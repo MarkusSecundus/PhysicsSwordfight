@@ -7,9 +7,12 @@ public class SwordMovement : MonoBehaviour
 {
     public float DamageWhenActive = 10f, DamageWhenIdle = 1f;
 
+    public Camera inputCamera;
+
     public Vector3 mult = Vector3.one;
     public Vector3 targetRotation, debuggerRotation;
     public ConfigurableJoint joint;
+    private JointRotationHelper jointRotationHelper;
 
     public ParaboloidSet controlParabola;
 
@@ -31,7 +34,6 @@ public class SwordMovement : MonoBehaviour
 
     private Vector3 lastForward = Vector3.zero;
     private Vector3 lastNormal = Vector3.zero;
-    private Quaternion originalRotation;
 
     private PhysicsDamager physicsDamager;
 
@@ -43,10 +45,11 @@ public class SwordMovement : MonoBehaviour
     {
         physicsDamager = GetComponent<PhysicsDamager>();
         joint ??= GetComponent<ConfigurableJoint>();
-        originalRotation = transform.localRotation;
+        jointRotationHelper = joint.MakeRotationHelper(Space.Self);
         lastBladetipPosition = swordTip.transform.position;
     }
 
+    private Camera cameraToUse => inputCamera ?? Camera.main;
 
     private float swordLength => Vector3.Distance(swordTip.position, swordHandle.position)*swordLengthModifier;
 
@@ -56,6 +59,7 @@ public class SwordMovement : MonoBehaviour
     private void rotateDebugger(Quaternion rotation)
     {
         debugger.transform.rotation = rotation;
+        Debug.Log($"{debugger.transform.name}| {rotation.eulerAngles} | glob: {debugger.transform.rotation.eulerAngles} | loc: {debugger.transform.localRotation.eulerAngles}");
     }
 
 
@@ -121,8 +125,8 @@ public class SwordMovement : MonoBehaviour
 
             var mousePos = Input.mousePosition;
 
-            if (Camera.main == null) return;
-            var ray = Camera.main.ScreenPointToRay(mousePos);
+            if (cameraToUse == null) return;
+            var ray = cameraToUse.ScreenPointToRay(mousePos);
             /*ray = debugger.transform.parent.InverseTransformRay(ray);
             DebugDrawUtils.DrawRay(ray, Color.red);*/
 
@@ -156,8 +160,9 @@ public class SwordMovement : MonoBehaviour
                 Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
 
 
-                joint.SetTargetRotationLocal(Quaternion.Inverse(debugger.transform.parent.rotation)* tr, originalRotation);
                 rotateDebugger(tr);
+                jointRotationHelper.SetTargetRotation(Quaternion.Inverse(debugger.transform.parent.rotation)*  tr);
+
                 debuggerPoint.position = hitPoint;
                 this.targetRotation = tr.eulerAngles;
             }

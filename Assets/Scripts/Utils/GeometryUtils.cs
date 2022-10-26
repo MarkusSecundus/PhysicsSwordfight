@@ -3,16 +3,44 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[System.Serializable]
+public class JointRotationHelper
+{
+    public ConfigurableJoint Joint { get; }
+    public Space Space { get; }
+
+	[SerializeField]
+    internal Quaternion startRotation;
+
+    public JointRotationHelper(ConfigurableJoint joint, Space space)
+    {
+        this.Space = space;
+        this.Joint = joint;
+        startRotation = space switch
+        {
+            Space.Self => joint.transform.localRotation,
+            Space.World => joint.transform.rotation,
+            _ => throw new ArgumentException($"Invalid value `{space}` provided for {nameof(space)}")
+        };
+    }
+
+    public void SetTargetRotation(Quaternion newTargetRotation)
+        => ConfigurableJointExtensions.SetTargetRotationInternal(Joint, newTargetRotation, startRotation, Space);
+}
+
+
 /// <summary>
 /// All credit goes to mstevenson <see href="https://gist.github.com/mstevenson/4958837"/>
 /// </summary>
 public static class ConfigurableJointExtensions
 {
-	/// <summary>
-	/// Sets a joint's targetRotation to match a given local rotation.
-	/// The joint transform's local rotation must be cached on Start and passed into this method.
-	/// </summary>
-	public static void SetTargetRotationLocal(this ConfigurableJoint joint, Quaternion targetLocalRotation, Quaternion startLocalRotation)
+    public static JointRotationHelper MakeRotationHelper(this ConfigurableJoint self, Space space) => new JointRotationHelper(self, space);
+    /// <summary>
+    /// Sets a joint's targetRotation to match a given local rotation.
+    /// The joint transform's local rotation must be cached on Start and passed into this method.
+    /// </summary>
+    public static void SetTargetRotationLocal(this ConfigurableJoint joint, Quaternion targetLocalRotation, Quaternion startLocalRotation)
 	{
 		if (joint.configuredInWorldSpace)
 		{
@@ -34,7 +62,7 @@ public static class ConfigurableJointExtensions
 		SetTargetRotationInternal(joint, targetWorldRotation, startWorldRotation, Space.World);
 	}
 
-	static void SetTargetRotationInternal(ConfigurableJoint joint, Quaternion targetRotation, Quaternion startRotation, Space space)
+	internal static void SetTargetRotationInternal(ConfigurableJoint joint, Quaternion targetRotation, Quaternion startRotation, Space space)
 	{
 		// Calculate the rotation expressed by the joint's axis and secondary axis
 		var right = joint.axis;
