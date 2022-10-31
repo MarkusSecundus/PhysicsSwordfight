@@ -13,6 +13,10 @@ public static class EnumUtil
 
 public static class HelperExtensions
 {
+    public static void Log(this string self, bool shouldLog = true)
+    {
+        if (shouldLog) Debug.Log(self);
+    }
     public static GameObject InstantiateWithTransform(this GameObject o,bool copyPosition=true, bool copyRotation = true, bool copyScale = true)
     {
         var ret = GameObject.Instantiate(o);

@@ -699,6 +699,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageWhenActive: 10
   DamageWhenIdle: 1
+  inputCamera: {fileID: 0}
   mult: {x: 1, y: 1, z: 1}
   targetRotation: {x: 0, y: 0, z: 0}
   debuggerRotation: {x: 0, y: 0, z: 0}
@@ -2585,7 +2586,6 @@ Transform:
   m_LocalPosition: {x: -0.039577, y: 0.20135, z: 1.506}
   m_LocalScale: {x: 1.2289476, y: 1.2289476, z: 1.2289476}
   m_Children:
-  - {fileID: 1252960959}
   - {fileID: 1341067919}
   m_Father: {fileID: 977461303}
   m_RootOrder: 5
@@ -2694,7 +2694,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: -0.2075}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.03845787, y: 0.19224524, z: 1.50611}
+  m_ConnectedAnchor: {x: -0.038455963, y: 0.19224524, z: 1.5061071}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -2792,6 +2792,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageWhenActive: 1
   DamageWhenIdle: 1
+  inputCamera: {fileID: 0}
   mult: {x: 1, y: 1, z: 1}
   targetRotation: {x: 0, y: 0, z: 0}
   debuggerRotation: {x: 0, y: 0, z: 0}
@@ -5077,87 +5078,6 @@ Transform:
   m_Father: {fileID: 1752147752}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1252960958
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1252960959}
-  - component: {fileID: 1252960961}
-  - component: {fileID: 1252960960}
-  m_Layer: 0
-  m_Name: SwordDebugger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &1252960959
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1252960958}
-  m_LocalRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
-  m_LocalPosition: {x: 0, y: 0, z: 0.5159999}
-  m_LocalScale: {x: 0.08144587, y: 1.037279, z: 0.01187461}
-  m_Children: []
-  m_Father: {fileID: 607926059}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 90}
---- !u!23 &1252960960
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1252960958}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: a435c3583ce2b2c448f4fbcbba44cc7a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1252960961
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1252960958}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1001 &1257843055
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5360,6 +5280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageWhenActive: 10
   DamageWhenIdle: 1
+  inputCamera: {fileID: 0}
   mult: {x: 1, y: 1, z: 1}
   targetRotation: {x: 0, y: 0, z: 0}
   debuggerRotation: {x: 0, y: 0, z: 0}
@@ -5817,7 +5738,7 @@ Transform:
   m_LocalScale: {x: 1.0892053, y: 1.0892054, z: 1.0892054}
   m_Children: []
   m_Father: {fileID: 607926059}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1341067920
 MeshRenderer:
@@ -5891,7 +5812,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1355960519}
-  m_LocalRotation: {x: -0, y: 0.6230161, z: -0, w: 0.78220904}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 47.2, y: 2.77, z: 140}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -5902,7 +5823,7 @@ Transform:
   - {fileID: 1257843056}
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 1517.073, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1413194404
 GameObject:
   m_ObjectHideFlags: 0

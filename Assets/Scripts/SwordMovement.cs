@@ -22,8 +22,6 @@ public class SwordMovement : MonoBehaviour
 
     public float swordLengthModifier = 1f;
 
-    public bool OnlyIfClicked = true;
-
 
     public Vector3 upVector = Vector3.up;
 
@@ -49,7 +47,7 @@ public class SwordMovement : MonoBehaviour
         lastBladetipPosition = swordTip.transform.position;
     }
 
-    private Camera cameraToUse => inputCamera ?? Camera.main;
+    private Camera cameraToUse => inputCamera ?? Camera.main ?? throw new NullReferenceException("No camera found");
 
     private float swordLength => Vector3.Distance(swordTip.position, swordHandle.position)*swordLengthModifier;
 
@@ -59,7 +57,7 @@ public class SwordMovement : MonoBehaviour
     private void rotateDebugger(Quaternion rotation)
     {
         debugger.transform.rotation = rotation;
-        Debug.Log($"{debugger.transform.name}| {rotation.eulerAngles} | glob: {debugger.transform.rotation.eulerAngles} | loc: {debugger.transform.localRotation.eulerAngles}");
+        //Debug.Log($"{debugger.transform.name}| {rotation.eulerAngles} | glob: {debugger.transform.rotation.eulerAngles} | loc: {debugger.transform.localRotation.eulerAngles}");
     }
 
 
@@ -112,61 +110,45 @@ public class SwordMovement : MonoBehaviour
 
         SetSwordDamageBasedOnSpeed();
 
-        if (OnlyIfClicked && !Input.GetKey(KeyCode.Mouse0))
+
+        _damper = minDamper;
+        Cursor.lockState = CursorLockMode.Confined;
+
+        var mousePos = Input.mousePosition;
+
+        var ray = cameraToUse.ScreenPointToRay(mousePos);
+
+
+
+        var intersection = ray.IntersectSphere(swordHandle.position, swordLength);
+
+        intersection.First ??= ray.GetRayPointWithLeastDistance(swordHandle.position);
+
+        if (intersection.First != null)
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            _damper = idleDamper;
-            //setDamper(idleDamper, 0.3f);
+            var swordHandlePoint = swordHandle.position;
+            var hitPoint = intersection.First.Value;
+
+            var hitDirectionVector = (hitPoint - swordHandlePoint);
+
+            Vector3 forward = hitDirectionVector, up = computeUpVector(forward);
+            if (Vector3.Distance(lastForward, forward) >= minLastVectorDiff)
+                lastForward = hitDirectionVector;
+            lastNormal = up;
+
+            var tr = Quaternion.LookRotation(hitDirectionVector, up);
+            //Debug.DrawLine(swordHandlePoint, swordHandlePoint + forward, Color.red);
+            Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
+
+
+            rotateDebugger(tr);
+            jointRotationHelper.SetTargetRotation(Quaternion.Inverse(debugger.transform.parent.rotation)*  tr);
+
+            debuggerPoint.position = hitPoint;
+            this.targetRotation = tr.eulerAngles;
         }
-        else
-        {
-            _damper = minDamper;
-            Cursor.lockState = CursorLockMode.Confined;
-
-            var mousePos = Input.mousePosition;
-
-            if (cameraToUse == null) return;
-            var ray = cameraToUse.ScreenPointToRay(mousePos);
-            /*ray = debugger.transform.parent.InverseTransformRay(ray);
-            DebugDrawUtils.DrawRay(ray, Color.red);*/
 
 
-            //Debug.Log($"Ray dst: {ray.PointDistanceFromRay(swordHandle.position)}");
-            //Debug.Log($"Ray dst v2: {Vector3.Distance(swordHandle.position, ray.GetRayPointWithLeastDistance(swordHandle.position))}");
-
-
-            var intersection = ray.IntersectSphere(swordHandle.position, swordLength);
-                                                              //
-            //Debug.Log($"Mouse: {mousePos}\nRay: {ray}");
-            //Debug.Log($"Intersection:  {intersection}");
-
-            if (intersection.First == null)
-                intersection.First = ray.GetRayPointWithLeastDistance(swordHandle.position);
-
-            if (intersection.First != null)
-            {
-                var swordHandlePoint = swordHandle.position;
-                var hitPoint = intersection.First.Value;
-
-                var hitDirectionVector = (hitPoint - swordHandlePoint);
-
-                Vector3 forward = hitDirectionVector, up = computeUpVector(forward);
-                if (Vector3.Distance(lastForward, forward) >= minLastVectorDiff)
-                    lastForward = hitDirectionVector;
-                lastNormal = up;
-
-                var tr = Quaternion.LookRotation(hitDirectionVector, up);
-                Debug.DrawLine(swordHandlePoint, swordHandlePoint + forward, Color.red);
-                Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
-
-
-                rotateDebugger(tr);
-                jointRotationHelper.SetTargetRotation(Quaternion.Inverse(debugger.transform.parent.rotation)*  tr);
-
-                debuggerPoint.position = hitPoint;
-                this.targetRotation = tr.eulerAngles;
-            }
-        }
         this.debuggerRotation = this.transform.rotation.eulerAngles;
     }
 
