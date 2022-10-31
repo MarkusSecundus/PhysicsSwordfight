@@ -710,7 +710,7 @@ MonoBehaviour:
   debugger: {fileID: 0}
   debuggerPoint: {fileID: 0}
   swordLengthModifier: 1
-  OnlyIfClicked: 1
+  inputCircleRadius: 0.3
   upVector: {x: 0, y: 1, z: 0}
   minLastVectorDiff: 0.3
   idleDamper: 0
@@ -2694,7 +2694,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: -0.2075}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.038455963, y: 0.19224524, z: 1.5061071}
+  m_ConnectedAnchor: {x: -0.038455963, y: 0.19224572, z: 1.5061071}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -2765,7 +2765,7 @@ ConfigurableJoint:
   m_SlerpDrive:
     serializedVersion: 3
     positionSpring: 1200
-    positionDamper: 120
+    positionDamper: 30
     maximumForce: 3.4028233e+38
   m_ProjectionMode: 0
   m_ProjectionDistance: 0.1
@@ -2792,7 +2792,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DamageWhenActive: 1
   DamageWhenIdle: 1
-  inputCamera: {fileID: 0}
+  inputCamera: {fileID: 963194227}
   mult: {x: 1, y: 1, z: 1}
   targetRotation: {x: 0, y: 0, z: 0}
   debuggerRotation: {x: 0, y: 0, z: 0}
@@ -2803,7 +2803,7 @@ MonoBehaviour:
   debugger: {fileID: 607926059}
   debuggerPoint: {fileID: 2114665247}
   swordLengthModifier: 0.4
-  OnlyIfClicked: 0
+  inputCircleRadius: 0.3
   upVector: {x: 0, y: 1, z: 0}
   minLastVectorDiff: 0.2
   idleDamper: 400
@@ -5291,7 +5291,7 @@ MonoBehaviour:
   debugger: {fileID: 607926059}
   debuggerPoint: {fileID: 2114665247}
   swordLengthModifier: 0.4
-  OnlyIfClicked: 0
+  inputCircleRadius: 0.3
   upVector: {x: 0, y: 1, z: 0}
   minLastVectorDiff: 0.2
   idleDamper: 400
@@ -5813,7 +5813,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1355960519}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 47.2, y: 2.77, z: 140}
+  m_LocalPosition: {x: 47.2, y: 3.67, z: 140}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 977461303}

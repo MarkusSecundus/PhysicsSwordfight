@@ -22,6 +22,8 @@ public class SwordMovement : MonoBehaviour
 
     public float swordLengthModifier = 1f;
 
+    public float inputCircleRadius = 0.3f;
+
 
     public Vector3 upVector = Vector3.up;
 
@@ -31,7 +33,6 @@ public class SwordMovement : MonoBehaviour
     public float idleDamper, maxDamper, minDamper;
 
     private Vector3 lastForward = Vector3.zero;
-    private Vector3 lastNormal = Vector3.zero;
 
     private PhysicsDamager physicsDamager;
 
@@ -51,9 +52,6 @@ public class SwordMovement : MonoBehaviour
 
     private float swordLength => Vector3.Distance(swordTip.position, swordHandle.position)*swordLengthModifier;
 
-    private Vector3 getAnchor() => joint.transform.TransformPoint(joint.anchor);
-
-
     private void rotateDebugger(Quaternion rotation)
     {
         debugger.transform.rotation = rotation;
@@ -69,39 +67,6 @@ public class SwordMovement : MonoBehaviour
         return ret;
     }
 
-    private float _damper
-    {
-        get => joint.slerpDrive.positionDamper;
-        set
-        {
-            var d = joint.slerpDrive;
-            if (d.positionDamper == value) return;
-            d.positionDamper = value;
-            joint.slerpDrive = d;
-        }
-    }
-
-    private Func<float, float> damperInterpolationFunc = t => t * t;
-
-    private float damperInterpolationProgress, damperInterpolationDuration = 1f, damperInterpolationBegin, damperInterpolationTarget;
-
-    private void setDamper(float damperToSet, float duration)
-    {
-        if (damperToSet == _damper) return;
-        damperInterpolationBegin = _damper;
-        damperInterpolationTarget = damperToSet;
-        damperInterpolationProgress = 0;
-        damperInterpolationDuration = duration;
-    }
-
-    private void ProcessDamperInterpolation()
-    {
-        if (damperInterpolationProgress >= damperInterpolationDuration) return;
-        damperInterpolationProgress += Time.deltaTime;
-        float t = damperInterpolationProgress / damperInterpolationDuration;
-        float diff = damperInterpolationTarget - damperInterpolationBegin;
-        _damper = damperInterpolationBegin +  damperInterpolationFunc(t) * diff;
-    }
 
 
     // Update is called once per frame
@@ -110,23 +75,19 @@ public class SwordMovement : MonoBehaviour
 
         SetSwordDamageBasedOnSpeed();
 
-
-        _damper = minDamper;
         Cursor.lockState = CursorLockMode.Confined;
 
-        var mousePos = Input.mousePosition;
-
-        var ray = cameraToUse.ScreenPointToRay(mousePos);
+        var ray = cameraToUse.ScreenPointToRay(Input.mousePosition);
 
 
+        var swordHandlePoint = swordHandle.position;
 
-        var intersection = ray.IntersectSphere(swordHandle.position, swordLength);
+        var intersection = ray.IntersectSphere(swordHandlePoint, swordLength);
 
-        intersection.First ??= ray.GetRayPointWithLeastDistance(swordHandle.position);
+        intersection.First ??= ray.GetRayPointWithLeastDistance(swordHandlePoint);
 
         if (intersection.First != null)
         {
-            var swordHandlePoint = swordHandle.position;
             var hitPoint = intersection.First.Value;
 
             var hitDirectionVector = (hitPoint - swordHandlePoint);
@@ -134,7 +95,6 @@ public class SwordMovement : MonoBehaviour
             Vector3 forward = hitDirectionVector, up = computeUpVector(forward);
             if (Vector3.Distance(lastForward, forward) >= minLastVectorDiff)
                 lastForward = hitDirectionVector;
-            lastNormal = up;
 
             var tr = Quaternion.LookRotation(hitDirectionVector, up);
             //Debug.DrawLine(swordHandlePoint, swordHandlePoint + forward, Color.red);
@@ -142,7 +102,7 @@ public class SwordMovement : MonoBehaviour
 
 
             rotateDebugger(tr);
-            jointRotationHelper.SetTargetRotation(Quaternion.Inverse(debugger.transform.parent.rotation)*  tr);
+            jointRotationHelper.SetTargetRotation(Quaternion.Inverse(joint.connectedBody.transform.rotation)*  tr);
 
             debuggerPoint.position = hitPoint;
             this.targetRotation = tr.eulerAngles;
