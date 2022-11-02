@@ -16,9 +16,10 @@ public class SwordMovement : MonoBehaviour
 
     public ParaboloidSet controlParabola;
 
-    public Transform swordTip, swordHandle;
+    public Transform swordTip, swordAnchor;
 
-    public Transform debugger, debuggerPoint;
+    public WeaponDebugger debugger;
+    public Transform debuggerPoint;
 
     public float swordLengthModifier = 1f;
 
@@ -39,6 +40,8 @@ public class SwordMovement : MonoBehaviour
 
     private Vector3 lastBladetipPosition;
 
+    private Vector3 swordHandlePoint => swordAnchor.position;// joint.transform.position + joint.anchor;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,17 +49,15 @@ public class SwordMovement : MonoBehaviour
         joint ??= GetComponent<ConfigurableJoint>();
         jointRotationHelper = joint.MakeRotationHelper(Space.Self);
         lastBladetipPosition = swordTip.transform.position;
+
+        swordAnchor.localPosition = joint.anchor;
+        debugger.AdjustPosition(joint);
     }
 
     private Camera cameraToUse => inputCamera ?? Camera.main ?? throw new NullReferenceException("No camera found");
 
-    private float swordLength => Vector3.Distance(swordTip.position, swordHandle.position)*swordLengthModifier;
+    private float swordLength => Vector3.Distance(swordTip.position, swordHandlePoint)*swordLengthModifier;
 
-    private void rotateDebugger(Quaternion rotation)
-    {
-        debugger.transform.rotation = rotation;
-        //Debug.Log($"{debugger.transform.name}| {rotation.eulerAngles} | glob: {debugger.transform.rotation.eulerAngles} | loc: {debugger.transform.localRotation.eulerAngles}");
-    }
 
 
     private Vector3 computeUpVector(Vector3 forward)
@@ -79,9 +80,6 @@ public class SwordMovement : MonoBehaviour
 
         var ray = cameraToUse.ScreenPointToRay(Input.mousePosition);
 
-
-        var swordHandlePoint = swordHandle.position;
-
         var intersection = ray.IntersectSphere(swordHandlePoint, swordLength);
 
         intersection.First ??= ray.GetRayPointWithLeastDistance(swordHandlePoint);
@@ -97,11 +95,11 @@ public class SwordMovement : MonoBehaviour
                 lastForward = hitDirectionVector;
 
             var tr = Quaternion.LookRotation(hitDirectionVector, up);
-            //Debug.DrawLine(swordHandlePoint, swordHandlePoint + forward, Color.red);
+
             Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
 
 
-            rotateDebugger(tr);
+            debugger.RotateDebugger(tr);
             jointRotationHelper.SetTargetRotation(Quaternion.Inverse(joint.connectedBody.transform.rotation)*  tr);
 
             debuggerPoint.position = hitPoint;
@@ -128,5 +126,12 @@ public class SwordMovement : MonoBehaviour
         this.physicsDamager.DamageMultiplier = travelSpeed >= NonIdleTravelSpeed ? DamageWhenActive : DamageWhenIdle;
 
         lastBladetipPosition = tipPosition;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(swordHandlePoint, 0.01f);
+        Gizmos.DrawWireSphere(swordHandlePoint, swordLength);
     }
 }

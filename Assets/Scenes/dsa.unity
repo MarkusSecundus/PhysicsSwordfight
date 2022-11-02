@@ -147,7 +147,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3541965}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0007, y: 0, z: -0.207}
+  m_LocalPosition: {x: -0.0007, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 623176092}
@@ -706,7 +706,7 @@ MonoBehaviour:
   joint: {fileID: 0}
   controlParabola: {fileID: 0}
   swordTip: {fileID: 0}
-  swordHandle: {fileID: 0}
+  swordAnchor: {fileID: 0}
   debugger: {fileID: 0}
   debuggerPoint: {fileID: 0}
   swordLengthModifier: 1
@@ -2568,6 +2568,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 607926059}
+  - component: {fileID: 607926060}
   m_Layer: 0
   m_Name: SwordDebugging
   m_TagString: Untagged
@@ -2583,13 +2584,26 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 607926058}
   m_LocalRotation: {x: 0, y: 0.70710677, z: 0.70710677, w: 0}
-  m_LocalPosition: {x: -0.039577, y: 0.20135, z: 1.506}
+  m_LocalPosition: {x: -0.039577, y: -0.094, z: 1.727}
   m_LocalScale: {x: 1.2289476, y: 1.2289476, z: 1.2289476}
   m_Children:
   - {fileID: 1341067919}
   m_Father: {fileID: 977461303}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: -90, y: 90, z: 90}
+--- !u!114 &607926060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 607926058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51130d125b1468243993caceb6df57d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actualDebugger: {fileID: 1341067919}
 --- !u!1001 &611568853
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2691,10 +2705,10 @@ ConfigurableJoint:
   m_GameObject: {fileID: 623176090}
   m_ConnectedBody: {fileID: 977461305}
   m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 0, z: -0.2075}
+  m_Anchor: {x: 0, y: 0, z: 0.1}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.038455963, y: 0.19224572, z: 1.5061071}
+  m_ConnectedAnchor: {x: -0.038455963, y: 0.38585782, z: 1.5061071}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -2765,7 +2779,7 @@ ConfigurableJoint:
   m_SlerpDrive:
     serializedVersion: 3
     positionSpring: 1200
-    positionDamper: 30
+    positionDamper: 100
     maximumForce: 3.4028233e+38
   m_ProjectionMode: 0
   m_ProjectionDistance: 0.1
@@ -2799,8 +2813,8 @@ MonoBehaviour:
   joint: {fileID: 623176093}
   controlParabola: {fileID: 0}
   swordTip: {fileID: 36121749}
-  swordHandle: {fileID: 3541966}
-  debugger: {fileID: 607926059}
+  swordAnchor: {fileID: 3541966}
+  debugger: {fileID: 607926060}
   debuggerPoint: {fileID: 2114665247}
   swordLengthModifier: 0.4
   inputCircleRadius: 0.3
@@ -5287,7 +5301,7 @@ MonoBehaviour:
   joint: {fileID: 1257843063}
   controlParabola: {fileID: 0}
   swordTip: {fileID: 923103360}
-  swordHandle: {fileID: 259070743}
+  swordAnchor: {fileID: 0}
   debugger: {fileID: 607926059}
   debuggerPoint: {fileID: 2114665247}
   swordLengthModifier: 0.4
@@ -5734,7 +5748,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1341067918}
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0.7071068, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 0.21860026}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.0892053, y: 1.0892054, z: 1.0892054}
   m_Children: []
   m_Father: {fileID: 607926059}
@@ -6800,7 +6814,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4334314812708720166, guid: edccbf15fadd9704cb7a2020a492b120, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.086
+      value: 3.868
       objectReference: {fileID: 0}
     - target: {fileID: 4334314812708720166, guid: edccbf15fadd9704cb7a2020a492b120, type: 3}
       propertyPath: m_LocalPosition.z
