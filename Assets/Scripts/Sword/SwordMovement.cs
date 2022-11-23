@@ -14,24 +14,16 @@ public class SwordMovement : MonoBehaviour
     public ConfigurableJoint joint;
     private JointRotationHelper jointRotationHelper;
 
-    public ParaboloidSet controlParabola;
-
     public Transform swordTip, swordAnchor;
 
     public WeaponDebugger debugger;
     public Transform debuggerPoint;
 
-    public float swordLengthModifier = 1f;
-
     public float inputCircleRadius = 0.3f;
 
 
-    public Vector3 upVector = Vector3.up;
-
     public float minLastVectorDiff = 0.3f;
 
-
-    public float idleDamper, maxDamper, minDamper;
 
     private Vector3 lastForward = Vector3.zero;
 
@@ -56,7 +48,7 @@ public class SwordMovement : MonoBehaviour
 
     private Camera cameraToUse => inputCamera ?? Camera.main ?? throw new NullReferenceException("No camera found");
 
-    private float swordLength => Vector3.Distance(swordTip.position, swordHandlePoint)*swordLengthModifier;
+    private float swordLength => inputCircleRadius;
 
 
 
@@ -73,7 +65,6 @@ public class SwordMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         SetSwordDamageBasedOnSpeed();
 
         Cursor.lockState = CursorLockMode.Confined;
@@ -111,7 +102,6 @@ public class SwordMovement : MonoBehaviour
     }
 
     public float NonIdleTravelSpeed = 1f;
-
     public float travelSpeed_debug = -1f;
 
     void SetSwordDamageBasedOnSpeed()
@@ -127,6 +117,8 @@ public class SwordMovement : MonoBehaviour
 
         lastBladetipPosition = tipPosition;
     }
+
+
 
     private void OnDrawGizmos()
     {
