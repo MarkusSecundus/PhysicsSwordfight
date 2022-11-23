@@ -65,11 +65,16 @@ public class SwordMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SetSwordDamageBasedOnSpeed();
-
         Cursor.lockState = CursorLockMode.Confined;
 
+        SetSwordDamageBasedOnSpeed();
+        SetSwordRotation();
+    }
+
+    void SetSwordRotation()
+    {
         var ray = cameraToUse.ScreenPointToRay(Input.mousePosition);
+        Debug.DrawRay(ray.origin, ray.direction, Color.yellow);
 
         var intersection = ray.IntersectSphere(swordHandlePoint, swordLength);
 
@@ -91,19 +96,20 @@ public class SwordMovement : MonoBehaviour
 
 
             debugger?.RotateDebugger(tr);
-            jointRotationHelper.SetTargetRotation(Quaternion.Inverse(joint.connectedBody.transform.rotation)*  tr);
+            jointRotationHelper.SetTargetRotation(Quaternion.Inverse(joint.connectedBody.transform.rotation) * tr);
 
-            if(debuggerPoint != null)debuggerPoint.position = hitPoint;
+            if (debuggerPoint != null) debuggerPoint.position = hitPoint;
             this.targetRotation = tr.eulerAngles;
         }
-
-
         this.debuggerRotation = this.transform.rotation.eulerAngles;
     }
 
-    public float NonIdleTravelSpeed = 1f;
-    public float travelSpeed_debug = -1f;
 
+
+
+
+    public float NonIdleTravelSpeed = 1f;
+    //public float travelSpeed_debug = -1f;
     void SetSwordDamageBasedOnSpeed()
     {
         var tipPosition = swordTip.transform.position;
@@ -111,7 +117,7 @@ public class SwordMovement : MonoBehaviour
         var pathTraveled = lastBladetipPosition - tipPosition;
 
 
-        var travelSpeed = this.travelSpeed_debug = pathTraveled.magnitude / Time.deltaTime;
+        var travelSpeed = /*this.travelSpeed_debug =*/ pathTraveled.magnitude / Time.deltaTime;
 
         this.physicsDamager.DamageMultiplier = travelSpeed >= NonIdleTravelSpeed ? DamageWhenActive : DamageWhenIdle;
 
@@ -124,6 +130,7 @@ public class SwordMovement : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawSphere(swordHandlePoint, 0.01f);
-        Gizmos.DrawWireSphere(swordHandlePoint, swordLength);
+        //Gizmos.DrawWireSphere(swordHandlePoint, swordLength);
+        DrawHelpers.DrawWireSphere(swordHandlePoint, swordLength, Gizmos.DrawLine);
     }
 }

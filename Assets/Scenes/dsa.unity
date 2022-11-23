@@ -2803,20 +2803,13 @@ MonoBehaviour:
   targetRotation: {x: 0, y: 0, z: 0}
   debuggerRotation: {x: 0, y: 0, z: 0}
   joint: {fileID: 623176093}
-  controlParabola: {fileID: 0}
   swordTip: {fileID: 36121749}
   swordAnchor: {fileID: 3541966}
   debugger: {fileID: 607926060}
   debuggerPoint: {fileID: 2114665247}
-  swordLengthModifier: 0.4
-  inputCircleRadius: 0.66
-  upVector: {x: 0, y: 1, z: 0}
+  inputCircleRadius: 0.42
   minLastVectorDiff: 0.2
-  idleDamper: 400
-  maxDamper: 50
-  minDamper: 10
   NonIdleTravelSpeed: 1
-  travelSpeed_debug: -1
 --- !u!75 &623176095
 ConstantForce:
   m_ObjectHideFlags: 0
@@ -5979,6 +5972,36 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 9.29916, y: 20.35888, z: 9.36264}
   m_Center: {x: -0.12509918, y: -1.09618, z: 0.45949173}
+--- !u!1 &1705081733
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1705081734}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1705081734
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705081733}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1740102558
 GameObject:
   m_ObjectHideFlags: 0
