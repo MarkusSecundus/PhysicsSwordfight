@@ -68,7 +68,6 @@ public class DestroyableByPhysics : MonoBehaviour
         AlreadyCollided.Add(collision.gameObject);
 
 
-
         var damager = GetDamager(collision);
         var multiplier = damager?.DamageMultiplier ?? DefaultMultiplier;
         if (damager != null) multiplier = ExceptionsFromRule.FirstOrDefault(r => damager.CompareTag(r.Tag))?.Multiplier ?? multiplier;

@@ -63,7 +63,7 @@ public class SwordMovement : MonoBehaviour
     private Vector3 computeUpVector(Vector3 forward)
     {
         var ret = Vector3.Cross(lastForward, forward).normalized;
-        if (ret.y < 0 /*|| (ret.y == 0 && (ret.z < 0 || (ret.z == 0 && ret.x < 0)))*/ )
+        if (ret.y < 0 /* (ret.y == 0 && (ret.z < 0 || (ret.z == 0 && ret.x < 0)))*/ )
             ret = -ret;
         return ret;
     }
@@ -99,10 +99,10 @@ public class SwordMovement : MonoBehaviour
             Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
 
 
-            debugger.RotateDebugger(tr);
+            debugger?.RotateDebugger(tr);
             jointRotationHelper.SetTargetRotation(Quaternion.Inverse(joint.connectedBody.transform.rotation)*  tr);
 
-            debuggerPoint.position = hitPoint;
+            if(debuggerPoint != null)debuggerPoint.position = hitPoint;
             this.targetRotation = tr.eulerAngles;
         }
 
