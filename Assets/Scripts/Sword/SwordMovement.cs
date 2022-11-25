@@ -2,6 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 
 public class SwordMovement : MonoBehaviour
 {
@@ -24,6 +27,8 @@ public class SwordMovement : MonoBehaviour
 
     public float minLastVectorDiff = 0.3f;
 
+    public float anchorMoveModifier = 1f;
+
 
     private Vector3 lastForward = Vector3.zero;
 
@@ -33,6 +38,16 @@ public class SwordMovement : MonoBehaviour
     private Vector3 lastBladetipPosition;
 
     private Vector3 swordHandlePoint => swordAnchor.position;// joint.transform.position + joint.anchor;
+
+    public BlockingConfig blockingConfig = new BlockingConfig();
+
+    [System.Serializable]
+    public class BlockingConfig
+    {
+        public Transform BlockingPosition;
+        public float BlockBeginDuration = 0.5f;
+        public float BlockEndDuration = 0.3f;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +59,7 @@ public class SwordMovement : MonoBehaviour
 
         swordAnchor.localPosition = joint.anchor;
         debugger.AdjustPosition(joint);
+        joint.autoConfigureConnectedAnchor = false;
     }
 
     private Camera cameraToUse => inputCamera ?? Camera.main ?? throw new NullReferenceException("No camera found");
@@ -69,6 +85,54 @@ public class SwordMovement : MonoBehaviour
 
         SetSwordDamageBasedOnSpeed();
         SetSwordRotation();
+        ManageBlocking();
+    }
+
+
+
+    private Vector3 originalConnectedAnchor;
+    private TweenerCore<Vector3, Vector3, VectorOptions> tween = null;
+    void ManageBlocking()
+    {
+        const KeyCode BlockKey = KeyCode.LeftShift;
+        if (Input.GetKeyDown(BlockKey)) StartBlock();
+        else if (Input.GetKeyUp(BlockKey)) EndBlock();
+
+        void StartBlock()
+        {
+            if (tween != null) { tween.Kill(); tween = null; }
+            else originalConnectedAnchor = joint.connectedAnchor;
+            var endValue = originalConnectedAnchor + blockingConfig.BlockingPosition.localPosition;
+            tween = joint.DOConnectedAnchor(endValue, blockingConfig.BlockBeginDuration);
+        }
+        void EndBlock() 
+        {
+            tween?.Kill();
+            tween = null;
+            tween = joint.DOConnectedAnchor(originalConnectedAnchor, blockingConfig.BlockBeginDuration);
+        }
+    }
+    void MoveAnchorTest()
+    {
+        var directions = new Dictionary<KeyCode, Vector2>()
+        {
+            [KeyCode.H] = new Vector2(0, 1),
+            [KeyCode.J] = new Vector2(0, -1),
+            [KeyCode.K] = new Vector2(-1,0),
+            [KeyCode.L] = new Vector2(1,0),
+        };
+        var toMove = Vector2.zero;
+        foreach(var p in directions)
+            if (Input.GetKey(p.Key)) toMove += p.Value;
+
+        if(toMove!= Vector2.zero)
+        {
+            toMove *= Time.deltaTime * anchorMoveModifier;
+
+            joint.connectedAnchor += toMove.xy0();
+            //joint.autoConfigureConnectedAnchor = true;
+            Debug.Log($"moved: {toMove}");
+        }
     }
 
     void SetSwordRotation()

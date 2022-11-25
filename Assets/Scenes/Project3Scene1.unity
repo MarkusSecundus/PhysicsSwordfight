@@ -1498,20 +1498,13 @@ MonoBehaviour:
   targetRotation: {x: 0, y: 0, z: 0}
   debuggerRotation: {x: 0, y: 0, z: 0}
   joint: {fileID: 0}
-  controlParabola: {fileID: 0}
   swordTip: {fileID: 0}
   swordAnchor: {fileID: 0}
   debugger: {fileID: 0}
   debuggerPoint: {fileID: 0}
-  swordLengthModifier: 1
   inputCircleRadius: 0.3
-  upVector: {x: 0, y: 1, z: 0}
   minLastVectorDiff: 0.3
-  idleDamper: 0
-  maxDamper: 0
-  minDamper: 0
   NonIdleTravelSpeed: 1
-  travelSpeed_debug: -1
 --- !u!75 &122283261
 ConstantForce:
   m_ObjectHideFlags: 0
@@ -5762,8 +5755,8 @@ ConfigurableJoint:
     maximumForce: 3.4028233e+38
   m_SlerpDrive:
     serializedVersion: 3
-    positionSpring: 1200
-    positionDamper: 120
+    positionSpring: 2000
+    positionDamper: 50
     maximumForce: 3.4028233e+38
   m_ProjectionMode: 0
   m_ProjectionDistance: 0.1
@@ -5795,20 +5788,13 @@ MonoBehaviour:
   targetRotation: {x: 0, y: 0, z: 0}
   debuggerRotation: {x: 0, y: 0, z: 0}
   joint: {fileID: 623176093}
-  controlParabola: {fileID: 0}
   swordTip: {fileID: 36121749}
   swordAnchor: {fileID: 3541966}
   debugger: {fileID: 0}
   debuggerPoint: {fileID: 2114665247}
-  swordLengthModifier: 0.4
   inputCircleRadius: 0.3
-  upVector: {x: 0, y: 1, z: 0}
   minLastVectorDiff: 0.2
-  idleDamper: 400
-  maxDamper: 50
-  minDamper: 10
   NonIdleTravelSpeed: 1
-  travelSpeed_debug: -1
 --- !u!75 &623176095
 ConstantForce:
   m_ObjectHideFlags: 0
@@ -9801,7 +9787,7 @@ MonoBehaviour:
   mainCamera: {fileID: 963194228}
   mouseXMultiplier: 300
   mouseYMultiplier: 100
-  keyboardMultiplier: 700
+  keyboardMultiplier: 4000
   horizontalRotationMultiplier: 4
   jumpMode: 2
   feetPosition: {fileID: 1777534729}
@@ -12382,20 +12368,13 @@ MonoBehaviour:
   targetRotation: {x: 0, y: 0, z: 0}
   debuggerRotation: {x: 0, y: 0, z: 0}
   joint: {fileID: 1257843063}
-  controlParabola: {fileID: 0}
   swordTip: {fileID: 923103360}
   swordAnchor: {fileID: 0}
   debugger: {fileID: 607926059}
   debuggerPoint: {fileID: 2114665247}
-  swordLengthModifier: 0.4
   inputCircleRadius: 0.3
-  upVector: {x: 0, y: 1, z: 0}
   minLastVectorDiff: 0.2
-  idleDamper: 400
-  maxDamper: 50
-  minDamper: 10
   NonIdleTravelSpeed: 1
-  travelSpeed_debug: -1
 --- !u!82 &1257843061
 AudioSource:
   m_ObjectHideFlags: 0

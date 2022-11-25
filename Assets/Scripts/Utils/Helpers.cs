@@ -70,8 +70,12 @@ public static class HelperExtensions
     }
 
     public static Vector2 xy(this Vector3 v) => new Vector2(v.x, v.y);
+    public static Vector2 xz(this Vector3 v) => new Vector2(v.x, v.z);
+    public static Vector2 yz(this Vector3 v) => new Vector2(v.y, v.z);
+
     public static Vector3 xy0(this Vector2 v) => new Vector3(v.x, v.y, 0);
     public static Vector3 x0z(this Vector2 v) => new Vector3(v.x, 0, v.y);
+    public static Vector3 _0yz(this Vector2 v) => new Vector3(0, v.x, v.y);
 }
 
 
