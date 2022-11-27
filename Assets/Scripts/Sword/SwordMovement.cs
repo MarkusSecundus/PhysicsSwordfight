@@ -54,8 +54,9 @@ public class SwordMovement : MonoBehaviour
     {
         physicsDamager = GetComponent<PhysicsDamager>();
         joint ??= GetComponent<ConfigurableJoint>();
-        jointRotationHelper = joint.MakeRotationHelper(Space.Self);
+        jointRotationHelper = joint.MakeRotationHelper();
         lastBladetipPosition = swordTip.transform.position;
+
 
         swordAnchor.localPosition = joint.anchor;
         debugger.AdjustPosition(joint);
@@ -81,18 +82,19 @@ public class SwordMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        var delta = Time.fixedDeltaTime;
         Cursor.lockState = CursorLockMode.Confined;
 
-        SetSwordDamageBasedOnSpeed();
-        SetSwordRotation();
-        ManageBlocking();
+        SetSwordDamageBasedOnSpeed(delta);
+        SetSwordRotation(delta);
+        ManageBlocking(delta);
     }
 
 
 
     private Vector3 originalConnectedAnchor;
     private TweenerCore<Vector3, Vector3, VectorOptions> tween = null;
-    void ManageBlocking()
+    void ManageBlocking(float delta)
     {
         const KeyCode BlockKey = KeyCode.LeftShift;
         if (Input.GetKeyDown(BlockKey)) StartBlock();
@@ -112,7 +114,7 @@ public class SwordMovement : MonoBehaviour
             tween = joint.DOConnectedAnchor(originalConnectedAnchor, blockingConfig.BlockBeginDuration);
         }
     }
-    void MoveAnchorTest()
+    void MoveAnchorTest(float delta)
     {
         var directions = new Dictionary<KeyCode, Vector2>()
         {
@@ -127,7 +129,7 @@ public class SwordMovement : MonoBehaviour
 
         if(toMove!= Vector2.zero)
         {
-            toMove *= Time.deltaTime * anchorMoveModifier;
+            toMove *= delta * anchorMoveModifier;
 
             joint.connectedAnchor += toMove.xy0();
             //joint.autoConfigureConnectedAnchor = true;
@@ -135,7 +137,7 @@ public class SwordMovement : MonoBehaviour
         }
     }
 
-    void SetSwordRotation()
+    void SetSwordRotation(float delta)
     {
         var ray = cameraToUse.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(ray.origin, ray.direction, Color.yellow);
@@ -174,14 +176,14 @@ public class SwordMovement : MonoBehaviour
 
     public float NonIdleTravelSpeed = 1f;
     //public float travelSpeed_debug = -1f;
-    void SetSwordDamageBasedOnSpeed()
+    void SetSwordDamageBasedOnSpeed(float delta)
     {
         var tipPosition = swordTip.transform.position;
 
         var pathTraveled = lastBladetipPosition - tipPosition;
 
 
-        var travelSpeed = /*this.travelSpeed_debug =*/ pathTraveled.magnitude / Time.deltaTime;
+        var travelSpeed = /*this.travelSpeed_debug =*/ pathTraveled.magnitude / delta;
 
         this.physicsDamager.DamageMultiplier = travelSpeed >= NonIdleTravelSpeed ? DamageWhenActive : DamageWhenIdle;
 

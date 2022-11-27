@@ -39,8 +39,9 @@ public class PlayerMovement : MonoBehaviour
 
     private bool IsGrounded => rb.velocity.sqrMagnitude < GroundedSpeedThreshold ||  Physics.CheckSphere(feetPosition.position, feetRadius, floorMask);
 
-    void Update()
+    void FixedUpdate()
     {
+        var delta = Time.fixedDeltaTime;
         if (Input.GetKeyDown(KeyCode.Tab))
             BindMove = !BindMove;
         
@@ -58,8 +59,8 @@ public class PlayerMovement : MonoBehaviour
         float mouseX = default, mouseY = default;
         if(!MouseOnlyIfNotClicked || !Input.GetKey(KeyCode.Mouse0))
         {
-            mouseX = Input.GetAxis("HorizontalRotation") * horizontalRotationMultiplier; //Input.GetAxis("Mouse X") * mouseXMultiplier * Time.deltaTime;
-            mouseY = Input.GetAxis("Mouse Y") * mouseYMultiplier * Time.deltaTime;
+            mouseX = Input.GetAxis("HorizontalRotation") * horizontalRotationMultiplier; //Input.GetAxis("Mouse X") * mouseXMultiplier * delta;
+            mouseY = Input.GetAxis("Mouse Y") * mouseYMultiplier * delta;
         }
 
         //Debug.Log($"vertical: {vertical} -- horizontal: {horizontal}\nmX: {mouseX} -- mY: {mouseY}");
@@ -76,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
             mainCamera.localRotation = Quaternion.Euler(xRotation, 0, 0);
         }
 
-        var toMove = (transform.forward * vertical + transform.right * horizontal) * Time.deltaTime * keyboardMultiplier;
+        var toMove = (transform.forward * vertical + transform.right * horizontal) * delta * keyboardMultiplier;
 
         if (this.IsGrounded)
         {
