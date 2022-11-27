@@ -20,6 +20,11 @@ public static class EnumUtil
 
 public static class HelperExtensions
 {
+    public static T WithModified<T>(this T self, System.Action<T> modify) where T: struct
+    {
+        modify(self);
+        return self;
+    }
     public static void Log(this string self, bool shouldLog = true)
     {
         if (shouldLog) Debug.Log(self);
