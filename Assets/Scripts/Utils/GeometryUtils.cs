@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -131,12 +132,6 @@ public static class ConfigurableJointExtensions
 		joint.targetRotation = resultRotation;
 	}*/
 }
-
-
-
-
-
-
 
 
 
@@ -346,6 +341,42 @@ public static class GeometryUtils
 		return Math.Acos(cos);
     }
 
+	public static float Distance(this Vector3 self, Vector3 b) => Vector3.Distance(self, b);
+
+	public static bool IsNegligible(this float f) => Mathf.Abs(f) < Mathf.Epsilon;
+	public static bool IsCloseTo(this float f, float g) => (f-g).IsNegligible();
+
+
+}
+
+
+public static class PlaneExtensions
+{
+	public static (Vector3 X, Vector3 Y) GetBase(this Plane plane)
+	{
+		Vector3 v1;
+		if((v1 = new Vector3(plane.normal.y, -plane.normal.x, 0)) == Vector3.zero && (v1 = new Vector3(plane.normal.z, 0, -plane.normal.x)) == Vector3.zero )
+            v1 = new Vector3(0, -plane.normal.z, plane.normal.y);
+
+		v1 = v1.normalized;
+		return (v1, Vector3.Cross(plane.normal, v1).normalized);
+    }
+
+	public static Vector3 GetBasedVector(this (Vector3 X, Vector3 Y) coordsBase, Vector2 v)
+	{
+		return v.x * coordsBase.X + v.y * coordsBase.Y;
+	}
+
+	public static Vector3 GetShift(this Plane self)
+		=> throw new NotImplementedException("Plane shift is yet to be implemented!");//self.normal * self.distance; //DOESN'T WORK!!!!
+
+
+    public static Plane GetTangentialPlane(this (Vector3 Center, float Radius) sphere, Vector3 point)
+    {
+        //if (!point.Distance(sphere.Center).IsCloseTo(sphere.Radius)) throw new ArgumentException($"The point doesn't lay on the sphere");
+
+        return new Plane(point - sphere.Center, point);
+    }
 }
 
 

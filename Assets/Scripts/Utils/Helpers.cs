@@ -74,6 +74,9 @@ public static class HelperExtensions
         }
     }
 
+    public static Vector2 x0(this Vector2 v) => new Vector2(v.x, 0);
+    public static Vector2 _0y(this Vector2 v) => new Vector2(0, v.y);
+
     public static Vector2 xy(this Vector3 v) => new Vector2(v.x, v.y);
     public static Vector2 xz(this Vector3 v) => new Vector2(v.x, v.z);
     public static Vector2 yz(this Vector3 v) => new Vector2(v.y, v.z);
@@ -87,6 +90,9 @@ public static class HelperExtensions
 public static class DrawHelpers
 {
     public delegate void LineDrawer<TVect>(TVect lineBegin, TVect lineEnd);
+
+    public static void DrawDirectedLine(this LineDrawer<Vector3> self, Vector3 begin, Vector3 direction)
+        => self(begin, begin + direction);
 
     public static void DrawWireCircle(float radius, int segments, LineDrawer<Vector2> drawLine)
     {
@@ -118,8 +124,40 @@ public static class DrawHelpers
                 b = rot * b;
             }
         });
+
+        int computeCircleSegments(float radius) => (int)Mathf.Max(6, Mathf.Ceil(Mathf.Sqrt(radius) * 36f));
+        int computeSphereCircles(float radius) => (int)Mathf.Max(2, Mathf.Ceil(Mathf.Sqrt(radius) * 18f));
     }
 
-    private static int computeCircleSegments(float radius) => (int) Mathf.Max(6, Mathf.Ceil(Mathf.Sqrt(radius)*36f));
-    private static int computeSphereCircles(float radius) => (int) Mathf.Max(2, Mathf.Ceil(Mathf.Sqrt(radius) *18f));
+
+    public static void DrawPlaneSegment(Plane plane, Vector3 center, LineDrawer<Vector3> drawLine, Vector2 diameter=default, int segments=24)
+    {
+        if (diameter == default) diameter = new Vector2(1, 1);
+
+        var step = diameter / (segments);
+
+        var bs = plane.GetBase();
+
+        Vector2 begin = -diameter / 2;
+
+        for(int x = 1; x< segments; ++x)
+        {
+            var b = begin + step.x0() * x;
+            var e = begin + step.x0() * x + step._0y() * segments;
+            draw(b, e);
+        }
+
+        for(int y = 1; y< segments; ++y)
+        {
+            var b = begin + step._0y() * y;
+            var e = begin + step._0y() * y + step.x0() * segments;
+            draw(b, e);
+        }
+
+        void draw(Vector2 a, Vector2 b)
+        {
+            drawLine(bs.GetBasedVector(a) + center, bs.GetBasedVector(b) + center);
+            Debug.Log($"{a}:{b}");
+        }
+    }
 }

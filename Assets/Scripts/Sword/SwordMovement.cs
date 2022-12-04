@@ -150,6 +150,11 @@ public class SwordMovement : MonoBehaviour
         {
             var hitPoint = intersection.First.Value;
 
+            {
+                var plane = (swordHandlePoint, swordLength).GetTangentialPlane(hitPoint);
+                DrawHelpers.DrawPlaneSegment(plane, hitPoint, (v,w)=>Debug.DrawLine(v,w, Color.green));
+            }
+
             var hitDirectionVector = (hitPoint - swordHandlePoint);
 
             Vector3 forward = hitDirectionVector, up = computeUpVector(forward);
@@ -196,7 +201,7 @@ public class SwordMovement : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawSphere(swordHandlePoint, 0.01f);
-        //Gizmos.DrawWireSphere(swordHandlePoint, swordLength);
+
         DrawHelpers.DrawWireSphere(swordHandlePoint, swordLength, Gizmos.DrawLine);
     }
 }
