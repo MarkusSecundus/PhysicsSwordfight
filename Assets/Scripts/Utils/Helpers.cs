@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -13,13 +14,37 @@ public static class RotationUtil
     public const float MaxAngle = MaxDegree;
 }
 
+
 public static class EnumUtil
 {
     public static TEnum Parse<TEnum>(string name) => (TEnum)System.Enum.Parse(typeof(TEnum), name);
 }
 
+
+[System.Serializable]
+public struct InspectableKeyValuePair<TKey, TValue>
+{
+    public TKey Key;
+    public TValue Value;
+}
+
 public static class HelperExtensions
 {
+    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> self)
+    {
+        var ret = new Dictionary<TKey, TValue>();
+        ret.AddAll(self);
+        return ret;
+    }
+    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<InspectableKeyValuePair<TKey, TValue>> self)
+        => self.Select(p => new KeyValuePair<TKey, TValue>(p.Key, p.Value)).ToDictionary();
+
+    public static ICollection<T> AddAll<T>(this ICollection<T> self, IEnumerable<T> toAdd)
+    {
+        foreach (var it in toAdd) self.Add(it);
+        return self;
+    }
+
     public static T WithModified<T>(this T self, System.Action<T> modify) where T: struct
     {
         modify(self);
@@ -74,16 +99,8 @@ public static class HelperExtensions
         }
     }
 
-    public static Vector2 x0(this Vector2 v) => new Vector2(v.x, 0);
-    public static Vector2 _0y(this Vector2 v) => new Vector2(0, v.y);
 
-    public static Vector2 xy(this Vector3 v) => new Vector2(v.x, v.y);
-    public static Vector2 xz(this Vector3 v) => new Vector2(v.x, v.z);
-    public static Vector2 yz(this Vector3 v) => new Vector2(v.y, v.z);
 
-    public static Vector3 xy0(this Vector2 v) => new Vector3(v.x, v.y, 0);
-    public static Vector3 x0z(this Vector2 v) => new Vector3(v.x, 0, v.y);
-    public static Vector3 _0yz(this Vector2 v) => new Vector3(0, v.x, v.y);
 }
 
 
@@ -138,6 +155,10 @@ public static class DrawHelpers
 
         var bs = plane.GetBase();
 
+        Debug.DrawLine(center, center + plane.normal, Color.red);
+        Debug.DrawLine(center, center + bs.X, Color.white);
+        Debug.DrawLine(center, center + bs.Y, Color.yellow);
+
         Vector2 begin = -diameter / 2;
 
         for(int x = 1; x< segments; ++x)
@@ -157,7 +178,7 @@ public static class DrawHelpers
         void draw(Vector2 a, Vector2 b)
         {
             drawLine(bs.GetBasedVector(a) + center, bs.GetBasedVector(b) + center);
-            Debug.Log($"{a}:{b}");
+            //Debug.Log($"{a}:{b}");
         }
     }
 }

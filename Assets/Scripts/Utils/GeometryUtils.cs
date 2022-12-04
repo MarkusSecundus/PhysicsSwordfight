@@ -346,12 +346,34 @@ public static class GeometryUtils
 	public static bool IsNegligible(this float f) => Mathf.Abs(f) < Mathf.Epsilon;
 	public static bool IsCloseTo(this float f, float g) => (f-g).IsNegligible();
 
+	public static float Dot(this Vector3 a, Vector3 b) => Vector3.Dot(a, b);
+	public static Vector3 Cross(this Vector3 a, Vector3 b) => Vector3.Cross(a, b);
 
+	public static Vector3 MultiplyElems(this Vector3 a, float x, float y, float z) => new Vector3(a.x *x, a.y * y, a.z * z);
+	public static Vector3 MultiplyElems(this Vector3 a, Vector3 b) => a.MultiplyElems(b.x, b.y, b.z);
+
+	public static Vector2 MultiplyElems(this Vector2 a, float x, float y) => new Vector3(a.x *x, a.y * y);
+	public static Vector2 MultiplyElems(this Vector2 a, Vector2 b) => a.MultiplyElems(b.x, b.y);
+
+
+    public static Vector2 x0(this Vector2 v) => new Vector2(v.x, 0);
+    public static Vector2 _0y(this Vector2 v) => new Vector2(0, v.y);
+
+    public static Vector2 xy(this Vector3 v) => new Vector2(v.x, v.y);
+    public static Vector2 xz(this Vector3 v) => new Vector2(v.x, v.z);
+    public static Vector2 yz(this Vector3 v) => new Vector2(v.y, v.z);
+
+    public static Vector3 xy0(this Vector2 v) => new Vector3(v.x, v.y, 0);
+    public static Vector3 x0z(this Vector2 v) => new Vector3(v.x, 0, v.y);
+    public static Vector3 _0yz(this Vector2 v) => new Vector3(0, v.x, v.y);
 }
 
 
 public static class PlaneExtensions
 {
+	private static readonly Matrix4x4 rotate90x = Matrix4x4.Rotate(Quaternion.Euler(90, 0, 0));
+	private static readonly Matrix4x4 rotate90y = Matrix4x4.Rotate(Quaternion.Euler(0, 90, 0));
+	private static readonly Matrix4x4 rotate90z = Matrix4x4.Rotate(Quaternion.Euler(0, 0, 90));
 	public static (Vector3 X, Vector3 Y) GetBase(this Plane plane)
 	{
 		Vector3 v1;
@@ -359,7 +381,12 @@ public static class PlaneExtensions
             v1 = new Vector3(0, -plane.normal.z, plane.normal.y);
 
 		v1 = v1.normalized;
-		return (v1, Vector3.Cross(plane.normal, v1).normalized);
+
+		/*if (!(v1 = rotate90x * plane.normal).Dot(plane.normal).IsNegligible() && !(v1 = rotate90y * plane.normal).Dot(plane.normal).IsNegligible())
+			v1 = rotate90z * plane.normal;
+		if (!v1.Dot(plane.normal).IsNegligible()) v1 = Vector3.Cross(plane.normal, v1);// Debug.Log($"Cross: {v1.Dot(plane.normal)}");*/
+        //v1 = rotate90x * plane.normal;
+        return (v1, Vector3.Cross(plane.normal, v1).normalized);
     }
 
 	public static Vector3 GetBasedVector(this (Vector3 X, Vector3 Y) coordsBase, Vector2 v)
