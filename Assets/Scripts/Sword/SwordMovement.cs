@@ -12,7 +12,6 @@ public class SwordMovement : MonoBehaviour
 
     public Camera inputCamera;
 
-    public Vector3 mult = Vector3.one;
     public Vector3 targetRotation, debuggerRotation;
     public ConfigurableJoint joint;
     private JointRotationHelper jointRotationHelper;
@@ -49,7 +48,7 @@ public class SwordMovement : MonoBehaviour
         public float BlockEndDuration = 0.3f;
     }
 
-    // Start is called before the first frame update
+
     void Start()
     {
         physicsDamager = GetComponent<PhysicsDamager>();
@@ -61,6 +60,7 @@ public class SwordMovement : MonoBehaviour
         swordAnchor.localPosition = joint.anchor;
         debugger.AdjustPosition(joint);
         joint.autoConfigureConnectedAnchor = false;
+        originalConnectedAnchor = joint.connectedAnchor;
     }
 
     private Camera cameraToUse => inputCamera ?? Camera.main ?? throw new NullReferenceException("No camera found");
@@ -103,7 +103,6 @@ public class SwordMovement : MonoBehaviour
         void StartBlock()
         {
             if (tween != null) { tween.Kill(); tween = null; }
-            else originalConnectedAnchor = joint.connectedAnchor;
             var endValue = originalConnectedAnchor + blockingConfig.BlockingPosition.localPosition;
             tween = joint.DOConnectedAnchor(endValue, blockingConfig.BlockBeginDuration);
         }
@@ -114,43 +113,17 @@ public class SwordMovement : MonoBehaviour
             tween = joint.DOConnectedAnchor(originalConnectedAnchor, blockingConfig.BlockBeginDuration);
         }
     }
-    void MoveAnchorTest(float delta)
-    {
-        var directions = new Dictionary<KeyCode, Vector2>()
-        {
-            [KeyCode.H] = new Vector2(0, 1),
-            [KeyCode.J] = new Vector2(0, -1),
-            [KeyCode.K] = new Vector2(-1,0),
-            [KeyCode.L] = new Vector2(1,0),
-        };
-        var toMove = Vector2.zero;
-        foreach(var p in directions)
-            if (Input.GetKey(p.Key)) toMove += p.Value;
 
-        if(toMove!= Vector2.zero)
-        {
-            toMove *= delta * anchorMoveModifier;
-
-            joint.connectedAnchor += toMove.xy0();
-            //joint.autoConfigureConnectedAnchor = true;
-            Debug.Log($"moved: {toMove}");
-        }
-    }
 
     void SetSwordRotation(float delta)
     {
-        var ray = cameraToUse.ScreenPointToRay(Input.mousePosition);
-        Debug.DrawRay(ray.origin, ray.direction, Color.yellow);
+        var input = GetUserInput(swordHandlePoint, swordLength);
 
-        var intersection = ray.IntersectSphere(swordHandlePoint, swordLength);
-
-        intersection.First ??= ray.GetRayPointWithLeastDistance(swordHandlePoint);
-
-        if (intersection.First != null)
+        if (input != null)
         {
-            var hitPoint = intersection.First.Value;
+            var hitPoint = input.Value;
 
-            {
+            {//debug
                 var plane = (swordHandlePoint, swordLength).GetTangentialPlane(hitPoint);
                 DrawHelpers.DrawPlaneSegment(plane, hitPoint, (v,w)=>Debug.DrawLine(v,w, Color.green));
             }
@@ -166,11 +139,8 @@ public class SwordMovement : MonoBehaviour
             Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
 
 
-            debugger?.RotateDebugger(tr);
-            jointRotationHelper.SetTargetRotation(Quaternion.Inverse(joint.connectedBody.transform.rotation) * tr);
-
-            if (debuggerPoint != null) debuggerPoint.position = hitPoint;
-            this.targetRotation = tr.eulerAngles;
+            SetSwordRotation(tr);
+            SetDebugPointPosition(hitPoint);
         }
         this.debuggerRotation = this.transform.rotation.eulerAngles;
     }
@@ -203,5 +173,33 @@ public class SwordMovement : MonoBehaviour
         Gizmos.DrawSphere(swordHandlePoint, 0.01f);
 
         DrawHelpers.DrawWireSphere(swordHandlePoint, swordLength, Gizmos.DrawLine);
+    }
+
+
+
+
+    public void SetAnchorPosition(Vector3 position, float speed_metersPerSecond) { }
+
+    public void SetSwordRotation(Quaternion rotation) 
+    {
+        debugger?.RotateDebugger(rotation);
+        jointRotationHelper.SetTargetRotation(Quaternion.Inverse(joint.connectedBody.transform.rotation) * rotation);
+
+        this.targetRotation = rotation.eulerAngles;
+    }
+    public void SetDebugPointPosition(Vector3 v)
+    {
+        if (debuggerPoint != null) debuggerPoint.position = v;
+
+    }
+
+    public Vector3? GetUserInput(Vector3 center, float radius)
+    {
+        var ray = cameraToUse.ScreenPointToRay(Input.mousePosition);
+        Debug.DrawRay(ray.origin, ray.direction, Color.yellow);
+
+        var intersection = ray.IntersectSphere(center, radius);
+
+        return intersection.First ??= ray.GetRayPointWithLeastDistance(center);
     }
 }

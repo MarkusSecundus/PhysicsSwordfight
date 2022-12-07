@@ -324,6 +324,25 @@ public static class GeometryUtils
 		=> new Ray(self.InverseTransformPoint(r.origin), self.InverseTransformDirection(r.direction));
 
 
+	/// <summary>
+	/// Computes angles of a triangle (described by the lengths of its sides) using the cosine theorem
+	/// </summary>
+	/// <returns></returns>
+	public static (float a, float b, float c) GetTriangleAngles_sss(float lengthA, float lengthB, float lengthC)
+	{
+		var cosA = getCos(lengthA, lengthB, lengthC);
+		var cosB = getCos(lengthB, lengthC, lengthA);
+		var cosC = getCos(lengthC, lengthA, lengthB);
+
+		return (Mathf.Acos(cosA)*Mathf.Rad2Deg, Mathf.Acos(cosB) * Mathf.Rad2Deg, Mathf.Acos(cosC) * Mathf.Rad2Deg);
+
+		float getCos(float a, float b, float c) => (b * b + c * c - a * a) / (2 * b * c);
+    }
+
+	public static float GetAngularDifference(this Vector3 a, Vector3 b)
+	{
+		return GetTriangleAngles_sss(a.magnitude, b.magnitude, a.Distance(b)).c;
+	}
 
 
 	/// <summary>
@@ -381,6 +400,8 @@ public static class PlaneExtensions
             v1 = new Vector3(0, -plane.normal.z, plane.normal.y);
 
 		v1 = v1.normalized;
+		/*v1 = plane.ClosestPointOnPlane(Vector3.one) - plane.GetShift();
+		v1 = plane.normal.Cross(v1).normalized;*/
 
 		/*if (!(v1 = rotate90x * plane.normal).Dot(plane.normal).IsNegligible() && !(v1 = rotate90y * plane.normal).Dot(plane.normal).IsNegligible())
 			v1 = rotate90z * plane.normal;
@@ -395,7 +416,7 @@ public static class PlaneExtensions
 	}
 
 	public static Vector3 GetShift(this Plane self)
-		=> throw new NotImplementedException("Plane shift is yet to be implemented!");//self.normal * self.distance; //DOESN'T WORK!!!!
+		=> self.ClosestPointOnPlane(Vector3.zero);//throw new NotImplementedException("Plane shift is yet to be implemented!");//self.normal * self.distance; //DOESN'T WORK!!!!
 
 
     public static Plane GetTangentialPlane(this (Vector3 Center, float Radius) sphere, Vector3 point)
