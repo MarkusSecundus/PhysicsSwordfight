@@ -8,13 +8,8 @@ using DG.Tweening.Plugins.Options;
 
 public class SwordMovement : MonoBehaviour
 {
-
-
-    public float DamageWhenActive = 10f, DamageWhenIdle = 1f;
-
     public Camera inputCamera;
 
-    public Vector3 targetRotation, debuggerRotation;
     public ConfigurableJoint joint;
     private JointRotationHelper jointRotationHelper;
 
@@ -25,16 +20,6 @@ public class SwordMovement : MonoBehaviour
 
     public float inputCircleRadius = 0.3f;
 
-
-    public float minLastVectorDiff = 0.3f;
-
-    public float anchorMoveModifier = 1f;
-
-
-    private PhysicsDamager physicsDamager;
-
-
-    private Vector3 lastBladetipPosition;
 
     public Vector3 swordHandlePoint => swordAnchor.position;// joint.transform.position + joint.anchor;
 
@@ -54,11 +39,8 @@ public class SwordMovement : MonoBehaviour
 
     void Start()
     {
-        physicsDamager = GetComponent<PhysicsDamager>();
         joint ??= GetComponent<ConfigurableJoint>();
         jointRotationHelper = joint.MakeRotationHelper();
-        lastBladetipPosition = swordTip.transform.position;
-
 
         swordAnchor.localPosition = joint.anchor;
         debugger.AdjustPosition(joint);
@@ -83,25 +65,9 @@ public class SwordMovement : MonoBehaviour
         var delta = Time.fixedDeltaTime;
 
         activeMode.OnFixedUpdate(delta);
-        SetSwordDamageBasedOnSpeed(delta);
     }
 
 
-
-
-    public float NonIdleTravelSpeed = 1f;
-    //public float travelSpeed_debug = -1f;
-    void SetSwordDamageBasedOnSpeed(float delta)
-    {
-        var tipPosition = swordTip.transform.position;
-
-        var pathTraveled = lastBladetipPosition - tipPosition;
-        var travelSpeed = pathTraveled.magnitude / delta;
-
-        this.physicsDamager.DamageMultiplier = travelSpeed >= NonIdleTravelSpeed ? DamageWhenActive : DamageWhenIdle;
-
-        lastBladetipPosition = tipPosition;
-    }
 
 
 
@@ -127,8 +93,6 @@ public class SwordMovement : MonoBehaviour
     {
         debugger?.RotateDebugger(rotation);
         jointRotationHelper.SetTargetRotation(Quaternion.Inverse(joint.connectedBody.transform.rotation) * rotation);
-
-        this.targetRotation = rotation.eulerAngles;
     }
     public void SetDebugPointPosition(Vector3 v)
     {

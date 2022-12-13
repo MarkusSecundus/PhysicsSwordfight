@@ -2757,6 +2757,7 @@ GameObject:
   - component: {fileID: 623176094}
   - component: {fileID: 623176097}
   - component: {fileID: 623176096}
+  - component: {fileID: 623176099}
   m_Layer: 0
   m_Name: Weapon
   m_TagString: Untagged
@@ -2907,27 +2908,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageWhenActive: 1
-  DamageWhenIdle: 1
   inputCamera: {fileID: 963194227}
-  targetRotation: {x: 0, y: 0, z: 0}
-  debuggerRotation: {x: 0, y: 0, z: 0}
   joint: {fileID: 623176093}
   swordTip: {fileID: 36121749}
   swordAnchor: {fileID: 3541966}
   debugger: {fileID: 607926060}
   debuggerPoint: {fileID: 2114665247}
   inputCircleRadius: 0.42
-  minLastVectorDiff: 0.2
-  anchorMoveModifier: 1
-  blockingConfig:
-    BlockingPosition: {fileID: 399414303}
-    BlockBeginDuration: 0.4
-    BlockEndDuration: 0.3
   Modes:
-    BasicMode:
+    Basic:
       minLastVectorDiff: 0.3
-  NonIdleTravelSpeed: 1
 --- !u!75 &623176095
 ConstantForce:
   m_ObjectHideFlags: 0
@@ -3065,6 +3055,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &623176099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623176090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef2a4d5352dd1c247a75cd7ff3f0eee1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NonIdleTravelSpeed: 1
+  DamageWhenActive: 10
+  DamageWhenIdle: 1
+  swordTip: {fileID: 36121749}
 --- !u!1 &627394071
 GameObject:
   m_ObjectHideFlags: 0

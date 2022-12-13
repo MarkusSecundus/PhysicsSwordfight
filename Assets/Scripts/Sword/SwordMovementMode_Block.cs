@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static SwordMovement;
 
+[System.Serializable]
 public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 {
     public Transform BlockingPosition;
