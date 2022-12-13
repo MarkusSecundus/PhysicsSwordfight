@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public abstract class ISwordMovementMode
+public abstract class IScriptSubmodule<TScript> where TScript: MonoBehaviour
 {
-    public SwordMovement Script { get;  }
+    public TScript Script { get; }
 
     protected Transform transform => Script.transform;
     protected GameObject gameObject => Script.gameObject;
 
-    public ISwordMovementMode(SwordMovement script) => this.Script = script;
+    public IScriptSubmodule(TScript script) => this.Script = script;
 
-    public virtual void Update(float delta) { }
-    public virtual void FixedUpdate(float delta) { }
+    public virtual void OnInitialized() { }
+    public virtual void OnStart() { }
+    public virtual void OnUpdate(float delta) { }
+    public virtual void OnFixedUpdate(float delta) { }
 
     public virtual void OnActivated() { }
     public virtual void OnDeactivated() { }

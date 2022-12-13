@@ -2924,6 +2924,9 @@ MonoBehaviour:
     BlockingPosition: {fileID: 399414303}
     BlockBeginDuration: 0.4
     BlockEndDuration: 0.3
+  Modes:
+    BasicMode:
+      minLastVectorDiff: 0.3
   NonIdleTravelSpeed: 1
 --- !u!75 &623176095
 ConstantForce:

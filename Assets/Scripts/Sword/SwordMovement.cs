@@ -8,6 +8,8 @@ using DG.Tweening.Plugins.Options;
 
 public class SwordMovement : MonoBehaviour
 {
+
+
     public float DamageWhenActive = 10f, DamageWhenIdle = 1f;
 
     public Camera inputCamera;
@@ -29,25 +31,26 @@ public class SwordMovement : MonoBehaviour
     public float anchorMoveModifier = 1f;
 
 
-    private Vector3 lastForward = Vector3.zero;
-
     private PhysicsDamager physicsDamager;
 
 
     private Vector3 lastBladetipPosition;
 
-    private Vector3 swordHandlePoint => swordAnchor.position;// joint.transform.position + joint.anchor;
+    public Vector3 swordHandlePoint => swordAnchor.position;// joint.transform.position + joint.anchor;
 
-    public BlockingConfig blockingConfig = new BlockingConfig();
 
+    private IScriptSubmodule<SwordMovement> activeMode;
+    public SwordMovementModes Modes;
     [System.Serializable]
-    public class BlockingConfig
+    public struct SwordMovementModes
     {
-        public Transform BlockingPosition;
-        public float BlockBeginDuration = 0.5f;
-        public float BlockEndDuration = 0.3f;
+        public SwordMovementMode_Basic Basic;
+        public SwordMovementMode_Block Block;
     }
-
+    public SwordMovement()
+    {
+        Modes = new SwordMovementModes { Basic = new SwordMovementMode_Basic(this) };
+    }
 
     void Start()
     {
@@ -59,92 +62,29 @@ public class SwordMovement : MonoBehaviour
 
         swordAnchor.localPosition = joint.anchor;
         debugger.AdjustPosition(joint);
-        joint.autoConfigureConnectedAnchor = false;
-        originalConnectedAnchor = joint.connectedAnchor;
+
+        activeMode = Modes.Basic;
+        activeMode.OnActivated();
     }
 
     private Camera cameraToUse => inputCamera ?? Camera.main ?? throw new NullReferenceException("No camera found");
 
-    private float swordLength => inputCircleRadius;
+    public float swordLength => inputCircleRadius;
 
 
-
-    private Vector3 computeUpVector(Vector3 forward)
-    {
-        var ret = Vector3.Cross(lastForward, forward).normalized;
-        if (ret.y < 0 /* (ret.y == 0 && (ret.z < 0 || (ret.z == 0 && ret.x < 0)))*/ )
-            ret = -ret;
-        return ret;
-    }
-
-
-
-    // Update is called once per frame
     void Update()
     {
+        activeMode.OnUpdate(Time.deltaTime);
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
         var delta = Time.fixedDeltaTime;
-        Cursor.lockState = CursorLockMode.Confined;
 
+        activeMode.OnFixedUpdate(delta);
         SetSwordDamageBasedOnSpeed(delta);
-        SetSwordRotation(delta);
-        ManageBlocking(delta);
     }
-
-
-
-    private Vector3 originalConnectedAnchor;
-    private TweenerCore<Vector3, Vector3, VectorOptions> tween = null;
-    void ManageBlocking(float delta)
-    {
-        const KeyCode BlockKey = KeyCode.LeftShift;
-        if (Input.GetKeyDown(BlockKey)) StartBlock();
-        else if (Input.GetKeyUp(BlockKey)) EndBlock();
-
-        void StartBlock()
-        {
-            if (tween != null) { tween.Kill(); tween = null; }
-            var endValue = originalConnectedAnchor + blockingConfig.BlockingPosition.localPosition;
-            tween = joint.DOConnectedAnchor(endValue, blockingConfig.BlockBeginDuration);
-        }
-        void EndBlock() 
-        {
-            tween?.Kill();
-            tween = null;
-            tween = joint.DOConnectedAnchor(originalConnectedAnchor, blockingConfig.BlockBeginDuration);
-        }
-    }
-
-
-    void SetSwordRotation(float delta)
-    {
-        var input = GetUserInput(swordHandlePoint, swordLength);
-
-        if (input != null)
-        {
-            var hitPoint = input.Value;
-
-            {//debug
-                var plane = (swordHandlePoint, swordLength).GetTangentialPlane(hitPoint);
-                DrawHelpers.DrawPlaneSegment(plane, hitPoint, (v,w)=>Debug.DrawLine(v,w, Color.green));
-            }
-
-            var hitDirectionVector = (hitPoint - swordHandlePoint);
-
-            Vector3 forward = hitDirectionVector, up = computeUpVector(forward);
-            if (Vector3.Distance(lastForward, forward) >= minLastVectorDiff)
-                lastForward = hitDirectionVector;
-
-            var tr = Quaternion.LookRotation(hitDirectionVector, up);
-
-            Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
-
-
-            SetSwordRotation(tr);
-            SetDebugPointPosition(hitPoint);
-        }
-        this.debuggerRotation = this.transform.rotation.eulerAngles;
-    }
-
 
 
 
@@ -156,9 +96,7 @@ public class SwordMovement : MonoBehaviour
         var tipPosition = swordTip.transform.position;
 
         var pathTraveled = lastBladetipPosition - tipPosition;
-
-
-        var travelSpeed = /*this.travelSpeed_debug =*/ pathTraveled.magnitude / delta;
+        var travelSpeed = pathTraveled.magnitude / delta;
 
         this.physicsDamager.DamageMultiplier = travelSpeed >= NonIdleTravelSpeed ? DamageWhenActive : DamageWhenIdle;
 
@@ -178,7 +116,12 @@ public class SwordMovement : MonoBehaviour
 
 
 
-    public void SetAnchorPosition(Vector3 position, float speed_metersPerSecond) { }
+
+
+    public void SetAnchorPosition(Vector3 position, float speed_metersPerSecond) 
+    {
+
+    }
 
     public void SetSwordRotation(Quaternion rotation) 
     {
