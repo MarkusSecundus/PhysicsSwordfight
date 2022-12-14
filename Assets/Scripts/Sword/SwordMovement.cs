@@ -5,6 +5,7 @@ using UnityEngine;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using System.Linq;
 
 public class SwordMovement : MonoBehaviour
 {
@@ -21,20 +22,17 @@ public class SwordMovement : MonoBehaviour
     public float inputCircleRadius = 0.3f;
 
 
-    public Vector3 swordHandlePoint => swordAnchor.position;// joint.transform.position + joint.anchor;
+    public Vector3 swordHandlePoint => swordAnchor.position;
+    public float swordLength => inputCircleRadius;
 
 
     private IScriptSubmodule<SwordMovement> activeMode;
-    public SwordMovementModes Modes;
-    [System.Serializable]
-    public struct SwordMovementModes
-    {
-        public SwordMovementMode_Basic Basic;
-        public SwordMovementMode_Block Block;
-    }
+    public SwordMovementModesContainer Modes;
+    public Dictionary<KeyCode, IScriptSubmodule<SwordMovement>> modes;
     public SwordMovement()
     {
-        Modes = new SwordMovementModes { Basic = new SwordMovementMode_Basic(this) };
+        Modes = new SwordMovementModesContainer { Basic = new SwordMovementMode_Basic(this), Block = new SwordMovementMode_Block(this) };
+        modes = Modes.MakeMap();
     }
 
     void Start()
@@ -45,28 +43,38 @@ public class SwordMovement : MonoBehaviour
         swordAnchor.localPosition = joint.anchor;
         debugger.AdjustPosition(joint);
 
-        activeMode = Modes.Basic;
-        activeMode.OnActivated();
+        foreach (var mode in modes.Values) mode.OnStart();
     }
 
     private Camera cameraToUse => inputCamera ?? Camera.main ?? throw new NullReferenceException("No camera found");
 
-    public float swordLength => inputCircleRadius;
 
 
     void Update()
     {
-        activeMode.OnUpdate(Time.deltaTime);
+        MakeSureRightModeIsActive();
+        activeMode?.OnUpdate(Time.deltaTime);
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        MakeSureRightModeIsActive();
         var delta = Time.fixedDeltaTime;
 
-        activeMode.OnFixedUpdate(delta);
+        activeMode?.OnFixedUpdate(delta);
     }
 
+
+    void MakeSureRightModeIsActive()
+    {
+        var mode = modes[modes.Keys.FirstOrDefault(Input.GetKey)];
+        if (activeMode != mode)
+        {
+            activeMode?.OnDeactivated();
+            (activeMode = mode)?.OnActivated();
+        }
+    }
 
 
 
@@ -84,6 +92,7 @@ public class SwordMovement : MonoBehaviour
 
 
 
+    private TweenerCore<Vector3, Vector3, VectorOptions> tween = null;
     public void SetAnchorPosition(Vector3 position, float speed_metersPerSecond) 
     {
 

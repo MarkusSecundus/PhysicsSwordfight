@@ -30,6 +30,13 @@ public struct InspectableKeyValuePair<TKey, TValue>
 
 public static class HelperExtensions
 {
+    public static T FirstOrDefault<T>(this IEnumerable<T> self, System.Func<T, bool> predicate, System.Func<T> defaultSupplier)
+    {
+        foreach(var i in self)
+            if (predicate(i)) return i;
+        
+        return defaultSupplier();
+    }
     public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> self)
     {
         var ret = new Dictionary<TKey, TValue>();

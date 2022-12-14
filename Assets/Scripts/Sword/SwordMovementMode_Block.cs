@@ -20,35 +20,34 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
     {
         joint = Script.GetComponent<ConfigurableJoint>();
         originalConnectedAnchor = joint.connectedAnchor;
+        joint.autoConfigureConnectedAnchor = false;
     }
     public override void OnActivated()
     {
-        joint.autoConfigureConnectedAnchor = false;
+        StartBlock();
+    }
+
+    public override void OnDeactivated()
+    {
+        EndBlock();
     }
 
     private ConfigurableJoint joint;
 
     private Vector3 originalConnectedAnchor;
     private TweenerCore<Vector3, Vector3, VectorOptions> tween = null;
-    void ManageBlocking(float delta)
+
+    void StartBlock()
     {
-        const KeyCode BlockKey = KeyCode.LeftShift;
-        if (Input.GetKeyDown(BlockKey)) StartBlock();
-        else if (Input.GetKeyUp(BlockKey)) EndBlock();
-
-        void StartBlock()
-        {
-            if (tween != null) { tween.Kill(); tween = null; }
-            var endValue = originalConnectedAnchor + BlockingPosition.localPosition;
-            tween = joint.DOConnectedAnchor(endValue, BlockBeginDuration);
-        }
-        void EndBlock()
-        {
-            tween?.Kill();
-            tween = null;
-            tween = joint.DOConnectedAnchor(originalConnectedAnchor, BlockBeginDuration);
-        }
+        if (tween != null) { tween.Kill(); tween = null; }
+        var endValue = originalConnectedAnchor + BlockingPosition.localPosition;
+        tween = joint.DOConnectedAnchor(endValue, BlockBeginDuration);
     }
-
+    void EndBlock()
+    {
+        tween?.Kill();
+        tween = null;
+        tween = joint.DOConnectedAnchor(originalConnectedAnchor, BlockBeginDuration);
+    }
 
 }

@@ -12,7 +12,6 @@ public abstract class IScriptSubmodule<TScript> where TScript: MonoBehaviour
 
     public IScriptSubmodule(TScript script) => this.Script = script;
 
-    public virtual void OnInitialized() { }
     public virtual void OnStart() { }
     public virtual void OnUpdate(float delta) { }
     public virtual void OnFixedUpdate(float delta) { }
