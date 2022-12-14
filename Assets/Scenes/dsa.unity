@@ -2918,6 +2918,11 @@ MonoBehaviour:
   Modes:
     Basic:
       minLastVectorDiff: 0.3
+    Block:
+      BlockingPosition: {fileID: 399414303}
+      BlockBeginDuration: 0.3
+      BlockEndDuration: 0.4
+    BlockKey: 304
 --- !u!75 &623176095
 ConstantForce:
   m_ObjectHideFlags: 0
