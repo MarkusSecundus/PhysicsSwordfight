@@ -15,6 +15,7 @@ public static class RotationUtil
 }
 
 
+
 public static class EnumUtil
 {
     public static TEnum Parse<TEnum>(string name) => (TEnum)System.Enum.Parse(typeof(TEnum), name);
@@ -28,8 +29,37 @@ public struct InspectableKeyValuePair<TKey, TValue>
     public TValue Value;
 }
 
+
+public enum TransformationPolicy
+{
+    Direction, Point, Vector
+}
 public static class HelperExtensions
 {
+    public static Vector3 LocalToGlobal(this Transform self, Vector3 v) => self.TransformPoint(v);
+    public static Vector3 GlobalToLocal(this Transform self, Vector3 v) => self.InverseTransformPoint(v);
+    public static Vector3 InverseTransform(this Transform self, Vector3 v, TransformationPolicy policy)
+        => policy switch
+        {
+            TransformationPolicy.Direction => self.InverseTransformDirection(v),
+            TransformationPolicy.Point => self.InverseTransformPoint(v),
+            TransformationPolicy.Vector => self.InverseTransformVector(v),
+            _ => throw new System.ArgumentException($"Invalid value of argument {nameof(v)}: '{v}'")
+        };
+    public static Vector3 Transform(this Transform self, Vector3 v, TransformationPolicy policy)
+        => policy switch
+        {
+            TransformationPolicy.Direction => self.TransformDirection(v),
+            TransformationPolicy.Point => self.TransformPoint(v),
+            TransformationPolicy.Vector => self.TransformVector(v),
+            _ => throw new System.ArgumentException($"Invalid value of argument {nameof(v)}: '{v}'")
+        };
+
+    public static bool HasNullElement<T>(this (T? a, T? b) self) where T : unmanaged
+        => self.a == null || self.b == null;
+    public static bool HasNullElement<T>(this (T a, T b) self) where T : class
+        => self.a == null || self.b == null;
+
     public static T FirstOrDefault<T>(this IEnumerable<T> self, System.Func<T, bool> predicate, System.Func<T> defaultSupplier)
     {
         foreach(var i in self)
@@ -77,6 +107,11 @@ public static class HelperExtensions
         => f(a.x, b.x) || f(a.y, b.y) || f(a.z, b.z);
 
 
+    public static bool IsNaN(this float f) => float.IsNaN(f);
+    public static bool IsPositiveInfinity(this float f) => float.IsPositiveInfinity(f);
+    public static bool IsNegativeInfinity(this float f) => float.IsNegativeInfinity(f);
+
+    public static bool IsNormalNumber(this float f) => !f.IsNaN() && !f.IsNegativeInfinity() && !f.IsPositiveInfinity();
 
     public static IEnumerable<GameObject> TransformChildren(this GameObject self) => self.transform.Cast<Transform>().Select(t=>t.gameObject);
 

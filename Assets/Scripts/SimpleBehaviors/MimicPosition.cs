@@ -2,30 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MimicPosition : MonoBehaviour
+public abstract class MimicPositionBase : MonoBehaviour
 {
-    public Transform toMimic;
+    protected abstract Vector3 PositionToMimic { get; }
+
     public Vector3 offset = Vector3.zero;
 
     [SerializeField] private bool computeOffset = false;
+    public Space Space = Space.World;
 
     private Rigidbody rb;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        if (computeOffset) offset = transform.position - toMimic.position;
+        if (computeOffset) offset = transform.position - PositionToMimic;
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
-        if (rb == null) transform.position = toMimic.position + offset;
+        if (rb == null || Space == Space.Self)
+        {
+            if(Space == Space.World)transform.position = PositionToMimic + offset;
+            else if(Space == Space.Self)transform.localPosition = PositionToMimic + offset;
+        }
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
-        if (rb != null) rb.position = toMimic.position + offset;
+        if (rb != null && Space == Space.World)
+        {
+            rb.position = PositionToMimic + offset;
+        }
     }
 
     private void OnDrawGizmos()
@@ -34,3 +43,11 @@ public class MimicPosition : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + offset);
     }
 }
+
+
+public class MimicPosition : MimicPositionBase
+{
+    public Transform toMimic;
+    protected override Vector3 PositionToMimic => toMimic.position;
+}
+
