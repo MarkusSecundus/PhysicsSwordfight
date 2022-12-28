@@ -2758,6 +2758,7 @@ GameObject:
   - component: {fileID: 623176097}
   - component: {fileID: 623176096}
   - component: {fileID: 623176099}
+  - component: {fileID: 623176100}
   m_Layer: 0
   m_Name: Weapon
   m_TagString: Untagged
@@ -3076,6 +3077,25 @@ MonoBehaviour:
   DamageWhenActive: 10
   DamageWhenIdle: 1
   swordTip: {fileID: 36121749}
+--- !u!114 &623176100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623176090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93f67e46733ff7741b4be9a75a5d163e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  relative: {x: 0, y: 0, z: 0}
+  absolute: {x: 0, y: 0, z: 0}
+  relTransformed: {x: 0, y: 0, z: 0}
+  relInverseTransformed: {x: 0, y: 0, z: 0}
+  absTransformed: {x: 0, y: 0, z: 0}
+  absInverseTransformed: {x: 0, y: 0, z: 0}
+  policy: 1
 --- !u!1 &627394071
 GameObject:
   m_ObjectHideFlags: 0
@@ -5184,9 +5204,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7de68ab0a3c18624ab9a02a442b21426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toMimic: {fileID: 3541966}
   offset: {x: 0, y: 0, z: 0}
   computeOffset: 1
+  Space: 0
+  toMimic: {fileID: 3541966}
 --- !u!1 &1355960519
 GameObject:
   m_ObjectHideFlags: 0

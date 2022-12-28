@@ -7,6 +7,10 @@ using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using System.Linq;
 
+using Submodule = IScriptSubmodule<SwordMovement>;
+
+
+
 public class SwordMovement : MonoBehaviour
 {
     public Camera inputCamera;
@@ -22,26 +26,29 @@ public class SwordMovement : MonoBehaviour
     public float inputCircleRadius = 0.3f;
 
 
-    public Vector3 swordHandlePoint => swordAnchor.position;
-    public float swordLength => inputCircleRadius;
+    public Vector3 FixedSwordHandlePoint => joint.connectedBody.transform.LocalToGlobal(originalConnectedAnchor);
+    public Vector3 FlexSwordHandlePoint => swordAnchor.position;
+    public float SwordLength => inputCircleRadius;
 
 
-    private IScriptSubmodule<SwordMovement> activeMode;
+    private Submodule activeMode;
     public SwordMovementModesContainer Modes;
-    public Dictionary<KeyCode, IScriptSubmodule<SwordMovement>> modes;
+    public Dictionary<KeyCode, Submodule> modes;
     public SwordMovement()
     {
-        Modes = new SwordMovementModesContainer { Basic = new SwordMovementMode_Basic(this), Block = new SwordMovementMode_Block(this) };
-        modes = Modes.MakeMap();
+        Modes = new SwordMovementModesContainer(this);
     }
 
     void Start()
     {
+        modes = Modes.MakeMap();
         joint ??= GetComponent<ConfigurableJoint>();
         jointRotationHelper = joint.MakeRotationHelper();
 
         swordAnchor.localPosition = joint.anchor;
         debugger.AdjustPosition(joint);
+
+        InitAnchorSetter();
 
         foreach (var mode in modes.Values) mode.OnStart();
     }
@@ -81,21 +88,38 @@ public class SwordMovement : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(swordHandlePoint, 0.01f);
-
-        DrawHelpers.DrawWireSphere(swordHandlePoint, swordLength, Gizmos.DrawLine);
+        activeMode?.OnDrawGizmos();
     }
 
 
 
-
-
-
-    private TweenerCore<Vector3, Vector3, VectorOptions> tween = null;
-    public void SetAnchorPosition(Vector3 position, float speed_metersPerSecond) 
+    private void InitAnchorSetter()
     {
+        this.originalConnectedAnchor = joint.connectedAnchor;
+        KillAnchorTween();
+    }
 
+    private void KillAnchorTween()
+    {
+        tween?.Kill(); tween = null;
+    }
+
+
+    private Vector3 originalConnectedAnchor { get; set; }
+    private TweenerCore<Vector3, Vector3, VectorOptions> tween;
+    public void SetAnchorPosition(Vector3 absolutePosition, float speed_metersPerSecond)
+    {
+        var relative = joint.connectedBody.transform.GlobalToLocal(absolutePosition);
+
+        KillAnchorTween();
+        if (speed_metersPerSecond.IsNaN())
+        {
+            joint.connectedAnchor = relative;
+        }
+        else
+        {
+
+        }
     }
 
     public void SetSwordRotation(Quaternion rotation) 
@@ -109,13 +133,14 @@ public class SwordMovement : MonoBehaviour
 
     }
 
-    public Vector3? GetUserInput(Vector3 center, float radius)
+    public (Vector3? First, Vector3? Second) GetUserInput(Vector3 center, float radius)
     {
         var ray = cameraToUse.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(ray.origin, ray.direction, Color.yellow);
 
-        var intersection = ray.IntersectSphere(center, radius);
+        var intersection = ray.IntersectSphere(center, radius); 
+        intersection.First ??= ray.GetRayPointWithLeastDistance(center);
 
-        return intersection.First ??= ray.GetRayPointWithLeastDistance(center);
+        return intersection;
     }
 }

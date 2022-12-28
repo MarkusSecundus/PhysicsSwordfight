@@ -18,4 +18,6 @@ public abstract class IScriptSubmodule<TScript> where TScript: MonoBehaviour
 
     public virtual void OnActivated() { }
     public virtual void OnDeactivated() { }
+
+    public virtual void OnDrawGizmos() { }
 }

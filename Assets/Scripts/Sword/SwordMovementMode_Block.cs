@@ -4,7 +4,6 @@ using DG.Tweening.Plugins.Options;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static SwordMovement;
 
 [System.Serializable]
 public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
@@ -18,19 +17,45 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 
     public override void OnStart()
     {
-        joint = Script.GetComponent<ConfigurableJoint>();
+        joint = Script.joint;
         originalConnectedAnchor = joint.connectedAnchor;
         joint.autoConfigureConnectedAnchor = false;
     }
     public override void OnActivated()
     {
-        StartBlock();
+        //StartBlock();
     }
 
     public override void OnDeactivated()
     {
-        EndBlock();
+        //EndBlock();
     }
+
+
+    public Vector3 swordHandlePoint => Script.FixedSwordHandlePoint;
+    private float swordLength => Script.SwordLength;
+    public override void OnFixedUpdate(float delta)
+    {
+
+        Cursor.lockState = CursorLockMode.Confined;
+        var input = Script.GetUserInput(swordHandlePoint,swordLength);
+
+        if (!input.HasNullElement())
+        {
+            var hitPoint = input.First.Value;
+            Script.SetAnchorPosition(hitPoint, float.NaN);
+            Script.SetDebugPointPosition(hitPoint);
+        }
+    }
+
+    public override void OnDrawGizmos()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(swordHandlePoint, 0.01f);
+
+        DrawHelpers.DrawWireSphere(swordHandlePoint, swordLength, Gizmos.DrawLine);
+    }
+
 
     private ConfigurableJoint joint;
 

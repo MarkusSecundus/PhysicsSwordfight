@@ -24,8 +24,8 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
         return ret;
     }
 
-    private Vector3 swordHandlePoint => Script.swordHandlePoint;
-    private float swordLength => Script.swordLength;
+    private Vector3 swordHandlePoint => Script.FlexSwordHandlePoint;
+    private float swordLength => Script.SwordLength;
 
 
     public float minLastVectorDiff = 0.3f;
@@ -35,9 +35,9 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
         Cursor.lockState = CursorLockMode.Confined;
         var input = Script.GetUserInput(swordHandlePoint, swordLength);
 
-        if (input != null)
+        if (input.First != null)
         {
-            var hitPoint = input.Value;
+            var hitPoint = input.First.Value;
 
             {//debug
                 var plane = (swordHandlePoint, swordLength).GetTangentialPlane(hitPoint);
@@ -58,6 +58,14 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
             Script.SetSwordRotation(tr);
             Script.SetDebugPointPosition(hitPoint);
         }
+    }
+
+    public override void OnDrawGizmos()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawSphere(swordHandlePoint, 0.01f);
+
+        DrawHelpers.DrawWireSphere(swordHandlePoint, swordLength, Gizmos.DrawLine);
     }
 
 }
