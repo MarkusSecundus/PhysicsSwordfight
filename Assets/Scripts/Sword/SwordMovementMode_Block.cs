@@ -24,12 +24,13 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
     public Vector3 swordHandlePoint => Script.FixedSwordHandlePoint;
     public override void OnFixedUpdate(float delta)
     {
-
         Cursor.lockState = CursorLockMode.Confined;
-        var input = Script.GetUserInput(swordHandlePoint,SwordLength);
+        var inputSphere = new Sphere(swordHandlePoint, SwordLength);
+        var input = Script.GetUserInput(inputSphere);
 
-        if (RegisterOnlyInputOnSphere? !input.HasNullElement() : input.First != null)
+        if (input.First != null)
         {
+            if (RegisterOnlyInputOnSphere && input.HasNullElement()) input.First = new Sphere(swordHandlePoint, SwordLength).ProjectPoint(input.First.Value);
             SetBlockPosition(input.First.Value);
         }
     }
@@ -43,7 +44,7 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
               handleDistance     = blockPointProjection.Distance(SwordHandle.position)
             ;
 
-        Plane tangentialPlane = (swordHandlePoint, SwordLength).GetTangentialPlane(hitPoint);
+        Plane tangentialPlane = new Sphere(swordHandlePoint, SwordLength).GetTangentialPlane(hitPoint);
         Vector3 normal = (hitPoint - swordHandlePoint).normalized; //normal pointing in the direction outwards, away from the centre of the sphere
 
         var bestDirectionHint = getBestDirectionHint(hitPoint);

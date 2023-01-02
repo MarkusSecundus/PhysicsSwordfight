@@ -19,7 +19,8 @@ public class SwordMovementMode_MovementTest : IScriptSubmodule<SwordMovement>
     {
 
         Cursor.lockState = CursorLockMode.Confined;
-        var input = Script.GetUserInput(swordHandlePoint, swordLength);
+        var inputSphere = new Sphere(swordHandlePoint, swordLength);
+        var input = Script.GetUserInput(inputSphere);
 
         if (OnlyTheSphere?!input.HasNullElement() : input.First != null)
         {

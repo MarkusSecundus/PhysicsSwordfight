@@ -6,6 +6,15 @@ using UnityEngine;
 
 
 [System.Serializable]
+public struct Sphere
+{
+	public Sphere(Vector3 center, float radius) => (Center, Radius) = (center, radius);
+
+	public Vector3 Center;
+	public float Radius;
+}
+
+[System.Serializable]
 public class JointRotationHelper
 {
     public ConfigurableJoint Joint { get; }
@@ -244,12 +253,14 @@ public static class GeometryUtils
 	}
 
 
-    public static (double? t1, double? t2) IntersectSphere_GetParameter(this Ray self, Vector3 centre, float radius)
+    public static (double? t1, double? t2) IntersectSphere_GetParameter(this Ray self, Sphere sphere)
     {
+		var (radius, centre) = (sphere.Radius, sphere.Center);
+
         if (self.direction == Vector3.zero)
             throw new ArgumentException(nameof(self), $"Direction must not be zero!");
 		if (radius == 0)
-			throw new ArgumentException(nameof(radius), $"Radius must not be zero!");
+			throw new ArgumentException(nameof(sphere), $"Radius must not be zero!");
 
 		Vector3 o = self.origin - centre, d = self.direction;
         double a = (double)d.x * d.x + (double)d.y * d.y + (double)d.z*d.z; //non-zero if the direction is non-zero
@@ -272,8 +283,8 @@ public static class GeometryUtils
 			);
 	}
 
-	public static (Vector3? First, Vector3? Second) IntersectSphere(this Ray self, Vector3 centre, float radius)
-		=> self.GetPointsFromParameters(self.IntersectSphere_GetParameter(centre, radius));
+	public static (Vector3? First, Vector3? Second) IntersectSphere(this Ray self, Sphere sphere)
+		=> self.GetPointsFromParameters(self.IntersectSphere_GetParameter(sphere));
 
 
 
@@ -296,7 +307,7 @@ public static class GeometryUtils
 
 
 	public static (Vector3? First, Vector3? Second) IntersectParaboloid(this Ray self, Vector3 shift, float divider)
-		=> self.GetPointsFromParameters(self.IntersectSphere_GetParameter(shift, divider));
+		=> self.GetPointsFromParameters(self.IntersectSphere_GetParameter(new Sphere(shift, divider)));
 
 
 
@@ -421,12 +432,18 @@ public static class PlaneExtensions
 		=> self.ClosestPointOnPlane(Vector3.zero);//throw new NotImplementedException("Plane shift is yet to be implemented!");//self.normal * self.distance; //DOESN'T WORK!!!!
 
 
-    public static Plane GetTangentialPlane(this (Vector3 Center, float Radius) sphere, Vector3 point)
+    public static Plane GetTangentialPlane(this Sphere sphere, Vector3 point)
     {
         //if (!point.Distance(sphere.Center).IsCloseTo(sphere.Radius)) throw new ArgumentException($"The point doesn't lay on the sphere");
 
         return new Plane(point - sphere.Center, point);
     }
+
+	public static Vector3 ProjectPoint(this Sphere sphere, Vector3 point)
+	{
+		var direction = (point - sphere.Center).normalized;
+		return sphere.Center + direction * sphere.Radius;
+	}
 }
 
 

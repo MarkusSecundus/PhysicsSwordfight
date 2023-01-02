@@ -134,13 +134,13 @@ public class SwordMovement : MonoBehaviour
 
     }
 
-    public (Vector3? First, Vector3? Second) GetUserInput(Vector3 center, float radius)
+    public (Vector3? First, Vector3? Second) GetUserInput(Sphere inputSphere)
     {
         var ray = cameraToUse.ScreenPointToRay(Input.mousePosition);
         Debug.DrawRay(ray.origin, ray.direction, Color.yellow);
 
-        var intersection = ray.IntersectSphere(center, radius); 
-        intersection.First ??= ray.GetRayPointWithLeastDistance(center);
+        var intersection = ray.IntersectSphere(inputSphere); 
+        intersection.First ??= ray.GetRayPointWithLeastDistance(inputSphere.Center);
 
         return intersection;
     }

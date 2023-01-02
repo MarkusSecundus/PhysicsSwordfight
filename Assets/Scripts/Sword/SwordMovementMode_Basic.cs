@@ -33,14 +33,15 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
     void SetSwordRotation(float delta)
     {
         Cursor.lockState = CursorLockMode.Confined;
-        var input = Script.GetUserInput(swordHandlePoint, swordLength);
+        var inputSphere = new Sphere(swordHandlePoint, swordLength);
+        var input = Script.GetUserInput(inputSphere);
 
         if (input.First != null)
         {
             var hitPoint = input.First.Value;
 
             {//debug
-                var plane = (swordHandlePoint, swordLength).GetTangentialPlane(hitPoint);
+                var plane = new Sphere(swordHandlePoint, swordLength).GetTangentialPlane(hitPoint);
                 DrawHelpers.DrawPlaneSegment(plane, hitPoint, (v, w) => Debug.DrawLine(v, w, Color.green));
             }
 
