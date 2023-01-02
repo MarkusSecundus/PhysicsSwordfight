@@ -314,6 +314,8 @@ public static class GeometryUtils
 		return -Vector3.Dot((self.origin - v), self.direction) / self.direction.magnitude.Pow2();
     }
 
+	public static float GetDistance(this Ray self, Vector3 v)
+		=> self.GetRayPointWithLeastDistance(v).Distance(v);
 	public static Vector3 GetRayPointWithLeastDistance(this Ray self, Vector3 v)
 		=> self.GetPoint(self.GetRayPointWithLeastDistance_GetParameter(v));
 

@@ -352,6 +352,36 @@ Transform:
   m_Father: {fileID: 623176092}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &47684160
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 47684161}
+  m_Layer: 0
+  m_Name: Hint1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &47684161
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47684160}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0.7071068, w: 0}
+  m_LocalPosition: {x: -0.037517548, y: 1.1258004, z: 2.1232946}
+  m_LocalScale: {x: 1.3385762, y: 1.3385761, z: 1.3385761}
+  m_Children: []
+  m_Father: {fileID: 875030733}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &67419423
 GameObject:
   m_ObjectHideFlags: 0
@@ -1841,7 +1871,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 623176092}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &405049623
 GameObject:
@@ -2758,7 +2788,6 @@ GameObject:
   - component: {fileID: 623176097}
   - component: {fileID: 623176096}
   - component: {fileID: 623176099}
-  - component: {fileID: 623176100}
   m_Layer: 0
   m_Name: Weapon
   m_TagString: Untagged
@@ -2796,6 +2825,7 @@ Transform:
   - {fileID: 261216388}
   - {fileID: 36121749}
   - {fileID: 3541966}
+  - {fileID: 1723808092}
   - {fileID: 1529701101}
   - {fileID: 399414303}
   m_Father: {fileID: 1355960520}
@@ -2920,10 +2950,17 @@ MonoBehaviour:
     Basic:
       minLastVectorDiff: 0.3
     Block:
-      BlockingPosition: {fileID: 399414303}
-      BlockBeginDuration: 0.3
-      BlockEndDuration: 0.4
+      SwordHandle: {fileID: 3541966}
+      SwordTip: {fileID: 36121749}
+      SwordEdgeBlockPoint: {fileID: 1723808092}
+      SwordDirectionHint: {fileID: 875030733}
+      SwordLength: 0.59
+      RegisterOnlyInputOnSphere: 1
     BlockKey: 304
+    MovementTest:
+      ShouldReturnBack: 0
+      OnlyTheSphere: 1
+    MovementTestKey: 117
 --- !u!75 &623176095
 ConstantForce:
   m_ObjectHideFlags: 0
@@ -3077,25 +3114,6 @@ MonoBehaviour:
   DamageWhenActive: 10
   DamageWhenIdle: 1
   swordTip: {fileID: 36121749}
---- !u!114 &623176100
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 623176090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93f67e46733ff7741b4be9a75a5d163e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  relative: {x: 0, y: 0, z: 0}
-  absolute: {x: 0, y: 0, z: 0}
-  relTransformed: {x: 0, y: 0, z: 0}
-  relInverseTransformed: {x: 0, y: 0, z: 0}
-  absTransformed: {x: 0, y: 0, z: 0}
-  absInverseTransformed: {x: 0, y: 0, z: 0}
-  policy: 1
 --- !u!1 &627394071
 GameObject:
   m_ObjectHideFlags: 0
@@ -3638,6 +3656,36 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 677707577}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &686762166
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 686762167}
+  m_Layer: 0
+  m_Name: Hint2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &686762167
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 686762166}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0.7071068, w: 0}
+  m_LocalPosition: {x: -0.037517548, y: -1.1258, z: 2.1232946}
+  m_LocalScale: {x: 1.3385762, y: 1.3385761, z: 1.3385761}
+  m_Children: []
+  m_Father: {fileID: 875030733}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &724120964
 GameObject:
   m_ObjectHideFlags: 0
@@ -4104,6 +4152,38 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &875030732
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 875030733}
+  m_Layer: 0
+  m_Name: SwordBlockingDirectionHints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &875030733
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875030732}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 47684161}
+  - {fileID: 686762167}
+  m_Father: {fileID: 977461303}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &896032692
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4478,6 +4558,7 @@ Transform:
   - {fileID: 607926059}
   - {fileID: 2114665247}
   - {fileID: 1355825298}
+  - {fileID: 875030733}
   m_Father: {fileID: 1355960520}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5511,7 +5592,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 623176092}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1529701102
 BoxCollider:
@@ -6376,6 +6457,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1723808091
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1723808092}
+  m_Layer: 0
+  m_Name: SwordEdgeBlockPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1723808092
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723808091}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0166, y: -0, z: 0.234}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 623176092}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1740102558
 GameObject:

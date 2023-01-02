@@ -8,11 +8,7 @@ using UnityEngine;
 [System.Serializable]
 public class SwordMovementMode_MovementTest : IScriptSubmodule<SwordMovement>
 {
-    public Transform BlockingPosition;
-    public float BlockBeginDuration = 0.5f;
-    public float BlockEndDuration = 0.3f;
-
-    public bool ShouldReturnBack = true;
+    public bool ShouldReturnBack = true, OnlyTheSphere = true;
 
     public SwordMovementMode_MovementTest(SwordMovement script) : base(script) { }
 
@@ -25,7 +21,7 @@ public class SwordMovementMode_MovementTest : IScriptSubmodule<SwordMovement>
         Cursor.lockState = CursorLockMode.Confined;
         var input = Script.GetUserInput(swordHandlePoint, swordLength);
 
-        if (!input.HasNullElement())
+        if (OnlyTheSphere?!input.HasNullElement() : input.First != null)
         {
             var hitPoint = input.First.Value;
             Script.SetAnchorPosition(hitPoint, float.NaN);

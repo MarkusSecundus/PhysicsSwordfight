@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -36,6 +37,27 @@ public enum TransformationPolicy
 }
 public static class HelperExtensions
 {
+    public static T Minimal<T, TComp>(this IEnumerable<T> self, System.Func<T, TComp> selector) where TComp: System.IComparable<TComp>
+    {
+        using var it = self.GetEnumerator();
+        if (!it.MoveNext()) throw new System.ArgumentOutOfRangeException("Empty collection was provided!");
+
+        var ret = it.Current;
+        var min = selector(ret);
+
+        while (it.MoveNext())
+        {
+            var cmp = selector(it.Current);
+            if(cmp.CompareTo(min) < 0)
+            {
+                min = cmp;
+                ret = it.Current;
+            }
+        }
+
+        return ret;
+    }
+
     public static Vector3 LocalToGlobal(this Transform self, Vector3 v) => self.TransformPoint(v);
     public static Vector3 GlobalToLocal(this Transform self, Vector3 v) => self.InverseTransformPoint(v);
     public static Vector3 InverseTransform(this Transform self, Vector3 v, TransformationPolicy policy)

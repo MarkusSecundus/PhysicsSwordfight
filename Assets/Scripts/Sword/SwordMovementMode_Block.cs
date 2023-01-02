@@ -4,75 +4,78 @@ using DG.Tweening.Plugins.Options;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [System.Serializable]
 public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 {
-    public Transform BlockingPosition;
-    public float BlockBeginDuration = 0.5f;
-    public float BlockEndDuration = 0.3f;
+    public Transform SwordHandle, SwordTip, SwordEdgeBlockPoint, SwordDirectionHint;
 
+    public float SwordLength;
+    public bool RegisterOnlyInputOnSphere = true;
 
     public SwordMovementMode_Block(SwordMovement script) : base(script){}
 
     public override void OnStart()
     {
-        joint = Script.joint;
-        originalConnectedAnchor = joint.connectedAnchor;
-        joint.autoConfigureConnectedAnchor = false;
+        if (SwordLength <= 0) SwordLength = Script.SwordLength;
     }
-    public override void OnActivated()
-    {
-        //StartBlock();
-    }
-
-    public override void OnDeactivated()
-    {
-        //EndBlock();
-    }
-
 
     public Vector3 swordHandlePoint => Script.FixedSwordHandlePoint;
-    private float swordLength => Script.SwordLength;
     public override void OnFixedUpdate(float delta)
     {
 
         Cursor.lockState = CursorLockMode.Confined;
-        var input = Script.GetUserInput(swordHandlePoint,swordLength);
+        var input = Script.GetUserInput(swordHandlePoint,SwordLength);
 
-        if (!input.HasNullElement())
+        if (RegisterOnlyInputOnSphere? !input.HasNullElement() : input.First != null)
         {
-            var hitPoint = input.First.Value;
-            Script.SetAnchorPosition(hitPoint, float.NaN);
-            Script.SetDebugPointPosition(hitPoint);
+            SetBlockPosition(input.First.Value);
         }
     }
+
+    private void SetBlockPosition(Vector3 hitPoint)
+    {
+        Ray bladeAxis = new Ray(SwordHandle.position, SwordTip.position - SwordHandle.position);
+        var blockPointProjection = bladeAxis.GetRayPointWithLeastDistance(SwordEdgeBlockPoint.position);
+        float blockPointDistance = blockPointProjection.Distance(SwordEdgeBlockPoint.position),
+              bladeTipDistance   = blockPointProjection.Distance(SwordTip.position),
+              handleDistance     = blockPointProjection.Distance(SwordHandle.position)
+            ;
+
+        Plane tangentialPlane = (swordHandlePoint, SwordLength).GetTangentialPlane(hitPoint);
+        Vector3 normal = (hitPoint - swordHandlePoint).normalized; //normal pointing in the direction outwards, away from the centre of the sphere
+
+        var bestDirectionHint = getBestDirectionHint(hitPoint);
+        var projectedDirectionHint = tangentialPlane.ClosestPointOnPlane(bestDirectionHint);
+
+        var bladeDirection = (projectedDirectionHint - hitPoint).normalized;
+
+        var tipPosition = hitPoint + bladeDirection * bladeTipDistance;
+        var handlePosition = hitPoint + (-bladeDirection) * handleDistance;
+
+        var swordRotation = Quaternion.LookRotation(tipPosition - handlePosition, normal);
+
+        Script.SetAnchorPosition(handlePosition, float.NaN);
+        Script.SetSwordRotation(swordRotation);
+
+
+        Script.SetDebugPointPosition(hitPoint);
+    }
+
+
+    private Vector3 getBestDirectionHint(Vector3 hitPoint)
+    {
+        return SwordDirectionHint.OfType<Transform>().Minimal(hint => hint.position.Distance(hitPoint)).position;
+    }
+
 
     public override void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawSphere(swordHandlePoint, 0.01f);
 
-        DrawHelpers.DrawWireSphere(swordHandlePoint, swordLength, Gizmos.DrawLine);
-    }
-
-
-    private ConfigurableJoint joint;
-
-    private Vector3 originalConnectedAnchor;
-    private TweenerCore<Vector3, Vector3, VectorOptions> tween = null;
-
-    void StartBlock()
-    {
-        if (tween != null) { tween.Kill(); tween = null; }
-        var endValue = originalConnectedAnchor + BlockingPosition.localPosition;
-        tween = joint.DOConnectedAnchor(endValue, BlockBeginDuration);
-    }
-    void EndBlock()
-    {
-        tween?.Kill();
-        tween = null;
-        tween = joint.DOConnectedAnchor(originalConnectedAnchor, BlockBeginDuration);
+        DrawHelpers.DrawWireSphere(swordHandlePoint, SwordLength, Gizmos.DrawLine);
     }
 
 }

@@ -95,6 +95,7 @@ public class SwordMovement : MonoBehaviour
 
     private void InitAnchorSetter()
     {
+        joint.autoConfigureConnectedAnchor = false;
         this.originalConnectedAnchor = joint.connectedAnchor;
         KillAnchorTween();
     }
