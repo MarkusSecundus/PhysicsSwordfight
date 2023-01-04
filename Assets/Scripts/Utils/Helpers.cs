@@ -37,6 +37,10 @@ public enum TransformationPolicy
 }
 public static class HelperExtensions
 {
+    public static Vector3 PositionRelativeTo(this Transform self, Transform relativeTo) 
+        => (relativeTo == self)        ? Vector3.zero :
+           (relativeTo == self.parent) ? self.localPosition :
+              relativeTo.GlobalToLocal(self.position);
     public static T Minimal<T, TComp>(this IEnumerable<T> self, System.Func<T, TComp> selector) where TComp: System.IComparable<TComp>
     {
         using var it = self.GetEnumerator();

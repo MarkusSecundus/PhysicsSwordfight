@@ -70,6 +70,7 @@ public class SwordMovement : MonoBehaviour
         var delta = Time.fixedDeltaTime;
 
         activeMode?.OnFixedUpdate(delta);
+        UpdateAnchorPosition(delta);
     }
 
 
@@ -106,21 +107,40 @@ public class SwordMovement : MonoBehaviour
     }
 
 
-    private Vector3 originalConnectedAnchor { get; set; }
     private TweenerCore<Vector3, Vector3, VectorOptions> tween;
+    private Vector3 originalConnectedAnchor;
+    //private Vector3 connectedAnchorTarget;
+    //private float connectedAnchorChangeSpeedTarget;
     public void SetAnchorPosition(Vector3 absolutePosition, float speed_metersPerSecond)
     {
         var relative = joint.connectedBody.transform.GlobalToLocal(absolutePosition);
-
-        KillAnchorTween();
-        if (speed_metersPerSecond.IsNaN())
+        if (true || !speed_metersPerSecond.IsNormalNumber() || relative.Distance(joint.connectedAnchor).IsNegligible(epsilon: 0.01f))
         {
+            KillAnchorTween();
             joint.connectedAnchor = relative;
+            return;
+        }
+        var travelTime = joint.connectedAnchor.Distance(relative) / speed_metersPerSecond;
+
+        if(tween==null || tween.IsComplete())
+        {
+            tween = joint.DOConnectedAnchor(relative, travelTime);
         }
         else
         {
-
+            //KillAnchorTween(); tween = joint.DOConnectedAnchor(relative, travelTime);
+            tween.ChangeEndValue(relative, travelTime, true);
         }
+        
+        //connectedAnchorChangeSpeedTarget = speed_metersPerSecond;
+        //connectedAnchorTarget = relative;
+
+
+    }
+
+    private void UpdateAnchorPosition(float delta)
+    {
+
     }
 
     public void SetSwordRotation(Quaternion rotation) 

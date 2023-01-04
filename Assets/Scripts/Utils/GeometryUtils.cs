@@ -376,6 +376,7 @@ public static class GeometryUtils
 	public static float Distance(this Vector3 self, Vector3 b) => Vector3.Distance(self, b);
 
 	public static bool IsNegligible(this float f) => Mathf.Abs(f) < Mathf.Epsilon;
+	public static bool IsNegligible(this float f, float epsilon) => Mathf.Abs(f) < epsilon;
 	public static bool IsCloseTo(this float f, float g) => (f-g).IsNegligible();
 
 	public static float Dot(this Vector3 a, Vector3 b) => Vector3.Dot(a, b);

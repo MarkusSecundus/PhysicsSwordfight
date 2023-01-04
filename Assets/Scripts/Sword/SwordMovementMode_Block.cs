@@ -13,12 +13,19 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 
     public float SwordLength;
     public bool RegisterOnlyInputOnSphere = true;
+    public float HandleSpeed_metersPerSecond = 6f;
 
     public SwordMovementMode_Block(SwordMovement script) : base(script){}
 
     public override void OnStart()
     {
         if (SwordLength <= 0) SwordLength = Script.SwordLength;
+    }
+
+
+    public override void OnDeactivated()
+    {
+        Script.SetAnchorPosition(Script.FixedSwordHandlePoint, HandleSpeed_metersPerSecond);
     }
 
     public Vector3 swordHandlePoint => Script.FixedSwordHandlePoint;
@@ -37,6 +44,12 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 
     private void SetBlockPosition(Vector3 hitPoint)
     {
+
+        Ray localBladeAxis = new Ray(SwordHandle.localPosition, SwordTip.localPosition - SwordHandle.localPosition);
+        var localBlockPointProjection = localBladeAxis.GetRayPointWithLeastDistance(SwordEdgeBlockPoint.localPosition);
+        Debug.Log($"quat: {Quaternion.LookRotation(SwordTip.localPosition - SwordHandle.localPosition, SwordEdgeBlockPoint.localPosition - localBlockPointProjection).eulerAngles}");
+
+
         Ray bladeAxis = new Ray(SwordHandle.position, SwordTip.position - SwordHandle.position);
         var blockPointProjection = bladeAxis.GetRayPointWithLeastDistance(SwordEdgeBlockPoint.position);
         float blockPointDistance = blockPointProjection.Distance(SwordEdgeBlockPoint.position),
@@ -55,13 +68,20 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
         var tipPosition = hitPoint + bladeDirection * bladeTipDistance;
         var handlePosition = hitPoint + (-bladeDirection) * handleDistance;
 
-        var swordRotation = Quaternion.LookRotation(tipPosition - handlePosition, normal);
+        var swordRotation = Quaternion.LookRotation(tipPosition - handlePosition, computeUpVector());
 
-        Script.SetAnchorPosition(handlePosition, float.NaN);
+        Script.SetAnchorPosition(handlePosition, HandleSpeed_metersPerSecond);
         Script.SetSwordRotation(swordRotation);
 
 
         Script.SetDebugPointPosition(hitPoint);
+
+
+        Vector3 computeUpVector()
+        {
+            //TODO: make it work in general case (so that it takes the blockPoint into consideration instead of assuming it to be orthogonal to the sword in the exact right way)
+            return normal.Cross(bladeDirection);
+        }
     }
 
 
