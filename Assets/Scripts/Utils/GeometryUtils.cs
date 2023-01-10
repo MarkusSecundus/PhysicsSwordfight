@@ -233,6 +233,20 @@ public static class MathUtils
 
 public static class GeometryUtils
 {
+	public static IEnumerable<Vector3> PointsOnCircle(int count=1, Vector3 begin = default, Vector3 axis = default, bool includeBegin=true)
+	{
+		if (count < 1) throw new ArgumentException("Must be a positive number", nameof(count));
+		Vector3 v = begin == default ? new Vector3(1,0,0):begin;
+
+		if(includeBegin)
+			yield return v;
+
+        var rot = Matrix4x4.Rotate(Quaternion.AngleAxis(RotationUtil.MaxAngle/count,axis==default?Vector3.forward:axis));
+        for (int t = 1; t < count; ++t)
+            yield return v = rot * v;
+	}
+
+
 	public static (double? x1, double? x2) SolveQuadraticEquation(double a, double b, double c)
 	{
 		double D = b * b - 4 * a * c;

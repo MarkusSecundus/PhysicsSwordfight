@@ -37,10 +37,17 @@ public enum TransformationPolicy
 }
 public static class HelperExtensions
 {
-    public static Vector3 PositionRelativeTo(this Transform self, Transform relativeTo) 
+    public static Vector3 GetPositionRelativeTo(this Transform self, Transform relativeTo) 
         => (relativeTo == self)        ? Vector3.zero :
            (relativeTo == self.parent) ? self.localPosition :
               relativeTo.GlobalToLocal(self.position);
+    public static Vector3 SetPositionRelativeTo(this Transform self, Transform relativeTo, Vector3 position)
+    {
+        if (relativeTo == self)
+            return (position == Vector3.zero) ? position : throw new System.ArgumentException("Position relative to self cannot be anything other than zero", nameof(relativeTo));
+        if (relativeTo == self.parent) return self.localPosition = position;
+        return self.position = relativeTo.LocalToGlobal(position);
+    }
     public static T Minimal<T, TComp>(this IEnumerable<T> self, System.Func<T, TComp> selector) where TComp: System.IComparable<TComp>
     {
         using var it = self.GetEnumerator();
@@ -113,17 +120,20 @@ public static class HelperExtensions
         modify(self);
         return self;
     }
+    public static Vector3 With(this Vector3 self, float? x = null, float? y = null, float? z = null)
+        => new Vector3(x ?? self.x, y ?? self.y, z ?? self.z);
     public static void Log(this string self, bool shouldLog = true)
     {
         if (shouldLog) Debug.Log(self);
     }
-    public static GameObject InstantiateWithTransform(this GameObject o,bool copyPosition=true, bool copyRotation = true, bool copyScale = true)
+    public static GameObject InstantiateWithTransform(this GameObject o,bool copyPosition=true, bool copyRotation = true, bool copyScale = true, bool copyParent=true)
     {
         var ret = GameObject.Instantiate(o);
 
         if (copyPosition) ret.transform.position = o.transform.position;
         if (copyRotation) ret.transform.rotation = o.transform.rotation;
         if(copyScale) ret.transform.localScale = o.transform.localScale;
+        if (copyParent) ret.transform.parent = o.transform.parent;
         ret.SetActive(true);
 
         return ret;
@@ -181,14 +191,10 @@ public static class DrawHelpers
 
     public static void DrawWireCircle(float radius, int segments, LineDrawer<Vector2> drawLine)
     {
-        var rot = Matrix4x4.Rotate(Quaternion.Euler(0, 0, RotationUtil.MaxAngle / segments));
-        Vector3 v = new Vector3(radius,0, 0);
-        for(int t = 0; t < segments;++t)
+        Vector2 v = new Vector2(radius,0);
+        foreach(Vector2 w in GeometryUtils.PointsOnCircle(segments, v))
         {
-            Vector3 w = rot * v;
-            Assert.AreEqual(0, v.z);
-            Assert.AreEqual(0, w.z);
-            drawLine(v.xy(),  w.xy());
+            drawLine(v,  w);
             v = w;
         }
     }
