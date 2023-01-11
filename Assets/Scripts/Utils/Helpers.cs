@@ -15,7 +15,31 @@ public static class RotationUtil
     public const float MaxAngle = MaxDegree;
 }
 
+public struct TransformSnapshot
+{
+    public Vector3 position;
+    public Quaternion rotation;
+    public Vector3 localScale;
 
+    public TransformSnapshot(Transform t)
+    {
+        (position, rotation, localScale) = (t.position, t.rotation, t.localScale);
+    }
+    public TransformSnapshot(Rigidbody r)
+    {
+        (position, rotation, localScale) = (r.position, r.rotation, default);
+    }
+
+    public void SetTo(Transform t)
+    {
+        (t.position, t.rotation) = (position, rotation);
+        if (localScale != default) t.localScale = localScale;
+    }
+    public void SetTo(Rigidbody r)
+    {
+        (r.position, r.rotation) = (position, rotation);
+    }
+}
 
 public static class EnumUtil
 {
@@ -37,6 +61,11 @@ public enum TransformationPolicy
 }
 public static class HelperExtensions
 {
+    public static IEnumerable<ContactPoint> IterateContacts(this Collision self)
+    {
+        for (int t = 0; t < self.contactCount; ++t) yield return self.GetContact(t);
+    }
+
     public static Vector3 GetPositionRelativeTo(this Transform self, Transform relativeTo) 
         => (relativeTo == self)        ? Vector3.zero :
            (relativeTo == self.parent) ? self.localPosition :
