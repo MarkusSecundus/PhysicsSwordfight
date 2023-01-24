@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -44,6 +45,8 @@ public struct TransformSnapshot
 public static class EnumUtil
 {
     public static TEnum Parse<TEnum>(string name) => (TEnum)System.Enum.Parse(typeof(TEnum), name);
+
+    public static TEnum[] GetValues<TEnum>() where TEnum : System.Enum => (TEnum[])System.Enum.GetValues(typeof(TEnum));
 }
 
 
@@ -100,6 +103,17 @@ public static class HelperExtensions
 
     public static Vector3 LocalToGlobal(this Transform self, Vector3 v) => self.TransformPoint(v);
     public static Vector3 GlobalToLocal(this Transform self, Vector3 v) => self.InverseTransformPoint(v);
+    public static Ray GlobalToLocal(this Transform self, Ray r) => r.GenericTransform(self.GlobalToLocal);
+    public static Ray LocalToGlobal(this Transform self, Ray r) => r.GenericTransform(self.LocalToGlobal);
+
+
+    public static Ray GenericTransform(this Ray r, System.Func<Vector3, Vector3> transformPoints)
+    {
+        Vector3 a = transformPoints(r.origin), b = transformPoints(a + r.direction);
+        return new Ray(a, b - a);
+    }
+
+
     public static Vector3 InverseTransform(this Transform self, Vector3 v, TransformationPolicy policy)
         => policy switch
         {

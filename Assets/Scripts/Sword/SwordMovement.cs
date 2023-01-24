@@ -13,8 +13,6 @@ using Submodule = IScriptSubmodule<SwordMovement>;
 
 public class SwordMovement : MonoBehaviour
 {
-    public Camera inputCamera;
-
     public ConfigurableJoint joint;
     private JointRotationHelper jointRotationHelper;
 
@@ -25,6 +23,7 @@ public class SwordMovement : MonoBehaviour
 
     public float inputCircleRadius = 0.3f;
 
+    public ISwordInput Input;
 
     public Vector3 FixedSwordHandlePoint => joint.connectedBody.transform.LocalToGlobal(originalConnectedAnchor);
     public Vector3 FlexSwordHandlePoint => swordAnchor.position;
@@ -52,8 +51,6 @@ public class SwordMovement : MonoBehaviour
 
         foreach (var mode in modes.Values) mode.OnStart();
     }
-
-    private Camera cameraToUse => inputCamera ?? Camera.main ?? throw new NullReferenceException("No camera found");
 
 
 
@@ -156,7 +153,8 @@ public class SwordMovement : MonoBehaviour
 
     public (Vector3? First, Vector3? Second) GetUserInput(Sphere inputSphere)
     {
-        var ray = cameraToUse.ScreenPointToRay(Input.mousePosition);
+        if (!(Input.GetInputRay() is Ray ray)) return (null, null);
+        
         Debug.DrawRay(ray.origin, ray.direction, Color.yellow);
 
         var intersection = ray.IntersectSphere(inputSphere); 
