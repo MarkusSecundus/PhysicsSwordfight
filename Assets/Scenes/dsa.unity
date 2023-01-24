@@ -2341,13 +2341,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputCamera: {fileID: 963194227}
   joint: {fileID: 291376678}
   swordTip: {fileID: 1838877710}
   swordAnchor: {fileID: 650885944}
   debugger: {fileID: 607926060}
   debuggerPoint: {fileID: 2114665247}
   inputCircleRadius: 0.42
+  Input: {fileID: 0}
   Modes:
     Basic:
       minLastVectorDiff: 0.3
@@ -4323,13 +4323,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputCamera: {fileID: 963194227}
   joint: {fileID: 623176093}
   swordTip: {fileID: 36121749}
   swordAnchor: {fileID: 3541966}
   debugger: {fileID: 607926060}
   debuggerPoint: {fileID: 2114665247}
   inputCircleRadius: 0.42
+  Input: {fileID: 977461308}
   Modes:
     Basic:
       minLastVectorDiff: 0.3
@@ -5138,13 +5138,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputCamera: {fileID: 963194227}
   joint: {fileID: 676889410}
   swordTip: {fileID: 64779009}
   swordAnchor: {fileID: 385956897}
   debugger: {fileID: 607926060}
   debuggerPoint: {fileID: 2114665247}
   inputCircleRadius: 0.42
+  Input: {fileID: 0}
   Modes:
     Basic:
       minLastVectorDiff: 0.3
@@ -6509,6 +6509,9 @@ GameObject:
   - component: {fileID: 977461305}
   - component: {fileID: 977461306}
   - component: {fileID: 977461307}
+  - component: {fileID: 977461308}
+  - component: {fileID: 977461310}
+  - component: {fileID: 977461309}
   m_Layer: 0
   m_Name: PlayerModel
   m_TagString: Untagged
@@ -6610,6 +6613,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DamageMultiplier: 0.01
+--- !u!114 &977461308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977461302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aeeaf607517a5c47bc67e319c9ae4b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputCamera: {fileID: 963194227}
+--- !u!114 &977461309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977461302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d559398d368d1d49a1bdebb7ba37903, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  filePattern: record
+  fileExtension: .json
+--- !u!114 &977461310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977461302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 668b375468f3c9b498e835a29038a96f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseInput: {fileID: 977461308}
+  startRecordingKey: 288
+  finishRecordingKey: 289
+  onRecordFinished:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 977461309}
+        m_TargetAssemblyTypeName: SwordInputRecordSerializer, Assembly-CSharp
+        m_MethodName: SaveRecording
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &985318288
 GameObject:
   m_ObjectHideFlags: 0

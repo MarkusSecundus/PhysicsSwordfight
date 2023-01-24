@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -42,6 +43,8 @@ public struct TransformSnapshot
     }
 }
 
+
+
 public static class EnumUtil
 {
     public static TEnum Parse<TEnum>(string name) => (TEnum)System.Enum.Parse(typeof(TEnum), name);
@@ -62,6 +65,7 @@ public enum TransformationPolicy
 {
     Direction, Point, Vector
 }
+
 public static class HelperExtensions
 {
     public static IEnumerable<ContactPoint> IterateContacts(this Collision self)

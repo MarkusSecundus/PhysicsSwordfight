@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SwordInputRecordPlayer : ISwordInput
 {
-    public IReadOnlyList<IReadOnlyList<SwordInputRecorder.FrameImage>> records;
+    private List<IReadOnlyList<SwordInputRecorder.FrameImage>> records = new List<IReadOnlyList<SwordInputRecorder.FrameImage>>();
 
 
 
@@ -13,7 +13,10 @@ public class SwordInputRecordPlayer : ISwordInput
     {
     }
 
-
+    public void AddRecord(IReadOnlyList<SwordInputRecorder.FrameImage> toAdd)
+    {
+        records.Add(toAdd);
+    }
 
     private SwordInputRecorder.FrameImage? currentFrame => records[currentRecordIndex][currentFrameIndex];
 
