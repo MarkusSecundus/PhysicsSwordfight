@@ -9,41 +9,48 @@ using UnityEngine.Events;
 
 public class SwordInputRecorder : MonoBehaviour
 {
-    public ISwordInput baseInput;
+    public ISwordInput inputToRecord;
 
     public KeyCode startRecordingKey = KeyCode.F7, finishRecordingKey = KeyCode.F8;
 
-    public UnityEvent<List<FrameImage>> onRecordFinished;
+    public UnityEvent<List<Frame>> onRecordFinished;
 
     [System.Serializable]
-    public struct FrameImage
+    public struct Frame
     {
-        public HashSet<KeyCode> Keys;
-        public SerializableRay? InputRayLocal;
+        /// <summary>
+        /// Set of all keys pressed at given moment
+        /// </summary>
+        public HashSet<KeyCode> KeysPressed;
+        /// <summary>
+        /// In coordinates relative to the recorder's transform!
+        /// Ray representing projection of the mouse cursor.
+        /// </summary>
+        public SerializableRay? CursorRay;
     }
 
-    private List<FrameImage> currentRecording;
+    private List<Frame> currentRecording;
     private bool isRecording => currentRecording != null;
 
     private void Update() 
     {
-        if (baseInput.GetKeyDown(finishRecordingKey)) FinishRecording();
-        if (baseInput.GetKeyDown(startRecordingKey)) StartRecording();
+        if (inputToRecord.GetKeyDown(finishRecordingKey)) FinishRecording();
+        if (inputToRecord.GetKeyDown(startRecordingKey)) StartRecording();
     }
 
     private void FixedUpdate()
     {
         if (!isRecording) return;
 
-        var frame = new FrameImage { Keys = new HashSet<KeyCode>() };
+        var frame = new Frame { KeysPressed = new HashSet<KeyCode>() };
         foreach(var key in EnumUtil.GetValues<KeyCode>())
         {
-            if(Input.GetKey(key)) frame.Keys.Add(key);
+            if(Input.GetKey(key)) frame.KeysPressed.Add(key);
         }
 
-        var ray = baseInput.GetInputRay();
-        frame.InputRayLocal = ray == null ? (Ray?)null : transform.GlobalToLocal(ray.Value);
-        Debug.Log($"local ray: {(Ray)frame.InputRayLocal}");
+        var ray = inputToRecord.GetInputRay();
+        frame.CursorRay = ray == null ? (Ray?)null : transform.GlobalToLocal(ray.Value);
+        Debug.Log($"local ray: {(Ray)frame.CursorRay}");
 
         currentRecording.Add(frame);
     }
@@ -59,7 +66,7 @@ public class SwordInputRecorder : MonoBehaviour
         }
         timeStamp = Time.timeAsDouble;
         Debug.Log("Starting recording!");
-        currentRecording = new List<FrameImage>();
+        currentRecording = new List<Frame>();
     }
     private void FinishRecording()
     {

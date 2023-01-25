@@ -9,7 +9,7 @@ public class SwordInputRecordPlayer : ISwordInput
 
     public KeyCode startPlayingKey = KeyCode.P;
 
-    private List<IReadOnlyList<SwordInputRecorder.FrameImage>> records = new List<IReadOnlyList<SwordInputRecorder.FrameImage>>();
+    private List<IReadOnlyList<SwordInputRecorder.Frame>> records = new List<IReadOnlyList<SwordInputRecorder.Frame>>();
 
     private int currentFrameIndex = 0;
 
@@ -39,17 +39,17 @@ public class SwordInputRecordPlayer : ISwordInput
         lastTimestamp = Time.timeAsDouble;
     }
 
-    public void AddRecord(IReadOnlyList<SwordInputRecorder.FrameImage> toAdd)
+    public void AddRecord(IReadOnlyList<SwordInputRecorder.Frame> toAdd)
     {
         records.Add(toAdd);
         recordsCount = records.Count;
     }
 
-    private IReadOnlyList<SwordInputRecorder.FrameImage>? currentRecord => currentRecordIndex<0?null: records[currentRecordIndex];
-    private SwordInputRecorder.FrameImage? currentFrame => currentFrameIndex<0?null:currentRecord?[currentFrameIndex];
+    private IReadOnlyList<SwordInputRecorder.Frame> currentRecord => currentRecordIndex<0?null: records[currentRecordIndex];
+    private SwordInputRecorder.Frame? currentFrame => currentFrameIndex<0?null:currentRecord?[currentFrameIndex];
 
-    public override Ray? GetInputRay() => currentFrame?.InputRayLocal is SerializableRay r ? transform.LocalToGlobal(r) : (Ray?)null;
-    public override bool GetKey(KeyCode code) => currentFrame?.Keys?.Contains(code)??false;
-    public override bool GetKeyDown(KeyCode code) => GetKey(code) && (currentFrameIndex <= 0 || !currentRecord[currentFrameIndex - 1].Keys.Contains(code));
-    public override bool GetKeyUp(KeyCode code) => GetKey(code) && (currentFrameIndex >= (currentRecord.Count - 1) || !currentRecord[currentFrameIndex + 1].Keys.Contains(code));
+    public override Ray? GetInputRay() => currentFrame?.CursorRay is SerializableRay r ? transform.LocalToGlobal(r) : (Ray?)null;
+    public override bool GetKey(KeyCode code) => currentFrame?.KeysPressed?.Contains(code)??false;
+    public override bool GetKeyDown(KeyCode code) => GetKey(code) && (currentFrameIndex <= 0 || !currentRecord[currentFrameIndex - 1].KeysPressed.Contains(code));
+    public override bool GetKeyUp(KeyCode code) => GetKey(code) && (currentFrameIndex >= (currentRecord.Count - 1) || !currentRecord[currentFrameIndex + 1].KeysPressed.Contains(code));
 }

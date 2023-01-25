@@ -18,9 +18,9 @@ public class SwordInputRecordDeserializer : MonoBehaviour
                 player.AddRecord(record);
     }
 
-    private static List<SwordInputRecorder.FrameImage> LoadRecording(string path)
+    private static List<SwordInputRecorder.Frame> LoadRecording(string path)
     {
         using var rdr = new StreamReader(path);
-        return JsonSerializer.DeserializeObject<List<SwordInputRecorder.FrameImage>>(rdr.ReadToEnd());
+        return JsonSerializer.DeserializeObject<List<SwordInputRecorder.Frame>>(rdr.ReadToEnd());
     }
 }

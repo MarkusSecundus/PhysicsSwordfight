@@ -10,7 +10,7 @@ public class SwordInputRecordSerializer : MonoBehaviour
     public string filePattern = "record", fileExtension = ".json";
     private int counter = 1;
 
-    public void SaveRecording(List<SwordInputRecorder.FrameImage> toSave)
+    public void SaveRecording(List<SwordInputRecorder.Frame> toSave)
     {
         
         var json = JsonSerializer.SerializeObject(toSave, Newtonsoft.Json.Formatting.Indented);
