@@ -153,7 +153,6 @@ public class SwordMovement : MonoBehaviour
 
     public (Vector3? First, Vector3? Second) GetUserInput(Sphere inputSphere)
     {
-        //Debug.Log($"Getting ray: {input.GetInputRay()}");
         if (!(Input.GetInputRay() is Ray ray)) return (null, null);
 
         

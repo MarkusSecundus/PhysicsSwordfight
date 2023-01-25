@@ -50,7 +50,6 @@ public class SwordInputRecorder : MonoBehaviour
 
         var ray = inputToRecord.GetInputRay();
         frame.CursorRay = ray == null ? (Ray?)null : transform.GlobalToLocal(ray.Value);
-        Debug.Log($"local ray: {(Ray)frame.CursorRay}");
 
         currentRecording.Add(frame);
     }
