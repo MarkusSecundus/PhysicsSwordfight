@@ -3252,8 +3252,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 491467533}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 43.5, y: 3.67, z: 128.58}
+  m_LocalRotation: {x: -0, y: -0.45316914, z: -0, w: 0.89142454}
+  m_LocalPosition: {x: 49.976143, y: 3.67, z: 114.17304}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 861574271}
@@ -3261,7 +3261,7 @@ Transform:
   - {fileID: 1785719813}
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -53.894, z: 0}
 --- !u!1 &500964394
 GameObject:
   m_ObjectHideFlags: 0
@@ -4371,7 +4371,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.038455963, y: 0.14999986, z: 1.5061071}
+  m_ConnectedAnchor: {x: -0.038459778, y: 0.14999986, z: 1.5061057}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -4447,7 +4447,7 @@ ConfigurableJoint:
   m_ProjectionMode: 0
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
-  m_ConfiguredInWorldSpace: 1
+  m_ConfiguredInWorldSpace: 0
   m_SwapBodies: 0
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
@@ -5090,7 +5090,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.038455963, y: 0.14999986, z: 1.5061071}
+  m_ConnectedAnchor: {x: -0.03845215, y: 0.14999986, z: 1.5061114}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -5166,7 +5166,7 @@ ConfigurableJoint:
   m_ProjectionMode: 0
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
-  m_ConfiguredInWorldSpace: 1
+  m_ConfiguredInWorldSpace: 0
   m_SwapBodies: 0
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
@@ -7441,7 +7441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 668b375468f3c9b498e835a29038a96f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseInput: {fileID: 977461308}
+  inputToRecord: {fileID: 977461308}
   startRecordingKey: 288
   finishRecordingKey: 289
   onRecordFinished:
@@ -8655,8 +8655,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1355960519}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 43.24, y: 3.67, z: 133.58}
+  m_LocalRotation: {x: -0, y: -0.40802994, z: -0, w: 0.9129686}
+  m_LocalPosition: {x: 48.415176, y: 3.67, z: 120.33275}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 977461303}
@@ -8664,7 +8664,7 @@ Transform:
   - {fileID: 2047915575}
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -48.162, z: 0}
 --- !u!1 &1397095064
 GameObject:
   m_ObjectHideFlags: 0
