@@ -21,11 +21,13 @@ public class SwordInputRecorder : MonoBehaviour
         /// <summary>
         /// Set of all keys pressed at given moment
         /// </summary>
+        [SerializeField]
         public HashSet<KeyCode> KeysPressed;
         /// <summary>
         /// In coordinates relative to the recorder's transform!
         /// Ray representing projection of the mouse cursor.
         /// </summary>
+        [SerializeField]
         public SerializableRay? CursorRay;
     }
 

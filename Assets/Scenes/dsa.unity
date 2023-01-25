@@ -4371,7 +4371,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.038459778, y: 0.14999986, z: 1.5061057}
+  m_ConnectedAnchor: {x: -0.03845024, y: 0.14999986, z: 1.5061109}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -6679,9 +6679,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paths:
-  - recs/1.json
-  - recs/2.json
-  - recs/3.json
+  - Assets/records/1.json
+  - Assets/records/2.json
+  - Assets/records/3.json
   players:
   - {fileID: 861574264}
 --- !u!114 &861574267
@@ -7427,8 +7427,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d559398d368d1d49a1bdebb7ba37903, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filePattern: records/
+  filePattern: Assets/records/
   fileExtension: .json
+  nextIndex: 1
 --- !u!114 &977461310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8655,8 +8656,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1355960519}
-  m_LocalRotation: {x: -0, y: -0.40802994, z: -0, w: 0.9129686}
-  m_LocalPosition: {x: 48.415176, y: 3.67, z: 120.33275}
+  m_LocalRotation: {x: -0, y: 0.9903974, z: -0, w: 0.13825025}
+  m_LocalPosition: {x: 77.61889, y: 3.67, z: 136.71124}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 977461303}
@@ -8664,7 +8665,7 @@ Transform:
   - {fileID: 2047915575}
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: -48.162, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 164.107, z: 0}
 --- !u!1 &1397095064
 GameObject:
   m_ObjectHideFlags: 0

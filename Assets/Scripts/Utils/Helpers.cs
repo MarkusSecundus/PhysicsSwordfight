@@ -1,13 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEditorInternal;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 public static class RotationUtil
 {

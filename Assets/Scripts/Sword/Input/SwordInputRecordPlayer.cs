@@ -18,7 +18,7 @@ public class SwordInputRecordPlayer : ISwordInput
         if (Input.GetKeyDown(startPlayingKey) && records.Count > 0)
         {
             currentRecordIndex = (currentRecordIndex + 1)%records.Count;
-            //Debug.Log($"Starting playing record nr. {currentRecordIndex}");
+            Debug.Log($"Starting playing record nr. {currentRecordIndex}");
             resetRecord();
         }
     }
@@ -27,7 +27,7 @@ public class SwordInputRecordPlayer : ISwordInput
         if (currentRecordIndex < 0 || currentRecordIndex >= recordsCount) return;
         if(++currentFrameIndex >= currentRecord.Count)
         {
-            //Debug.Log($"Finished playing record {currentRecordIndex}. Replay duration: {Time.time - lastTimestamp}");
+            Debug.Log($"Finished playing record {currentRecordIndex}. Replay duration: {Time.time - lastTimestamp}");
             resetRecord();
         }
     }

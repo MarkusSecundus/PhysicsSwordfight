@@ -8,7 +8,7 @@ using JsonSerializer = Newtonsoft.Json.JsonConvert;
 public class SwordInputRecordSerializer : MonoBehaviour
 {
     public string filePattern = "record", fileExtension = ".json";
-    private int counter = 1;
+    public int nextIndex  = 1;
 
     public void SaveRecording(List<SwordInputRecorder.Frame> toSave)
     {
@@ -17,10 +17,10 @@ public class SwordInputRecordSerializer : MonoBehaviour
 
         Debug.Log($"Saving record with length {toSave.Count}");
 
-        var path = Path.GetFullPath(filePattern + counter + fileExtension);
+        var path = Path.GetFullPath(filePattern + nextIndex + fileExtension);
         Directory.CreateDirectory(Path.GetDirectoryName(path));
         using var file = new StreamWriter(path);
-        ++counter;
+        ++nextIndex;
         file.WriteLine(json);
         Debug.Log($"Saved record to file {path}");
     }
