@@ -113,7 +113,7 @@ public static class HelperExtensions
 
     public static Ray GenericTransform(this Ray r, System.Func<Vector3, Vector3> transformPoints)
     {
-        Vector3 a = transformPoints(r.origin), b = transformPoints(a + r.direction);
+        Vector3 a = transformPoints(r.origin), b = transformPoints(r.origin + r.direction);
         return new Ray(a, b - a);
     }
 

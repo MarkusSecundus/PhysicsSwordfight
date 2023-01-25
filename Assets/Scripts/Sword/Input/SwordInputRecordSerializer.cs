@@ -18,6 +18,7 @@ public class SwordInputRecordSerializer : MonoBehaviour
         Debug.Log($"Saving record with length {toSave.Count}");
 
         var path = Path.GetFullPath(filePattern + counter + fileExtension);
+        Directory.CreateDirectory(Path.GetDirectoryName(path));
         using var file = new StreamWriter(path);
         ++counter;
         file.WriteLine(json);

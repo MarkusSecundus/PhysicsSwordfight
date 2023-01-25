@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
@@ -16,14 +18,14 @@ public class SwordInputRecorder : MonoBehaviour
     [System.Serializable]
     public struct FrameImage
     {
-        public HashSet<KeyCode> Keys, KeysDown, KeysUp;
+        public HashSet<KeyCode> Keys;
         public SerializableRay? InputRayLocal;
     }
 
     private List<FrameImage> currentRecording;
     private bool isRecording => currentRecording != null;
 
-    private void Update()
+    private void Update() 
     {
         if (baseInput.GetKeyDown(finishRecordingKey)) FinishRecording();
         if (baseInput.GetKeyDown(startRecordingKey)) StartRecording();
@@ -33,22 +35,21 @@ public class SwordInputRecorder : MonoBehaviour
     {
         if (!isRecording) return;
 
-        var frame = new FrameImage { Keys = new HashSet<KeyCode>(), KeysDown = new HashSet<KeyCode>(), KeysUp = new HashSet<KeyCode>() };
+        var frame = new FrameImage { Keys = new HashSet<KeyCode>() };
         foreach(var key in EnumUtil.GetValues<KeyCode>())
         {
-            if(Input.GetKeyDown(key)) frame.KeysDown.Add(key);
-            if(Input.GetKeyUp(key)) frame.KeysUp.Add(key);
             if(Input.GetKey(key)) frame.Keys.Add(key);
         }
 
         var ray = baseInput.GetInputRay();
-        frame.InputRayLocal = (ray==null?(Ray?)null:transform.GlobalToLocal(ray.Value));
+        frame.InputRayLocal = ray == null ? (Ray?)null : transform.GlobalToLocal(ray.Value);
+        Debug.Log($"local ray: {(Ray)frame.InputRayLocal}");
 
         currentRecording.Add(frame);
     }
 
 
-
+    private double timeStamp;
     private void StartRecording()
     {
         if (isRecording)
@@ -56,6 +57,7 @@ public class SwordInputRecorder : MonoBehaviour
             Debug.Log("Already recording! Finish first to start another recording");
             return;
         }
+        timeStamp = Time.timeAsDouble;
         Debug.Log("Starting recording!");
         currentRecording = new List<FrameImage>();
     }
@@ -66,7 +68,7 @@ public class SwordInputRecorder : MonoBehaviour
             Debug.Log("Cannot finish recording when none is happening!");
             return;
         }
-        Debug.Log($"Recording finished! Number of frames recorded: {currentRecording.Count}");
+        Debug.Log($"Recording finished! Number of frames recorded: {currentRecording.Count}. Duration: {Time.timeAsDouble - timeStamp}");
         var recording = currentRecording;
         currentRecording = null;
         onRecordFinished?.Invoke(recording);

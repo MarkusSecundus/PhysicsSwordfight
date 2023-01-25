@@ -47,7 +47,7 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 
         Ray localBladeAxis = new Ray(SwordHandle.localPosition, SwordTip.localPosition - SwordHandle.localPosition);
         var localBlockPointProjection = localBladeAxis.GetRayPointWithLeastDistance(SwordEdgeBlockPoint.localPosition);
-        Debug.Log($"quat: {Quaternion.LookRotation(SwordTip.localPosition - SwordHandle.localPosition, SwordEdgeBlockPoint.localPosition - localBlockPointProjection).eulerAngles}");
+        //Debug.Log($"quat: {Quaternion.LookRotation(SwordTip.localPosition - SwordHandle.localPosition, SwordEdgeBlockPoint.localPosition - localBlockPointProjection).eulerAngles}");
 
 
         Ray bladeAxis = new Ray(SwordHandle.position, SwordTip.position - SwordHandle.position);

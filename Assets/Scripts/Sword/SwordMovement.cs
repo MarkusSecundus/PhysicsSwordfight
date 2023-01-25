@@ -136,7 +136,7 @@ public class SwordMovement : MonoBehaviour
     }
 
     private void UpdateAnchorPosition(float delta)
-    {
+    { 
 
     }
 
@@ -153,7 +153,9 @@ public class SwordMovement : MonoBehaviour
 
     public (Vector3? First, Vector3? Second) GetUserInput(Sphere inputSphere)
     {
+        //Debug.Log($"Getting ray: {input.GetInputRay()}");
         if (!(Input.GetInputRay() is Ray ray)) return (null, null);
+
         
         Debug.DrawRay(ray.origin, ray.direction, Color.yellow);
 
