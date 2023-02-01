@@ -6,14 +6,17 @@ using System.Diagnostics.Tracing;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
-public class SwordInputRecorder : MonoBehaviour
+public class SwordInputRecorder : ISwordInput
 {
     public ISwordInput inputToRecord;
 
     public KeyCode startRecordingKey = KeyCode.F7, finishRecordingKey = KeyCode.F8;
 
     public UnityEvent<List<Frame>> onRecordFinished;
+
+    private HashSet<string> axesToRecord = new HashSet<string>();
 
     [System.Serializable]
     public struct Frame
@@ -29,6 +32,9 @@ public class SwordInputRecorder : MonoBehaviour
         /// </summary>
         [SerializeField]
         public SerializableRay? CursorRay;
+
+        [SerializeField]
+        public Dictionary<string, float> Axes;
     }
 
     private List<Frame> currentRecording;
@@ -44,11 +50,17 @@ public class SwordInputRecorder : MonoBehaviour
     {
         if (!isRecording) return;
 
-        var frame = new Frame { KeysPressed = new HashSet<KeyCode>() };
+        var frame = new Frame { KeysPressed = new HashSet<KeyCode>(), Axes = new Dictionary<string, float>() };
         foreach(var key in EnumUtil.GetValues<KeyCode>())
         {
             if(Input.GetKey(key)) frame.KeysPressed.Add(key);
         }
+        foreach(var axis in axesToRecord)
+        {
+            var axisValue = inputToRecord.GetAxis(axis);
+            if (axisValue != 0) frame.Axes[axis] = axisValue;
+        }
+
 
         var ray = inputToRecord.GetInputRay();
         frame.CursorRay = ray == null ? (Ray?)null : transform.GlobalToLocal(ray.Value);
@@ -81,5 +93,23 @@ public class SwordInputRecorder : MonoBehaviour
         currentRecording = null;
         onRecordFinished?.Invoke(recording);
     }
+
+    public override bool GetKey(KeyCode code) => inputToRecord.GetKey(code);
+
+    public override bool GetKeyUp(KeyCode code) => inputToRecord.GetKeyUp(code);
+
+    public override bool GetKeyDown(KeyCode code) => inputToRecord.GetKeyDown(code);
+
+    public override float GetAxis(string axisName)
+    {
+        float ret() => inputToRecord.GetAxis(axisName);
+        if (axesToRecord.Add(axisName))
+        {
+            if (currentRecording.TryPeek(out var last)) last.Axes[axisName] = ret();
+        }
+        return ret();
+    }
+
+    public override Ray? GetInputRay() => inputToRecord.GetInputRay();
 }
 

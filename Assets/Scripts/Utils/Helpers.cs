@@ -37,7 +37,6 @@ public struct TransformSnapshot
 }
 
 
-
 public static class EnumUtil
 {
     public static TEnum Parse<TEnum>(string name) => (TEnum)System.Enum.Parse(typeof(TEnum), name);
@@ -133,6 +132,18 @@ public static class HelperExtensions
     public static bool HasNullElement<T>(this (T a, T b) self) where T : class
         => self.a == null || self.b == null;
 
+    public static bool IsEmpty<T>(this IReadOnlyCollection<T> self) => self==null || self.Count <= 0;
+    public static Vector3 Average<T>(this IEnumerable<T> self, System.Func<T, Vector3> selector)
+    {
+        var (ret, count) = (Vector3.zero, 0);
+        foreach (var i in self)
+        {
+            ret += selector(i);
+            ++count;
+        }
+        return count <= 0? Vector3.zero : ret / count;
+    }
+
     public static T FirstOrDefault<T>(this IEnumerable<T> self, System.Func<T, bool> predicate, System.Func<T> defaultSupplier)
     {
         foreach(var i in self)
@@ -217,8 +228,20 @@ public static class HelperExtensions
         }
     }
 
-
-
+    public static T Peek<T>(this IReadOnlyList<T> self) => self[self.Count-1];
+    public static bool TryPeek<T>(this IReadOnlyList<T> self, out T ret)
+    {
+        if (self.IsEmpty())
+        {
+            ret = default;
+            return false;
+        }
+        else
+        {
+            ret = self.Peek();
+            return true;
+        }
+    }
 }
 
 

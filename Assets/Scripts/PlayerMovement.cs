@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public ISwordInput Input;
     public Transform mainCamera;
 
     public float mouseXMultiplier=1f, mouseYMultiplier=1f, keyboardMultiplier=1f;
@@ -18,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     public float feetRadius = 0.1f;
     public LayerMask floorMask;
 
+    public float inputStabilizationRate = 0.8f;
 
     public Vector3 jumpForce = Vector3.up;
 
@@ -67,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
 
         //transform.Rotate(Vector3.up * mouseX);
         rb.MoveRotation(rb.rotation.withEuler(x: 0f, z: 0f));
-        rb.angularVelocity = Vector3.up * mouseX;
+        rb.angularVelocity = mouseX == 0? rb.angularVelocity*inputStabilizationRate : Vector3.up * mouseX;
 
         if(mainCamera != null && BindMove)
         {

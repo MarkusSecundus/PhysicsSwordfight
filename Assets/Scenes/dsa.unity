@@ -2225,8 +2225,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.01588764, y: 0.9360773, z: 0.0072014895}
-  m_Center: {x: -0.000001383887, y: 0.2636989, z: 0.00021521692}
+  m_Size: {x: 0.035830047, y: 0.9788637, z: 0.008634111}
+  m_Center: {x: 0.00016974915, y: 0.28509215, z: -0.0005010766}
 --- !u!23 &261216391
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4313,7 +4313,6 @@ GameObject:
   - component: {fileID: 623176098}
   - component: {fileID: 623176094}
   - component: {fileID: 623176097}
-  - component: {fileID: 623176096}
   - component: {fileID: 623176099}
   - component: {fileID: 623176100}
   m_Layer: 0
@@ -4473,7 +4472,7 @@ MonoBehaviour:
   debugger: {fileID: 607926060}
   debuggerPoint: {fileID: 2114665247}
   inputCircleRadius: 0.42
-  Input: {fileID: 977461308}
+  Input: {fileID: 977461310}
   Modes:
     Basic:
       minLastVectorDiff: 0.3
@@ -4502,22 +4501,6 @@ ConstantForce:
   m_RelativeForce: {x: 0, y: 0, z: 0}
   m_Torque: {x: 0, y: 100, z: 0}
   m_RelativeTorque: {x: 0, y: 0, z: 0}
---- !u!114 &623176096
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 623176090}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: efff59c4cf31c2045bfd3f779efeb9fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  joint: {fileID: 623176093}
-  targetRotation: {x: 0, y: 0, z: 0}
-  debug: {x: 0, y: 0, z: 0}
-  debugLocal: {x: 0, y: 0, z: 0}
 --- !u!114 &623176097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6644,6 +6627,7 @@ GameObject:
   - component: {fileID: 861574267}
   - component: {fileID: 861574264}
   - component: {fileID: 861574265}
+  - component: {fileID: 861574266}
   m_Layer: 0
   m_Name: PlayerModel
   m_TagString: Untagged
@@ -6679,11 +6663,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   paths:
-  - Assets/records/1.json
-  - Assets/records/2.json
-  - Assets/records/3.json
+  - records/1.json
+  - records/2.json
+  - records/3.json
   players:
   - {fileID: 861574264}
+--- !u!114 &861574266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861574263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eb1dae1de8c86c41a84f96195b077a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &861574267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6736,11 +6732,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 861574263}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ffd90a1a27b9ec45828c268db17fa21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Input: {fileID: 861574266}
   mainCamera: {fileID: 0}
   mouseXMultiplier: 300
   mouseYMultiplier: 100
@@ -6752,6 +6749,7 @@ MonoBehaviour:
   floorMask:
     serializedVersion: 2
     m_Bits: 64
+  inputStabilizationRate: 0.8
   jumpForce: {x: 0, y: 5, z: 0}
   MouseOnlyIfNotClicked: 1
   BindMove: 1
@@ -7342,6 +7340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ffd90a1a27b9ec45828c268db17fa21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Input: {fileID: 977461310}
   mainCamera: {fileID: 963194228}
   mouseXMultiplier: 300
   mouseYMultiplier: 100
@@ -7353,6 +7352,7 @@ MonoBehaviour:
   floorMask:
     serializedVersion: 2
     m_Bits: 64
+  inputStabilizationRate: 0.8
   jumpForce: {x: 0, y: 5, z: 0}
   MouseOnlyIfNotClicked: 1
   BindMove: 1
@@ -7427,9 +7427,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d559398d368d1d49a1bdebb7ba37903, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filePattern: Assets/records/
+  filePattern: records/
   fileExtension: .json
-  nextIndex: 1
+  nextIndex: 3
 --- !u!114 &977461310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9245,7 +9245,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1529701101
 Transform:
   m_ObjectHideFlags: 0
