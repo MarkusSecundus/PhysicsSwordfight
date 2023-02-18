@@ -212,7 +212,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5692771888074364032}
   - component: {fileID: 5692771888074364039}
-  - component: {fileID: 5692771888074364035}
   - component: {fileID: 5692771888074364033}
   - component: {fileID: 5692771888074364094}
   - component: {fileID: 5692771888074364034}
@@ -262,18 +261,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!75 &5692771888074364035
-ConstantForce:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5692771888074364038}
-  m_Enabled: 0
-  m_Force: {x: 0, y: 100, z: 0}
-  m_RelativeForce: {x: 0, y: 0, z: 0}
-  m_Torque: {x: 0, y: 100, z: 0}
-  m_RelativeTorque: {x: 0, y: 0, z: 0}
 --- !u!153 &5692771888074364033
 ConfigurableJoint:
   m_ObjectHideFlags: 0
