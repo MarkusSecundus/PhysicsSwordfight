@@ -233,21 +233,26 @@ public static class MathUtils
 
 public static class GeometryUtils
 {
-	public static IEnumerable<Vector3> PointsOnCircle(int count=1, Vector3 begin = default, Vector3 axis = default, bool includeBegin=true)
-	{
-		if (count < 1) throw new ArgumentException("Must be a positive number", nameof(count));
-		Vector3 v = begin == default ? new Vector3(1,0,0):begin;
+	public static IEnumerable<Vector3> PointsOnCircle(int count = 1, Vector3 begin = default, Vector3 axis = default, bool includeBegin = true)
+    {
+        if (count < 1) throw new ArgumentException("Must be a positive number", nameof(count));
+        Vector3 v = begin == default ? new Vector3(1, 0, 0) : begin;
 
-		if(includeBegin)
-			yield return v;
+        if (includeBegin)
+            yield return v;
 
-        var rot = Matrix4x4.Rotate(Quaternion.AngleAxis(RotationUtil.MaxAngle/count,axis==default?Vector3.forward:axis));
+        var rot = Matrix4x4.Rotate(Quaternion.AngleAxis(RotationUtil.MaxAngle / count, axis == default ? Vector3.forward : axis));
         for (int t = 1; t < count; ++t)
             yield return v = rot * v;
+    }
+
+	public static Vector3 GetPointOnCircle(float angle_radians)
+	{
+		return new Vector3(Mathf.Cos(angle_radians), Mathf.Sin(angle_radians));
 	}
 
 
-	public static (double? x1, double? x2) SolveQuadraticEquation(double a, double b, double c)
+    public static (double? x1, double? x2) SolveQuadraticEquation(double a, double b, double c)
 	{
 		double D = b * b - 4 * a * c;
 
@@ -411,6 +416,7 @@ public static class GeometryUtils
     public static Vector2 yz(this Vector3 v) => new Vector2(v.y, v.z);
 
     public static Vector3 xy0(this Vector2 v) => new Vector3(v.x, v.y, 0);
+    public static Vector3 xyx(this Vector2 v) => new Vector3(v.x, v.y, v.x);
     public static Vector3 x0z(this Vector2 v) => new Vector3(v.x, 0, v.y);
     public static Vector3 _0yz(this Vector2 v) => new Vector3(0, v.x, v.y);
 }

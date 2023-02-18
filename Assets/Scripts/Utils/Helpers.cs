@@ -242,6 +242,15 @@ public static class HelperExtensions
             return true;
         }
     }
+
+    public static Vector3 NextVector3(this System.Random self, Vector3 min, Vector3 max)
+    {
+        return new Vector3((float)(min.x + self.NextDouble() * (max.x-min.x)), (float)(min.y + self.NextDouble() * (max.y-min.y)), (float)(min.z + self.NextDouble() * (max.z-min.z)));
+    }
+    public static Vector2 NextVector2(this System.Random self, Vector2 min, Vector2 max)
+    {
+        return new Vector2((float)(min.x + self.NextDouble() * (max.x-min.x)), (float)(min.y + self.NextDouble() * (max.y-min.y)));
+    }
 }
 
 
