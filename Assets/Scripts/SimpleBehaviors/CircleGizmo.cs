@@ -5,15 +5,22 @@ using UnityEngine;
 using UnityEngine.Diagnostics;
 using UnityEngine.Events;
 
-[ExecuteInEditMode]
-public class CircleGizmo : MonoBehaviour
+public abstract class IPointsSupplier : MonoBehaviour
+{
+    public abstract IEnumerable<Vector3> IteratePoints();
+}
+
+
+public class CircleGizmo : IPointsSupplier
 {
     public Color Color = Color.black;
-    public int Segments = 8;
-
+    public int Segments = 8, MaxSegmentsToIterate=-1;
+    public bool ShouldDrawTheGizmo = true;
 
     private void OnDrawGizmos()
     {
+        if (!ShouldDrawTheGizmo) return;
+
         Gizmos.color = Color;
 
         Vector3 lastPoint = default, beginPoint = default;
@@ -26,14 +33,16 @@ public class CircleGizmo : MonoBehaviour
             Gizmos.DrawLine(lastPoint, it.Current);
             lastPoint = it.Current;
         }
-        Gizmos.DrawLine(lastPoint, beginPoint);
+        if(!IsCutOff)
+            Gizmos.DrawLine(lastPoint, beginPoint);
     }
 
-    public IEnumerable<Vector3> IteratePoints()
-        => GeometryUtils.PointsOnCircle(Segments).Select(transform.LocalToGlobal);
-    [ContextMenu("Click me!?")]
-    public void Ddsa()
+    private bool IsCutOff => MaxSegmentsToIterate >= 0 && MaxSegmentsToIterate < Segments;
+
+    public override IEnumerable<Vector3> IteratePoints()
     {
-        Debug.Log("Clicked!!!");
+        var ret = GeometryUtils.PointsOnCircle(Segments).Select(transform.LocalToGlobal);
+        if (IsCutOff) ret = ret.Take(MaxSegmentsToIterate);
+        return ret;
     }
 }
