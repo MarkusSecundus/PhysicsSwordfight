@@ -25,6 +25,6 @@ public class BasicSwordInput : ISwordInput
     public override bool GetKeyUp(KeyCode code)
         => Input.GetKeyUp(code);
 
-    public override float GetAxis(string axisName)
-        => Input.GetAxis(axisName);
+    public override float GetAxis(InputAxis axis)
+        => Input.GetAxis(axis.Name());
 }

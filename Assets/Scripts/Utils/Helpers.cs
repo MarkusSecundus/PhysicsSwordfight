@@ -243,6 +243,14 @@ public static class HelperExtensions
         }
     }
 
+    public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> self)
+    {
+        foreach (var collection
+            in self)
+            foreach (var item in collection) 
+                yield return item;
+    }
+
     public static Vector3 NextVector3(this System.Random self, Vector3 min, Vector3 max)
     {
         return new Vector3((float)(min.x + self.NextDouble() * (max.x-min.x)), (float)(min.y + self.NextDouble() * (max.y-min.y)), (float)(min.z + self.NextDouble() * (max.z-min.z)));

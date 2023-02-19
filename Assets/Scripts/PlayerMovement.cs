@@ -55,14 +55,14 @@ public class PlayerMovement : MonoBehaviour
 
         rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
 
-        var vertical = Input.GetAxis("Vertical");
-        var horizontal = Input.GetAxis("Horizontal");
+        var vertical = Input.GetAxis(InputAxis.Vertical);
+        var horizontal = Input.GetAxis(InputAxis.Horizontal);
 
         float mouseX = default, mouseY = default;
         if(!MouseOnlyIfNotClicked || !Input.GetKey(KeyCode.Mouse0))
         {
-            mouseX = Input.GetAxis("HorizontalRotation") * horizontalRotationMultiplier; //Input.GetAxis("Mouse X") * mouseXMultiplier * delta;
-            mouseY = Input.GetAxis("Mouse Y") * mouseYMultiplier * delta;
+            mouseX = Input.GetAxis(InputAxis.HorizontalRotation) * horizontalRotationMultiplier; //Input.GetAxis("Mouse X") * mouseXMultiplier * delta;
+            mouseY = Input.GetAxis(InputAxis.MouseY) * mouseYMultiplier * delta;
         }
 
         //Debug.Log($"vertical: {vertical} -- horizontal: {horizontal}\nmX: {mouseX} -- mY: {mouseY}");
@@ -88,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
             else if (rb != null)
                 rb.velocity = new Vector3(toMove.x, rb.velocity.y, toMove.z);
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Tab))
                 rb.AddRelativeForce(jumpForce, jumpMode);
         }
 

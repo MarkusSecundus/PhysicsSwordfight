@@ -16,7 +16,7 @@ public class SwordInputRecorder : ISwordInput
 
     public UnityEvent<List<Frame>> onRecordFinished;
 
-    private HashSet<string> axesToRecord = new HashSet<string>();
+    private HashSet<InputAxis> axesToRecord = new HashSet<InputAxis>();
 
     [System.Serializable]
     public struct Frame
@@ -34,7 +34,7 @@ public class SwordInputRecorder : ISwordInput
         public SerializableRay? CursorRay;
 
         [SerializeField]
-        public Dictionary<string, float> Axes;
+        public Dictionary<InputAxis, float> Axes;
     }
 
     private List<Frame> currentRecording;
@@ -50,7 +50,7 @@ public class SwordInputRecorder : ISwordInput
     {
         if (!isRecording) return;
 
-        var frame = new Frame { KeysPressed = new HashSet<KeyCode>(), Axes = new Dictionary<string, float>() };
+        var frame = new Frame { KeysPressed = new HashSet<KeyCode>(), Axes = new Dictionary<InputAxis, float>() };
         foreach(var key in EnumUtil.GetValues<KeyCode>())
         {
             if(Input.GetKey(key)) frame.KeysPressed.Add(key);
@@ -100,12 +100,12 @@ public class SwordInputRecorder : ISwordInput
 
     public override bool GetKeyDown(KeyCode code) => inputToRecord.GetKeyDown(code);
 
-    public override float GetAxis(string axisName)
+    public override float GetAxis(InputAxis axis)
     {
-        float ret() => inputToRecord.GetAxis(axisName);
-        if (axesToRecord.Add(axisName))
+        float ret() => inputToRecord.GetAxis(axis);
+        if (axesToRecord.Add(axis))
         {
-            if (currentRecording.TryPeek(out var last)) last.Axes[axisName] = ret();
+            if (currentRecording.TryPeek(out var last)) last.Axes[axis] = ret();
         }
         return ret();
     }
