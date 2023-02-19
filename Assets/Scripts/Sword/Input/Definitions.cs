@@ -8,7 +8,7 @@ public enum InputAxis
 {
     Horizontal,
     Vertical,
-    HorizontalRotation,
+    HorizontalSecondary,
     MouseX,
     MouseY
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlaceObjectsOnPoints : MonoBehaviour
 {
-    [SerializeField]public IPointsSupplier CircleDefinition;
+    [SerializeField] public IPointsSupplier CircleDefinition;
     public Transform ParentToFill;
     public GameObject ToPlace;
 
@@ -40,7 +40,7 @@ public class PlaceObjectsOnPoints : MonoBehaviour
 
     public void ClearParent()
     {
-        if (ParentToFill.childCount > 0)
+        while (ParentToFill.childCount > 0)
         {
             foreach (Transform t in ParentToFill)
                 Object.DestroyImmediate(t.gameObject);

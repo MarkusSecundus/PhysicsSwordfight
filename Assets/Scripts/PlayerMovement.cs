@@ -39,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Update is called once per frame
 
-    private bool IsGrounded => rb.velocity.sqrMagnitude < GroundedSpeedThreshold ||  Physics.CheckSphere(feetPosition.position, feetRadius, floorMask);
+    private bool IsGrounded => true|| rb.velocity.sqrMagnitude < GroundedSpeedThreshold ||  Physics.CheckSphere(feetPosition.position, feetRadius, floorMask);
 
     void FixedUpdate()
     {
@@ -61,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
         float mouseX = default, mouseY = default;
         if(!MouseOnlyIfNotClicked || !Input.GetKey(KeyCode.Mouse0))
         {
-            mouseX = Input.GetAxis(InputAxis.HorizontalRotation) * horizontalRotationMultiplier; //Input.GetAxis("Mouse X") * mouseXMultiplier * delta;
+            mouseX = Input.GetAxis(InputAxis.HorizontalSecondary) * horizontalRotationMultiplier; //Input.GetAxis("Mouse X") * mouseXMultiplier * delta;
             mouseY = Input.GetAxis(InputAxis.MouseY) * mouseYMultiplier * delta;
         }
 
