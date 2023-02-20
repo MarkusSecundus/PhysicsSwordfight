@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using JetBrains.Annotations;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -8,6 +9,13 @@ public static class RotationUtil
     public const float MaxRadians = Mathf.PI*2f;
 
     public const float MaxAngle = MaxDegree;
+}
+
+
+[System.Serializable]
+public struct Vector3Interval
+{
+    public Vector3 Min, Max;
 }
 
 public struct TransformSnapshot
@@ -34,6 +42,38 @@ public struct TransformSnapshot
     {
         (r.position, r.rotation) = (position, rotation);
     }
+}
+
+public struct Vector3Field
+{
+    public float Value { get; }
+    public FieldType Field { get; }
+    public Vector3Field(float value) => (Value, Field) = (value, FieldType.UseProvidedValue);
+    public Vector3Field(FieldType type)
+    {
+        if (type == FieldType.UseProvidedValue)
+            throw new System.ArgumentException($"To use the type {nameof(FieldType.UseProvidedValue)}, use the other constructor that provides the value!");
+        (Value, Field) = (default, type);
+    }
+
+    public enum FieldType : byte
+    {
+        UseOriginal=default, UseProvidedValue, X, Y, Z
+    }
+
+    public static implicit operator Vector3Field(float value) => new Vector3Field(value);
+    public static implicit operator Vector3Field(float? value) => value == null? V.Null : new Vector3Field(value.Value);
+
+    static Vector3Field()
+    {
+        if (default(Vector3Field).Field != FieldType.UseOriginal)
+            throw new System.InvalidProgramException($"Assert failed: default({nameof(Vector3Field)}) must be equal to Null");
+    }
+}
+
+public static class V
+{
+    public static readonly Vector3Field X = new Vector3Field(Vector3Field.FieldType.X), Y = new Vector3Field(Vector3Field.FieldType.Y), Z = new Vector3Field(Vector3Field.FieldType.Z), Null = default;
 }
 
 
@@ -171,8 +211,22 @@ public static class HelperExtensions
         modify(self);
         return self;
     }
-    public static Vector3 With(this Vector3 self, float? x = null, float? y = null, float? z = null)
-        => new Vector3(x ?? self.x, y ?? self.y, z ?? self.z);
+    public static Vector3 With(this Vector3 self, Vector3Field x = default, Vector3Field y = default, Vector3Field z = default)
+    {
+        float FieldValue(Vector3Field field, float original) => field.Field switch
+        {
+            Vector3Field.FieldType.UseOriginal => original,
+            Vector3Field.FieldType.UseProvidedValue => field.Value,
+            Vector3Field.FieldType.X => self.x,
+            Vector3Field.FieldType.Y => self.y,
+            Vector3Field.FieldType.Z => self.z,
+            _ => throw new System.ArgumentException($"Provided ")
+        };
+        return new Vector3(FieldValue(x,self.x), FieldValue(y, self.y), FieldValue(z, self.z));
+    }
+
+    public static Quaternion WithEuler(this Quaternion self, Vector3Field x = default, Vector3Field y = default, Vector3Field z = default) 
+        => Quaternion.Euler(self.eulerAngles.With(x, y, z));
     public static void Log(this string self, bool shouldLog = true)
     {
         if (shouldLog) Debug.Log(self);
@@ -252,12 +306,17 @@ public static class HelperExtensions
     }
 
     public static Vector3 NextVector3(this System.Random self, Vector3 min, Vector3 max)
+        => new Vector3((float)(min.x + self.NextDouble() * (max.x - min.x)), (float)(min.y + self.NextDouble() * (max.y - min.y)), (float)(min.z + self.NextDouble() * (max.z - min.z)));
+    public static Vector2 NextVector2(this System.Random self, Vector2 min, Vector2 max) 
+        => new Vector2((float)(min.x + self.NextDouble() * (max.x - min.x)), (float)(min.y + self.NextDouble() * (max.y - min.y)));
+
+    public static Vector3 Clamp(this Vector3 self, Vector3Interval i) 
+        => new Vector3(Mathf.Clamp(self.x, i.Min.x, i.Max.x), Mathf.Clamp(self.y, i.Min.y, i.Max.y), Mathf.Clamp(self.z, i.Min.z, i.Max.z));
+
+    public static Vector3 ClampEuler(this Vector3 self, Vector3Interval interval)
     {
-        return new Vector3((float)(min.x + self.NextDouble() * (max.x-min.x)), (float)(min.y + self.NextDouble() * (max.y-min.y)), (float)(min.z + self.NextDouble() * (max.z-min.z)));
-    }
-    public static Vector2 NextVector2(this System.Random self, Vector2 min, Vector2 max)
-    {
-        return new Vector2((float)(min.x + self.NextDouble() * (max.x-min.x)), (float)(min.y + self.NextDouble() * (max.y-min.y)));
+        float Fix(float f) => (f%=360) >= 180f ? f-360 : f;
+        return new Vector3(Fix(self.x), Fix(self.y), Fix(self.z)).Clamp(interval);
     }
 }
 

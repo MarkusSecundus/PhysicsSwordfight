@@ -6,11 +6,13 @@ using UnityEngine;
 
 public enum InputAxis
 {
-    Horizontal,
-    Vertical,
-    HorizontalSecondary,
-    MouseX,
-    MouseY
+    None=0,
+    Horizontal=1,
+    Vertical=2,
+    HorizontalSecondary=3,
+    HorizontalQE=6,
+    MouseX=4,
+    MouseY=5
 }
 public static class InputAxisExtensions
 {

@@ -4,135 +4,112 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [System.Serializable]
+    public class InputMapping
+    {
+        public KeyCode Jump = KeyCode.LeftShift;
+        public InputAxis WalkForwardBackward = InputAxis.Vertical, StrafeLeftRight = InputAxis.Horizontal, LookUpDown = InputAxis.MouseY, LookLeftRight = InputAxis.MouseX, RotateLeftRight = InputAxis.HorizontalSecondary;
+    }
+    [System.Serializable]
+    public class InputMultipliers
+    {
+        public float WalkForwardBackward = 1f, StrafeLeftRight = 1f, RotateLeftRight = 1f;
+        public float LookUpDown = 1f, LookLeftRight = 0.1f;
+        public Vector3 Jump = Vector3.up;
+        public ForceMode JumpMode = ForceMode.VelocityChange;
+        public Vector3Interval LookConstraints; 
+        public float InputStabilizationRate = 0.8f;
+    }
+
+
     public ISwordInput Input;
-    public Transform mainCamera;
+    public Transform CameraToUse;
 
-    public float mouseXMultiplier=1f, mouseYMultiplier=1f, keyboardMultiplier=1f;
+    private new Rigidbody rigidbody;
 
-    public float horizontalRotationMultiplier=1f;
+    public InputMapping Mapping = new InputMapping();
+    public InputMultipliers Tweaks = new InputMultipliers();
 
-    public ForceMode jumpMode = ForceMode.VelocityChange;
 
-    private CharacterController controller;
-    private Rigidbody rb;
-    public Transform feetPosition;
-    public float feetRadius = 0.1f;
-    public LayerMask floorMask;
+    private Vector3 WalkForwardBackwardBase => transform.forward;
+    private Vector3 StrafeLeftRightBase => transform.right;
+    private Vector3 RotateLeftRightBase => transform.up;
 
-    public float inputStabilizationRate = 0.8f;
-
-    public Vector3 jumpForce = Vector3.up;
-
-    public bool MouseOnlyIfNotClicked = true;
+    private Vector3 LookUpDownBase => default;
+    private Vector3 LookLeftRightBase => default;
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        controller = GetComponent<CharacterController>();
-        rb = GetComponent<Rigidbody>();
+        rigidbody = GetComponent<Rigidbody>();
+        rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationY;
     }
 
-
-    public bool BindMove = true;
-
-    public float GroundedSpeedThreshold = 0.01f;
-
-    // Update is called once per frame
-
-    private bool IsGrounded => true|| rb.velocity.sqrMagnitude < GroundedSpeedThreshold ||  Physics.CheckSphere(feetPosition.position, feetRadius, floorMask);
 
     void FixedUpdate()
     {
-        var delta = Time.fixedDeltaTime;
-        if (Input.GetKeyDown(KeyCode.Tab))
-            BindMove = !BindMove;
-        
-        /*if (!BindMove)
-        {
-            rb.constraints |= RigidbodyConstraints.FreezeRotationY;
-            return;
-        }*/
-
-        rb.constraints &= ~RigidbodyConstraints.FreezeRotationY;
-
-        var vertical = Input.GetAxis(InputAxis.Vertical);
-        var horizontal = Input.GetAxis(InputAxis.Horizontal);
-
-        float mouseX = default, mouseY = default;
-        if(!MouseOnlyIfNotClicked || !Input.GetKey(KeyCode.Mouse0))
-        {
-            mouseX = Input.GetAxis(InputAxis.HorizontalSecondary) * horizontalRotationMultiplier; //Input.GetAxis("Mouse X") * mouseXMultiplier * delta;
-            mouseY = Input.GetAxis(InputAxis.MouseY) * mouseYMultiplier * delta;
-        }
-
-        //Debug.Log($"vertical: {vertical} -- horizontal: {horizontal}\nmX: {mouseX} -- mY: {mouseY}");
-
-        //transform.Rotate(Vector3.up * mouseX);
-        rb.MoveRotation(rb.rotation.withEuler(x: 0f, z: 0f));
-        rb.angularVelocity = mouseX == 0? rb.angularVelocity*inputStabilizationRate : Vector3.up * mouseX;
-
-        if(mainCamera != null && BindMove)
-        {
-            var currXRotation = mainCamera.localRotation.eulerAngles.x;
-
-            var xRotation = currXRotation - mouseY;//Mathf.Clamp(currXRotation - mouseY, -90f, 90f);
-            mainCamera.localRotation = Quaternion.Euler(xRotation, 0, 0);
-        }
-
-        var toMove = (transform.forward * vertical + transform.right * horizontal) * delta * keyboardMultiplier;
-
-        if (this.IsGrounded)
-        {
-            if (controller != null)
-                controller.Move(toMove);
-            else if (rb != null)
-                rb.velocity = new Vector3(toMove.x, rb.velocity.y, toMove.z);
-
-            if (Input.GetKeyDown(KeyCode.Tab))
-                rb.AddRelativeForce(jumpForce, jumpMode);
-        }
-
-
-#if false
-
-        var mv = new Vector3(horizontal, 0, vertical) * keyboardMultiplier;
-        mv = transform.TransformDirection(mv);
-        //rb.AddForce(mv, mode);
-        oldPosition = transform.position;
-        transform.position += mv;
-        transform.Rotate(new Vector3(-mouseY*0, mouseX) * mouseMultiplier);
-#endif
-
-
-    }
-    /*
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (oldPosition != null) transform.position = oldPosition.Value;
+        DoMoveStep(Time.fixedDeltaTime);
     }
 
-    private void OnCollisionStay(Collision collision)
+    void DoMoveStep(float delta)
     {
-        OnCollisionEnter(null);   
-    }*/
-
-
-    private void SetRagdoll(bool ragdoll)
-    {
-        rb.isKinematic = !ragdoll;
+        HandleWalking(delta);
+        HandleRotating(delta);
+        HandleLooking(delta);
+        HandleJumping(delta);
     }
-}
 
-static class PlayerMovementExtensions
-{
 
-    public static Quaternion withEuler(this Quaternion self, float? x = null, float? y = null, float? z = null)
+
+
+    void HandleWalking(float delta)
     {
-        var eul = self.eulerAngles;
-        if (x != null) eul.x = x.Value;
-        if (y != null) eul.y = y.Value;
-        if (z != null) eul.z = z.Value;
-        return Quaternion.Euler(eul);
+        var walkForward = Input.GetAxis(Mapping.WalkForwardBackward) * Tweaks.WalkForwardBackward;
+        var strafeLeftRight = Input.GetAxis(Mapping.StrafeLeftRight) * Tweaks.StrafeLeftRight;
+
+        var toMove = (walkForward*WalkForwardBackwardBase + strafeLeftRight*StrafeLeftRightBase); //*delta !!velocity should not be multiplied by delta (opposed to applied force)!
+
+        rigidbody.velocity = toMove.With(y: toMove.y + rigidbody.velocity.y);
+
+        //rigidbody.AddRelativeForce(walkForward*delta);
+        //rigidbody.AddRelativeForce(strafeLeftRight*delta);
+    }
+
+    void HandleRotating(float delta)
+    {
+        var axisValue = Input.GetAxis(Mapping.RotateLeftRight);
+        var rotateLeftRight = axisValue * Tweaks.RotateLeftRight * RotateLeftRightBase;
+
+        rigidbody.MoveRotation(rigidbody.rotation.WithEuler(x: 0f, z: 0f)); //?! TODO: figure out if and why this is necessary! (especially since those rotation axes are already locked)
+        rigidbody.angularVelocity = axisValue==0 /*solid 0 only when the input is non-active*/ ? rigidbody.angularVelocity * Tweaks.InputStabilizationRate : rotateLeftRight; //again, velocity should not be multiplied by delta!
+    }
+
+    void HandleLooking(float delta)
+    {
+        float lookLeftRight = Input.GetAxis(Mapping.LookLeftRight) * Tweaks.LookLeftRight * delta; //here delta makes sense since we are manually moving the camera rotation by some ammount
+        float lookUpDown = Input.GetAxis(Mapping.LookUpDown) * Tweaks.LookUpDown * delta;
+
+
+        var currentCameraRotation = CameraToUse.localRotation.eulerAngles;
+        var xRotation = currentCameraRotation.x - lookUpDown;   //for some reason needs to use substraction to not be inverted
+        var yRotation = currentCameraRotation.y + lookLeftRight; //no need to clamp this to the reasonable <0;180°> interval - that is taken care of just by forcing the z rotation to 0° (if the player managed to force y outside of this range, that changes z to upside-down a.k.a 180° - reseting that back to 0° by lucky coincidence resets the camera exactly to the reasonable position that one would want in such scenario)
+        var rotationToSet = new Vector3(xRotation, yRotation, 0f).ClampEuler(Tweaks.LookConstraints);
+        if (CameraToUse != null)
+            CameraToUse.localRotation = Quaternion.Euler(rotationToSet);
+    }
+
+    void HandleJumping(float delta)
+    {
+        if (Input.GetKeyDown(Mapping.Jump))
+            rigidbody.AddRelativeForce(Tweaks.Jump, Tweaks.JumpMode);
+    }
+
+
+
+    //transform from local coords to global while preserving the magnitude
+    private Vector3 LocalToGlobal(Vector3 local)
+    {
+        var magnitude = local.magnitude;
+        return transform.LocalToGlobal(local).normalized * magnitude;
     }
 }
 
