@@ -40,6 +40,7 @@ public class PlaceObjectsOnPoints : MonoBehaviour
 
     public void ClearParent()
     {
+        Debug.Log("Clearing the pallisade!");
         while (ParentToFill.childCount > 0)
         {
             foreach (Transform t in ParentToFill)

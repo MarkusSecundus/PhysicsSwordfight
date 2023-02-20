@@ -12,10 +12,13 @@ public class RunActionInEditor : MonoBehaviour
 
     private void Update()
     {
+        
         try
         {
             if (RunButton)
             {
+                RunButton = false;
+                Debug.Log($"Running an action: '{name}'");
                 ToRun?.Invoke();
             }
         }
