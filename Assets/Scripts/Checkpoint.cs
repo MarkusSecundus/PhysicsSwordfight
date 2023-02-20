@@ -11,7 +11,7 @@ public class Checkpoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var player = other.gameObject.GetComponentInParent<PlayerBasics>();
+        var player = other.gameObject.GetComponentInParent<Respawnable>();
         if (player == null) return;
 
         player.LastCheckpoint = this;

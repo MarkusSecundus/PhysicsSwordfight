@@ -13,7 +13,7 @@ public class KillFloor : MonoBehaviour
 
     private void KillObject(GameObject o)
     {
-        var player = o.GetComponentInParent<PlayerBasics>();
+        var player = o.GetComponentInParent<Respawnable>();
         if (player == null) return;
 
         player.Die();

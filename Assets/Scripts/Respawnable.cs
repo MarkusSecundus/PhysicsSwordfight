@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PlayerBasics : MonoBehaviour
+public class Respawnable : MonoBehaviour
 {
     public Checkpoint LastCheckpoint;
 
