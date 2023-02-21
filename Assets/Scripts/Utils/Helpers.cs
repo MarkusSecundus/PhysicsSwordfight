@@ -44,6 +44,16 @@ public struct TransformSnapshot
     }
 }
 
+public static class Op
+{
+    public static T post_assign<T>(ref T variable, T newValue)
+    {
+        var ret = variable;
+        variable = newValue;
+        return ret;
+    }
+}
+
 public struct Vector3Field
 {
     public float Value { get; }
@@ -310,13 +320,38 @@ public static class HelperExtensions
     public static Vector2 NextVector2(this System.Random self, Vector2 min, Vector2 max) 
         => new Vector2((float)(min.x + self.NextDouble() * (max.x - min.x)), (float)(min.y + self.NextDouble() * (max.y - min.y)));
 
+
+    public static float Mod(this float f, float mod, out float div)
+    {
+        var d = System.Math.Floor(f / mod);
+        div = (float)d;
+        var ret = f - (d * mod);
+        if (ret < 0f) ret += mod;
+        return (float)ret;
+    }
+    public static float Mod(this float f, float mod) => f.Mod(mod, out _);
+
     public static Vector3 Clamp(this Vector3 self, Vector3Interval i) 
         => new Vector3(Mathf.Clamp(self.x, i.Min.x, i.Max.x), Mathf.Clamp(self.y, i.Min.y, i.Max.y), Mathf.Clamp(self.z, i.Min.z, i.Max.z));
 
-    public static Vector3 ClampEuler(this Vector3 self, Vector3Interval interval)
+    
+
+
+    //TODO: Fix this so that it handles correctly intervals like <180°; 210°> aka. <180°;-150°> etc.
+    public static Vector3 ClampEuler(this Vector3 self, Vector3Interval i)
     {
         float Fix(float f) => (f%=360) >= 180f ? f-360 : f;
-        return new Vector3(Fix(self.x), Fix(self.y), Fix(self.z)).Clamp(interval);
+        return new Vector3(Fix(self.x), Fix(self.y), Fix(self.z)).Clamp(i);
+
+        //attempt at correct implementation that doesn't work however
+        //float Clamp(float f, float min, float max) => ClampModulo(f, min, max, 360);  
+        //return new Vector3(Clamp(self.x, i.Min.x, i.Max.x), Clamp(self.y, i.Min.y, i.Max.y), Clamp(self.z, i.Min.z, i.Max.z));
+        //float ClampModulo(float f, float min, float max, float modulo)
+        //{
+        //    (f,min,max) = (f.Mod(modulo), min.Mod(modulo), max.Mod(modulo));
+        //    if (min <= max) return Mathf.Clamp(f, min, max);
+        //    else return Mathf.Clamp(f, min, max + modulo).Mod(modulo);
+        //}
     }
 }
 

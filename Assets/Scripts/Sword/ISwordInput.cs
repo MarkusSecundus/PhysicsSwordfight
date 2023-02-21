@@ -10,6 +10,7 @@ public abstract class ISwordInput : MonoBehaviour
     public abstract bool GetKeyDown(KeyCode code);
 
     public abstract float GetAxis(InputAxis axis);
+    public abstract float GetAxisRaw(InputAxis axis);
 
     public abstract Ray? GetInputRay();
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class NullSwordInput : ISwordInput
 {
+    public override float GetAxisRaw(InputAxis axis) => 0f;
     public override float GetAxis(InputAxis axis) => 0f;
     public override Ray? GetInputRay() => null;
     public override bool GetKey(KeyCode code) => false;

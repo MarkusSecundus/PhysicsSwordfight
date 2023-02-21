@@ -54,4 +54,5 @@ public class SwordInputRecordPlayer : ISwordInput
     public override bool GetKeyUp(KeyCode code) => GetKey(code) && (currentFrameIndex >= (currentRecord.Count - 1) || !currentRecord[currentFrameIndex + 1].KeysPressed.Contains(code));
 
     public override float GetAxis(InputAxis axis) => currentFrame?.Axes != null && currentFrame.Value.Axes.TryGetValue(axis, out var ret) == true ? ret : 0;
+    public override float GetAxisRaw(InputAxis axis) => throw new System.NotImplementedException();
 }

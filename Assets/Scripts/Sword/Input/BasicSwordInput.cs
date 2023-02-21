@@ -28,4 +28,6 @@ public class BasicSwordInput : ISwordInput
 
     public override float GetAxis(InputAxis axis)
         => Input.GetAxis(axis.Name());
+    public override float GetAxisRaw(InputAxis axis)
+        => Input.GetAxisRaw(axis.Name());
 }

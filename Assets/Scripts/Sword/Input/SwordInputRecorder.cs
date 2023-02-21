@@ -35,6 +35,7 @@ public class SwordInputRecorder : ISwordInput
 
         [SerializeField]
         public Dictionary<InputAxis, float> Axes;
+        public Dictionary<InputAxis, float> AxesRaw;
     }
 
     private List<Frame> currentRecording;
@@ -50,7 +51,7 @@ public class SwordInputRecorder : ISwordInput
     {
         if (!isRecording) return;
 
-        var frame = new Frame { KeysPressed = new HashSet<KeyCode>(), Axes = new Dictionary<InputAxis, float>() };
+        var frame = new Frame { KeysPressed = new HashSet<KeyCode>(), Axes = new Dictionary<InputAxis, float>(), AxesRaw = new Dictionary<InputAxis, float>() };
         foreach(var key in EnumUtil.GetValues<KeyCode>())
         {
             if(Input.GetKey(key)) frame.KeysPressed.Add(key);
@@ -59,6 +60,9 @@ public class SwordInputRecorder : ISwordInput
         {
             var axisValue = inputToRecord.GetAxis(axis);
             if (axisValue != 0) frame.Axes[axis] = axisValue;
+
+            axisValue = inputToRecord.GetAxisRaw(axis);
+            if (axisValue != 0) frame.AxesRaw[axis] = axisValue;
         }
 
 
@@ -106,6 +110,15 @@ public class SwordInputRecorder : ISwordInput
         if (axesToRecord.Add(axis))
         {
             if (currentRecording.TryPeek(out var last)) last.Axes[axis] = ret();
+        }
+        return ret();
+    }
+    public override float GetAxisRaw(InputAxis axis)
+    {
+        float ret() => inputToRecord.GetAxisRaw(axis);
+        if (axesToRecord.Add(axis))
+        {
+            if (currentRecording.TryPeek(out var last)) last.AxesRaw[axis] = ret();
         }
         return ret();
     }

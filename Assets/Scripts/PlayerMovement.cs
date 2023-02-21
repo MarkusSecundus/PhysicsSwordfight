@@ -1,29 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Op;
 
 public class PlayerMovement : MonoBehaviour
 {
     [System.Serializable]
+    public struct KeyPair
+    {
+        public KeyCode Increment, Decrement;
+    }
+
+    [System.Serializable]
     public class InputMapping
     {
         public KeyCode Jump = KeyCode.LeftShift;
-        public InputAxis WalkForwardBackward = InputAxis.Vertical, StrafeLeftRight = InputAxis.Horizontal, LookUpDown = InputAxis.MouseY, LookLeftRight = InputAxis.MouseX, RotateLeftRight = InputAxis.HorizontalSecondary;
+        public InputAxis WalkForwardBackward = InputAxis.Vertical;
+        public InputAxis StrafeLeftRight = InputAxis.Horizontal;
+        public InputAxis LookUpDown = InputAxis.MouseY;
+        public InputAxis LookLeftRight = InputAxis.MouseX;
+        public InputAxis RotateLeftRight = InputAxis.HorizontalSecondary;
     }
     [System.Serializable]
     public class InputMultipliers
     {
-        public float WalkForwardBackward = 1f, StrafeLeftRight = 1f, RotateLeftRight = 1f;
-        public float LookUpDown = 1f, LookLeftRight = 0.1f;
+        public float WalkForwardBackward = 1f;
+        public float StrafeLeftRight = 1f;
+
+        public float RotateLeftRight = 1f;
+        public float RotateLeftRightDecellerateThreshold = Mathf.Epsilon;
+        public ForceMode RotateLeftRightMode = ForceMode.Acceleration;
+        public float RotateLeftRightStabilizationRate = 1f;
+
+        public float LookUpDown = 1f;
+        public float LookLeftRight = 0.1f;
+        public Vector3Interval LookConstraints;
+
         public Vector3 Jump = Vector3.up;
         public ForceMode JumpMode = ForceMode.VelocityChange;
-        public Vector3Interval LookConstraints; 
-        public float InputStabilizationRate = 0.8f;
+        
+        public Vector3 Gravity = new Vector3(0, -9.81f, 0);
+        public ForceMode GravityMode = ForceMode.Acceleration;
     }
 
 
     public ISwordInput Input;
     public Transform CameraToUse;
+    public Collider FeetCollider;
 
     private new Rigidbody rigidbody;
 
@@ -33,10 +56,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 WalkForwardBackwardBase => transform.forward;
     private Vector3 StrafeLeftRightBase => transform.right;
-    private Vector3 RotateLeftRightBase => transform.up;
-
-    private Vector3 LookUpDownBase => default;
-    private Vector3 LookLeftRightBase => default;
+    private Vector3 RotateLeftRightBase => Vector3.up;
 
     void Start()
     {
@@ -44,23 +64,36 @@ public class PlayerMovement : MonoBehaviour
         rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationY;
     }
 
-
+    private void Update()
+    {
+        DoHandleInputs(Time.deltaTime);
+    }
     void FixedUpdate()
     {
         DoMoveStep(Time.fixedDeltaTime);
     }
 
+    void DoHandleInputs(float delta)
+    {
+        HandleWalkingInputs(delta);
+        HandleRotatingInputs(delta);
+        HandleLookingInputs(delta);
+        HandleJumpingInputs(delta);
+    }
     void DoMoveStep(float delta)
     {
         HandleWalking(delta);
         HandleRotating(delta);
         HandleLooking(delta);
         HandleJumping(delta);
+        HandleGravity(delta);
     }
 
 
 
 
+
+    void HandleWalkingInputs(float delta) { }
     void HandleWalking(float delta)
     {
         var walkForward = Input.GetAxis(Mapping.WalkForwardBackward) * Tweaks.WalkForwardBackward;
@@ -74,15 +107,35 @@ public class PlayerMovement : MonoBehaviour
         //rigidbody.AddRelativeForce(strafeLeftRight*delta);
     }
 
+
+
+
+
+    float rotationInProgress = 0f;
+    void HandleRotatingInputs(float delta) {
+        rotationInProgress = Input.GetAxisRaw(Mapping.RotateLeftRight);
+    }
     void HandleRotating(float delta)
     {
-        var axisValue = Input.GetAxis(Mapping.RotateLeftRight);
-        var rotateLeftRight = axisValue * Tweaks.RotateLeftRight * RotateLeftRightBase;
+        rigidbody.MoveRotation(rigidbody.rotation.WithEuler(x: 0f, z: 0f)); //?! (because the axis locking doesn't actaully work 100%) Ex-TODO: figure out if and why this is necessary! (especially since those rotation axes are already locked)
 
-        rigidbody.MoveRotation(rigidbody.rotation.WithEuler(x: 0f, z: 0f)); //?! TODO: figure out if and why this is necessary! (especially since those rotation axes are already locked)
-        rigidbody.angularVelocity = axisValue==0 /*solid 0 only when the input is non-active*/ ? rigidbody.angularVelocity * Tweaks.InputStabilizationRate : rotateLeftRight; //again, velocity should not be multiplied by delta!
+        if (rotationInProgress.IsNegligible())
+        {
+            var rotateCompensate = -rigidbody.angularVelocity * Tweaks.RotateLeftRightStabilizationRate;
+            rigidbody.AddTorque(rotateCompensate, Tweaks.RotateLeftRightMode);
+            //Debug.Log($"C_ applied{rotateCompensate} -> velocity{rigidbody.angularVelocity} {{{rotationInProgress}}}");
+        }
+        else
+        {
+            var rotateLeftRight = rotationInProgress * delta * Tweaks.RotateLeftRight * RotateLeftRightBase;
+            rigidbody.AddRelativeTorque(rotateLeftRight, Tweaks.RotateLeftRightMode);
+            Debug.Log($"   applied{rotateLeftRight} -> velocity{rigidbody.angularVelocity} {{{rotationInProgress}}}");
+        }
     }
 
+    
+
+    void HandleLookingInputs(float delta) { }
     void HandleLooking(float delta)
     {
         float lookLeftRight = Input.GetAxis(Mapping.LookLeftRight) * Tweaks.LookLeftRight * delta; //here delta makes sense since we are manually moving the camera rotation by some ammount
@@ -92,24 +145,29 @@ public class PlayerMovement : MonoBehaviour
         var currentCameraRotation = CameraToUse.localRotation.eulerAngles;
         var xRotation = currentCameraRotation.x - lookUpDown;   //for some reason needs to use substraction to not be inverted
         var yRotation = currentCameraRotation.y + lookLeftRight; //no need to clamp this to the reasonable <0;180°> interval - that is taken care of just by forcing the z rotation to 0° (if the player managed to force y outside of this range, that changes z to upside-down a.k.a 180° - reseting that back to 0° by lucky coincidence resets the camera exactly to the reasonable position that one would want in such scenario)
-        var rotationToSet = new Vector3(xRotation, yRotation, 0f).ClampEuler(Tweaks.LookConstraints);
+        var rotationToSet = new Vector3(xRotation, yRotation, 0f).ClampEuler(Tweaks.LookConstraints);   
         if (CameraToUse != null)
             CameraToUse.localRotation = Quaternion.Euler(rotationToSet);
     }
 
-    void HandleJumping(float delta)
+
+
+
+    bool shouldJump = false;
+    void HandleJumpingInputs(float delta) 
     {
         if (Input.GetKeyDown(Mapping.Jump))
+            shouldJump = true;
+    }
+    void HandleJumping(float delta)
+    {
+        if (post_assign(ref shouldJump, false))
             rigidbody.AddRelativeForce(Tweaks.Jump, Tweaks.JumpMode);
     }
 
-
-
-    //transform from local coords to global while preserving the magnitude
-    private Vector3 LocalToGlobal(Vector3 local)
+    void HandleGravity(float delta)
     {
-        var magnitude = local.magnitude;
-        return transform.LocalToGlobal(local).normalized * magnitude;
+        rigidbody.AddRelativeForce(Tweaks.Gravity, Tweaks.GravityMode);
     }
 }
 
