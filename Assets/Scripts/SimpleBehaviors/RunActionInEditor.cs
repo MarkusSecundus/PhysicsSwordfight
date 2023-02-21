@@ -6,30 +6,32 @@ using UnityEngine.Events;
 [ExecuteInEditMode]
 public class RunActionInEditor : MonoBehaviour
 {
-    public enum ShouldRun
-    {
-        No=default, Yes=454313
-    }
 
     public UnityEvent ToRun;
 
-    public ShouldRun RunButton = ShouldRun.No;
+    public bool RunButton = false;
+
+    private void Start() => RunButton = false;
+    private void OnEnable() => RunButton = false;
+    private void OnBecameVisible() => RunButton = false;
+    private void OnApplicationFocus(bool focus) => RunButton = false;
 
     private void Update()
     {
         
         try
         {
-            if (RunButton==ShouldRun.Yes)
+            if (RunButton==true)
             {
-                Debug.Log($"Running an action: '{name}', value: '{RunButton}'");
-                RunButton = ShouldRun.No;
+                var buttonValue = RunButton;
+                RunButton = false;
+                Debug.Log($"Running an action: '{name}', value: '{buttonValue}'");
                 ToRun?.Invoke();
             }
         }
         finally
         {
-            RunButton = ShouldRun.No;
+            RunButton = false;
         }
     }
 }
