@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using UnityEditorInternal;
 using UnityEngine;
 using static Op;
 
@@ -29,7 +31,6 @@ public class PlayerMovement : MonoBehaviour
 
         public float RotateLeftRight = 1f;
         public float RotateLeftRightDecellerateThreshold = Mathf.Epsilon;
-        public ForceMode RotateLeftRightMode = ForceMode.Acceleration;
         public float RotateLeftRightStabilizationRate = 1f;
 
         public float LookUpDown = 1f;
@@ -56,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 WalkForwardBackwardBase => transform.forward;
     private Vector3 StrafeLeftRightBase => transform.right;
-    private Vector3 RotateLeftRightBase => Vector3.up;
+    private Vector3 RotateLeftRightBase => transform.up;
 
     void Start()
     {
@@ -101,10 +102,7 @@ public class PlayerMovement : MonoBehaviour
 
         var toMove = (walkForward*WalkForwardBackwardBase + strafeLeftRight*StrafeLeftRightBase); //*delta !!velocity should not be multiplied by delta (opposed to applied force)!
 
-        rigidbody.velocity = toMove.With(y: toMove.y + rigidbody.velocity.y);
-
-        //rigidbody.AddRelativeForce(walkForward*delta);
-        //rigidbody.AddRelativeForce(strafeLeftRight*delta);
+        rigidbody.MoveToVelocity(toMove.With(y: toMove.y + rigidbody.velocity.y));
     }
 
 
@@ -119,18 +117,9 @@ public class PlayerMovement : MonoBehaviour
     {
         rigidbody.MoveRotation(rigidbody.rotation.WithEuler(x: 0f, z: 0f)); //?! (because the axis locking doesn't actaully work 100%) Ex-TODO: figure out if and why this is necessary! (especially since those rotation axes are already locked)
 
-        if (rotationInProgress.IsNegligible())
-        {
-            var rotateCompensate = -rigidbody.angularVelocity * Tweaks.RotateLeftRightStabilizationRate;
-            rigidbody.AddTorque(rotateCompensate, Tweaks.RotateLeftRightMode);
-            //Debug.Log($"C_ applied{rotateCompensate} -> velocity{rigidbody.angularVelocity} {{{rotationInProgress}}}");
-        }
-        else
-        {
-            var rotateLeftRight = rotationInProgress * delta * Tweaks.RotateLeftRight * RotateLeftRightBase;
-            rigidbody.AddRelativeTorque(rotateLeftRight, Tweaks.RotateLeftRightMode);
-            Debug.Log($"   applied{rotateLeftRight} -> velocity{rigidbody.angularVelocity} {{{rotationInProgress}}}");
-        }
+        var rotateLeftRight = rotationInProgress * delta * Tweaks.RotateLeftRight * RotateLeftRightBase;
+        rigidbody.MoveToAngularVelocity(rotateLeftRight);
+        //Debug.Log($"   applied{rotateLeftRight.Repr()} -> velocity{rigidbody.angularVelocity.Repr()} {{{rotationInProgress}}} base{RotateLeftRightBase}");
     }
 
     
@@ -168,6 +157,15 @@ public class PlayerMovement : MonoBehaviour
     void HandleGravity(float delta)
     {
         rigidbody.AddRelativeForce(Tweaks.Gravity, Tweaks.GravityMode);
+    }
+}
+
+internal static class ExtensionsThatWillHopefullyBeSoonDeleted
+{
+    public static string Repr(this Vector3 v)
+    {
+        if (v.x == 0f && v.y == 0f && v.z == 0f) return "<ZERO>";
+        return $"({v.x};{v.y};{v.z})";
     }
 }
 
