@@ -10,7 +10,7 @@ public class WeaponDebugger : MonoBehaviour
     public void AdjustPosition(ConfigurableJoint weaponToDebug)
     {
         var anchorShift = weaponToDebug.anchor;//weaponToDebug.transform.parent.TransformPoint(weaponToDebug.transform.InverseTransformPoint(weaponToDebug.anchor));
-        Debug.Log($"orig: {weaponToDebug.anchor} | trans: {anchorShift}");
+        //Debug.Log($"orig: {weaponToDebug.anchor} | trans: {anchorShift}");
         transform.position = weaponToDebug.transform.position - anchorShift;
         actualDebugger.localPosition = Vector3.zero;// anchorShift;
     }

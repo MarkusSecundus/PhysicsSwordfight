@@ -72,6 +72,12 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         DoMoveStep(Time.fixedDeltaTime);
+        ///*Debug.Log($"intertia{rigidbody.inertiaTensor}-euler{rigidbody.inertiaTensorRotation}, depenetr{rigidbody.maxDepenetrationVelocity}");*/
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        //Debug.Log($"{collision.gameObject}...impulse: {collision.impulse}, r.velocity{collision.relativeVelocity}");
     }
 
     void DoHandleInputs(float delta)
@@ -91,7 +97,14 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-
+    private void OnCollisionEnter(Collision collision)
+    {
+        //Debug.Log($"Entering collision: {collision.collider}"); 
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        //Debug.Log($"Exiting  collision: {collision.collider}");
+    }
 
 
     void HandleWalkingInputs(float delta) { }
@@ -109,24 +122,25 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-    float rotationInProgress = 0f;
-    void HandleRotatingInputs(float delta) {
-        rotationInProgress = Input.GetAxisRaw(Mapping.RotateLeftRight);
-    }
+    void HandleRotatingInputs(float delta) { }
     void HandleRotating(float delta)
     {
+        float toRotate = Input.GetAxis(Mapping.RotateLeftRight);
+
         rigidbody.MoveRotation(rigidbody.rotation.WithEuler(x: 0f, z: 0f)); //?! (because the axis locking doesn't actaully work 100%) Ex-TODO: figure out if and why this is necessary! (especially since those rotation axes are already locked)
 
-        var rotateLeftRight = rotationInProgress * delta * Tweaks.RotateLeftRight * RotateLeftRightBase;
+        var rotateLeftRight = toRotate *delta  * Tweaks.RotateLeftRight * RotateLeftRightBase;
         rigidbody.MoveToAngularVelocity(rotateLeftRight);
-        //Debug.Log($"   applied{rotateLeftRight.Repr()} -> velocity{rigidbody.angularVelocity.Repr()} {{{rotationInProgress}}} base{RotateLeftRightBase}");
+        //Debug.Log($"   applied{rotateLeftRight.ToStringPrecise()} -> velocity{rigidbody.angularVelocity.ToStringPrecise()} {{{toRotate}}} base{RotateLeftRightBase}");
     }
 
-    
+
 
     void HandleLookingInputs(float delta) { }
     void HandleLooking(float delta)
     {
+        if (CameraToUse == null) return;
+
         float lookLeftRight = Input.GetAxis(Mapping.LookLeftRight) * Tweaks.LookLeftRight * delta; //here delta makes sense since we are manually moving the camera rotation by some ammount
         float lookUpDown = Input.GetAxis(Mapping.LookUpDown) * Tweaks.LookUpDown * delta;
 
@@ -157,15 +171,6 @@ public class PlayerMovement : MonoBehaviour
     void HandleGravity(float delta)
     {
         rigidbody.AddRelativeForce(Tweaks.Gravity, Tweaks.GravityMode);
-    }
-}
-
-internal static class ExtensionsThatWillHopefullyBeSoonDeleted
-{
-    public static string Repr(this Vector3 v)
-    {
-        if (v.x == 0f && v.y == 0f && v.z == 0f) return "<ZERO>";
-        return $"({v.x};{v.y};{v.z})";
     }
 }
 

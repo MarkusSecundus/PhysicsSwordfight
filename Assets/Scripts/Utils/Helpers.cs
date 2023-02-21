@@ -221,6 +221,13 @@ public static class HelperExtensions
         modify(self);
         return self;
     }
+    
+    public static string ToStringPrecise(this Vector3 v)
+    {
+        if (v.x == 0f && v.y == 0f && v.z == 0f) return "<ZERO>";
+        return $"({v.x};{v.y};{v.z})";
+    }
+
     public static Vector3 With(this Vector3 self, Vector3Field x = default, Vector3Field y = default, Vector3Field z = default)
     {
         float FieldValue(Vector3Field field, float original) => field.Field switch
