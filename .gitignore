@@ -51,8 +51,12 @@ ExportedObj/
 # Blender backup files
 *.blend1
 
-#MuseScore backup files
+#MuseScore backup files and artifacts
 **/.mscbackup/
+**/ArtWorkplace/MuseScore/**/*.ogg
+**/ArtWorkplace/MuseScore/**/*.mp3
+**/ArtWorkplace/MuseScore/**/*.wav
+**/ArtWorkplace/MuseScore/**/*.flac
 
 # Unity3D generated file on crash reports
 sysinfo.txt
