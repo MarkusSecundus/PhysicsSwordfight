@@ -51,6 +51,9 @@ ExportedObj/
 # Blender backup files
 *.blend1
 
+#MuseScore backup files
+**/.mscbackup/
+
 # Unity3D generated file on crash reports
 sysinfo.txt
 
