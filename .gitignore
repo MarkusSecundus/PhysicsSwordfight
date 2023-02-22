@@ -53,6 +53,7 @@ ExportedObj/
 
 #MuseScore backup files and artifacts
 **/.mscbackup/
+*.mscz.autosave
 **/ArtWorkplace/MuseScore/**/*.ogg
 **/ArtWorkplace/MuseScore/**/*.mp3
 **/ArtWorkplace/MuseScore/**/*.wav
