@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using UnityEditorInternal;
 using UnityEngine;
 using static Op;
 
@@ -28,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     {
         public float WalkForwardBackward = 1f;
         public float StrafeLeftRight = 1f;
+        public float WalkMidairMultiplier = 0.5f;
 
         public float RotateLeftRight = 1f;
         public float RotateLeftRightDecellerateThreshold = Mathf.Epsilon;
@@ -38,16 +37,21 @@ public class PlayerMovement : MonoBehaviour
         public Vector3Interval LookConstraints;
 
         public Vector3 Jump = Vector3.up;
-        public ForceMode JumpMode = ForceMode.VelocityChange;
         
         public Vector3 Gravity = new Vector3(0, -9.81f, 0);
-        public ForceMode GravityMode = ForceMode.Acceleration;
+        public Vector3 GravityWhenGrounded = new Vector3(0, -9.81f, 0);
+    }
+
+    private static class Constants
+    {
+        public const ForceMode GravityMode = ForceMode.Acceleration;
+        public const ForceMode JumpMode = ForceMode.VelocityChange;
     }
 
 
     public ISwordInput Input;
     public Transform CameraToUse;
-    public Collider FeetCollider;
+    public TriggerActivityInfo Feet;
 
     private new Rigidbody rigidbody;
 
@@ -79,6 +83,14 @@ public class PlayerMovement : MonoBehaviour
     {
         //Debug.Log($"{collision.gameObject}...impulse: {collision.impulse}, r.velocity{collision.relativeVelocity}");
     }
+
+
+
+    bool IsGrounded => Feet.IsTriggered();
+    
+
+
+
 
     void DoHandleInputs(float delta)
     {
@@ -164,13 +176,17 @@ public class PlayerMovement : MonoBehaviour
     }
     void HandleJumping(float delta)
     {
-        if (post_assign(ref shouldJump, false))
-            rigidbody.AddRelativeForce(Tweaks.Jump, Tweaks.JumpMode);
+        if (post_assign(ref shouldJump, false) && IsGrounded)
+            rigidbody.AddRelativeForce(Tweaks.Jump, Constants.JumpMode);
     }
 
     void HandleGravity(float delta)
     {
-        rigidbody.AddRelativeForce(Tweaks.Gravity, Tweaks.GravityMode);
+        rigidbody.AddRelativeForce(
+          IsGrounded
+            ? Tweaks.GravityWhenGrounded
+            : Tweaks.Gravity
+        , Constants.GravityMode);
     }
 }
 

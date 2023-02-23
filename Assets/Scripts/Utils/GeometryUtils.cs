@@ -480,12 +480,7 @@ public static class PhysicsUtils
 	{
 		var toApply = velocity - self.angularVelocity;
 		self.AddTorque(toApply, ForceMode.VelocityChange);
-		Debug.Log($"applied torque {toApply}, target: {velocity} -> velocity{self.angularVelocity}");
-	}
-    public static void MoveToAngularVelocity(this Rigidbody self, float? x=default, float? y = default, float? z = default)
-	{
-		var toApply = (Vector3.zero.With(x,y,z) - self.angularVelocity).With(x==null?0f:V.Null, y==null?0f: V.Null, z==null?0f: V.Null);
-		self.AddTorque(toApply, ForceMode.VelocityChange);
+		//Debug.Log($"applied torque {toApply}, target: {velocity} -> velocity{self.angularVelocity}");
 	}
 }
 
