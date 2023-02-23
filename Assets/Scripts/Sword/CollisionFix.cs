@@ -37,13 +37,14 @@ public class CollisionFix : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         LastSnapshot = MakeSnapshot(collision);
-        Debug.Log($"(fr.{Time.frameCount}) Entering collision: {gameObject.name} -- {collision.gameObject.name} [{collision.contactCount} contacts]");
+        //Debug.Log($"(fr.{Time.frameCount}) Entering collision: {gameObject.name} -- {collision.gameObject.name} [{collision.contactCount} contacts]");
+        Debug.Log($"Collision force: {collision.relativeVelocity.magnitude}, impulse: {collision.impulse.magnitude}");
     }
 
     private void OnCollisionStay(Collision collision)
     {
         var current = MakeSnapshot(collision);
-        Debug.Log($"Collision.. dot product: {Vector3.Dot(LastSnapshot.CollisionNormal, (LastSnapshot.CollisionPoint - current.CollisionPoint).normalized)}");
+        //Debug.Log($"Collision.. dot product: {Vector3.Dot(LastSnapshot.CollisionNormal, (LastSnapshot.CollisionPoint - current.CollisionPoint).normalized)}");
         /*foreach(var p in collision.IterateContacts())
         {
             DrawHelpers.DrawWireSphere(p.point, 0.05f, (x,y)=>Debug.DrawLine(x,y,Color.yellow));
@@ -54,7 +55,7 @@ public class CollisionFix : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        Debug.Log($"(fr.{Time.frameCount}) Exiting collision: {gameObject.name} -- {collision.gameObject.name} [{collision.contactCount} contacts]");
+        //Debug.Log($"(fr.{Time.frameCount}) Exiting collision: {gameObject.name} -- {collision.gameObject.name} [{collision.contactCount} contacts]");
         
     }
 
