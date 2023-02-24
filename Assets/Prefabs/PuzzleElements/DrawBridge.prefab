@@ -126,7 +126,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 1.0000079, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.49945578, y: 0.47745284, z: -0.49443612}
+  m_ConnectedAnchor: {x: 0.49945578, y: 0.47745287, z: -0.49443612}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 1, z: 0}
   m_TwistLimitSpring:
@@ -413,7 +413,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5174851070453105136}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: fb1c4bcfff4dd264a9e21e753353146b, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -466,6 +466,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 492e5ed37e2730144bbda968df04bad7, type: 3}
   soundsOnDestroyed:
   - {fileID: 8300000, guid: fd49744311b2b8a4bbdd4701714ee067, type: 3}
+  ExceptionsFromRule: []
   lastShotTime: 0.20000000298023224
 --- !u!144 &5174851070453105142
 CharacterJoint:
@@ -702,7 +703,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5174851070806624308}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: fb1c4bcfff4dd264a9e21e753353146b, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2

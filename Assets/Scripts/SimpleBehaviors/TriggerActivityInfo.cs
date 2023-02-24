@@ -5,10 +5,16 @@ using UnityEngine;
 
 public class TriggerActivityInfo : MonoBehaviour
 {
-    public bool IsTriggered() => activeTriggers.Count > 0;
+    public int ActiveTriggerCollidersCount => activeTriggerCollidersCount;
+    public int ActiveNormalCollidersCount => activeNormalCollidersCount;
     public IReadOnlyCollection<Collider> GetActiveTriggers() => activeTriggers.Keys;
 
+
+
+
     private Dictionary<Collider, int> activeTriggers = new Dictionary<Collider, int>();
+
+    private int activeTriggerCollidersCount = 0, activeNormalCollidersCount = 0;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -16,6 +22,7 @@ public class TriggerActivityInfo : MonoBehaviour
         else
         {
             activeTriggers[other] = 1;
+            ++(other.isTrigger ? ref activeTriggerCollidersCount : ref activeNormalCollidersCount);
             Debug.Log($"BEGIN[{this.name} - {other.gameObject.name}]");
         }
     }
@@ -27,6 +34,7 @@ public class TriggerActivityInfo : MonoBehaviour
         if (--count < 1)
         {
             activeTriggers.Remove(other);
+            --(other.isTrigger ? ref activeTriggerCollidersCount : ref activeNormalCollidersCount);
             Debug.Log($"  end[{this.name} - {other.gameObject.name}]");
         }
         else

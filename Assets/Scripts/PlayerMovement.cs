@@ -86,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-    bool IsGrounded => Feet.IsTriggered();
+    bool IsGrounded => Feet.ActiveNormalCollidersCount > 0;
     
 
 
