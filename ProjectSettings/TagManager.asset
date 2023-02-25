@@ -18,9 +18,9 @@ TagManager:
   - ActiveRagdollParts
   - 
   - NoCollisions
-  - 
-  - 
-  - 
+  - Swords
+  - PlayerDetailedBody
+  - PlayerSimpleBody
   - 
   - 
   - 

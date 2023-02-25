@@ -20,4 +20,11 @@ public abstract class IScriptSubmodule<TScript> where TScript: MonoBehaviour
     public virtual void OnDeactivated() { }
 
     public virtual void OnDrawGizmos() { }
+    /*
+    public virtual void OnCollisionEnter(Collision col) { }
+    public virtual void OnCollisionStay(Collision col) { }
+    public virtual void OnCollisionExit(Collision col) { }
+    public virtual void OnTriggerEnter(Collider other) { }
+    public virtual void OnTriggerStay(Collider other) { }
+    public virtual void OnTriggerExit(Collider other) { }*/
 }

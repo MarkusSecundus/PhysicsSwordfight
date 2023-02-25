@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5692771887061091392}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SwordEdgeBlockPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 5692771887357732071}
   - component: {fileID: 5692771887357732066}
   - component: {fileID: 5692771887357732065}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5692771887622551250}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SwordHandle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -151,7 +151,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5692771887655113097}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SwordTip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -181,7 +181,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5692771887854840067}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: BlockPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -219,7 +219,7 @@ GameObject:
   - component: {fileID: 5692771888074364095}
   - component: {fileID: 5692771888074364088}
   - component: {fileID: 355317055}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -274,7 +274,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.038455963, y: 0.1500001, z: 1.506109}
+  m_ConnectedAnchor: {x: 17.408, y: 3.766, z: -0.83389}
   serializedVersion: 2
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -612,6 +612,10 @@ PrefabInstance:
       value: PlaceholderSword
       objectReference: {fileID: 0}
     - target: {fileID: 7010590274503931669, guid: bbf19b5a5ff9d124887d59f73574d95a, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 7010590274503931669, guid: bbf19b5a5ff9d124887d59f73574d95a, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -633,9 +637,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerSword
       objectReference: {fileID: 0}
+    - target: {fileID: 1388242244446646439, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 2421287886425072370, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2444452555269094263, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4326030747136633590, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
       propertyPath: m_Size.x
