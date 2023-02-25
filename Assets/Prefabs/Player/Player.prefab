@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3054810447143846431}
   - component: {fileID: 3054810447143846430}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordDebugging
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,10 +54,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3054810447373561256}
-  - component: {fileID: 3054810447373561257}
   - component: {fileID: 3054810447373561258}
-  m_Layer: 0
-  m_Name: Feet
+  m_Layer: 13
+  m_Name: FeetTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,25 +69,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3054810447373561263}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.997, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 3054810448071537794}
-  m_RootOrder: 3
+  m_Father: {fileID: 5660474562990328951}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3054810447373561257
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3054810447373561263}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25cec62fdb710d545a7780e9541cc789, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &3054810447373561258
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -113,7 +100,7 @@ GameObject:
   - component: {fileID: 3054810447411053664}
   - component: {fileID: 3054810447411053666}
   - component: {fileID: 3054810447411053665}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DebugPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,64 +170,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &3054810447707817758
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3054810447707817759}
-  - component: {fileID: 3054810447707817752}
-  - component: {fileID: 3054810447707817753}
-  m_Layer: 0
-  m_Name: FeetTriggerCollider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3054810447707817759
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3054810447707817758}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.073, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 3054810448071537794}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3054810447707817752
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3054810447707817758}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 0.1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3054810447707817753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3054810447707817758}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5cac3fb44170d548b8170f97e0a6dc8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ToDisable: []
 --- !u!1 &3054810447980001119
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,7 +179,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3054810447980001112}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SwordBlockingDirectionHints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -286,7 +215,7 @@ GameObject:
   - component: {fileID: 3054810447987869857}
   - component: {fileID: 3054810447987869856}
   - component: {fileID: 3054810447987869863}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -397,7 +326,7 @@ GameObject:
   - component: {fileID: 3054810448020464005}
   - component: {fileID: 3054810448020464004}
   - component: {fileID: 3054810448020464027}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -494,7 +423,7 @@ GameObject:
   - component: {fileID: 3054810448071537798}
   - component: {fileID: 3054810448071537797}
   - component: {fileID: 3054810448071537796}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: PlayerModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -515,12 +444,11 @@ Transform:
   - {fileID: 3054810448144780398}
   - {fileID: 3054810448098143754}
   - {fileID: 3054810448020464026}
-  - {fileID: 3054810447373561256}
+  - {fileID: 5660474562990328951}
   - {fileID: 3054810447143846431}
   - {fileID: 3054810447411053664}
   - {fileID: 3054810447987869862}
   - {fileID: 3054810447980001112}
-  - {fileID: 3054810447707817759}
   m_Father: {fileID: 3054810448625913529}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -538,7 +466,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Input: {fileID: 3054810448071537797}
   CameraToUse: {fileID: 3054810448098143754}
-  Feet: {fileID: 3054810447373561257}
+  Feet: {fileID: 3123015496551986211}
   Mapping:
     Jump: 32
     WalkForwardBackward: 2
@@ -670,7 +598,7 @@ GameObject:
   - component: {fileID: 3054810448098143754}
   - component: {fileID: 3054810448098143752}
   - component: {fileID: 3054810448098143753}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -754,7 +682,7 @@ GameObject:
   - component: {fileID: 3054810448144780393}
   - component: {fileID: 3054810448144780392}
   - component: {fileID: 3054810448144780399}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -847,7 +775,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3054810448189425957}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Hint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -877,7 +805,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3054810448213870684}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Hint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -909,7 +837,7 @@ GameObject:
   - component: {fileID: 3054810448490597895}
   - component: {fileID: 3054810448490597889}
   - component: {fileID: 3054810448490597888}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: LongSwordMesh (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1027,6 +955,50 @@ MonoBehaviour:
   Player: {fileID: 3054810448071537793}
   Sword: {fileID: 4884797979620796685}
   IsMainPlayer: 1
+--- !u!1 &4472917042433036163
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5660474562990328951}
+  - component: {fileID: 3123015496551986211}
+  m_Layer: 13
+  m_Name: Feet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5660474562990328951
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4472917042433036163}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.997, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3054810447373561256}
+  m_Father: {fileID: 3054810448071537794}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3123015496551986211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4472917042433036163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25cec62fdb710d545a7780e9541cc789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &921690083278945679
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1082,6 +1054,18 @@ PrefabInstance:
       propertyPath: m_ConnectedBody
       value: 
       objectReference: {fileID: 3054810448071537819}
+    - target: {fileID: 5692771888074364033, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: -0.038455963
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364033, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 0.1500001
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364033, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 1.506109
+      objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: Input
       value: 
