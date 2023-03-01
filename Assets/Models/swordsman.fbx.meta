@@ -35,7 +35,7 @@ ModelImporter:
     second: Armature|TPose.002
   - first:
       74: 2627435525218807875
-    second: Armature|IdleV2.L
+    second: Idle
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -65,7 +65,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Armature|IdleV2.L
+      name: Idle
       takeName: Armature|IdleV2.L
       internalID: 0
       firstFrame: 0
