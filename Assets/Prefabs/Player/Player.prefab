@@ -339,7 +339,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   computeOffset: 1
   Space: 0
-  toMimic: {fileID: 4884797979032357725}
+  toMimic: {fileID: 0}
 --- !u!1 &3054810448071537818
 GameObject:
   m_ObjectHideFlags: 0
@@ -544,7 +544,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3054810448098143759}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.488, z: 0.437}
+  m_LocalPosition: {x: 0, y: 0.5310001, z: 0.437}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3054810448071537794}
@@ -1034,7 +1034,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364032, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.766
+      value: 3.809
       objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364032, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1078,7 +1078,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364033, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_ConnectedAnchor.y
-      value: 0.1500001
+      value: 0.19300008
       objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364033, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_ConnectedAnchor.z
@@ -1104,7 +1104,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weapon
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7146665888130828464, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
 --- !u!4 &4884797979620796687 stripped
 Transform:
@@ -1116,14 +1117,64 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
   m_PrefabInstance: {fileID: 921690083278945679}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 4884797979620796681}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &4884797979032357725 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5692771887622551250, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+--- !u!1 &3564825252292563632 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4445701068808711999, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
   m_PrefabInstance: {fileID: 921690083278945679}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5367965922582403963 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5094794589441255156, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+  m_PrefabInstance: {fileID: 921690083278945679}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3564825252292563632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 059989545d7a5604fa921092316edae0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &4884797979620796681 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5692771888074364038, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+  m_PrefabInstance: {fileID: 921690083278945679}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7614613266935546068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3564825252292563632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 059989545d7a5604fa921092316edae0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  centerOfWeight: {fileID: 0}
+  tipPoint: {fileID: 0}
+  upHandTarget: {fileID: 0}
+  downHandTarget: {fileID: 0}
+--- !u!114 &3957976327220328359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4884797979620796681}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 059989545d7a5604fa921092316edae0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 5367965922582403963}
+  centerOfWeight: {fileID: 0}
+  tipPoint: {fileID: 0}
+  upHandTarget: {fileID: 0}
+  downHandTarget: {fileID: 0}

@@ -9,7 +9,11 @@ using System.Linq;
 [System.Serializable]
 public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 {
-    public Transform SwordHandle, SwordTip, SwordEdgeBlockPoint, SwordDirectionHint;
+    public Transform SwordDirectionHint;
+
+    private Transform SwordHandle => Script.descriptor.SwordCenterOfMass;
+    private Transform SwordTip => Script.descriptor.SwordTip;
+    private Transform SwordEdgeBlockPoint => Script.descriptor.SwordBlockPoint;
 
     public float SwordLength;
     public bool RegisterOnlyInputOnSphere = true;

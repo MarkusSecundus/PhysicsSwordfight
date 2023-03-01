@@ -13,10 +13,12 @@ using Submodule = IScriptSubmodule<SwordMovement>;
 
 public class SwordMovement : MonoBehaviour
 {
+    public SwordDescriptor descriptor;
+
     public ConfigurableJoint joint;
     private JointRotationHelper jointRotationHelper;
 
-    public Transform swordTip, swordAnchor;
+    private Transform swordAnchor => descriptor.SwordCenterOfMass;
 
     public WeaponDebugger debugger;
     public Transform debuggerPoint;

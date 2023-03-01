@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public static class RotationUtil
@@ -110,6 +111,10 @@ public enum TransformationPolicy
 
 public static class HelperExtensions
 {
+    public static T IfNil<T>(this T self, T defaultValue) where T : Object => self.IsNil() ? defaultValue : self;
+    public static bool IsNotNil(this Object self) => !self.IsNil();
+    public static bool IsNil(this Object self) => self == null || self.Equals(null);
+
     public static IEnumerable<ContactPoint> IterateContacts(this Collision self)
     {
         for (int t = 0; t < self.contactCount; ++t) yield return self.GetContact(t);
