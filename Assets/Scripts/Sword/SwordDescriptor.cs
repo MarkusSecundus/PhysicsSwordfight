@@ -9,11 +9,11 @@ public class SwordDescriptor : MonoBehaviour
         Debug.Log($"Descriptor {gameObject.name}.. target({target}), CoM({centerOfWeight})");
     }
 
-    public Transform SwordCenterOfMass => centerOfWeight.IfNil(target?.SwordCenterOfMass);
-    public Transform SwordTip => tipPoint.IfNil(target?.SwordTip);
-    public Transform SwordHandleUpHandTarget => upHandTarget.IfNil(target?.SwordHandleUpHandTarget);
-    public Transform SwordHandleDownHandTarget => downHandTarget.IfNil(target?.SwordHandleDownHandTarget);
-    public Transform SwordBlockPoint => blockPoint.IfNil(target?.blockPoint);
+    public Transform SwordCenterOfMass => centerOfWeight = centerOfWeight.IfNil(target?.SwordCenterOfMass);
+    public Transform SwordTip => tipPoint = tipPoint.IfNil(target?.SwordTip);
+    public Transform SwordHandleUpHandTarget => upHandTarget = upHandTarget.IfNil(target?.SwordHandleUpHandTarget);
+    public Transform SwordHandleDownHandTarget => downHandTarget = downHandTarget.IfNil(target?.SwordHandleDownHandTarget);
+    public Transform SwordBlockPoint => blockPoint = blockPoint.IfNil(target?.blockPoint);
 
     [SerializeField] private SwordDescriptor target = null;
     [SerializeField] private Transform centerOfWeight=null, tipPoint = null, blockPoint = null, upHandTarget = null, downHandTarget = null;

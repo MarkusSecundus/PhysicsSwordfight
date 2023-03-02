@@ -1,41 +1,35 @@
 fileFormatVersion: 2
-guid: 92b3166382bcdd241a5e07777bece040
+guid: edf08bc9d940ee64194b51524f45ef3e
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
   - first:
       74: -8945691123924629249
-    second: Idle
+    second: Idle-old
   - first:
-      74: 4106399916549189888
-    second: Armature|Idle.001
+      74: 2627435525218807875
+    second: Armature|IdleV2.L
   - first:
-      74: 5356489323871576133
-    second: Armature|Idle.002
+      74: 5359873183752910009
+    second: Idle_Transition
   - first:
-      74: 452726505412543662
-    second: Armature|Idle
+      74: 2055559352316330613
+    second: Armature|IdleV2.R
   - first:
       74: -5974456830322164556
-    second: Kneel
-  - first:
-      74: -5971211555260236336
-    second: Armature|Kneel.001
-  - first:
-      74: -6924000417218250933
-    second: Armature|Kneel.002
+    second: Armature|Kneel
   - first:
       74: 5152524018116331999
     second: TPose
   - first:
-      74: 3264255196622608844
-    second: Armature|TPose.001
-  - first:
-      74: -2226253611676364669
-    second: Armature|TPose.002
-  - first:
-      74: 2627435525218807875
+      74: 1726943654684929191
     second: Idle
+  - first:
+      74: -2610954038984997024
+    second: IdleV2.R
+  - first:
+      74: -8639922974182340995
+    second: Kneel
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -55,7 +49,7 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
-    importConstraints: 1
+    importConstraints: 0
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -94,6 +88,35 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
+      name: Idle_Transition
+      takeName: Armature|IdleV2.LtoR
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 32
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
       name: Kneel
       takeName: Armature|Kneel
       internalID: 0
@@ -105,7 +128,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 0
@@ -206,7 +229,7 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     globalScale: 1
-    rootMotionBoneName: 
+    rootMotionBoneName: Root
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
