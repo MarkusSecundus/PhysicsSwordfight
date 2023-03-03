@@ -229,6 +229,9 @@ public static class MathUtils
 {
 	public static double Pow2(this double d) => d * d;
 	public static float Pow2(this float d) => d * d;
+
+	public static float MinAbsolute(float a, float b) => (Mathf.Abs(a) <= Mathf.Abs(b)) ? a : b;
+	public static float MaxAbsolute(float a, float b) => (Mathf.Abs(a) >= Mathf.Abs(b)) ? a : b;
 }
 
 public static class GeometryUtils
