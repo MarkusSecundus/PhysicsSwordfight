@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2296976167612933198}
-  - component: {fileID: 3978737838181670148}
-  - component: {fileID: 437670339550017936}
+  - component: {fileID: 4195212485615462911}
+  - component: {fileID: 875551008747555789}
   m_Layer: 0
   m_Name: SpruceTree3
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3978737838181670148
+--- !u!33 &4195212485615462911
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,7 +40,7 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7013882366737610613}
   m_Mesh: {fileID: -2432090755550338912, guid: c74b15b479b341a448cf7898abe08b26, type: 3}
---- !u!23 &437670339550017936
+--- !u!23 &875551008747555789
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
