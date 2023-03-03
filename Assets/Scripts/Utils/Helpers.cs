@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -182,6 +183,36 @@ public static class HelperExtensions
             _ => throw new System.ArgumentException($"Invalid value of argument {nameof(v)}: '{v}'")
         };
 
+
+    public static double ComputeChainLength(this IEnumerable<Transform> self)
+    {
+        double ret = 0f;
+
+        Transform last = null;
+        foreach(var t in self)
+        {
+            if (last != null) 
+                ret += t.position.Distance(last.position);
+            last = t;
+        }
+
+        return ret;
+    }
+
+    public static Vector3 Normalized(this Vector3 v, out float magnitude)
+    {
+        magnitude = v.magnitude;
+        if (magnitude > 1E-05f) //copypasted from decompiled builtin Vector3.Normalize()
+            return v / magnitude;
+        else return Vector3.zero;
+    }
+
+    public static float Magnitude(this Vector3 v, out Vector3 normalized)
+    {
+        normalized = v.Normalized(out var ret);
+        return ret;
+    }
+
     public static bool HasNullElement<T>(this (T? a, T? b) self) where T : unmanaged
         => self.a == null || self.b == null;
     public static bool HasNullElement<T>(this (T a, T b) self) where T : class
@@ -343,7 +374,7 @@ public static class HelperExtensions
     }
     public static float Mod(this float f, float mod) => f.Mod(mod, out _);
 
-    public static Vector3 Clamp(this Vector3 self, Vector3Interval i) 
+    public static Vector3 ClampFields(this Vector3 self, Vector3Interval i) 
         => new Vector3(Mathf.Clamp(self.x, i.Min.x, i.Max.x), Mathf.Clamp(self.y, i.Min.y, i.Max.y), Mathf.Clamp(self.z, i.Min.z, i.Max.z));
 
     
@@ -353,7 +384,7 @@ public static class HelperExtensions
     public static Vector3 ClampEuler(this Vector3 self, Vector3Interval i)
     {
         float Fix(float f) => (f%=360) >= 180f ? f-360 : f;
-        return new Vector3(Fix(self.x), Fix(self.y), Fix(self.z)).Clamp(i);
+        return new Vector3(Fix(self.x), Fix(self.y), Fix(self.z)).ClampFields(i);
 
         //attempt at correct implementation that doesn't work however
         //float Clamp(float f, float min, float max) => ClampModulo(f, min, max, 360);  

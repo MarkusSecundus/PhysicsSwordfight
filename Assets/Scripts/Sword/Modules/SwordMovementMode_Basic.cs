@@ -39,12 +39,13 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
         if (input.First != null)
         {
             var hitPoint = input.First.Value;
-
-            if(false){//debug
+            
+#if true            
+            {//debug
                 var plane = new Sphere(swordHandlePoint, swordLength).GetTangentialPlane(hitPoint);
                 DrawHelpers.DrawPlaneSegment(plane, hitPoint, (v, w) => Debug.DrawLine(v, w, Color.green));
             }
-
+#endif
             var hitDirectionVector = (hitPoint - swordHandlePoint);
 
             Vector3 forward = hitDirectionVector, up = computeUpVector(forward);
@@ -53,7 +54,7 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
 
             var tr = Quaternion.LookRotation(hitDirectionVector, up);
 
-            //Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
+            Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
 
 
             Script.SetSwordRotation(tr);

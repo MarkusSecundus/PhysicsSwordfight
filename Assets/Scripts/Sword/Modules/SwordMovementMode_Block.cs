@@ -11,9 +11,6 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 {
     public Transform SwordDirectionHint;
 
-    private Transform SwordHandle => Script.descriptor.SwordCenterOfMass;
-    private Transform SwordTip => Script.descriptor.SwordTip;
-    private Transform SwordEdgeBlockPoint => Script.descriptor.SwordBlockPoint;
 
     public float SwordLength;
     public bool RegisterOnlyInputOnSphere = true;
@@ -32,16 +29,19 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
         Script.SetAnchorPosition(Script.FixedSwordHandlePoint, HandleSpeed_metersPerSecond);
     }
 
-    public Vector3 swordHandlePoint => Script.FixedSwordHandlePoint;
+    public Vector3 fixedHandlePoint => Script.FixedSwordHandlePoint;
+    private Transform handleBegin => Script.descriptor.SwordAnchor;
+    private Transform bladeTip => Script.descriptor.SwordTip;
+    private Transform bladeEdgeBlockPoint => Script.descriptor.SwordBlockPoint;
     public override void OnFixedUpdate(float delta)
     {
         Cursor.lockState = CursorLockMode.Confined;
-        var inputSphere = new Sphere(swordHandlePoint, SwordLength);
+        var inputSphere = new Sphere(fixedHandlePoint, SwordLength);
         var input = Script.GetUserInput(inputSphere);
 
         if (input.First != null)
         {
-            if (RegisterOnlyInputOnSphere && input.HasNullElement()) input.First = new Sphere(swordHandlePoint, SwordLength).ProjectPoint(input.First.Value);
+            if (RegisterOnlyInputOnSphere && input.HasNullElement()) input.First = new Sphere(fixedHandlePoint, SwordLength).ProjectPoint(input.First.Value);
             SetBlockPosition(input.First.Value);
         }
     }
@@ -49,20 +49,20 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
     private void SetBlockPosition(Vector3 hitPoint)
     {
 
-        Ray localBladeAxis = new Ray(SwordHandle.localPosition, SwordTip.localPosition - SwordHandle.localPosition);
-        var localBlockPointProjection = localBladeAxis.GetRayPointWithLeastDistance(SwordEdgeBlockPoint.localPosition);
+        Ray localBladeAxis = new Ray(handleBegin.localPosition, bladeTip.localPosition - handleBegin.localPosition);
+        var localBlockPointProjection = localBladeAxis.GetRayPointWithLeastDistance(bladeEdgeBlockPoint.localPosition);
         //Debug.Log($"quat: {Quaternion.LookRotation(SwordTip.localPosition - SwordHandle.localPosition, SwordEdgeBlockPoint.localPosition - localBlockPointProjection).eulerAngles}");
 
 
-        Ray bladeAxis = new Ray(SwordHandle.position, SwordTip.position - SwordHandle.position);
-        var blockPointProjection = bladeAxis.GetRayPointWithLeastDistance(SwordEdgeBlockPoint.position);
-        float blockPointDistance = blockPointProjection.Distance(SwordEdgeBlockPoint.position),
-              bladeTipDistance   = blockPointProjection.Distance(SwordTip.position),
-              handleDistance     = blockPointProjection.Distance(SwordHandle.position)
+        Ray bladeAxis = new Ray(handleBegin.position, bladeTip.position - handleBegin.position);
+        var blockPointProjection = bladeAxis.GetRayPointWithLeastDistance(bladeEdgeBlockPoint.position);
+        float blockPointDistance = blockPointProjection.Distance(bladeEdgeBlockPoint.position),
+              bladeTipDistance   = blockPointProjection.Distance(bladeTip.position),
+              handleDistance     = blockPointProjection.Distance(handleBegin.position)
             ;
 
-        Plane tangentialPlane = new Sphere(swordHandlePoint, SwordLength).GetTangentialPlane(hitPoint);
-        Vector3 normal = (hitPoint - swordHandlePoint).normalized; //normal pointing in the direction outwards, away from the centre of the sphere
+        Plane tangentialPlane = new Sphere(fixedHandlePoint, SwordLength).GetTangentialPlane(hitPoint);
+        Vector3 normal = (hitPoint - fixedHandlePoint).normalized; //normal pointing in the direction outwards, away from the centre of the sphere
 
         var bestDirectionHint = getBestDirectionHint(hitPoint);
         var projectedDirectionHint = tangentialPlane.ClosestPointOnPlane(bestDirectionHint);
@@ -98,9 +98,9 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
     public override void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(swordHandlePoint, 0.01f);
+        Gizmos.DrawSphere(fixedHandlePoint, 0.01f);
 
-        DrawHelpers.DrawWireSphere(swordHandlePoint, SwordLength, Gizmos.DrawLine);
+        DrawHelpers.DrawWireSphere(fixedHandlePoint, SwordLength, Gizmos.DrawLine);
     }
 
 }

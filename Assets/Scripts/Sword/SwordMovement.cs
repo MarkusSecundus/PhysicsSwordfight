@@ -18,6 +18,7 @@ public class SwordMovement : MonoBehaviour
     public ConfigurableJoint joint;
     private JointRotationHelper jointRotationHelper;
 
+    public SwordsmanDescriptor swordsmanDescriptor;
     private Transform swordAnchor => descriptor.SwordCenterOfMass;
 
     public WeaponDebugger debugger;
@@ -30,7 +31,7 @@ public class SwordMovement : MonoBehaviour
     public Vector3 FixedSwordHandlePoint => joint.connectedBody.transform.LocalToGlobal(originalConnectedAnchor);
     public Vector3 FlexSwordHandlePoint => swordAnchor.position;
     public float SwordLength => inputCircleRadius;
-
+    public Rigidbody swordsmanBody => joint.connectedBody;
 
     private Submodule activeMode;
     public SwordMovementModesContainer Modes;
@@ -161,8 +162,29 @@ public class SwordMovement : MonoBehaviour
         Debug.DrawRay(ray.origin, ray.direction, Color.yellow);
 
         var intersection = ray.IntersectSphere(inputSphere); 
-        intersection.First ??= ray.GetRayPointWithLeastDistance(inputSphere.Center);
+        intersection.First ??= UserInputFallback(ray, inputSphere);
+        intersection.First = ClampInput(intersection.First, inputSphere);
 
         return intersection;
+    }
+
+
+    private Vector3 UserInputFallback(Ray inputRay, Sphere inputSphere)
+    {
+        var pointWithLeastDistance = inputRay.GetRayPointWithLeastDistance(inputSphere.Center);
+
+        return pointWithLeastDistance;
+    }
+
+    private Vector3? ClampInput(Vector3? v, Sphere inputSphere)
+    {
+        if (!(v is Vector3 input)) return null;
+
+        var clampingPlane = new Plane(swordsmanBody.transform.forward, swordsmanDescriptor.InputClampingBoundary.position);
+
+        if (clampingPlane.SameSide(input, inputSphere.Center)) 
+            return input;
+        else
+            return clampingPlane.ClosestPointOnPlane(input);
     }
 }

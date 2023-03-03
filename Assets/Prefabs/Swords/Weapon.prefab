@@ -291,9 +291,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  descriptor: {fileID: 0}
   joint: {fileID: 5692771888074364033}
-  swordTip: {fileID: 7058973195999071761}
-  swordAnchor: {fileID: 7058973195966507338}
   debugger: {fileID: 0}
   debuggerPoint: {fileID: 0}
   inputCircleRadius: 0.42
@@ -302,9 +301,6 @@ MonoBehaviour:
     Basic:
       minLastVectorDiff: 0.3
     Block:
-      SwordHandle: {fileID: 7058973195966507338}
-      SwordTip: {fileID: 7058973195999071761}
-      SwordEdgeBlockPoint: {fileID: 7058973195522497496}
       SwordDirectionHint: {fileID: 0}
       SwordLength: 0.59
       RegisterOnlyInputOnSphere: 1
@@ -382,6 +378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 5094794589441255156}
+  anchor: {fileID: 0}
   centerOfWeight: {fileID: 0}
   tipPoint: {fileID: 0}
   blockPoint: {fileID: 0}
@@ -398,6 +395,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerSword
       objectReference: {fileID: 0}
+    - target: {fileID: 7512588884811610476, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
+      propertyPath: anchor
+      value: 
+      objectReference: {fileID: 7058973195966507338}
     - target: {fileID: 7922440363819721628, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -468,10 +469,5 @@ Transform:
 --- !u!4 &7058973195966507338 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5692771887622551250, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
-  m_PrefabInstance: {fileID: 3383975071566798744}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7058973195522497496 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5692771887061091392, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
   m_PrefabInstance: {fileID: 3383975071566798744}
   m_PrefabAsset: {fileID: 0}
