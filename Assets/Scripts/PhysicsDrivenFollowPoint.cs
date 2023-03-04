@@ -66,13 +66,13 @@ public abstract class PhysicsDrivenFollowPointBase : MonoBehaviour
             
             rb.AddForce(forceToApply, ForceMode.VelocityChange);
             lastAppliedForce = forceToApply;
-            Debug.Log($"Clamped.. add{clampedTargetVelocity.ToStringPrecise()} -> vel{rb.velocity.ToStringPrecise()}");
+            //Debug.Log($"Clamped.. add{clampedTargetVelocity.ToStringPrecise()} -> vel{rb.velocity.ToStringPrecise()}");
             
         }
         else
         {
             rb.AddForce(forceToApply, ForceMode.VelocityChange);
-            Debug.Log($"Applied.. frc{forceToApply.ToStringPrecise()} -> vel{rb.velocity.ToStringPrecise()}");
+            //Debug.Log($"Applied.. frc{forceToApply.ToStringPrecise()} -> vel{rb.velocity.ToStringPrecise()}");
         }
 
 

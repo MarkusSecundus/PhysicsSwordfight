@@ -19,7 +19,7 @@ public class SwordMovement : MonoBehaviour
     public ConfigurableJoint joint;
     private JointRotationHelper jointRotationHelper;
 
-    public PhysicsDrivenFollowPointBase.Configuration HandleMovementConfig = new PhysicsDrivenFollowPointBase.Configuration();
+    public float HandleMovementInterpolationFactor = 9f;
 
     public SwordsmanDescriptor swordsmanDescriptor;
     private Transform swordAnchor => descriptor.SwordCenterOfMass;
@@ -58,10 +58,6 @@ public class SwordMovement : MonoBehaviour
         foreach (var mode in modes.Values) mode.OnStart();
     }
 
-    private void OnDestroy()
-    {
-        DisposeAnchorSetter();
-    }
 
     void Update()
     {
@@ -74,7 +70,8 @@ public class SwordMovement : MonoBehaviour
     {
         MakeSureRightModeIsActive();
         var delta = Time.fixedDeltaTime;
-
+        
+        UpdateAnchorPosition(delta);
         activeMode?.OnFixedUpdate(delta);
     }
 
@@ -160,52 +157,19 @@ public class SwordMovement : MonoBehaviour
     private void InitAnchorSetter()
     {
         joint.autoConfigureConnectedAnchor = false;
-        this.originalConnectedAnchor = joint.connectedAnchor;
-        connectedAnchorTween = GameObjectUtils.InstantiateUtilObject($"{gameObject.name}_AnchorMovementModel", typeof(Rigidbody)).AddComponent<SwordHandleMovementSimulator>().Init(this, HandleMovementConfig);
-    }
-    private void DisposeAnchorSetter()
-    {
-        Destroy(connectedAnchorTween);
+        this.targetConnectedAnchor=this.originalConnectedAnchor = joint.connectedAnchor;
     }
 
-
-    private SwordHandleMovementSimulator connectedAnchorTween;
     private Vector3 originalConnectedAnchor;
+    private Vector3 targetConnectedAnchor;
     public void MoveAnchorPosition(Vector3 absolutePosition)
     {
         var relative = joint.connectedBody.transform.GlobalToLocal(absolutePosition);
-        connectedAnchorTween.PositionToFollow = relative;
-        //joint.connectedAnchor = relative;
+        targetConnectedAnchor = relative;
     }
 
-
-    private class SwordHandleMovementSimulator : PhysicsDrivenFollowPointBase
+    void UpdateAnchorPosition(float delta)
     {
-        protected override Vector3 GetFollowPosition() => PositionToFollow;
-
-        public SwordMovement Script;
-        public Vector3 PositionToFollow;
-
-        public SwordHandleMovementSimulator Init(SwordMovement script, PhysicsDrivenFollowPointBase.Configuration config)
-        {
-            (Script, Config) = (script, config);
-            return this;
-        }
-
-        protected override void Start()
-        {
-            base.Start();
-            rb.position = PositionToFollow = Script.originalConnectedAnchor;
-        }
-
-        protected override void FixedUpdate()
-        {
-            base.FixedUpdate();
-
-            if (!Script.IsNil())
-            {
-                Script.joint.connectedAnchor = rb.position;
-            }
-        }
+        joint.connectedAnchor += (targetConnectedAnchor - joint.connectedAnchor) * delta * HandleMovementInterpolationFactor;
     }
 }
