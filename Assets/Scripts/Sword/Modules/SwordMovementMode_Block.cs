@@ -26,7 +26,7 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 
     public override void OnDeactivated()
     {
-        Script.SetAnchorPosition(Script.FixedSwordHandlePoint, HandleSpeed_metersPerSecond);
+        Script.MoveAnchorPosition(Script.FixedSwordHandlePoint);
     }
 
     public Vector3 fixedHandlePoint => Script.FixedSwordHandlePoint;
@@ -75,7 +75,7 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
         var upVector = computeUpVector();
         var swordRotation = Quaternion.LookRotation(tipPosition - handlePosition, upVector);
 
-        Script.SetAnchorPosition(handlePosition, HandleSpeed_metersPerSecond);
+        Script.MoveAnchorPosition(handlePosition);
         Script.SetSwordRotation(swordRotation);
 
 

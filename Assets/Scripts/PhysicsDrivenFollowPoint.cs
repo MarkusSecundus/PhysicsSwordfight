@@ -4,67 +4,85 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(Rigidbody))]
-public abstract class PhysicsDrivenFollowPointBase : MonoBehaviour
+public class PhysicsDrivenFollowPoint : PhysicsDrivenFollowPointBase
 {
-    protected abstract Vector3 GetFollowPosition();
+    [SerializeField] private Transform ToFollow;
+    protected override Vector3 GetFollowPosition() => ToFollow.position;
 }
 
 
 
 [RequireComponent(typeof(Rigidbody))]
-public class PhysicsDrivenFollowPoint : PhysicsDrivenFollowPointBase
+public abstract class PhysicsDrivenFollowPointBase : MonoBehaviour
 {
-    [SerializeField] private Transform ToFollow;
-    protected override Vector3 GetFollowPosition() => ToFollow.position;
+    protected abstract Vector3 GetFollowPosition();
 
-    public float DriveForce = 1f, MaxVelocity = 1f, SlowdownDistance = 0.1f, SlowdownRate = 2f;
+    [System.Serializable]
+    public class Configuration
+    {
+        public float DriveForce = 1f, MaxVelocity = 1f, SlowdownDistance = 0.1f, SlowdownRate = 2f, TestParam=0.05f;
+    }
 
-    private Rigidbody rb;
+    public Configuration Config = new Configuration();
+
+
+    protected Rigidbody rb;
 
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         DoStep(Time.fixedDeltaTime);
     }
 
-
+    Vector3 lastAppliedForce = Vector3.zero;
     void DoStep(float delta)
     {
-        var toMove = ToFollow.position - transform.position;
+        var c = Config;
+        var toFollow = GetFollowPosition();
+        var toMove = toFollow - rb.position;
         var direction = toMove.Normalized(out var distance);
-
-        //var velocityDirection = (toMove - rb.velocity).normalized;//(direction - rb.velocity.normalized).normalized;
+        //Debug.Log($"rb{rb.position}->{toFollow}  [{distance}*{direction}]");
         var velocityDirection = (direction - rb.velocity.normalized).normalized;
 
         var maxVelocityMagnitude = ComputeMaxVelocityMagnitude();
-        
-        var forceMagnitudeToApply = DriveForce * delta;
+
+        var forceMagnitudeToApply = c.DriveForce * delta;   //multiply by delta to get the immediate velocity change
 
         var forceToApply = velocityDirection * forceMagnitudeToApply;
         var resultVelocity = rb.velocity + forceToApply;
-        if(resultVelocity.magnitude > maxVelocityMagnitude)
+
+
+        if (resultVelocity.magnitude > maxVelocityMagnitude)
         {
-            Debug.Log("Reached max velocity");
+            var clampedTargetVelocity = velocityDirection * maxVelocityMagnitude;
+            forceToApply = (clampedTargetVelocity - rb.velocity);
+
+            
+            rb.AddForce(forceToApply, ForceMode.VelocityChange);
+            lastAppliedForce = forceToApply;
+            Debug.Log($"Clamped.. add{clampedTargetVelocity.ToStringPrecise()} -> vel{rb.velocity.ToStringPrecise()}");
+            
+        }
+        else
+        {
+            rb.AddForce(forceToApply, ForceMode.VelocityChange);
+            Debug.Log($"Applied.. frc{forceToApply.ToStringPrecise()} -> vel{rb.velocity.ToStringPrecise()}");
         }
 
-        //rb.MoveToVelocity(toMove);
-        rb.AddForce(forceToApply, ForceMode.VelocityChange);
-
-        Debug.Log($"this{rb.position}, target{ToFollow.position} - dir{direction}, veldir{velocityDirection}, vel{rb.velocity}");
 
         float ComputeMaxVelocityMagnitude()
         {
-            var maxVelocity = MaxVelocity;
-            if (distance < SlowdownDistance)
+            var maxVelocity = c.MaxVelocity;
+            if (distance < c.SlowdownDistance)
             {
-                var interpolationParameter = distance / SlowdownDistance; //number between 0 and 1
-                var multiplier = Mathf.Pow(interpolationParameter, SlowdownRate);
+                var interpolationParameter = distance / c.SlowdownDistance; //number between 0 and 1
+                var multiplier = Mathf.Pow(interpolationParameter, c.SlowdownRate);
                 maxVelocity *= multiplier;
             }
             return maxVelocity;
@@ -72,3 +90,6 @@ public class PhysicsDrivenFollowPoint : PhysicsDrivenFollowPointBase
     }
 
 }
+
+
+

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - PlateSwitcher
+  - UtilGameObjectRoot
   layers:
   - Default
   - TransparentFX

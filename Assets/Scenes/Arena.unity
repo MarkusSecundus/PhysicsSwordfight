@@ -3374,7 +3374,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 255506610}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 40.84, y: 2.53, z: 20.93}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.24299, y: 0.24299, z: 0.24299}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3387,7 +3387,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 255506610}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -8381,7 +8381,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &640040527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8394,11 +8394,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 096d1fe94a62b1c42a286db0af04e18b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Config:
+    DriveForce: 500
+    MaxVelocity: 100
+    SlowdownDistance: 0.1
+    SlowdownRate: 5
+    Tolerance: 0.05
   ToFollow: {fileID: 255506611}
-  DriveForce: 600
-  MaxVelocity: 20
-  SlowdownDistance: 0.1
-  SlowdownRate: 2
 --- !u!54 &640040528
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -35359,9 +35361,33 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2086466195}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: HandleMovementConfig.Tolerance
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: Modes.Block.SwordDirectionHint
       value: 
       objectReference: {fileID: 1993847116}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: HandleMovementConfig.DriveForce
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: HandleMovementConfig.MaxVelocity
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: HandleMovementConfig.SlowdownRate
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: HandleMovementConfig.SlowdownDistance
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: HandleMovementConfig.DampeningFactorWhenAtMax
+      value: 0.9
+      objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364038, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Name
       value: Weapon

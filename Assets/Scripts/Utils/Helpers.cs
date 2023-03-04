@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public static class RotationUtil
 {
@@ -110,12 +111,51 @@ public enum TransformationPolicy
     Direction, Point, Vector
 }
 
-public static class HelperExtensions
+
+public static class GameObjectUtils
 {
+    public static GameObject InstantiateWithTransform(this GameObject o, bool copyPosition = true, bool copyRotation = true, bool copyScale = true, bool copyParent = true)
+    {
+        var ret = GameObject.Instantiate(o);
+
+        if (copyPosition) ret.transform.position = o.transform.position;
+        if (copyRotation) ret.transform.rotation = o.transform.rotation;
+        if (copyScale) ret.transform.localScale = o.transform.localScale;
+        if (copyParent) ret.transform.parent = o.transform.parent;
+        ret.SetActive(true);
+
+        return ret;
+    }
+
+    private static readonly string UtilGameObjectRootTag = "UtilGameObjectRoot";
+    private static Transform GetUtilObjectParent()
+    {
+        var ret = GameObject.FindWithTag(UtilGameObjectRootTag);
+        if(ret == null)
+        {
+            ret = new GameObject("UtilityObjects");
+            ret.tag = UtilGameObjectRootTag;
+        }
+        return ret.transform;
+    }
+
+    public static GameObject InstantiateUtilObject(string name, params System.Type[] componentsToAdd)
+    {
+        var ret = new GameObject(name, componentsToAdd);
+        var utilParent = GetUtilObjectParent();
+        //ret.transform.SetParent(utilParent);
+        return ret;
+    }
+
     public static T IfNil<T>(this T self, T defaultValue) where T : Object => self.IsNil() ? defaultValue : self;
     public static bool IsNotNil(this Object self) => !self.IsNil();
     public static bool IsNil(this Object self) => self == null || self.Equals(null);
 
+
+}
+
+public static class HelperExtensions
+{
     public static IEnumerable<ContactPoint> IterateContacts(this Collision self)
     {
         for (int t = 0; t < self.contactCount; ++t) yield return self.GetContact(t);
@@ -261,7 +301,8 @@ public static class HelperExtensions
     public static string ToStringPrecise(this Vector3 v)
     {
         if (v.x == 0f && v.y == 0f && v.z == 0f) return "<ZERO>";
-        return $"({v.x};{v.y};{v.z})";
+        var magnitude = v.Magnitude(out var normalized);
+        return $"{magnitude}*{normalized}";//$"({v.x};{v.y};{v.z})";
     }
 
     public static Vector3 With(this Vector3 self, Vector3Field x = default, Vector3Field y = default, Vector3Field z = default)
@@ -284,19 +325,6 @@ public static class HelperExtensions
     {
         if (shouldLog) Debug.Log(self);
     }
-    public static GameObject InstantiateWithTransform(this GameObject o,bool copyPosition=true, bool copyRotation = true, bool copyScale = true, bool copyParent=true)
-    {
-        var ret = GameObject.Instantiate(o);
-
-        if (copyPosition) ret.transform.position = o.transform.position;
-        if (copyRotation) ret.transform.rotation = o.transform.rotation;
-        if(copyScale) ret.transform.localScale = o.transform.localScale;
-        if (copyParent) ret.transform.parent = o.transform.parent;
-        ret.SetActive(true);
-
-        return ret;
-    }
-
     public static bool Any(this Vector3 a, Vector3 b, System.Func<float, float, bool> f)
         => f(a.x, b.x) || f(a.y, b.y) || f(a.z, b.z);
 

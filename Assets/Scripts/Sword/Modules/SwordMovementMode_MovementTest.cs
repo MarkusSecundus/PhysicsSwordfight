@@ -25,7 +25,7 @@ public class SwordMovementMode_MovementTest : IScriptSubmodule<SwordMovement>
         if (OnlyTheSphere?!input.HasNullElement() : input.First != null)
         {
             var hitPoint = input.First.Value;
-            Script.SetAnchorPosition(hitPoint, float.NaN);
+            Script.MoveAnchorPosition(hitPoint);
             Script.SetDebugPointPosition(hitPoint);
         }
     }
@@ -33,7 +33,7 @@ public class SwordMovementMode_MovementTest : IScriptSubmodule<SwordMovement>
     public override void OnDeactivated()
     {
         if(ShouldReturnBack)
-            Script.SetAnchorPosition(swordHandlePoint, float.NaN);
+            Script.MoveAnchorPosition(swordHandlePoint);
     }
 
     public override void OnDrawGizmos()

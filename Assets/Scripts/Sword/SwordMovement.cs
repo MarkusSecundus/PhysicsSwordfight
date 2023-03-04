@@ -15,8 +15,11 @@ public class SwordMovement : MonoBehaviour
 {
     public SwordDescriptor descriptor;
 
+
     public ConfigurableJoint joint;
     private JointRotationHelper jointRotationHelper;
+
+    public PhysicsDrivenFollowPointBase.Configuration HandleMovementConfig = new PhysicsDrivenFollowPointBase.Configuration();
 
     public SwordsmanDescriptor swordsmanDescriptor;
     private Transform swordAnchor => descriptor.SwordCenterOfMass;
@@ -55,7 +58,10 @@ public class SwordMovement : MonoBehaviour
         foreach (var mode in modes.Values) mode.OnStart();
     }
 
-
+    private void OnDestroy()
+    {
+        DisposeAnchorSetter();
+    }
 
     void Update()
     {
@@ -70,7 +76,6 @@ public class SwordMovement : MonoBehaviour
         var delta = Time.fixedDeltaTime;
 
         activeMode?.OnFixedUpdate(delta);
-        UpdateAnchorPosition(delta);
     }
 
 
@@ -94,54 +99,8 @@ public class SwordMovement : MonoBehaviour
 
 
 
-    private void InitAnchorSetter()
-    {
-        joint.autoConfigureConnectedAnchor = false;
-        this.originalConnectedAnchor = joint.connectedAnchor;
-        KillAnchorTween();
-    }
-
-    private void KillAnchorTween()
-    {
-        tween?.Kill(); tween = null;
-    }
 
 
-    private TweenerCore<Vector3, Vector3, VectorOptions> tween;
-    private Vector3 originalConnectedAnchor;
-    //private Vector3 connectedAnchorTarget;
-    //private float connectedAnchorChangeSpeedTarget;
-    public void SetAnchorPosition(Vector3 absolutePosition, float speed_metersPerSecond)
-    {
-        var relative = joint.connectedBody.transform.GlobalToLocal(absolutePosition);
-        if (true || !speed_metersPerSecond.IsNormalNumber() || relative.Distance(joint.connectedAnchor).IsNegligible(epsilon: 0.01f))
-        {
-            KillAnchorTween();
-            joint.connectedAnchor = relative;
-            return;
-        }
-        var travelTime = joint.connectedAnchor.Distance(relative) / speed_metersPerSecond;
-
-        if(tween==null || tween.IsComplete())
-        {
-            tween = joint.DOConnectedAnchor(relative, travelTime);
-        }
-        else
-        {
-            //KillAnchorTween(); tween = joint.DOConnectedAnchor(relative, travelTime);
-            tween.ChangeEndValue(relative, travelTime, true);
-        }
-        
-        //connectedAnchorChangeSpeedTarget = speed_metersPerSecond;
-        //connectedAnchorTarget = relative;
-
-
-    }
-
-    private void UpdateAnchorPosition(float delta)
-    { 
-
-    }
 
     public void SetSwordRotation(Quaternion rotation) 
     {
@@ -186,5 +145,67 @@ public class SwordMovement : MonoBehaviour
             return input;
         else
             return clampingPlane.ClosestPointOnPlane(input);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    private void InitAnchorSetter()
+    {
+        joint.autoConfigureConnectedAnchor = false;
+        this.originalConnectedAnchor = joint.connectedAnchor;
+        connectedAnchorTween = GameObjectUtils.InstantiateUtilObject($"{gameObject.name}_AnchorMovementModel", typeof(Rigidbody)).AddComponent<SwordHandleMovementSimulator>().Init(this, HandleMovementConfig);
+    }
+    private void DisposeAnchorSetter()
+    {
+        Destroy(connectedAnchorTween);
+    }
+
+
+    private SwordHandleMovementSimulator connectedAnchorTween;
+    private Vector3 originalConnectedAnchor;
+    public void MoveAnchorPosition(Vector3 absolutePosition)
+    {
+        var relative = joint.connectedBody.transform.GlobalToLocal(absolutePosition);
+        connectedAnchorTween.PositionToFollow = relative;
+        //joint.connectedAnchor = relative;
+    }
+
+
+    private class SwordHandleMovementSimulator : PhysicsDrivenFollowPointBase
+    {
+        protected override Vector3 GetFollowPosition() => PositionToFollow;
+
+        public SwordMovement Script;
+        public Vector3 PositionToFollow;
+
+        public SwordHandleMovementSimulator Init(SwordMovement script, PhysicsDrivenFollowPointBase.Configuration config)
+        {
+            (Script, Config) = (script, config);
+            return this;
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+            rb.position = PositionToFollow = Script.originalConnectedAnchor;
+        }
+
+        protected override void FixedUpdate()
+        {
+            base.FixedUpdate();
+
+            if (!Script.IsNil())
+            {
+                Script.joint.connectedAnchor = rb.position;
+            }
+        }
     }
 }
