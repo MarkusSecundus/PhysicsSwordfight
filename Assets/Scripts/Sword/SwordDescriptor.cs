@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class SwordDescriptor : MonoBehaviour
 {
-    private void Start()
-    {
-        Debug.Log($"Descriptor {gameObject.name}.. target({target}), CoM({centerOfWeight})");
-    }
-
     public Transform SwordAnchor => anchor = anchor.IfNil(target?.SwordAnchor);
     public Transform SwordCenterOfMass => centerOfWeight = centerOfWeight.IfNil(target?.SwordCenterOfMass);
     public Transform SwordTip => tipPoint = tipPoint.IfNil(target?.SwordTip);

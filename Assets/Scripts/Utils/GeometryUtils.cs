@@ -461,7 +461,6 @@ public static class PlaneExtensions
     public static Plane GetTangentialPlane(this Sphere sphere, Vector3 point)
     {
         //if (!point.Distance(sphere.Center).IsCloseTo(sphere.Radius)) throw new ArgumentException($"The point doesn't lay on the sphere");
-
         return new Plane(point - sphere.Center, point);
     }
 
