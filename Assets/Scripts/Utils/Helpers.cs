@@ -111,6 +111,16 @@ public enum TransformationPolicy
     Direction, Point, Vector
 }
 
+[System.Serializable]
+public struct TransformChain
+{
+    public Transform root, tip;
+
+    public bool IsValid() => root!=null && tip != null && tip.IsChildOf(root);
+
+    public Transform[] ToArray() => UnityEngine.Animations.Rigging.ConstraintsUtils.ExtractChain(root, tip);
+}
+
 
 public static class GameObjectUtils
 {
@@ -127,6 +137,9 @@ public static class GameObjectUtils
         return ret;
     }
 
+    //IsChildOf is a terrible name for what it is actually checking
+    public static bool IsDescendantOf(this Transform parent, Transform descendant) => descendant.IsChildOf(parent);
+
     private static readonly string UtilGameObjectRootTag = "UtilGameObjectRoot";
     private static Transform GetUtilObjectParent()
     {
@@ -138,6 +151,7 @@ public static class GameObjectUtils
         }
         return ret.transform;
     }
+
 
     public static GameObject InstantiateUtilObject(string name, params System.Type[] componentsToAdd)
     {
@@ -473,10 +487,6 @@ public static class DrawHelpers
         var step = diameter / (segments);
 
         var bs = plane.GetBase();
-
-        Debug.DrawLine(center, center + plane.normal, Color.red);
-        Debug.DrawLine(center, center + bs.X, Color.white);
-        Debug.DrawLine(center, center + bs.Y, Color.yellow);
 
         Vector2 begin = -diameter / 2;
 
