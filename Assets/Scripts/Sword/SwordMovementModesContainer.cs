@@ -16,6 +16,9 @@ public class SwordMovementModesContainer
     public SwordMovementMode_MovementTest MovementTest;
     public KeyCode MovementTestKey = KeyCode.T;
 
+    public SwordMovementMode_Stabbing Stabbing;
+    public KeyCode StabbingKey = KeyCode.LeftControl;
+
     public SwordMovementModesContainer(SwordMovement script)
     {
         this.InitFields<Submodule>(new object[] { script });

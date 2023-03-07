@@ -95,7 +95,16 @@ public class SwordMovement : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// ..takes all global coords
+    /// </summary>
+    /// <param name="lookAt">what the blade should point at</param>
+    /// <param name="anchor">where the swords anchor should move - remains unchanged if null</param>
+    /// <param name="up">upvector for blade rotation, interpolated from this and last movement if null</param>
+    public void SetSwordPosition(Vector3 lookAt, Vector3? anchor=null, Vector3? up=null)
+    {
+        //TODO: implement
+    }
 
 
 
