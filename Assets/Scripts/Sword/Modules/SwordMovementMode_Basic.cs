@@ -32,7 +32,6 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
     private Vector3 lastForward = Vector3.zero;
     void SetSwordRotation(float delta)
     {
-        Cursor.lockState = CursorLockMode.Confined;
         var inputSphere = new Sphere(swordHandlePoint, swordLength);
         var input = Script.GetUserInput(inputSphere);
 

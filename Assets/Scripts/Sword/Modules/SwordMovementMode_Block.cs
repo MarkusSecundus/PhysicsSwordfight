@@ -10,11 +10,10 @@ using System.Linq;
 public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 {
     public Transform SwordDirectionHint;
-
+    public IRayIntersectable InputIntersector;
 
     public float SwordLength;
     public bool RegisterOnlyInputOnSphere = true;
-    public float HandleSpeed_metersPerSecond = 6f;
 
     public SwordMovementMode_Block(SwordMovement script) : base(script){}
 
@@ -35,15 +34,22 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
     private Transform bladeEdgeBlockPoint => Script.descriptor.SwordBlockPoint;
     public override void OnFixedUpdate(float delta)
     {
-        Cursor.lockState = CursorLockMode.Confined;
+        var input = GetUserInput();
+        if (input != null) 
+            SetBlockPosition(input.Value);
+    }
+
+    private Vector3? GetUserInput()
+    {
         var inputSphere = new Sphere(fixedHandlePoint, SwordLength);
         var input = Script.GetUserInput(inputSphere);
 
         if (input.First != null)
         {
             if (RegisterOnlyInputOnSphere && input.HasNullElement()) input.First = new Sphere(fixedHandlePoint, SwordLength).ProjectPoint(input.First.Value);
-            SetBlockPosition(input.First.Value);
+            return input.First.Value;
         }
+        return null;
     }
 
     private void SetBlockPosition(Vector3 hitPoint)
@@ -98,9 +104,10 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
     public override void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(fixedHandlePoint, 0.01f);
+        InputIntersector.Visualize(Camera.main, Gizmos.DrawLine);
+        //Gizmos.DrawSphere(fixedHandlePoint, 0.01f);
 
-        DrawHelpers.DrawWireSphere(fixedHandlePoint, SwordLength, Gizmos.DrawLine);
+        //DrawHelpers.DrawWireSphere(fixedHandlePoint, SwordLength, Gizmos.DrawLine);
     }
 
 }

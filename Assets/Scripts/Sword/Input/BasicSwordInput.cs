@@ -8,7 +8,7 @@ public class BasicSwordInput : ISwordInput
     public Camera inputCamera;
     public void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.;
         inputCamera ??= Camera.main ?? throw new NullReferenceException("No camera found");
     }
 
