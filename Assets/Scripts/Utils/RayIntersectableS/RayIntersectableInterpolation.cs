@@ -5,24 +5,28 @@ using UnityEngine;
 [System.Serializable]
 public class RayIntersectableInterpolation : IRayIntersectable
 {
-    public IRayIntersectable[] Spheres;
+    [System.Serializable]
+    public struct Entry
+    {
+        public IRayIntersectable Value;
+        public float Weight;
+    }
+
+    public Entry[] entries;
 
 
-    public Vector3? GetIntersection(Ray r)
+    public override Vector3? GetIntersection(Ray r)
     {
         Vector3 sum = Vector3.zero;
-        int count = 0;
-        bool someValueWasEncountered = false;
-        foreach(var sphere in Spheres)
+        float weightSum = 0;
+        foreach(var e in entries)
         {
-            if (sphere.GetIntersection(r) is Vector3 i)
+            if (e.Value.GetIntersection(r) is Vector3 i)
             {
-                sum += i;
-                someValueWasEncountered = true;
+                sum += i*e.Weight;
+                weightSum += e.Weight;
             }
-            ++count;
         }
-
-        return someValueWasEncountered? (Vector3?)sum/count : null;
+        return weightSum > 0? (Vector3?)(sum/weightSum): null;
     }
 }
