@@ -7,26 +7,30 @@ public class RayIntersectableSphere : IRayIntersectable
 {
     public Transform Center;
     public float Radius;
-    public float MaxAngle = 360f;
+    public bool ProjectIfMissed = false;
 
-    public override Vector3? GetIntersection(Ray r)
+    protected override RayIntersection GetIntersection_impl(Ray r) => new RayIntersection(ComputeIntersection(r), Center.position);
+    private Vector3? ComputeIntersection(Ray r)
     {
         var result = r.IntersectSphere(new Sphere(Center.position, Radius));
         if (IsValid(result.First)) return result.First.Value;
-        if (IsValid(result.Second )) return result.Second.Value;
+        //if (IsValid(result.Second )) return result.Second.Value;
+        if (ProjectIfMissed)
+        {
+            return new Sphere(Center.position, Radius).ProjectPoint(r.GetRayPointWithLeastDistance(Center.position));
+        }
         return null;
     }
     private bool IsValid(Vector3? v)
     {
         if (v == null) return false;
-        var angle = Vector3.Angle(transform.forward, v.Value - Center.position);
-        if (Mathf.Abs(angle) > MaxAngle) return false;
+        var direction = v.Value - Center.position;
         return true;
     }
 
     protected override void OnDrawGizmos()
     {
-        if (MaxAngle < 360f)
+        if (Hole != null || ProjectIfMissed)
             base.OnDrawGizmos();
         else
         {

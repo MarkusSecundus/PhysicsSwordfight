@@ -35,25 +35,30 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
     public override void OnFixedUpdate(float delta)
     {
         var input = GetUserInput();
-        if (input != null) 
-            SetBlockPosition(input.Value);
+        if (input.IsValid) 
+            SetBlockPosition(input);
     }
 
-    private Vector3? GetUserInput()
+    private RayIntersection GetUserInput()
     {
+        var ray = Script.Input.GetInputRay();
+        if (ray == null) return RayIntersection.Null;
+        return InputIntersector.GetIntersection(ray.Value);
+
         var inputSphere = new Sphere(fixedHandlePoint, SwordLength);
         var input = Script.GetUserInput(inputSphere);
 
         if (input.First != null)
         {
             if (RegisterOnlyInputOnSphere && input.HasNullElement()) input.First = new Sphere(fixedHandlePoint, SwordLength).ProjectPoint(input.First.Value);
-            return input.First.Value;
+            return new RayIntersection(input.First.Value, default);
         }
-        return null;
+        return default;
     }
 
-    private void SetBlockPosition(Vector3 hitPoint)
+    private void SetBlockPosition(RayIntersection userInput)
     {
+        var hitPoint = userInput.Value;
 
         Ray localBladeAxis = new Ray(handleBegin.localPosition, bladeTip.localPosition - handleBegin.localPosition);
         var localBlockPointProjection = localBladeAxis.GetRayPointWithLeastDistance(bladeEdgeBlockPoint.localPosition);
@@ -67,8 +72,9 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
               handleDistance     = blockPointProjection.Distance(handleBegin.position)
             ;
 
-        Plane tangentialPlane = new Sphere(fixedHandlePoint, SwordLength).GetTangentialPlane(hitPoint);
-        Vector3 normal = (hitPoint - fixedHandlePoint).normalized; //normal pointing in the direction outwards, away from the centre of the sphere
+        var center = userInput.InputorCenter;//fixedHandlePoint;
+        Plane tangentialPlane = new Sphere(center, SwordLength).GetTangentialPlane(hitPoint);
+        Vector3 normal = (hitPoint - center).normalized; //normal pointing in the direction outwards, away from the centre of the sphere
 
         var bestDirectionHint = getBestDirectionHint(hitPoint);
         var projectedDirectionHint = tangentialPlane.ClosestPointOnPlane(bestDirectionHint);
@@ -100,9 +106,5 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
         return SwordDirectionHint.OfType<Transform>().Minimal(hint => hint.position.Distance(hitPoint)).position;
     }
 
-
-    public override void OnDrawGizmos()
-    {
-    }
 
 }

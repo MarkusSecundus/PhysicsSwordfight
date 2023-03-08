@@ -40,13 +40,10 @@ public class SwordMovementMode_Stabbing : IScriptSubmodule<SwordMovement>
     private Vector3? GetUserInput()
     {
         var inputRay = Script.Input.GetInputRay();
-        if(inputRay != null)
-        {
-            //var input = (Input.GetKey(StabKey)?ref InputIntersectorWhenStabbing: ref InputIntersector).GetIntersection(inputRay.Value);
-            var input = InputIntersector.GetIntersection(inputRay.Value);
-            if (input != null)
-                return input.Value;
-        }
+        //var input = (Input.GetKey(StabKey)?ref InputIntersectorWhenStabbing: ref InputIntersector).GetIntersection(inputRay.Value);
+        var input = InputIntersector.GetIntersection(inputRay);
+        if (input != null)
+            return input.Value;
 
         return null;
     }

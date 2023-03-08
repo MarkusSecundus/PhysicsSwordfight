@@ -5346,12 +5346,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ee6f6f8bedf3b43a893fe4abd864dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShouldDrawGizmo: 1
+  ShouldDrawGizmo: 0
   GizmoSegments: 24
   GizmoOvershoot: 1
+  CenterOverride: {fileID: 0}
+  Hole: {fileID: 0}
+  HoleWeight:
+    x3: 0
+    x2: 0
+    x1: 1
+    c: 0
   Center: {fileID: 408652133}
   Radius: 0.4
-  MaxAngle: 360
+  ProjectIfMissed: 0
 --- !u!1 &416535673
 GameObject:
   m_ObjectHideFlags: 0
@@ -9170,6 +9177,62 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 678480978}
   m_Mesh: {fileID: -2432090755550338912, guid: 1ee74fdf47e56f34997a5c8eb8b9b81e, type: 3}
+--- !u!1 &683020394
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 683020395}
+  - component: {fileID: 683020396}
+  m_Layer: 13
+  m_Name: Hole
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &683020395
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683020394}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.43}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1866043573}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &683020396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683020394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3ee6f6f8bedf3b43a893fe4abd864dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShouldDrawGizmo: 0
+  GizmoSegments: 24
+  GizmoOvershoot: 1
+  CenterOverride: {fileID: 0}
+  Hole: {fileID: 0}
+  HoleWeight:
+    x3: 0
+    x2: 0
+    x1: 1
+    c: 0
+  Center: {fileID: 683020395}
+  Radius: 0.64
+  ProjectIfMissed: 0
 --- !u!1 &690147928
 GameObject:
   m_ObjectHideFlags: 0
@@ -16455,9 +16518,16 @@ MonoBehaviour:
   ShouldDrawGizmo: 0
   GizmoSegments: 24
   GizmoOvershoot: 1
+  CenterOverride: {fileID: 0}
+  Hole: {fileID: 0}
+  HoleWeight:
+    x3: 0
+    x2: 0
+    x1: 1
+    c: 0
   Center: {fileID: 1106867040}
   Radius: 0.43
-  MaxAngle: 360
+  ProjectIfMissed: 0
 --- !u!1 &1108196430
 GameObject:
   m_ObjectHideFlags: 0
@@ -17917,13 +17987,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1201333609}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.43200004, z: -1.865}
+  m_LocalRotation: {x: -0.095358245, y: -0, z: 0.000000009313222, w: 0.99544305}
+  m_LocalPosition: {x: 0, y: -0.112, z: -1.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1357201250}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -10.944, y: 0, z: 0}
 --- !u!114 &1201333611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17939,9 +18009,16 @@ MonoBehaviour:
   ShouldDrawGizmo: 0
   GizmoSegments: 24
   GizmoOvershoot: 1
+  CenterOverride: {fileID: 683020395}
+  Hole: {fileID: 1866043574}
+  HoleWeight:
+    x3: 3
+    x2: 0
+    x1: 0
+    c: -2.5
   Center: {fileID: 1201333610}
   Radius: 2.27
-  MaxAngle: 360
+  ProjectIfMissed: 0
 --- !u!1 &1201557319
 GameObject:
   m_ObjectHideFlags: 0
@@ -19864,9 +19941,16 @@ MonoBehaviour:
   ShouldDrawGizmo: 0
   GizmoSegments: 24
   GizmoOvershoot: 1
+  CenterOverride: {fileID: 0}
+  Hole: {fileID: 0}
+  HoleWeight:
+    x3: 0
+    x2: 0
+    x1: 1
+    c: 0
   Center: {fileID: 1338618892}
   Radius: 0.43
-  MaxAngle: 360
+  ProjectIfMissed: 0
 --- !u!1 &1338966826
 GameObject:
   m_ObjectHideFlags: 0
@@ -20078,13 +20162,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShouldDrawGizmo: 0
-  GizmoSegments: 40
+  GizmoSegments: 24
   GizmoOvershoot: 3.27
+  CenterOverride: {fileID: 0}
+  Hole: {fileID: 0}
+  HoleWeight:
+    x3: 0
+    x2: 0
+    x1: 1
+    c: 0
   entries:
   - Value: {fileID: 1866043574}
     Weight: 0.4
   - Value: {fileID: 1201333611}
-    Weight: 0.3
+    Weight: 0.05
 --- !u!1 &1358349416
 GameObject:
   m_ObjectHideFlags: 0
@@ -28645,9 +28736,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1866043572}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.43200004, z: 0.444}
+  m_LocalPosition: {x: 0, y: 0.43200004, z: 0.381}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 683020395}
   m_Father: {fileID: 1357201250}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -28666,9 +28758,16 @@ MonoBehaviour:
   ShouldDrawGizmo: 0
   GizmoSegments: 24
   GizmoOvershoot: 1
+  CenterOverride: {fileID: 0}
+  Hole: {fileID: 683020396}
+  HoleWeight:
+    x3: 0
+    x2: 0
+    x1: 1
+    c: -1
   Center: {fileID: 1866043573}
-  Radius: 0.28
-  MaxAngle: 102.7
+  Radius: 0.43
+  ProjectIfMissed: 0
 --- !u!1 &1872034840
 GameObject:
   m_ObjectHideFlags: 0
@@ -33508,7 +33607,7 @@ Camera:
     height: 1
   near clip plane: 0.01
   far clip plane: 1000
-  field of view: 86.7
+  field of view: 90.8
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -35959,7 +36058,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 0
+  m_Weight: 1
   m_Effectors: []
 --- !u!1 &4824329098467635275
 GameObject:

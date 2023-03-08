@@ -36,8 +36,7 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
         //var inputSphere = new Sphere(swordHandlePoint, swordLength);
         //var input = Script.GetUserInput(inputSphere);
         var inputRay = Script.Input.GetInputRay();
-        if (inputRay == null) return;
-        var input = InputIntersectable.GetIntersection(inputRay.Value);
+        var input = InputIntersectable.GetIntersection(inputRay);
 
         if (input != null)
         {
