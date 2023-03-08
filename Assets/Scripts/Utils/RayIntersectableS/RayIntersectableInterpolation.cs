@@ -29,4 +29,5 @@ public class RayIntersectableInterpolation : IRayIntersectable
         }
         return weightSum > 0? (Vector3?)(sum/weightSum): null;
     }
+
 }

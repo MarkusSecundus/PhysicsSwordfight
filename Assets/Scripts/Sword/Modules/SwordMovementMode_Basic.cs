@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
 {
+    public IRayIntersectable InputIntersectable;
     public SwordMovementMode_Basic(SwordMovement script) : base(script){}
 
     public override void OnFixedUpdate(float delta)
@@ -32,12 +33,15 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
     private Vector3 lastForward = Vector3.zero;
     void SetSwordRotation(float delta)
     {
-        var inputSphere = new Sphere(swordHandlePoint, swordLength);
-        var input = Script.GetUserInput(inputSphere);
+        //var inputSphere = new Sphere(swordHandlePoint, swordLength);
+        //var input = Script.GetUserInput(inputSphere);
+        var inputRay = Script.Input.GetInputRay();
+        if (inputRay == null) return;
+        var input = InputIntersectable.GetIntersection(inputRay.Value);
 
-        if (input.First != null)
+        if (input != null)
         {
-            var hitPoint = input.First.Value;
+            var hitPoint = input.Value;
             
 #if false            
             {//debug
@@ -64,9 +68,9 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
     public override void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;
-        Gizmos.DrawSphere(swordHandlePoint, 0.01f);
+        //Gizmos.DrawSphere(swordHandlePoint, 0.01f);
 
-        DrawHelpers.DrawWireSphere(swordHandlePoint, swordLength, Gizmos.DrawLine);
+        //DrawHelpers.DrawWireSphere(swordHandlePoint, swordLength, Gizmos.DrawLine);
     }
 
 }

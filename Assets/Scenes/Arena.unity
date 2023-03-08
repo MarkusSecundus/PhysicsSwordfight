@@ -5346,9 +5346,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ee6f6f8bedf3b43a893fe4abd864dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShouldDrawGizmo: 1
+  GizmoSegments: 24
+  GizmoOvershoot: 1
   Center: {fileID: 408652133}
   Radius: 0.4
-  DrawGizmo: 0
+  MaxAngle: 360
 --- !u!1 &416535673
 GameObject:
   m_ObjectHideFlags: 0
@@ -16449,9 +16452,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ee6f6f8bedf3b43a893fe4abd864dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShouldDrawGizmo: 0
+  GizmoSegments: 24
+  GizmoOvershoot: 1
   Center: {fileID: 1106867040}
   Radius: 0.43
-  DrawGizmo: 1
+  MaxAngle: 360
 --- !u!1 &1108196430
 GameObject:
   m_ObjectHideFlags: 0
@@ -17912,7 +17918,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1201333609}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.43200004, z: -1.701}
+  m_LocalPosition: {x: -0, y: 0.43200004, z: -1.865}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1357201250}
@@ -17930,9 +17936,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ee6f6f8bedf3b43a893fe4abd864dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShouldDrawGizmo: 0
+  GizmoSegments: 24
+  GizmoOvershoot: 1
   Center: {fileID: 1201333610}
   Radius: 2.27
-  DrawGizmo: 0
+  MaxAngle: 360
 --- !u!1 &1201557319
 GameObject:
   m_ObjectHideFlags: 0
@@ -19852,9 +19861,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ee6f6f8bedf3b43a893fe4abd864dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShouldDrawGizmo: 0
+  GizmoSegments: 24
+  GizmoOvershoot: 1
   Center: {fileID: 1338618892}
   Radius: 0.43
-  DrawGizmo: 1
+  MaxAngle: 360
 --- !u!1 &1338966826
 GameObject:
   m_ObjectHideFlags: 0
@@ -20065,11 +20077,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6857df4df7c9bf47a0a857520a39082, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShouldDrawGizmo: 0
+  GizmoSegments: 40
+  GizmoOvershoot: 3.27
   entries:
   - Value: {fileID: 1866043574}
-    Weight: 1
+    Weight: 0.4
   - Value: {fileID: 1201333611}
-    Weight: 1
+    Weight: 0.3
 --- !u!1 &1358349416
 GameObject:
   m_ObjectHideFlags: 0
@@ -28630,7 +28645,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1866043572}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.43200004, z: 0.43699947}
+  m_LocalPosition: {x: -0, y: 0.43200004, z: 0.444}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1357201250}
@@ -28648,9 +28663,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ee6f6f8bedf3b43a893fe4abd864dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShouldDrawGizmo: 0
+  GizmoSegments: 24
+  GizmoOvershoot: 1
   Center: {fileID: 1866043573}
   Radius: 0.28
-  DrawGizmo: 0
+  MaxAngle: 102.7
 --- !u!1 &1872034840
 GameObject:
   m_ObjectHideFlags: 0
@@ -33523,13 +33541,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2116216859}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.10539634, y: 0, z: 0, w: 0.9944303}
   m_LocalPosition: {x: 0, y: 0.738, z: 0.175}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2086466198}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 12.1, y: 0, z: 0}
 --- !u!1 &2117843060
 GameObject:
   m_ObjectHideFlags: 0
@@ -35510,6 +35528,10 @@ PrefabInstance:
       propertyPath: HandleMovementConfig.Tolerance
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: Modes.Basic.InputIntersectable
+      value: 
+      objectReference: {fileID: 408652134}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: Modes.Block.SwordDirectionHint
       value: 

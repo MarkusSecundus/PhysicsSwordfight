@@ -103,11 +103,6 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 
     public override void OnDrawGizmos()
     {
-        Gizmos.color = Color.cyan;
-        InputIntersector.Visualize(Camera.main, Gizmos.DrawLine);
-        //Gizmos.DrawSphere(fixedHandlePoint, 0.01f);
-
-        //DrawHelpers.DrawWireSphere(fixedHandlePoint, SwordLength, Gizmos.DrawLine);
     }
 
 }

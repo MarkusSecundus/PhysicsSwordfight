@@ -510,4 +510,34 @@ public static class DrawHelpers
             //Debug.Log($"{a}:{b}");
         }
     }
+
+
+    public static void DrawPlaneSegmentInterstepped(Plane plane, Vector3 center, LineDrawer<Vector3> drawLine, Vector2 diameter = default, int segments = 24)
+    {
+        if (diameter == default) diameter = new Vector2(1, 1);
+
+        var step = diameter / (segments);
+
+        var bs = plane.GetBase();
+
+        Vector2 begin = -diameter / 2;
+
+        for (int x = 0; x < segments-1; ++x)
+        {
+            for(int y = 0; y< segments-1; ++y)
+            {
+                var b = begin + step.MultiplyElems(x, y);
+                var bx = b + step.x0();
+                var by = b + step._0y();
+                draw(b, bx);
+                draw(b, by);
+            }
+        }
+
+        void draw(Vector2 a, Vector2 b)
+        {
+            drawLine(bs.GetBasedVector(a) + center, bs.GetBasedVector(b) + center);
+            //Debug.Log($"{a}:{b}");
+        }
+    }
 }
