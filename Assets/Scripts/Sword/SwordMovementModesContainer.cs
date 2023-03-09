@@ -13,8 +13,8 @@ public class SwordMovementModesContainer
     public SwordMovementMode_Block Block;
     public KeyCode BlockKey = KeyCode.LeftShift;
 
-    public SwordMovementMode_MovementTest MovementTest;
-    public KeyCode MovementTestKey = KeyCode.T;
+    //public SwordMovementMode_MovementTest MovementTest;
+    //public KeyCode MovementTestKey = KeyCode.T;
 
     public SwordMovementMode_Stabbing Stabbing;
     public KeyCode StabbingKey = KeyCode.LeftControl;

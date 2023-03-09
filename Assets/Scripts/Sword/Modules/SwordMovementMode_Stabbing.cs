@@ -10,7 +10,7 @@ using System.Linq;
 public class SwordMovementMode_Stabbing : IScriptSubmodule<SwordMovement>
 {
     public Transform SwordDirectionHint;
-    public IRayIntersectable InputIntersector, InputIntersectorWhenStabbing;
+    public IRayIntersectable InputIntersector;
     public float StabDistance = 0.8f;
     public KeyCode StabKey = KeyCode.Mouse0;
 

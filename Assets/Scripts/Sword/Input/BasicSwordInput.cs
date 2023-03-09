@@ -30,4 +30,16 @@ public class BasicSwordInput : ISwordInput
         => Input.GetAxis(axis.Name());
     public override float GetAxisRaw(InputAxis axis)
         => Input.GetAxisRaw(axis.Name());
+
+#if false
+    private void OnDrawGizmos()
+    {
+        var ray = GetInputRay();
+        if(ray != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawRay(ray.Value);
+        }
+    }
+#endif
 }
