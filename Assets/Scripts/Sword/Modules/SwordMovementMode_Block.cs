@@ -44,16 +44,6 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
         var ray = Script.Input.GetInputRay();
         if (ray == null) return RayIntersection.Null;
         return InputIntersector.GetIntersection(ray.Value);
-
-        var inputSphere = new Sphere(fixedHandlePoint, SwordLength);
-        var input = Script.GetUserInput(inputSphere);
-
-        if (input.First != null)
-        {
-            if (RegisterOnlyInputOnSphere && input.HasNullElement()) input.First = new Sphere(fixedHandlePoint, SwordLength).ProjectPoint(input.First.Value);
-            return new RayIntersection(input.First.Value, default);
-        }
-        return default;
     }
 
     private void SetBlockPosition(RayIntersection userInput)
