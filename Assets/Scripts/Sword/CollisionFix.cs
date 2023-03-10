@@ -1,65 +1,131 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CollisionFix : MonoBehaviour
 {
-    private Rigidbody rb;
+    [SerializeField] private SwordDescriptor sword;
 
+    [SerializeField] private float ColliderDepth = 1f;
 
+    private Collider fixCollider;
 
-    public struct Snapshot
-    {
-        public Vector3 CollisionPoint, CollisionNormal, LastRigidbodyPosition;
-
-        public bool IsValidMove(Snapshot frameBefore)
-        {
-            var traveled = (CollisionPoint - frameBefore.CollisionPoint).normalized;
-            return Vector3.Dot(frameBefore.CollisionNormal, traveled) >= 0;
-        }
-    }
-    private Snapshot MakeSnapshot(Collision c) => new Snapshot
-    {
-        CollisionPoint = c.IterateContacts().Average(c => c.point),
-        CollisionNormal = c.IterateContacts().Average(c => c.normal).normalized,
-        LastRigidbodyPosition = rb.position,
-    };
-    private Snapshot LastSnapshot;
+    public Transform opposite;
 
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        fixCollider = SetUpCollider();
+    }
+
+    private void FixedUpdate()
+    {
+        if(opposite.IsNotNil())
+            UpdateColliderPosition(opposite.position);
     }
 
 
-    private void OnCollisionEnter(Collision collision)
+    private bool isInitialized = false;
+    Collider SetUpCollider()
     {
-        LastSnapshot = MakeSnapshot(collision);
-        //Debug.Log($"(fr.{Time.frameCount}) Entering collision: {gameObject.name} -- {collision.gameObject.name} [{collision.contactCount} contacts]");
-        Debug.Log($"Collision force: {collision.relativeVelocity.magnitude}, impulse: {collision.impulse.magnitude}");
+        var bladeLength = sword.SwordTip.position.Distance(sword.SwordAnchor.position);
+        var sideLength = ColliderDepth / Mathf.Sqrt(2f);
+
+        var ret = new GameObject($"{gameObject.name} {opposite.gameObject.name} - CollisionFix");
+        ret.transform.SetParent(null);
+        var rb = ret.AddComponent<Rigidbody>();
+        rb.isKinematic = true;
+        var c = ret.AddComponent<BoxCollider>();
+        c.gameObject.layer = ColliderLayers.CollisionFix;
+        c.size = new Vector3(sideLength, bladeLength, sideLength);
+        var updater = ret.AddComponent<ColliderUpdater>();
+        updater.target = this.opposite;
+        updater.collider = c;
+        //this.isInitialized = true;
+
+        return c;
+    } 
+
+    private void UpdateColliderPosition(Vector3 opposite)
+    {
+        var fixer = fixCollider.gameObject;
+        Vector3 bladeAnchor = sword.SwordAnchor.position, bladeTip = sword.SwordTip.position;
+        var bladeCenter = (bladeAnchor + bladeTip) * 0.5f;
+        var bladeDirection = (bladeTip - bladeAnchor).normalized;
+        var planeToContainCollider = new Plane(bladeDirection, bladeCenter);
+
+        var direction =  (bladeCenter - planeToContainCollider.ClosestPointOnPlane(opposite)).normalized;
+        var position = bladeCenter + direction * ColliderDepth*0.5f; 
+
+        fixer.transform.position = position;
+        fixer.transform.rotation = Quaternion.AngleAxis(45f, bladeDirection)* Quaternion.LookRotation(direction, bladeDirection);
     }
 
-    private void OnCollisionStay(Collision collision)
+
+
+    private class ColliderUpdater : MonoBehaviour
     {
-        var current = MakeSnapshot(collision);
-        //Debug.Log($"Collision.. dot product: {Vector3.Dot(LastSnapshot.CollisionNormal, (LastSnapshot.CollisionPoint - current.CollisionPoint).normalized)}");
-        /*foreach(var p in collision.IterateContacts())
+        public Transform target { get; set; }
+        public Collider collider { get; set; }
+
+        private void OnCollisionEnter(Collision collision)
         {
-            DrawHelpers.DrawWireSphere(p.point, 0.05f, (x,y)=>Debug.DrawLine(x,y,Color.yellow));
-            Debug.DrawRay(p.point, p.normal, Color.red);
-        }*/
-        LastSnapshot = current;
+            if (!collision.gameObject.transform.IsOrHasAncestor(target))
+            {
+                foreach(var c in collision.gameObject.GetComponentsInChildren<Collider>())
+                    Physics.IgnoreCollision(this.collider, c, true);
+                //collision.rigidbody?.AddForce(-collision.impulse);
+                Debug.Log($"Disabled {collider.gameObject} - {collision.gameObject}");
+            }
+        }
     }
 
-    private void OnCollisionExit(Collision collision)
+
+    private static int TargetLayer => ColliderLayers.Swords;
+
+    private static ulong CollisionFixWaveCounter = 1;
+    private ulong CollisionFixWave = 1;
+    private static void UpdateCollisions()
     {
-        //Debug.Log($"(fr.{Time.frameCount}) Exiting collision: {gameObject.name} -- {collision.gameObject.name} [{collision.contactCount} contacts]");
-        
+        ++CollisionFixWaveCounter;
+
+        var currentScene = SceneManager.GetActiveScene();
+        var instancesToUpdate = currentScene.GetAllComponents<CollisionFix>().Where(f=>f.isInitialized).ToList();
+
+        var targetables = GetAllTargetableObjects(currentScene.GetRootGameObjects().Select(o => o.transform)).ToList();
+
+        var colliderBuffer = new List<Collider>();
+
+
+        foreach(var fix in instancesToUpdate)
+        {
+            foreach(var t in targetables.Where(t=>t.transform!=fix.opposite.transform /*&& t.LastUpdate < fix.CollisionFixWave*/))
+            {
+                t.GetComponentsInChildren<Collider>(colliderBuffer);
+                foreach (var c in colliderBuffer) if (c.gameObject.layer == TargetLayer) Physics.IgnoreCollision(fix.fixCollider, c);
+            }
+            fix.CollisionFixWave = CollisionFixWaveCounter;
+        }
+        foreach (var t in targetables) t.LastUpdate = CollisionFixWaveCounter;
     }
 
-    private void GetAverageCollisionPoint(Collision col)
+
+    private static IEnumerable<TargetObjectMetadata> GetAllTargetableObjects(IEnumerable<Transform> root)
     {
+        foreach(var o in root)
+        {
+            if (o.gameObject.layer == TargetLayer)
+                yield return o.gameObject.GetComponent<TargetObjectMetadata>() ?? o.gameObject.AddComponent<TargetObjectMetadata>();
+            else 
+                foreach (var y in GetAllTargetableObjects(o.Cast<Transform>())) yield return y;
+        }
+    }
+
+    private class TargetObjectMetadata : MonoBehaviour
+    {
+        public ulong LastUpdate { get; set; } = 0;
     }
 }

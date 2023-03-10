@@ -291,25 +291,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  descriptor: {fileID: 0}
+  descriptor: {fileID: 7146665888130828464}
   joint: {fileID: 5692771888074364033}
+  HandleMovementInterpolationFactor: 9
+  swordsmanDescriptor: {fileID: 0}
   debugger: {fileID: 0}
   debuggerPoint: {fileID: 0}
   inputCircleRadius: 0.42
   Input: {fileID: 0}
   Modes:
     Basic:
+      InputIntersectable: {fileID: 0}
       minLastVectorDiff: 0.3
     Block:
       SwordDirectionHint: {fileID: 0}
+      InputIntersector: {fileID: 0}
       SwordLength: 0.59
       RegisterOnlyInputOnSphere: 1
-      HandleSpeed_metersPerSecond: 6
     BlockKey: 304
-    MovementTest:
-      ShouldReturnBack: 0
-      OnlyTheSphere: 1
-    MovementTestKey: 117
+    Stabbing:
+      SwordDirectionHint: {fileID: 0}
+      InputIntersector: {fileID: 0}
+      StabDistance: 0.8
+      StabKey: 323
+    StabbingKey: 306
 --- !u!114 &5692771888074364093
 MonoBehaviour:
   m_ObjectHideFlags: 0

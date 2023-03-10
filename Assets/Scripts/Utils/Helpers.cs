@@ -161,11 +161,28 @@ public static class GameObjectUtils
         return ret;
     }
 
-    public static T IfNil<T>(this T self, T defaultValue) where T : Object => self.IsNil() ? defaultValue : self;
-    public static bool IsNotNil(this Object self) => !self.IsNil();
-    public static bool IsNil(this Object self) => self == null || self.Equals(null);
+    public static bool IsOrHasAncestor(this Transform self, Transform ancestor)
+    {
+        if (self == ancestor) return true;
+        for (; self != null; self = self.parent) if (self == ancestor) return true;
+        return false;
+    }
+
+    public static T IfNil<T>(this T self, T defaultValue) => self.IsNil() ? defaultValue : self;
+    public static bool IsNotNil(this object self) => !self.IsNil();
+    public static bool IsNil(this object self) => self == null || self.Equals(null);
 
 
+
+    public static IEnumerable<T> GetAllComponents<T>(this Scene self, bool includeInactive=false)
+    {
+        var buffer = new List<T>();
+        foreach(var o in self.GetRootGameObjects())
+        {
+            o.GetComponentsInChildren<T>(includeInactive, buffer);
+            foreach (var y in buffer) yield return y;
+        }
+    }
 }
 
 public static class HelperExtensions
