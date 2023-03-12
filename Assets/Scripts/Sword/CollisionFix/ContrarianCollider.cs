@@ -24,11 +24,13 @@ public class ContrarianCollider : ContrarianColliderBase
 
 public abstract class ContrarianColliderBase : MonoBehaviour
 {
-    private BoxCollider collider;
+    private new BoxCollider collider;
 
     public float ColliderDepth = 1f;
     public SwordDescriptor SwordDescriptor;
     protected abstract SwordDescriptor GetTarget();
+
+    private Rigidbody TargetRigidbody;
 
 
     public void IgnoreCollisions(Collider other, bool shouldIgnore = true) => Physics.IgnoreCollision(collider, other, shouldIgnore);
@@ -42,6 +44,7 @@ public abstract class ContrarianColliderBase : MonoBehaviour
         collider = gameObject.AddComponent<BoxCollider>();
     }
 
+
     protected void SetUpCollider()
     {
         var bladeLength = SwordDescriptor.SwordTip.position.Distance(SwordDescriptor.SwordAnchor.position);
@@ -51,15 +54,20 @@ public abstract class ContrarianColliderBase : MonoBehaviour
         var triggerCol = gameObject.AddComponent<BoxCollider>();
         triggerCol.isTrigger = true;
         triggerCol.size = collider.size * 2;
+        TargetRigidbody = GetTarget().GetComponent<Rigidbody>();
     }
 
     private void OnCollisionEnter(Collision collision) => OnCollision(collision);
     private void OnCollisionStay(Collision collision) => OnCollision(collision);
     private void OnCollisionExit(Collision collision) => OnCollision(collision);
 
+
     void OnCollision(Collision collision)
     {
-        //TODO: implement!
+        foreach (var c in collision.IterateContacts())
+        {
+            TargetRigidbody.AddForceAtPosition(c.impulse/* *-1f */, c.point, ForceMode.Acceleration);
+        }
     }
 
 

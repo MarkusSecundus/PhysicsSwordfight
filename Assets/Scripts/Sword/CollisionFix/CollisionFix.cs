@@ -91,7 +91,7 @@ public class CollisionFix : MonoBehaviour
         public CollisionFix Base;
 
         public Transform target { get; set; }
-        public Collider collider { get; set; }
+        public new Collider collider { get; set; }
 
         public HashSet<Collider> EnteredColliders { get; } = new HashSet<Collider>();
         

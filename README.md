@@ -2,7 +2,7 @@
 
 Work in progress of my bachelor's thesis
 
-To open, use [Unity 2020.3.31](https://unity.com/releases/editor/archive)  
+To open, use [Unity 2022.2.10](https://unity.com/releases/editor/archive)  
   
 Credits:
  - [Unity3D](https://unity.com/)
