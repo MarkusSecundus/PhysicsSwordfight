@@ -77,7 +77,8 @@ public abstract class ContrarianColliderBase : MonoBehaviour
     }
     protected virtual Vector3 ComputeTargetPosition(SwordDescriptor d)
     {
-        return (d.SwordAnchor.position + d.SwordTip.position) * 0.5f;
+        Ray thisSword = SwordDescriptor.SwordBladeAsRay(), otherSword = GetTarget().SwordBladeAsRay();
+        return otherSword.GetShortestRayConnection(thisSword).origin;
     }
 
     protected void UpdateColliderPosition(Vector3 opposite)
@@ -94,4 +95,13 @@ public abstract class ContrarianColliderBase : MonoBehaviour
         fixer.transform.position = position;
         fixer.transform.rotation = Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(direction, bladeDirection);
     }
+
+    /*private void OnDrawGizmos()
+    {
+        Ray thisSword = SwordDescriptor.SwordBladeAsRay(), otherSword = GetTarget().SwordBladeAsRay();
+        var toDraw = thisSword.GetShortestRayConnection(otherSword);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(toDraw);
+    }*/
 }

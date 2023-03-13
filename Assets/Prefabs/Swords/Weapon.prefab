@@ -26,6 +26,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.34401315, y: 0.22755796, z: 0.07228303}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5692771888074364032}
   m_RootOrder: 1
@@ -65,6 +66,7 @@ Transform:
   m_LocalRotation: {x: 0, y: -0.70710677, z: -0.70710677, w: 0}
   m_LocalPosition: {x: 17.408, y: 3.766, z: -0.83389}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4829093479927053316}
   - {fileID: 5692771887854840067}
@@ -78,15 +80,26 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5692771888074364038}
-  serializedVersion: 2
+  serializedVersion: 4
   m_Mass: 1.5
   m_Drag: 0
   m_AngularDrag: 0
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!153 &5692771888074364033
 ConfigurableJoint:
   m_ObjectHideFlags: 0
@@ -100,7 +113,7 @@ ConfigurableJoint:
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 17.408, y: 3.766, z: -0.83389}
-  serializedVersion: 2
+  serializedVersion: 3
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
   m_YMotion: 0
@@ -140,38 +153,44 @@ ConfigurableJoint:
   m_TargetPosition: {x: 0, y: 0, z: 0}
   m_TargetVelocity: {x: 0, y: 0, z: 0}
   m_XDrive:
-    serializedVersion: 3
+    serializedVersion: 4
     positionSpring: 1200000
     positionDamper: 10000
     maximumForce: 3.402823e+38
+    useAcceleration: 0
   m_YDrive:
-    serializedVersion: 3
+    serializedVersion: 4
     positionSpring: 1200000
     positionDamper: 10000
     maximumForce: 3.402823e+38
+    useAcceleration: 0
   m_ZDrive:
-    serializedVersion: 3
+    serializedVersion: 4
     positionSpring: 1200000
     positionDamper: 10000
     maximumForce: 3.402823e+38
+    useAcceleration: 0
   m_TargetRotation: {x: 0, y: 0, z: 0, w: 1}
   m_TargetAngularVelocity: {x: 0, y: 0, z: 0}
   m_RotationDriveMode: 1
   m_AngularXDrive:
-    serializedVersion: 3
+    serializedVersion: 4
     positionSpring: 0
     positionDamper: 0
     maximumForce: 3.4028233e+38
+    useAcceleration: 0
   m_AngularYZDrive:
-    serializedVersion: 3
+    serializedVersion: 4
     positionSpring: 0
     positionDamper: 10
     maximumForce: 3.4028233e+38
+    useAcceleration: 0
   m_SlerpDrive:
-    serializedVersion: 3
+    serializedVersion: 4
     positionSpring: 120
     positionDamper: 10
     maximumForce: 3.4028233e+38
+    useAcceleration: 0
   m_ProjectionMode: 1
   m_ProjectionDistance: 0.1
   m_ProjectionAngle: 180
@@ -356,6 +375,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9cb440690e06d84cb794d52314ff608, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sword: {fileID: 0}
+  ColliderDepth: 1
+  triggerArea: {x: 3, y: 3, z: 3}
+  opposite: {fileID: 0}
 --- !u!114 &355317055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,11 +412,13 @@ MonoBehaviour:
   blockPoint: {fileID: 0}
   upHandTarget: {fileID: 0}
   downHandTarget: {fileID: 0}
+  edges: []
 --- !u!1001 &3383975071566798744
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 5692771888074364032}
     m_Modifications:
     - target: {fileID: 1388242244446646439, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
@@ -449,6 +474,9 @@ PrefabInstance:
       value: 90
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
 --- !u!4 &4829093479927053316 stripped
 Transform:
@@ -466,13 +494,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 059989545d7a5604fa921092316edae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &7058973195999071761 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5692771887655113097, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
-  m_PrefabInstance: {fileID: 3383975071566798744}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7058973195966507338 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5692771887622551250, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
+  m_PrefabInstance: {fileID: 3383975071566798744}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7058973195999071761 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5692771887655113097, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
   m_PrefabInstance: {fileID: 3383975071566798744}
   m_PrefabAsset: {fileID: 0}

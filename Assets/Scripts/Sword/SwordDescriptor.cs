@@ -22,3 +22,13 @@ public class SwordDescriptor : MonoBehaviour
         public Transform Root, Direction;
     }
 }
+
+public static class SwordDescriptorExtensions
+{
+    public static Ray SwordBladeAsRay(this SwordDescriptor self)
+    {
+        var anchor = self.SwordAnchor.position;
+        var direction = self.SwordTip.position - anchor;
+        return new Ray(anchor, direction);
+    }
+}
