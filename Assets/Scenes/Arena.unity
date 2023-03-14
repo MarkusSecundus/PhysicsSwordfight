@@ -32840,8 +32840,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ColliderDepth: 1
-  Tolerance: 0.3
-  SwordDescriptor: {fileID: 2056266606240543155}
+  Tolerance: 0.4
+  HostDescriptor: {fileID: 2056266606240543155}
   target: {fileID: 1080698412}
 --- !u!4 &1788359389
 Transform:

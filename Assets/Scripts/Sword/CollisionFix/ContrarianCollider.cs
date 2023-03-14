@@ -17,7 +17,7 @@ public class ContrarianCollider : ContrarianColliderBase
     }
     void DisableCollisionsWithParent()
     {
-        foreach (var c in SwordDescriptor.gameObject.GetComponentsInChildren<Collider>())
+        foreach (var c in HostDescriptor.gameObject.GetComponentsInChildren<Collider>())
             this.IgnoreCollisions(c, true);
     }
 }
@@ -27,10 +27,10 @@ public abstract class ContrarianColliderBase : MonoBehaviour
     private new BoxCollider collider;
 
     public float ColliderDepth = 1f, Tolerance = 0.3f;
-    public SwordDescriptor SwordDescriptor;
+    public SwordDescriptor HostDescriptor;
     protected abstract SwordDescriptor GetTarget();
 
-    private Rigidbody TargetRigidbody;
+    private Rigidbody HostRigidbody;
 
 
     public void IgnoreCollisions(Collider other, bool shouldIgnore = true) => Physics.IgnoreCollision(collider, other, shouldIgnore);
@@ -47,14 +47,16 @@ public abstract class ContrarianColliderBase : MonoBehaviour
 
     protected void SetUpCollider()
     {
-        var bladeLength = SwordDescriptor.SwordTip.position.Distance(SwordDescriptor.SwordAnchor.position);
+
+        var bladeLength = HostDescriptor.SwordTip.position.Distance(HostDescriptor.SwordAnchor.position);
         var sideLength = ColliderDepth / Mathf.Sqrt(2f);
 
         collider.size = new Vector3(sideLength, bladeLength, sideLength);
-        var triggerCol = gameObject.AddComponent<BoxCollider>();
-        triggerCol.isTrigger = true;
-        triggerCol.size = collider.size * 2;
-        TargetRigidbody = GetTarget().GetComponent<Rigidbody>();
+        //var triggerCol = gameObject.AddComponent<BoxCollider>();triggerCol.isTrigger = true;triggerCol.size = collider.size * 2;
+        HostRigidbody = HostDescriptor.GetComponent<Rigidbody>();
+
+        //var joint = gameObject.AddComponent<FixedJoint>();
+        //joint.connectedBody = HostRigidbody;
     }
 
     private void OnCollisionEnter(Collision collision) => OnCollision(collision);
@@ -64,12 +66,14 @@ public abstract class ContrarianColliderBase : MonoBehaviour
 
     void OnCollision(Collision collision)
     {
+#if true
         foreach (var c in collision.IterateContacts())
         {
+            HostRigidbody.AddForceAtPosition(-c.impulse, c.point, ForceMode.Acceleration);
             if (c.impulse == Vector3.zero) continue;
-            TargetRigidbody.AddForceAtPosition(c.impulse/* *-1f */, c.point, ForceMode.Acceleration);
             Debug.Log($"fr. {Time.frameCount} - adding force {c.impulse.ToStringPrecise()}");
         }
+#endif
     }
 
 
@@ -81,17 +85,18 @@ public abstract class ContrarianColliderBase : MonoBehaviour
     private Vector3 lastDirection = VectorUtils.NaNVector3;
     protected void UpdateColliderPosition()
     {
-        ScaledRay thisSword = SwordDescriptor.SwordBladeAsRay(), otherSword = GetTarget().SwordBladeAsRay();
+        ScaledRay thisSword = HostDescriptor.SwordBladeAsRay(), otherSword = GetTarget().SwordBladeAsRay();
         var directionRay = otherSword.GetShortestScaledRayConnection(thisSword);
         var opposite = directionRay.origin;
 
-
+#if false
         DrawHelpers.DrawWireSphere(opposite, 0.1f, (a, b) => Debug.DrawLine(a, b, Color.red));
         DrawHelpers.DrawWireSphere(directionRay.end, 0.05f, (a, b) => Debug.DrawLine(a, b, Color.yellow));
         Debug.DrawLine(directionRay.origin, directionRay.end, Color.green);
+#endif
 
         var fixer = collider.gameObject;
-        Vector3 bladeAnchor = SwordDescriptor.SwordAnchor.position, bladeTip = SwordDescriptor.SwordTip.position;
+        Vector3 bladeAnchor = HostDescriptor.SwordAnchor.position, bladeTip = HostDescriptor.SwordTip.position;
         var bladeCenter = (bladeAnchor + bladeTip) * 0.5f;
         var bladeDirection = (bladeTip - bladeAnchor).normalized;
         var planeToContainCollider = new Plane(bladeDirection, bladeCenter);
