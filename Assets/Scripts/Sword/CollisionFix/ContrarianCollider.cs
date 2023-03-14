@@ -26,7 +26,7 @@ public abstract class ContrarianColliderBase : MonoBehaviour
 {
     private new BoxCollider collider;
 
-    public float ColliderDepth = 1f;
+    public float ColliderDepth = 1f, Tolerance = 0.3f;
     public SwordDescriptor SwordDescriptor;
     protected abstract SwordDescriptor GetTarget();
 
@@ -66,23 +66,30 @@ public abstract class ContrarianColliderBase : MonoBehaviour
     {
         foreach (var c in collision.IterateContacts())
         {
+            if (c.impulse == Vector3.zero) continue;
             TargetRigidbody.AddForceAtPosition(c.impulse/* *-1f */, c.point, ForceMode.Acceleration);
+            Debug.Log($"fr. {Time.frameCount} - adding force {c.impulse.ToStringPrecise()}");
         }
     }
 
 
     protected virtual void FixedUpdate()
     {
-        UpdateColliderPosition(ComputeTargetPosition(GetTarget()));
-    }
-    protected virtual Vector3 ComputeTargetPosition(SwordDescriptor d)
-    {
-        Ray thisSword = SwordDescriptor.SwordBladeAsRay(), otherSword = GetTarget().SwordBladeAsRay();
-        return otherSword.GetShortestRayConnection(thisSword).origin;
+        UpdateColliderPosition();
     }
 
-    protected void UpdateColliderPosition(Vector3 opposite)
+    private Vector3 lastDirection = VectorUtils.NaNVector3;
+    protected void UpdateColliderPosition()
     {
+        ScaledRay thisSword = SwordDescriptor.SwordBladeAsRay(), otherSword = GetTarget().SwordBladeAsRay();
+        var directionRay = otherSword.GetShortestScaledRayConnection(thisSword);
+        var opposite = directionRay.origin;
+
+
+        DrawHelpers.DrawWireSphere(opposite, 0.1f, (a, b) => Debug.DrawLine(a, b, Color.red));
+        DrawHelpers.DrawWireSphere(directionRay.end, 0.05f, (a, b) => Debug.DrawLine(a, b, Color.yellow));
+        Debug.DrawLine(directionRay.origin, directionRay.end, Color.green);
+
         var fixer = collider.gameObject;
         Vector3 bladeAnchor = SwordDescriptor.SwordAnchor.position, bladeTip = SwordDescriptor.SwordTip.position;
         var bladeCenter = (bladeAnchor + bladeTip) * 0.5f;
@@ -90,6 +97,12 @@ public abstract class ContrarianColliderBase : MonoBehaviour
         var planeToContainCollider = new Plane(bladeDirection, bladeCenter);
 
         var direction = (bladeCenter - planeToContainCollider.ClosestPointOnPlane(opposite)).normalized;
+        if (direction.Dot(lastDirection) < 0 && directionRay.length < Tolerance)
+        {
+            direction = -direction;
+            Debug.Log($"fr.{Time.frameCount} - Dot was negative!");
+        }
+        lastDirection = direction;
         var position = bladeCenter + direction * ColliderDepth * 0.5f;
 
         fixer.transform.position = position;

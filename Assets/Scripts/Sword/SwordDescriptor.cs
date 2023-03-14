@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class SwordDescriptor : MonoBehaviour
 {
+
     public Transform SwordAnchor => anchor = anchor.IfNil(target?.SwordAnchor);
     public Transform SwordCenterOfMass => centerOfWeight = centerOfWeight.IfNil(target?.SwordCenterOfMass);
     public Transform SwordTip => tipPoint = tipPoint.IfNil(target?.SwordTip);
     public Transform SwordHandleUpHandTarget => upHandTarget = upHandTarget.IfNil(target?.SwordHandleUpHandTarget);
     public Transform SwordHandleDownHandTarget => downHandTarget = downHandTarget.IfNil(target?.SwordHandleDownHandTarget);
     public Transform SwordBlockPoint => blockPoint = blockPoint.IfNil(target?.blockPoint);
+    public Transform SwordBottom => bottom = bottom.IfNil(target?.bottom);
     public IReadOnlyList<Edge> Edges => edges = edges.IfNil(target?.edges);
 
     [SerializeField] private SwordDescriptor target = null;
-    [SerializeField] private Transform anchor = null, centerOfWeight=null, tipPoint = null, blockPoint = null, upHandTarget = null, downHandTarget = null;
+    [SerializeField] private Transform anchor = null, centerOfWeight=null, tipPoint = null, blockPoint = null, upHandTarget = null, downHandTarget = null, bottom = null;
     [SerializeField] private Edge[] edges;
 
     [System.Serializable]
@@ -25,10 +27,10 @@ public class SwordDescriptor : MonoBehaviour
 
 public static class SwordDescriptorExtensions
 {
-    public static Ray SwordBladeAsRay(this SwordDescriptor self)
+    public static ScaledRay SwordBladeAsRay(this SwordDescriptor self)
     {
-        var anchor = self.SwordAnchor.position;
-        var direction = self.SwordTip.position - anchor;
-        return new Ray(anchor, direction);
+        var botom = self.SwordAnchor.position;
+        var direction = self.SwordTip.position - botom;
+        return new ScaledRay(botom, direction);
     }
 }

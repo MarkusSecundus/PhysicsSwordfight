@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Networking.UnityWebRequest;
 
 
 [System.Serializable]
@@ -12,6 +13,26 @@ public struct Sphere
 
 	public Vector3 Center;
 	public float Radius;
+}
+
+[System.Serializable]
+public struct ScaledRay
+{
+	public ScaledRay(Vector3 origin, Vector3 direction) => (this.origin, this.direction) = (origin, direction);
+
+	public Vector3 origin, direction;
+
+	public Vector3 end { get => origin + direction; set => direction = value - origin; }
+
+	public float length => direction.magnitude;
+
+	public static ScaledRay FromPoints(Vector3 origin, Vector3 end) => new ScaledRay(origin, end - origin);
+}
+
+public static class ScaledRayExtensions
+{
+	public static Ray AsRay(this ScaledRay self) => new Ray(self.origin, self.direction);
+	public static ScaledRay AsRay(this Ray self) => new ScaledRay(self.origin, self.direction);
 }
 
 [System.Serializable]
@@ -142,6 +163,10 @@ public static class ConfigurableJointExtensions
 	}*/
 }
 
+public static class VectorUtils
+{
+	public static readonly Vector3 NaNVector3 = new Vector3(float.NaN, float.NaN, float.NaN);
+}
 
 
 public static class MeshUtils
@@ -343,40 +368,64 @@ public static class GeometryUtils
 		return dst;
     }
 
-	public static Ray GetShortestRayConnection(this Ray self, Ray other)
+	private struct ShortestRayConnectionResult
 	{
-		///
-		/// We are searching for a line that connects self and other in the shortest way possible. We know such line must be orthogonal to both self and other -> self.direction = self.direction.Cross(other.direction)
-		/// Wow the only thing we need to find is result.origin.
-		/// Lets assume we want result.origin to lie on self - then 
-		///		result.origin = self.origin + t1*self.direction for some t1
-		/// Also result.origin + t3*result.direction = other.origin + t2*other.direction for some t3, t2 (the intersection of result with other)
-		/// by substituting result.origin for the first line, we get:
-		/// self.origin + t1*self.direction + t3*result.direction = other.origin + t2*other.direction
-		/// By solving this system of linear equations (3 equations memberwise for xs, ys and zs) we obtain the 3 parameters that give us the result
-		/// Default shape of the equation system is 
-		///		t1*self.direction + t2*(-other.direction) + t3*result.direction = -self.origin + other.origin
-		/// 
-
-		var resultDirection = self.direction.Cross(other.direction);
-
-		Vector3 a = self.direction, b = -other.direction, c = resultDirection, d = -self.origin + other.origin;
-
-		var equationParams = MathNet.Numerics.LinearAlgebra.Matrix<double>.Build.DenseOfArray(new double[,]
-		{
-			{ a.x, b.x, c.x},
-			{ a.y, b.y, c.y},
-			{ a.z, b.z, c.z}
-		});
-		var constants = MathNet.Numerics.LinearAlgebra.Vector<double>.Build.Dense(new double[] { d.x, d.y, d.z});
-
-		var solution = equationParams.Solve(constants);
-
-		double t1 = solution[0], t2 = solution[1], t3 = solution[2];
-
-		var resultOrigin = self.origin + (float)t1 * self.direction;
-		return new Ray(resultOrigin, resultDirection*(float)t3);
+		public Vector3 resultDirection;
+		public double t1, t2, t3;
 	}
+
+	private static ShortestRayConnectionResult GetShortestRayConnection_impl(ScaledRay self, ScaledRay other)
+    {
+        ///
+        /// We are searching for a line that connects self and other in the shortest way possible. We know such line must be orthogonal to both self and other -> self.direction = self.direction.Cross(other.direction)
+        /// Wow the only thing we need to find is result.origin.
+        /// Lets assume we want result.origin to lie on self - then 
+        ///		result.origin = self.origin + t1*self.direction for some t1
+        /// Also result.origin + t3*result.direction = other.origin + t2*other.direction for some t3, t2 (the intersection of result with other)
+        /// by substituting result.origin for the first line, we get:
+        /// self.origin + t1*self.direction + t3*result.direction = other.origin + t2*other.direction
+        /// By solving this system of linear equations (3 equations memberwise for xs, ys and zs) we obtain the 3 parameters that give us the result
+        /// Default shape of the equation system is 
+        ///		t1*self.direction + t2*(-other.direction) + t3*result.direction = -self.origin + other.origin
+        /// 
+
+        var resultDirection = self.direction.Cross(other.direction);
+
+        Vector3 a = self.direction, b = -other.direction, c = resultDirection, d = -self.origin + other.origin;
+
+        var equationParams = MathNet.Numerics.LinearAlgebra.Matrix<double>.Build.DenseOfArray(new double[,]
+        {
+            { a.x, b.x, c.x},
+            { a.y, b.y, c.y},
+            { a.z, b.z, c.z}
+        });
+        var constants = MathNet.Numerics.LinearAlgebra.Vector<double>.Build.Dense(new double[] { d.x, d.y, d.z });
+
+        var solution = equationParams.Solve(constants);
+
+        double t1 = solution[0], t2 = solution[1], t3 = solution[2];
+
+		return new ShortestRayConnectionResult { resultDirection = resultDirection, t1 = t1, t2 = t2, t3 = t3 };
+    }
+	public static ScaledRay GetShortestRayConnection(this ScaledRay self, ScaledRay other)
+	{
+		var result = GetShortestRayConnection_impl(self, other);
+
+        var resultOrigin = self.origin + (float)result.t1 * self.direction;
+        var resultEnd = other.origin + (float)result.t2 * other.direction;
+        return ScaledRay.FromPoints(resultOrigin, resultEnd);
+    }
+
+	//Same as GetShortestRayConnection(..) but considers the ray to represent finite line segments (that have a beginning and an end)
+	public static ScaledRay GetShortestScaledRayConnection(this ScaledRay self, ScaledRay other)
+	{
+		var result = GetShortestRayConnection_impl(self, other);
+
+        var resultOrigin = self.origin + Mathf.Clamp01((float)result.t1) * self.direction;
+		var resultEnd = other.origin + Mathf.Clamp01((float)result.t2) * other.direction;
+		return ScaledRay.FromPoints(resultOrigin, resultEnd);
+	}
+
 
 	public static double GetRayPointWithLeastDistance_GetParameter(this Ray self, Vector3 v)
     {

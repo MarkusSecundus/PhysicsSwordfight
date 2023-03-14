@@ -32840,6 +32840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ColliderDepth: 1
+  Tolerance: 0.3
   SwordDescriptor: {fileID: 2056266606240543155}
   target: {fileID: 1080698412}
 --- !u!4 &1788359389
@@ -39933,6 +39934,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aeeaf607517a5c47bc67e319c9ae4b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsDisabled: 0
+  DisableKey: 27
   inputCamera: {fileID: 2116216860}
 --- !u!114 &2086466195
 MonoBehaviour:
@@ -42561,6 +42564,7 @@ MonoBehaviour:
   blockPoint: {fileID: 0}
   upHandTarget: {fileID: 0}
   downHandTarget: {fileID: 0}
+  bottom: {fileID: 0}
   edges: []
 --- !u!136 &2060677542787135788
 CapsuleCollider:

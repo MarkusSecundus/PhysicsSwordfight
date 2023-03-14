@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class BasicSwordInput : ISwordInput
 {
+    public bool IsDisabled = false;
+    public KeyCode DisableKey = KeyCode.Escape;
+
     public Camera inputCamera;
     public void Start()
     {
@@ -15,22 +18,27 @@ public class BasicSwordInput : ISwordInput
 
      
     public override Ray? GetInputRay()
-        => inputCamera.ScreenPointToRay(Input.mousePosition);
+        =>IsDisabled?null: inputCamera.ScreenPointToRay(Input.mousePosition);
 
     public override bool GetKey(KeyCode code)
-        => Input.GetKey(code);
+        =>IsDisabled?false: Input.GetKey(code);
 
     public override bool GetKeyDown(KeyCode code)
-        => Input.GetKeyDown(code);
+        => IsDisabled ? false : Input.GetKeyDown(code);
 
     public override bool GetKeyUp(KeyCode code)
-        => Input.GetKeyUp(code);
+        => IsDisabled ? false : Input.GetKeyUp(code);
 
     public override float GetAxis(InputAxis axis)
-        => Input.GetAxis(axis.Name());
+        => IsDisabled ? 0f : Input.GetAxis(axis.Name());
     public override float GetAxisRaw(InputAxis axis)
-        => Input.GetAxisRaw(axis.Name());
+        => IsDisabled ? 0f : Input.GetAxisRaw(axis.Name());
 
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(DisableKey)) IsDisabled = !IsDisabled;
+    }
 #if false
     private void OnDrawGizmos()
     {

@@ -331,7 +331,7 @@ public static class HelperExtensions
     
     public static string ToStringPrecise(this Vector3 v)
     {
-        if (v.x == 0f && v.y == 0f && v.z == 0f) return "<ZERO>";
+        if (v == Vector3.zero) return "<ZERO>";
         var magnitude = v.Magnitude(out var normalized);
         return $"{magnitude}*{normalized}";//$"({v.x};{v.y};{v.z})";
     }
