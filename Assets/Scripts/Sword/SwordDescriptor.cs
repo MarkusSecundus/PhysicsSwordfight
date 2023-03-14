@@ -29,7 +29,7 @@ public static class SwordDescriptorExtensions
 {
     public static ScaledRay SwordBladeAsRay(this SwordDescriptor self)
     {
-        var botom = self.SwordAnchor.position;
+        var botom = self.SwordBottom.position;
         var direction = self.SwordTip.position - botom;
         return new ScaledRay(botom, direction);
     }

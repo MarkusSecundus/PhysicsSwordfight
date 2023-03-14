@@ -30,7 +30,7 @@ public class CollisionTransferTest : MonoBehaviour
     {
         //Debug.Log($"Collision with {collision.gameObject.name} - force: {collision.impulse.ToStringPrecise()}");
 
-        Test();
+        WorksQuiteOk(collision);
         //WithoutForceTranslation(collision);
         //Debug.Log($"velocity: {rb.velocity} - {rb.angularVelocity}");
     }
