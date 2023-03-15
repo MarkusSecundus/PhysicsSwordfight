@@ -153,12 +153,31 @@ public static class GameObjectUtils
     }
 
 
-    public static GameObject InstantiateUtilObject(string name, params System.Type[] componentsToAdd)
+    public static GameObject InstantiateUtilObject(string name, params System.Type[] componentsToAdd) 
+        => GetUtilObjectParent().CreateChild(name, componentsToAdd);
+
+    public static T GetUtilComponent<T>() where T: UnityEngine.Component
+    {
+        var parent = GetUtilObjectParent();
+        if (parent.GetComponentInChildren<T>() is not null and var ret) 
+            return ret;
+        else 
+            return parent.CreateChild(typeof(T).Name).AddComponent<T>();
+    }
+
+    public static GameObject CreateChild(this Transform father, string name, params System.Type[] componentsToAdd)
     {
         var ret = new GameObject(name, componentsToAdd);
-        var utilParent = GetUtilObjectParent();
-        //ret.transform.SetParent(utilParent);
+        ret.transform.SetParent(father);
+        ret.transform.ResetLocalPositionRotationScale();
         return ret;
+    }
+
+    public static void ResetLocalPositionRotationScale(this Transform t)
+    {
+        t.localScale = Vector3.one;
+        t.localRotation = Quaternion.identity;
+        t.localPosition = Vector3.zero;
     }
 
     public static bool IsOrHasAncestor(this Transform self, Transform ancestor)
