@@ -10,9 +10,9 @@ public class ContrarianCollider : ContrarianColliderBase
     protected override ScaledRay GetTarget() => Target.SwordBladeAsRay();
     protected override ScaledRay GetHost() => Host.SwordBladeAsRay();
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
         SetUp(Host.GetComponent<Rigidbody>());
         DisableCollisionsWithParent();
     }
@@ -56,7 +56,7 @@ public abstract class ContrarianColliderBase : MonoBehaviour
     public void IgnoreCollisions(Collider other, bool shouldIgnore = true) => Physics.IgnoreCollision(collider, other, shouldIgnore);
 
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         gameObject.layer = ColliderLayers.CollisionFix; 
         collider = gameObject.AddComponent<BoxCollider>();

@@ -19409,7 +19409,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5032553792225604756, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
   m_PrefabInstance: {fileID: 1942041797}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1533307006}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 059989545d7a5604fa921092316edae0, type: 3}
@@ -28931,6 +28931,30 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.52, y: 3.73, z: 0.3}
   m_Center: {x: 0, y: 1.87, z: 0}
+--- !u!1 &1533307006 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7636414052227803298, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+  m_PrefabInstance: {fileID: 1942041797}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1533307015
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1533307006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9cb440690e06d84cb794d52314ff608, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ColliderConfig:
+    mode: 1
+    ColliderDepth: 1
+    Tolerance: 0.3
+    Overreach: 0.1
+    ForceMultiplierForStandaloneMode: -1
+  TriggerArea: {x: 4, y: 4, z: 4}
 --- !u!1 &1546153196
 GameObject:
   m_ObjectHideFlags: 0
@@ -29331,7 +29355,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1570618619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29344,13 +29368,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc7ef5b1b345cd34aa8260e607844794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ColliderDepth: 0.5
-  Tolerance: 0.3
-  Overreach: 0.1
+  Cfg:
+    mode: 0
+    ColliderDepth: 1
+    Tolerance: 0.3
+    Overreach: 0.1
+    ForceMultiplierForStandaloneMode: -1
+  Target: {fileID: 1080698412}
   Host: {fileID: 2056266606240543155}
-  mode: 0
-  ForceMultiplierForStandaloneMode: -1
-  target: {fileID: 1080698412}
 --- !u!4 &1570618620
 Transform:
   m_ObjectHideFlags: 0
@@ -32998,7 +33023,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1788359388
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33011,13 +33036,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc7ef5b1b345cd34aa8260e607844794, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ColliderDepth: 0.5
-  Tolerance: 0.3
-  Overreach: 0.1
+  Cfg:
+    mode: 1
+    ColliderDepth: 1
+    Tolerance: 0.3
+    Overreach: 0.1
+    ForceMultiplierForStandaloneMode: -1
+  Target: {fileID: 2056266606240543155}
   Host: {fileID: 1080698412}
-  mode: 0
-  ForceMultiplierForStandaloneMode: -1
-  target: {fileID: 2056266606240543155}
 --- !u!4 &1788359389
 Transform:
   m_ObjectHideFlags: 0
@@ -36041,7 +36067,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7636414052227803298, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1533307015}
   m_SourcePrefab: {fileID: 100100000, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
 --- !u!1 &1942827196
 GameObject:
@@ -43036,6 +43065,18 @@ PrefabInstance:
     - target: {fileID: 5692771888074364088, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364088, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: TriggerArea.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364088, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: TriggerArea.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364088, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: TriggerArea.z
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7058973195701697406, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_IsActive

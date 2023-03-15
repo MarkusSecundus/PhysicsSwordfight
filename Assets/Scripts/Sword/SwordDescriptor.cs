@@ -2,7 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwordDescriptor : MonoBehaviour
+public interface IRayProvider
+{
+    public ScaledRay GetRay();
+}
+
+public class SwordDescriptor : MonoBehaviour, IRayProvider
 {
 
     public Transform SwordAnchor => anchor = anchor.IfNil(target?.SwordAnchor);
@@ -23,6 +28,8 @@ public class SwordDescriptor : MonoBehaviour
     {
         public Transform Root, Direction;
     }
+
+    ScaledRay IRayProvider.GetRay() => this.SwordBladeAsRay();
 }
 
 public static class SwordDescriptorExtensions
