@@ -240,12 +240,13 @@ public static class MeshUtils
 
 }
 
-public static class DebugDrawUtils
+public static class AnimationUtils
 {
-	public static void DrawRay(Ray r, Color col, float duration = 1f, float lengthMultiply = 100f)
-	{
-		Debug.DrawRay(r.origin - r.direction * lengthMultiply, r.origin + r.direction * lengthMultiply, col, duration);
-	}
+	public static AnimationCurve AnimationCurve01 => new AnimationCurve(
+		new Keyframe { time=-0.1f, value=-0.1f, inTangent=0f, outTangent = 0f, inWeight=0, outWeight=1f/3f}, 
+		new Keyframe { time=0.99f, value=-0.1f, inTangent=0f, outTangent = 0f, inWeight=1f/3f, outWeight=1}, 
+		new Keyframe { time=1f, value=1.1f, inTangent=45f, outTangent = 45f, inWeight=1f/3f, outWeight=0}
+	);
 }
 
 
@@ -307,7 +308,7 @@ public static class GeometryUtils
         if (self.direction == Vector3.zero)
             throw new ArgumentException(nameof(self), $"Direction must not be zero!");
 		if (radius == 0)
-			throw new ArgumentException(nameof(sphere), $"Radius must not be zero!");
+			return (null, null);
 
 		Vector3 o = self.origin - centre, d = self.direction;
         double a = (double)d.x * d.x + (double)d.y * d.y + (double)d.z*d.z; //non-zero if the direction is non-zero

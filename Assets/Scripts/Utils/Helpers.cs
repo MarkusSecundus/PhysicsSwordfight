@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -347,6 +348,18 @@ public static class HelperExtensions
         modify(self);
         return self;
     }
+
+    public static string MakeString<T>(this IEnumerable<T> self, string separator=", ")
+    {
+        using var it = self.GetEnumerator();
+
+        if (!it.MoveNext()) return "";
+        var ret = new StringBuilder().Append(it.Current.ToString());
+        while (it.MoveNext()) ret = ret.Append(separator).Append(it.Current.ToString());
+
+        return ret.ToString();
+    }
+
     
     public static string ToStringPrecise(this Vector3 v)
     {

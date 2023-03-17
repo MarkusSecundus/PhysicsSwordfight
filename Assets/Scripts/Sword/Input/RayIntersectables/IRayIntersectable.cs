@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
@@ -27,8 +28,10 @@ public abstract class IRayIntersectable : MonoBehaviour
 
     public Transform CenterOverride = null;
     public RayIntersectableSphere Hole;
-    public Polynomial HoleWeight = new Polynomial { x1 =1f, c = -1f};
+    //public Polynomial HoleWeight = new Polynomial { x1 =1f, c = -1f};
 
+    public AnimationCurve HoleWeight = AnimationUtils.AnimationCurve01;
+     
     public RayIntersection GetIntersection(Ray r)
     {
         var ret = GetIntersection_impl(r);
@@ -48,10 +51,7 @@ public abstract class IRayIntersectable : MonoBehaviour
         var distance = Hole.Center.position.Distance(i.Value);
         var distanceRatio = distance / Hole.Radius;
         var weightAdjust = Mathf.Clamp(HoleWeight.Evaluate(distanceRatio), 0f, 1f);
-        if (distanceRatio < 1f)
-        {
-            ;
-        }
+
         i.Weight *= weightAdjust;
     }
 
