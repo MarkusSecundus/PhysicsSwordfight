@@ -4,10 +4,10 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class CollisionFix : MonoBehaviour
+public partial class CollisionFix : MonoBehaviour
 {
     [SerializeField]
-    ContrarianCollider.Config ColliderConfig = ContrarianCollider.Config.Default;
+    ContrarianCollider.Configuration ColliderConfig = ContrarianCollider.Configuration.Default;
 
     [SerializeField] private Vector3 TriggerArea = new Vector3(4, 4, 4);
 
@@ -17,15 +17,16 @@ public class CollisionFix : MonoBehaviour
 
     private CollisionFixManager manager;
 
+
     private void Awake()
     {
         this.Rigidbody = GetComponent<Rigidbody>();
         this.SwordDescriptor = GetComponent<SwordDescriptor>();
         this.AllColliders = GetComponentsInChildren<Collider>();
 
-        transform.CreateChild("trigger").AddComponent<CallbackedTrigger>()
-            .Add<BoxCollider>(c => c.size = TriggerArea)
-            .Init(ColliderLayers.CollisionFix, onEnter: AreaEntered, onExit: AreaExited);
+        //transform.CreateChild("trigger").AddComponent<CallbackedTrigger>()
+        //    .Add<BoxCollider>(c => c.size = TriggerArea)
+        //    .Init(ColliderLayers.CollisionFix, onEnter: AreaEntered, onExit: AreaExited);
 
         manager = GameObjectUtils.GetUtilComponent<CollisionFixManager>();
         manager.Register(this);
@@ -46,6 +47,11 @@ public class CollisionFix : MonoBehaviour
         Debug.Log($"left!");
     }
 
+    private void SetIgnoreCollisions(Collider collider, bool ignoreCollisions=true)
+    {
+        foreach (var c in AllColliders) Physics.IgnoreCollision(c, collider, ignoreCollisions);
+    }
+
     public class Fixer : ContrarianColliderBase
     {
         public SwordDescriptor Host, Target;
@@ -56,8 +62,9 @@ public class CollisionFix : MonoBehaviour
         public Fixer Init(CollisionFix host, CollisionFix target)
         {
             (this.Host, this.Target) = (host.SwordDescriptor, target.SwordDescriptor);
-            this.Cfg = host.ColliderConfig;
+            this.Config = host.ColliderConfig;
             this.SetUp(host.Rigidbody);
+            host.SetIgnoreCollisions(this.collider);
             return this;
         }
     }

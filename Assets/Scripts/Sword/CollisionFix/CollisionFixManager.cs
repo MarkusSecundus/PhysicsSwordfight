@@ -2,63 +2,68 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CollisionFixManager : MonoBehaviour
+public partial class CollisionFix
 {
-    private readonly Dictionary<Collider, CollisionFix> fixByCollider = new Dictionary<Collider, CollisionFix>();
-
-    private readonly HashSet<CollisionFix> active = new HashSet<CollisionFix>();
-    private readonly Dictionary<UnorderedPair<CollisionFix>, CollisionFix.Fixer> fixers = new Dictionary<UnorderedPair<CollisionFix>, CollisionFix.Fixer>();
-
-
-    public void Register(CollisionFix fix) 
+    public class CollisionFixManager : MonoBehaviour
     {
-        if (!active.Add(fix)) throw new System.InvalidOperationException($"{fix.name} is already registered!");
+        private readonly Dictionary<Collider, CollisionFix> fixByCollider = new Dictionary<Collider, CollisionFix>();
 
-        foreach(var f in active)
+        private readonly HashSet<CollisionFix> active = new HashSet<CollisionFix>();
+        private readonly Dictionary<UnorderedPair<CollisionFix>, CollisionFix.Fixer> fixers = new Dictionary<UnorderedPair<CollisionFix>, CollisionFix.Fixer>();
+
+
+        public void Register(CollisionFix fix)
         {
-            if (f == fix) continue;
+            if (!active.Add(fix)) throw new System.InvalidOperationException($"{fix.name} is already registered!");
 
-            CreateFixer(fix, f);
+            foreach (var f in active)
+            {
+                if (f == fix) continue;
+
+                CreateFixer(fix, f);
+            }
+
+            foreach (var c in fix.AllColliders)
+            {
+                fixByCollider.Add(c, fix);
+            }
         }
 
-        foreach(var c in fix.AllColliders)
+        public void Unregister(CollisionFix fix)
         {
-            fixByCollider.Add(c, fix);
+            if (!active.Contains(fix)) throw new System.InvalidOperationException($"{fix.name} is not registered!");
+
+            foreach (var f in active)
+            {
+                if (f == fix) continue;
+
+                if (fixers.ContainsKey(new UnorderedPair<CollisionFix>(f, fix)))
+                    DestroyFixer(fix, f);
+            }
+
+            foreach (var c in fix.AllColliders)  //not an ideal solution that might lead to memory leaks if some colliders were removed from the fixer after it was created
+            {
+                fixByCollider.Remove(c);
+            }
         }
-    }
 
-    public void Unregister(CollisionFix fix) 
-    {
-        if (!active.Contains(fix)) throw new System.InvalidOperationException($"{fix.name} is not registered!");
 
-        foreach(var f in active)
+
+        private void CreateFixer(CollisionFix a, CollisionFix b)
         {
-            if (f == fix) continue;
-
-            if(fixers.ContainsKey(new UnorderedPair<CollisionFix>(f,fix)))
-                DestroyFixer(fix, f);
+            return;
+            var fixer = GameObjectUtils.InstantiateUtilObject($"fixer_{a.name}-{b.name}").AddComponent<CollisionFix.Fixer>().Init(a, b);
+            fixers.Add(new UnorderedPair<CollisionFix>(a, b), fixer);
         }
 
-        foreach(var c in fix.AllColliders)  //not an ideal solution that might lead to memory leaks if some colliders were removed from the fixer after it was created
+        private void DestroyFixer(CollisionFix a, CollisionFix b)
         {
-            fixByCollider.Remove(c);
+            var key = new UnorderedPair<CollisionFix>(a, b);
+            var fixer = fixers[key];
+            fixers.Remove(key);
+            Object.Destroy(fixer.gameObject);
         }
+
     }
-
-
-
-    private void CreateFixer(CollisionFix a, CollisionFix b)
-    {
-        var fixer = GameObjectUtils.InstantiateUtilObject($"fixer_{a.name}-{b.name}").AddComponent<CollisionFix.Fixer>().Init(a, b);
-        fixers.Add(new UnorderedPair<CollisionFix>(a, b), fixer);
-    }
-
-    private void DestroyFixer(CollisionFix a, CollisionFix b)
-    {
-        var key = new UnorderedPair<CollisionFix>(a, b);
-        var fixer = fixers[key];
-        fixers.Remove(key);
-        Object.Destroy(fixer.gameObject);
-    }
-
 }
+

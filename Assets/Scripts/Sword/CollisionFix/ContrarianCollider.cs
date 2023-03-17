@@ -26,32 +26,29 @@ public class ContrarianCollider : ContrarianColliderBase
 public abstract class ContrarianColliderBase : MonoBehaviour
 {
     [System.Serializable]
-    public struct Config
+    public struct Configuration
     {
         public Mode mode;
         public float ColliderDepth, Tolerance, Overreach, ForceMultiplierForStandaloneMode;
 
-        public static Config Default => new Config { mode = Mode.Hosted, ColliderDepth = 1f, Tolerance = 0.3f, Overreach = 0.1f, ForceMultiplierForStandaloneMode = -1f };
+        public static Configuration Default => new Configuration { mode = Mode.Hosted, ColliderDepth = 1f, Tolerance = 0.3f, Overreach = 0.1f, ForceMultiplierForStandaloneMode = -1f };
     }
 
-    public Config Cfg = Config.Default;
+    public Configuration Config = Configuration.Default;
 
     public enum Mode
     {
-        Standalone, Hosted, Jointed
+        Standalone, Hosted
     }
 
     protected abstract ScaledRay GetTarget();
     protected abstract ScaledRay GetHost();
 
 
-    private new BoxCollider collider;
+    protected new BoxCollider collider;
 
 
     private Rigidbody HostRigidbody;
-
-    private ConfigurableJoint joint;
-
 
     public void IgnoreCollisions(Collider other, bool shouldIgnore = true) => Physics.IgnoreCollision(collider, other, shouldIgnore);
 
@@ -60,6 +57,16 @@ public abstract class ContrarianColliderBase : MonoBehaviour
     {
         gameObject.layer = ColliderLayers.CollisionFix; 
         collider = gameObject.AddComponent<BoxCollider>();
+
+        StartCoroutine(LateFixedUpdateCaller());
+        IEnumerator LateFixedUpdateCaller()
+        {
+            while (true)
+            {
+                yield return new WaitForFixedUpdate();
+                LateFixedUpdate();
+            }
+        }
     }
 
 
@@ -67,29 +74,15 @@ public abstract class ContrarianColliderBase : MonoBehaviour
     {
         HostRigidbody = hostRigidbody.GetComponent<Rigidbody>();
         var bladeLength = GetHost().length;
-        var sideLength = (Cfg.ColliderDepth + Cfg.Overreach) / Mathf.Sqrt(2f);
+        var sideLength = (Config.ColliderDepth + Config.Overreach) / Mathf.Sqrt(2f);
 
         collider.size = new Vector3(sideLength, bladeLength, sideLength);
 
-        if (Cfg.mode == Mode.Standalone)
+        if (Config.mode == Mode.Standalone)
         {
             var rb = gameObject.AddComponent<Rigidbody>();
             rb.isKinematic = true;
-        }else if(Cfg.mode == Mode.Jointed)
-        {
-            var hostAsRay = GetHost();
-            var hostCenter = (hostAsRay.origin + hostAsRay.end) * 0.5f;
-            transform.position = hostCenter + new Vector3(sideLength/2f, 0f, sideLength/2f);
-            var rb = gameObject.AddComponent<Rigidbody>();
-            rb.mass = 1;
-            joint = gameObject.AddComponent<ConfigurableJoint>();
-            joint.enablePreprocessing = false;
-            joint.connectedBody = HostRigidbody;
-            joint.anchor = transform.GlobalToLocal(hostCenter);
-            joint.axis = new Vector3(0, 1, 0);
-            joint.xMotion = joint.yMotion = joint.zMotion = joint.angularXMotion = joint.angularYMotion = joint.angularZMotion = ConfigurableJointMotion.Locked;
-        }
-        else if(Cfg.mode == Mode.Hosted)
+        }else if(Config.mode == Mode.Hosted)
         {
             gameObject.transform.SetParent(HostRigidbody.transform);
         }
@@ -103,11 +96,11 @@ public abstract class ContrarianColliderBase : MonoBehaviour
 
     void OnCollision(Collision collision)
     {
-        if (Cfg.mode == Mode.Standalone)
+        if (Config.mode == Mode.Standalone)
         {
             foreach (var c in collision.IterateContacts())
             {
-                HostRigidbody.AddForceAtPosition(c.impulse* Cfg.ForceMultiplierForStandaloneMode, c.point, ForceMode.VelocityChange);
+                HostRigidbody.AddForceAtPosition(c.impulse* Config.ForceMultiplierForStandaloneMode, c.point, ForceMode.VelocityChange);
                 //if (c.impulse == Vector3.zero) continue;
                 //Debug.Log($"fr. {Time.frameCount} - adding force {c.impulse.ToStringPrecise()}");
                 //DrawHelpers.DrawWireSphere(c.point, 0.03f, (a, b) => Debug.DrawLine(a, b, Color.green));
@@ -117,26 +110,10 @@ public abstract class ContrarianColliderBase : MonoBehaviour
         }
     }
 
-#if false
-    private void OnTriggerEnter(Collider other) => OnTrigger(other);
-    private void OnTriggerStay(Collider other) => OnTrigger(other);
-    private void OnTriggerExit(Collider other) => OnTrigger(other);
-
-    void OnTrigger(Collider other)
+    protected virtual void LateFixedUpdate()
     {
-        var bounds = collider.bounds;
-        var cast = Physics.BoxCastAll(bounds.center, bounds.extents, Vector3.zero, collider.transform.rotation);
-        foreach(var c in cast)
-        {
-            DrawHelpers.DrawWireSphere(c.point, 0.03f, (a, b) => Debug.DrawLine(a, b, Color.white));
-        }
-        Debug.Log($"Triggered! - {cast.Length} contacts!");
-    }
-#endif
-
-    protected virtual void Update()
-    {
-        UpdateColliderPosition();
+        //Debug.Log($"fr.{Time.frameCount} Late Update called!");
+        //UpdateColliderPosition();
     }
     protected virtual void FixedUpdate()
     {
@@ -163,28 +140,20 @@ public abstract class ContrarianColliderBase : MonoBehaviour
 #endif
 
         var fixer = collider.gameObject;
-        //Vector3 bladeAnchor = Host.SwordAnchor.position, bladeTip = Host.SwordTip.position;
         var bladeCenter = thisSword.origin + thisSword.direction * 0.5f;
         var bladeDirection = thisSword.direction.normalized;
         var planeToContainCollider = new Plane(bladeDirection, bladeCenter);
 
         var direction = (bladeCenter - planeToContainCollider.ClosestPointOnPlane(opposite)).normalized;
-        if (direction.Dot(lastDirection) < 0 && directionRay.length < Cfg.Tolerance)
+        if (direction.Dot(lastDirection) < 0 && directionRay.length < Config.Tolerance)
         {
             direction = -direction;
-            //Debug.Log($"fr.{Time.frameCount} - Dot was negative!");
         }
         lastDirection = direction;
-        var position = bladeCenter + direction * Cfg.ColliderDepth * 0.5f;
+        var position = bladeCenter + direction * Config.ColliderDepth * 0.5f;
 
-        if(Cfg.mode == Mode.Standalone || Cfg.mode == Mode.Hosted)
-        {
-            fixer.transform.position = position;
-            fixer.transform.rotation = Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(direction, bladeDirection);
-        }else if(Cfg.mode == Mode.Jointed)
-        {
-            //fixer.transform.rotation = Quaternion.LookRotation(direction, bladeDirection);
-        }
+        fixer.transform.position = position;
+        fixer.transform.rotation = Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(direction, bladeDirection);
     }
 
     private static ScaledRay AccountForCurrentMotion(ScaledRay position, Rigidbody rb, float delta)
