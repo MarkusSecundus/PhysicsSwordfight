@@ -10,3 +10,4 @@ Credits:
  - [MuseScore](https://musescore.org/)
  - [TextMesh Pro](https://docs.unity3d.com/Packages/com.unity.textmeshpro@3.0/manual/index.html)
  - [DOTween](http://dotween.demigiant.com/)
+ - [Math.NET Numerics](https://numerics.mathdotnet.com/)
