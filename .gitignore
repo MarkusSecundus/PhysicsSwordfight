@@ -9,5 +9,8 @@
 *.bbl
 *.blg
 *.xmpi
+*.fdb_latexmk
+*.fls
+*.synctex.gz
 prace.pdf
 abstrakt.pdf
