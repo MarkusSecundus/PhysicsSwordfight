@@ -38,7 +38,7 @@ public abstract class ContrarianColliderBase : MonoBehaviour
 
     public enum Mode
     {
-        Standalone, Hosted
+        Standalone, Hosted, StandaloneDynamic
     }
 
     protected abstract ScaledRay GetTarget();
@@ -48,25 +48,13 @@ public abstract class ContrarianColliderBase : MonoBehaviour
     protected new BoxCollider collider;
 
 
-    private Rigidbody HostRigidbody;
+    private Rigidbody HostRigidbody, rb;
 
     public void IgnoreCollisions(Collider other, bool shouldIgnore = true) => Physics.IgnoreCollision(collider, other, shouldIgnore);
 
 
     protected virtual void Awake()
     {
-        gameObject.layer = ColliderLayers.CollisionFix; 
-        collider = gameObject.AddComponent<BoxCollider>();
-
-        StartCoroutine(LateFixedUpdateCaller());
-        IEnumerator LateFixedUpdateCaller()
-        {
-            while (true)
-            {
-                yield return new WaitForFixedUpdate();
-                LateFixedUpdate();
-            }
-        }
     }
 
 
@@ -76,15 +64,34 @@ public abstract class ContrarianColliderBase : MonoBehaviour
         var bladeLength = GetHost().length;
         var sideLength = (Config.ColliderDepth + Config.Overreach) / Mathf.Sqrt(2f);
 
+        if(Config.mode == Mode.StandaloneDynamic)
+        {
+            collider = transform.CreateChild("collider").AddComponent<BoxCollider>();
+        }
+        else
+        {
+            collider = gameObject.AddComponent<BoxCollider>();
+        }
         collider.size = new Vector3(sideLength, bladeLength, sideLength);
+        collider.gameObject.layer = ColliderLayers.CollisionFix;
 
-        if (Config.mode == Mode.Standalone)
+        switch (Config.mode)
         {
-            var rb = gameObject.AddComponent<Rigidbody>();
-            rb.isKinematic = true;
-        }else if(Config.mode == Mode.Hosted)
-        {
-            gameObject.transform.SetParent(HostRigidbody.transform);
+            case Mode.Standalone:
+            {
+                rb = gameObject.AddComponent<Rigidbody>();
+                rb.isKinematic = true;
+            }break;
+            case Mode.StandaloneDynamic:
+            {
+                rb = gameObject.AddComponent<Rigidbody>();
+                rb.MimicStateOf(hostRigidbody);
+                
+            }break;
+            case Mode.Hosted:
+            {
+                gameObject.transform.SetParent(HostRigidbody.transform);
+            }break;
         }
     }
 
@@ -107,18 +114,28 @@ public abstract class ContrarianColliderBase : MonoBehaviour
                 //Debug.DrawLine(c.point, c.point + c.impulse, Color.red);
                 //Debug.DrawLine(c.point, c.point + c.normal, Color.blue);
             }
+        }else if(Config.mode == Mode.StandaloneDynamic)
+        {
+            var (velocityDelta, angularVelocityDelta) = (rb.velocity - lastVelocity, rb.angularVelocity - lastAngularVelocity);
+            if(velocityDelta != Vector3.zero || angularVelocityDelta != Vector3.zero)
+            {
+                Debug.Log($"Applying deltas: {velocityDelta} - angular{angularVelocityDelta} ; col({collision.gameObject})", this);
+                HostRigidbody.velocity += velocityDelta;
+                HostRigidbody.angularVelocity += angularVelocityDelta;
+            }
+            SetVelocties();
         }
     }
 
-    protected virtual void LateFixedUpdate()
-    {
-        //Debug.Log($"fr.{Time.frameCount} Late Update called!");
-        //UpdateColliderPosition();
-    }
+
+    private void SetVelocties() => (rb.transform.position, rb.transform.rotation, rb.velocity, rb.angularVelocity) = (HostRigidbody.position, HostRigidbody.rotation, HostRigidbody.velocity, HostRigidbody.angularVelocity);
+
     protected virtual void FixedUpdate()
     {
         UpdateColliderPosition();
     }
+
+    private Vector3 lastVelocity = Vector3.zero, lastAngularVelocity = Vector3.zero;
 
     private Vector3 lastDirection = VectorUtils.NaNVector3;
     protected void UpdateColliderPosition()
@@ -139,7 +156,7 @@ public abstract class ContrarianColliderBase : MonoBehaviour
         Debug.DrawLine(directionRay.origin, directionRay.end, Color.green);
 #endif
 
-        var fixer = collider.gameObject;
+
         var bladeCenter = thisSword.origin + thisSword.direction * 0.5f;
         var bladeDirection = thisSword.direction.normalized;
         var planeToContainCollider = new Plane(bladeDirection, bladeCenter);
@@ -152,14 +169,21 @@ public abstract class ContrarianColliderBase : MonoBehaviour
         lastDirection = direction;
         var position = bladeCenter + direction * Config.ColliderDepth * 0.5f;
 
-        fixer.transform.position = position;
-        fixer.transform.rotation = Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(direction, bladeDirection);
+
+        if (Config.mode == Mode.StandaloneDynamic)
+        {
+            SetVelocties();
+            (lastVelocity, lastAngularVelocity) = (rb.velocity, rb.angularVelocity);
+        }
+        collider.transform.position = position;
+        collider.transform.rotation = Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(direction, bladeDirection);
+
     }
 
     private static ScaledRay AccountForCurrentMotion(ScaledRay position, Rigidbody rb, float delta)
     {
-        var toRotate = Quaternion.Euler(rb.angularVelocity * delta);
-        var toMove = rb.velocity * delta;
+        var toRotate = Quaternion.Euler((rb.angularVelocity + 0f*rb.GetAccumulatedTorque() * delta / rb.mass ) * delta);
+        var toMove = (rb.velocity + 0f * rb.GetAccumulatedForce() * delta / rb.mass) * delta ;
 
         var (origin, end) = (position.origin, position.end);
 

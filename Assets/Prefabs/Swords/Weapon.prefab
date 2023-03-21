@@ -85,7 +85,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaTensor: {x: 0.05, y: 0.07, z: 0.02}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
@@ -93,8 +93,8 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
+  m_ImplicitCom: 0
+  m_ImplicitTensor: 0
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -375,10 +375,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9cb440690e06d84cb794d52314ff608, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sword: {fileID: 0}
-  ColliderDepth: 1
-  triggerArea: {x: 3, y: 3, z: 3}
-  opposite: {fileID: 0}
+  ColliderConfig:
+    mode: 1
+    ColliderDepth: 1
+    Tolerance: 0.3
+    Overreach: 0.1
+    ForceMultiplierForStandaloneMode: -1
+  TriggerArea: {x: 4, y: 4, z: 4}
 --- !u!114 &355317055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,6 +415,7 @@ MonoBehaviour:
   blockPoint: {fileID: 0}
   upHandTarget: {fileID: 0}
   downHandTarget: {fileID: 0}
+  bottom: {fileID: 0}
   edges: []
 --- !u!1001 &3383975071566798744
 PrefabInstance:

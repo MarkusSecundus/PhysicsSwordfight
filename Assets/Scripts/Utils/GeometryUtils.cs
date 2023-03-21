@@ -573,6 +573,56 @@ public static class PhysicsUtils
 		self.AddTorque(toApply, ForceMode.VelocityChange);
 		//Debug.Log($"applied torque {toApply}, target: {velocity} -> velocity{self.angularVelocity}");
 	}
+
+	public static Rigidbody MimicVolatilesOf(this Rigidbody self, Rigidbody toMimic)
+    {
+        self.position = toMimic.position;
+        self.rotation = toMimic.rotation;
+        self.velocity = toMimic.velocity;
+        self.angularVelocity = toMimic.angularVelocity;
+
+		return self;
+	}
+
+	public static Rigidbody MimicStateOf(this Rigidbody self, Rigidbody toMimic)
+    {
+
+        self.automaticCenterOfMass = false;
+        self.centerOfMass = toMimic.centerOfMass;
+
+        self.automaticInertiaTensor = false;
+        self.inertiaTensor = toMimic.inertiaTensor;
+        self.inertiaTensorRotation = toMimic.inertiaTensorRotation;
+
+        self.drag = toMimic.drag;
+        self.angularDrag = toMimic.angularDrag;
+        self.maxAngularVelocity = toMimic.maxAngularVelocity;
+        self.maxDepenetrationVelocity = toMimic.maxDepenetrationVelocity;
+        self.maxLinearVelocity = toMimic.maxLinearVelocity;
+        self.useGravity = toMimic.useGravity;
+        self.mass = toMimic.mass;
+        self.maxDepenetrationVelocity = toMimic.maxDepenetrationVelocity;
+
+        self.sleepThreshold = toMimic.sleepThreshold;
+        self.solverIterations = toMimic.solverIterations;
+        self.solverVelocityIterations = toMimic.solverVelocityIterations;
+
+        return self.MimicVolatilesOf(toMimic);
+    }
+
+	public static Rigidbody MimicAllOf(this Rigidbody self, Rigidbody toMimic)
+	{
+		self.collisionDetectionMode = toMimic.collisionDetectionMode;
+		self.constraints = toMimic.constraints;
+		self.detectCollisions = toMimic.detectCollisions;
+		self.excludeLayers = toMimic.excludeLayers;
+		self.freezeRotation = toMimic.freezeRotation;
+		self.includeLayers = toMimic.includeLayers;
+		self.interpolation = toMimic.interpolation;
+		self.isKinematic = toMimic.isKinematic;
+
+		return self.MimicStateOf(toMimic);
+	}
 }
 
 public static class CollectionsUtils

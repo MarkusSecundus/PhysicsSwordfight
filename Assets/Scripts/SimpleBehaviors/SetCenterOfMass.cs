@@ -12,7 +12,10 @@ public class SetCenterOfMass : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         if (LogTheAutomaticCenterOfMass)
-            Debug.Log($"{gameObject.name}..Precalculated center of mass was: {rb.centerOfMass}");
+        {
+            Debug.Log($"Precalculated center of mass was: {rb.centerOfMass}", this);
+            Debug.Log($"Precalculated inertia tensor was: {rb.inertiaTensor}, rotation {rb.inertiaTensorRotation.eulerAngles}", this);
+        }
         rb.centerOfMass = LocalCenterOfMass;
     }
 
