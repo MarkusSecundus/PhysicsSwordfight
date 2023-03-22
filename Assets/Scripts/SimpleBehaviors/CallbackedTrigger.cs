@@ -8,11 +8,14 @@ public class CallbackedTrigger : MonoBehaviour
 {
     private callback OnEnter, OnExit;
 
+    private List<Collider> colliders = new List<Collider>();
+    public IEnumerable<Collider> Colliders => colliders;
     public CallbackedTrigger Add<T>(System.Action<T> initializer) where T: Collider
     {
         var collider = gameObject.AddComponent<T>();
         collider.isTrigger = true;
         initializer?.Invoke(collider);
+        colliders.Add(collider);
 
         return this;
     }

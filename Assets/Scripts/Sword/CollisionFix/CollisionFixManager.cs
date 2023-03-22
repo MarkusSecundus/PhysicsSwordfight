@@ -1,27 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+
+using AttachedFixersTable = System.Collections.Generic.Dictionary<CollisionFix, CollisionFix.Fixer>;
+using ColliderToParentTable = System.Collections.Generic.Dictionary<UnityEngine.Collider, CollisionFix>;
 
 public partial class CollisionFix
 {
+    private readonly AttachedFixersTable attachedFixers = new AttachedFixersTable();
+
     public class CollisionFixManager : MonoBehaviour
     {
-        private readonly Dictionary<Collider, CollisionFix> fixByCollider = new Dictionary<Collider, CollisionFix>();
+        private readonly ColliderToParentTable fixByCollider = new ColliderToParentTable();
 
         private readonly HashSet<CollisionFix> active = new HashSet<CollisionFix>();
-        private readonly Dictionary<UnorderedPair<CollisionFix>, CollisionFix.Fixer> fixers = new Dictionary<UnorderedPair<CollisionFix>, CollisionFix.Fixer>();
 
+
+        public bool TryFindFixer(Collider c, out CollisionFix parent) => fixByCollider.TryGetValue(c, out parent);
+
+        private bool TryFindFixer(CollisionFix a, CollisionFix b, out CollisionFix.Fixer ret) => TryFindFixer(a, b, out ret, out _, out _); 
+        private bool TryFindFixer(CollisionFix a, CollisionFix b, out CollisionFix.Fixer ret, out AttachedFixersTable containingTable, out CollisionFix key) 
+            => (containingTable = a.attachedFixers).TryGetValue(key=b, out ret) 
+            || (containingTable = b.attachedFixers).TryGetValue(key=a, out ret);
 
         public void Register(CollisionFix fix)
         {
             if (!active.Add(fix)) throw new System.InvalidOperationException($"{fix.name} is already registered!");
 
-            foreach (var f in active)
-            {
-                if (f == fix) continue;
-
-                CreateFixer(fix, f);
-            }
 
             foreach (var c in fix.AllColliders)
             {
@@ -37,8 +43,7 @@ public partial class CollisionFix
             {
                 if (f == fix) continue;
 
-                if (fixers.ContainsKey(new UnorderedPair<CollisionFix>(f, fix)))
-                    DestroyFixer(fix, f);
+                DestroyFixer(fix, f);
             }
 
             foreach (var c in fix.AllColliders)  //not an ideal solution that might lead to memory leaks if some colliders were removed from the fixer after it was created
@@ -47,23 +52,33 @@ public partial class CollisionFix
             }
         }
 
-
-
-        private void CreateFixer(CollisionFix a, CollisionFix b)
+        public void EnableFixer(CollisionFix a, CollisionFix b)
         {
-            return;
+            if (TryFindFixer(a, b, out _))
+                return;
+
+            if (Random.Range(0, 2) == 0) (a, b) = (b, a);
+
             var fixer = GameObjectUtils.InstantiateUtilObject($"fixer_{a.name}-{b.name}").AddComponent<CollisionFix.Fixer>().Init(a, b);
-            fixers.Add(new UnorderedPair<CollisionFix>(a, b), fixer);
+            a.attachedFixers.Add(b, fixer);
+        }
+
+        public void DisableFixer(CollisionFix a, CollisionFix b)
+        {
+            if(TryFindFixer(a,b, out var fixer))
+            {
+                fixer.gameObject.SetActive(false);
+            }
         }
 
         private void DestroyFixer(CollisionFix a, CollisionFix b)
         {
-            var key = new UnorderedPair<CollisionFix>(a, b);
-            var fixer = fixers[key];
-            fixers.Remove(key);
-            Object.Destroy(fixer.gameObject);
+            if(TryFindFixer(a,b, out var fixer, out var containingDict, out var key))
+            {
+                containingDict.Remove(key);
+                Object.Destroy(fixer.gameObject);
+            }
         }
-
     }
 }
 

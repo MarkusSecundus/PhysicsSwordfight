@@ -6,7 +6,7 @@ using UnityEngine;
 public class SwordmillBehavior : MonoBehaviour
 {
     public ConfigurableJoint Rotor;
-    public GameObject SwordPrototype;
+    public ConfigurableJoint SwordPrototype;
     public int SwordsCount = 1;
     public Vector3 positionOffset = Vector3.zero;   
 
@@ -25,8 +25,7 @@ public class SwordmillBehavior : MonoBehaviour
 
     void Update()
     {
-        foreach (var s in swords)
-            s.targetRotation = Quaternion.Euler(s.targetRotation.eulerAngles.With(x: SwordsAngle));
+        //foreach (var s in swords) s.targetRotation = Quaternion.Euler(s.targetRotation.eulerAngles.With(x: SwordsAngle));
 
         Rotor.connectedAnchor = originalConnectedAnchor + positionOffset;
     }
@@ -38,17 +37,16 @@ public class SwordmillBehavior : MonoBehaviour
 
 
 
-    IEnumerable<ConfigurableJoint> MakeSwords(GameObject prototype, int count)
+    IEnumerable<ConfigurableJoint> MakeSwords(ConfigurableJoint proto, int count)
     {
-        var proto = prototype.GetComponent<ConfigurableJoint>();
-        List<ConfigurableJoint> ret = new List<ConfigurableJoint> { proto};
+        List<ConfigurableJoint> ret = new List<ConfigurableJoint> {proto};
 
         var angleToAdd = RotationUtil.MaxDegree / count;
         var angleAccumulator = 0f;
         proto.autoConfigureConnectedAnchor = false;
         foreach (var v in GeometryUtils.PointsOnCircle(count, proto.connectedAnchor, Vector3.up, includeBegin:false))
         {
-            var s = prototype.InstantiateWithTransform().GetComponent<ConfigurableJoint>();
+            var s = proto.gameObject.InstantiateWithTransform().GetComponent<ConfigurableJoint>();
             ret.Add(s);
             s.connectedAnchor = v;
             s.targetRotation = s.targetRotation * Quaternion.AngleAxis(angleAccumulator += angleToAdd, Vector3.up);

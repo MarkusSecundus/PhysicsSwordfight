@@ -47,7 +47,6 @@ GameObject:
   - component: {fileID: 5692771888074364093}
   - component: {fileID: 5692771888074364095}
   - component: {fileID: 5692771888074364088}
-  - component: {fileID: 355317055}
   - component: {fileID: 7146665888130828464}
   m_Layer: 11
   m_Name: Weapon
@@ -381,21 +380,7 @@ MonoBehaviour:
     Tolerance: 0.3
     Overreach: 0.1
     ForceMultiplierForStandaloneMode: -1
-  TriggerArea: {x: 4, y: 4, z: 4}
---- !u!114 &355317055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5692771888074364038}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 37bbb861d1b8dba40902089fca9c539b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LocalCenterOfMass: {x: 0, y: 0, z: 0.1}
-  LogTheAutomaticCenterOfMass: 1
+  ActivationRadius: 3
 --- !u!114 &7146665888130828464
 MonoBehaviour:
   m_ObjectHideFlags: 0

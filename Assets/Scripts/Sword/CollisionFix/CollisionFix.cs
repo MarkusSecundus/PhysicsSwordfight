@@ -6,10 +6,12 @@ using UnityEngine.SceneManagement;
 
 public partial class CollisionFix : MonoBehaviour
 {
+    public static int TargetLayer => ColliderLayers.CollisionFix;
+
     [SerializeField]
     ContrarianCollider.Configuration ColliderConfig = ContrarianCollider.Configuration.Default;
 
-    [SerializeField] private Vector3 TriggerArea = new Vector3(4, 4, 4);
+    [SerializeField] private float ActivationRadius = 3f;
 
     public IReadOnlyList<Collider> AllColliders { get; private set; }
     private Rigidbody Rigidbody { get; set; }
@@ -17,16 +19,16 @@ public partial class CollisionFix : MonoBehaviour
 
     private CollisionFixManager manager;
 
-
+    private CallbackedTrigger InstanceCreator;
     private void Awake()
     {
         this.Rigidbody = GetComponent<Rigidbody>();
         this.SwordDescriptor = GetComponent<SwordDescriptor>();
         this.AllColliders = GetComponentsInChildren<Collider>();
 
-        //transform.CreateChild("trigger").AddComponent<CallbackedTrigger>()
-        //    .Add<BoxCollider>(c => c.size = TriggerArea)
-        //    .Init(ColliderLayers.CollisionFix, onEnter: AreaEntered, onExit: AreaExited);
+        InstanceCreator = transform.CreateChild("trigger").AddComponent<CallbackedTrigger>()
+            .Add<SphereCollider>(c => c.radius = ActivationRadius)
+            .Init(CollisionFix.TargetLayer, onEnter: AreaEntered);
 
         manager = GameObjectUtils.GetUtilComponent<CollisionFixManager>();
         manager.Register(this);
@@ -37,14 +39,17 @@ public partial class CollisionFix : MonoBehaviour
         manager.Unregister(this);
     }
 
-
     void AreaEntered(Collider collider)
     {
-        Debug.Log($"Entered!");
-    }
-    void AreaExited(Collider collider)
-    {
-        Debug.Log($"left!");
+        if(manager.TryFindFixer(collider, out var other) && other != this)
+        {
+            manager.EnableFixer(this, other);
+            foreach (var c in InstanceCreator.Colliders) other.SetIgnoreCollisions(c);
+        }
+        else
+        {
+            foreach (var c in InstanceCreator.Colliders) Physics.IgnoreCollision(c, collider);
+        }
     }
 
     private void SetIgnoreCollisions(Collider collider, bool ignoreCollisions=true)
@@ -52,20 +57,41 @@ public partial class CollisionFix : MonoBehaviour
         foreach (var c in AllColliders) Physics.IgnoreCollision(c, collider, ignoreCollisions);
     }
 
+
     public class Fixer : ContrarianColliderBase
     {
-        public SwordDescriptor Host, Target;
+        public CollisionFix Host, Target;
 
-        protected override ScaledRay GetHost() => Host.SwordBladeAsRay();
-        protected override ScaledRay GetTarget() => Target.SwordBladeAsRay();
-    
+        protected override ScaledRay GetHost() => Host.SwordDescriptor.SwordBladeAsRay();
+        protected override ScaledRay GetTarget() => Target.SwordDescriptor.SwordBladeAsRay();
+
+        public void SetIgnoreCollisions(CollisionFix fix) => fix.SetIgnoreCollisions(this.collider);
+
+        private SphereCollider trigger;
         public Fixer Init(CollisionFix host, CollisionFix target)
         {
-            (this.Host, this.Target) = (host.SwordDescriptor, target.SwordDescriptor);
+            (this.Host, this.Target) = (host, target);
             this.Config = host.ColliderConfig;
             this.SetUp(host.Rigidbody);
-            host.SetIgnoreCollisions(this.collider);
+            this.SetIgnoreCollisions(host);
+            trigger = gameObject.AddComponent<SphereCollider>();
+            trigger.isTrigger = true;
+            trigger.radius = host.ActivationRadius;
             return this;
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if(Host.manager.TryFindFixer(other, out var justHit))
+            {
+                if (justHit != Target)
+                    justHit.SetIgnoreCollisions(this.collider);
+                justHit.SetIgnoreCollisions(trigger);
+            }
+            else
+            {
+                Physics.IgnoreCollision(trigger, other);
+            }
         }
     }
 
