@@ -1,7 +1,7 @@
 % Metadata k uložení do PDF, podrobnější popis viz dokumentace balíčku pdfx.
 
 \Author{Jméno Příjmení}
-\Title{Název práce}
-\Keywords{klíčová slova\sep další taková\sep ještě jiná}
+\Title{ 3D Simulátor šermu s mečem založený na fyzice}
+\Keywords{šerm\sep herní fyzika\sep počítačová hra\sep herní engine Unity}
 \Subject{Abstrakt práce}
 \Publisher{Univerzita Karlova}

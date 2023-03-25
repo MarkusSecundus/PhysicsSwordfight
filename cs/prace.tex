@@ -60,36 +60,36 @@
 %%% Údaje o práci
 
 % Název práce v jazyce práce (přesně podle zadání)
-\def\NazevPrace{Název práce}
+\def\NazevPrace{3D Simulátor šermu s mečem založený na fyzice}
 
 % Název práce v angličtině
-\def\NazevPraceEN{Name of thesis}
+\def\NazevPraceEN{3D Physics driven swordfighting simulator}
 
 % Jméno autora
-\def\AutorPrace{Jméno Příjmení}
+\def\AutorPrace{Jakub Hroník}
 
 % Rok odevzdání
-\def\RokOdevzdani{ROK}
+\def\RokOdevzdani{2023}
 
 % Název katedry nebo ústavu, kde byla práce oficiálně zadána
 % (dle Organizační struktury MFF UK, případně plný název pracoviště mimo MFF)
-\def\Katedra{Název katedry nebo ústavu}
-\def\KatedraEN{Name of the department}
+\def\Katedra{Katedra softwaru a výuky informatiky}
+\def\KatedraEN{Department of Software and Computer Science Education}
 
 % Jedná se o katedru (department) nebo o ústav (institute)?
 \def\TypPracoviste{Katedra}
 \def\TypPracovisteEN{Department}
 
 % Vedoucí práce: Jméno a příjmení s~tituly
-\def\Vedouci{Vedoucí práce}
+\def\Vedouci{Mgr. Vojtěch Černý}
 
 % Pracoviště vedoucího (opět dle Organizační struktury MFF)
-\def\KatedraVedouciho{katedra}
-\def\KatedraVedoucihoEN{department}
+\def\KatedraVedouciho{Katedra softwaru a výuky informatiky}
+\def\KatedraVedoucihoEN{Department of Software and Computer Science Education}
 
 % Studijní program a obor
-\def\StudijniProgram{studijní program}
-\def\StudijniObor{studijní obor}
+\def\StudijniProgram{Informatika (B1801)}
+\def\StudijniObor{IPSS (1801R048)}
 
 % Nepovinné poděkování (vedoucímu práce, konzultantovi, tomu, kdo
 % zapůjčil software, literaturu apod.)
@@ -99,7 +99,16 @@ Poděkování.
 
 % Abstrakt (doporučený rozsah cca 80-200 slov; nejedná se o zadání práce)
 \def\Abstrakt{%
-Abstrakt.
+Boj s chladnou zbraní je mechanika přítomná v nějaké podobě v mnoha akčních hrách z první osoby.
+pouze hrstka z nich se však pokouší o realistickou simulaci, jež by hráči dala svobodu jakkoliv se blížící
+té, již manipulace s chladnou zbraní umožňuje v reálném světě.
+Práce implementuje simulátor šermu s jedenapůlručním (dlouhým) mečem v enginu Unity, ve kterém
+figuruje meč jako plně fyzikálně simulovaný objekt, a předkládá schéma ovládání pro klávesnici a myš
+umožňující hráči jemnou kontrolu nad pohybem zbraně. Pro testování hratelnosti implementuje
+jednoduchého AI protivníka, rovněž jsme prozkoumali některé možnosti, které jemná kontrola nad
+mečem otevírá pro fyzikální interakci s herním prostředím.
+Implementace je modulární a může posloužit jako základ pro akční hru s pokročilým bojovým
+systémem nebo pro fyzikální puzzle hru.
 }
 \def\AbstraktEN{%
 Abstract.
@@ -107,10 +116,10 @@ Abstract.
 
 % 3 až 5 klíčových slov (doporučeno), každé uzavřeno ve složených závorkách
 \def\KlicovaSlova{%
-{klíčová} {slova}
+{šerm} {herní fyzika} {počítačová hra} {herní engine Unity}
 }
 \def\KlicovaSlovaEN{%
-{key} {words}
+{swordfighting} {game physics} {computer game} {Unity engine}
 }
 
 %% Balíček hyperref, kterým jdou vyrábět klikací odkazy v PDF,

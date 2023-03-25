@@ -12,5 +12,6 @@
 *.fdb_latexmk
 *.fls
 *.synctex.gz
+*.bcf
 prace.pdf
 abstrakt.pdf
