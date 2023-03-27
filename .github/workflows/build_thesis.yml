@@ -12,6 +12,7 @@ jobs:
         with:
           ref: "thesis-text"
           path: "."
+      - run: yes | sudo apt update ; yes | sudo apt upgrade
       - run: sudo apt install make texlive-full -y
       - run: cd cs ; make ; cd ..
       - uses: "marvinpinto/action-automatic-releases@latest"
