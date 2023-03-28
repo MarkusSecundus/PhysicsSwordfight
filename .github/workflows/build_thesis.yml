@@ -1,6 +1,8 @@
 name: Build the Bachelors Thesis
 
 on:
+  push:
+    branches: [ thesis-text ]
   workflow_dispatch:
 
 jobs:
