@@ -49,7 +49,6 @@
 \usepackage{indentfirst}    % zavede odsazení 1. odstavce kapitoly
 
 \usepackage[backend=biber]{biblatex}
-
 %\usepackage{natbib}         % zajištuje možnost odkazovat na literaturu
 			    % stylem AUTOR (ROK), resp. AUTOR [ČÍSLO]
 \usepackage[nottoc]{tocbibind} % zajistí přidání seznamu literatury,
@@ -59,6 +58,10 @@
 \usepackage{booktabs}       % lepší vodorovné linky v tabulkách
 \usepackage{paralist}       % lepší enumerate a itemize
 \usepackage{xcolor}         % barevná sazba
+
+\usepackage{acro}	% seznam zkratek
+
+\include{seznamzkratek}
 
 \addbibresource{literatura.bib}
 %%% Údaje o práci
@@ -166,7 +169,8 @@ Abstract.
 
 %%% Použité zkratky v bakalářské práci (opět nemusí být nutné uvádět)
 %%% U matematických prací může být lepší přemístit seznam zkratek na začátek práce.
-\chapwithtoc{Seznam použitých zkratek}
+\printacronyms[heading=chapter*, name={Seznam zkratek}]
+\addcontentsline{toc}{chapter}{Seznam zkratek}
 
 %%% Přílohy k bakalářské práci, existují-li. Každá příloha musí být alespoň jednou
 %%% odkazována z vlastního textu práce. Přílohy se číslují.
