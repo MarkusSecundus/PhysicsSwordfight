@@ -6,6 +6,7 @@ using UnityEngine;
 public class FpsCounter : MonoBehaviour
 {
     TMP_Text text;
+    [SerializeField] string format = "FPS: {0}";
     void Start()
     {
         text = GetComponent<TMP_Text>();
@@ -14,6 +15,6 @@ public class FpsCounter : MonoBehaviour
     void Update()
     {
         float fps = 1f / Time.unscaledDeltaTime;
-        text.text = $"FPS: {Mathf.RoundToInt(fps)}";
+        text.text = string.Format(format, Mathf.RoundToInt(fps));
     }
 }
