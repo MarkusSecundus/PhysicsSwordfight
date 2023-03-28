@@ -13,5 +13,6 @@
 *.fls
 *.synctex.gz
 *.bcf
+*.run.xml
 prace.pdf
 abstrakt.pdf

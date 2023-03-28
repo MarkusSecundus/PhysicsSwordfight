@@ -9,7 +9,7 @@
 %%% a unsrt jsou standardní součástí latexových distribucí. Styl czplainnat
 %%% je dodáván s touto šablonou a bibTeX ho hledá v aktuálním adresáři.
 
-\bibliographystyle{czplainnat}    %% Autor (rok) s českými spojkami
+%\bibliographystyle{czplainnat}    %% Autor (rok) s českými spojkami
 % \bibliographystyle{plainnat}    %% Autor (rok) s anglickými spojkami
 % \bibliographystyle{unsrt}       %% [číslo]
 
@@ -18,7 +18,8 @@
 %%% Vytvoření seznamu literatury. Pozor, pokud jste necitovali ani jednu
 %%% položku, seznam se automaticky vynechá.
 
-\bibliography{literatura}
+\printbibliography
+%\bibliography{literatura}
 
 %%% Kdybyste chtěli bibliografii vytvářet ručně (bez bibTeXu), lze to udělat
 %%% následovně. V takovém případě se řiďte normou ISO 690 a zvyklostmi v oboru.
