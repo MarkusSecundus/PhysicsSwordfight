@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAssembly : MonoBehaviour
+public class SwordsmanAssembly : MonoBehaviour
 {
-    public PlayerMovement Player;
+    public SwordsmanMovement Player;
     public SwordMovement Sword;
 
     public bool IsMainPlayer = false;

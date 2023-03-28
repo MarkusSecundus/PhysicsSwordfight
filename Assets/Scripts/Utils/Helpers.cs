@@ -207,6 +207,18 @@ public static class GameObjectUtils
 
 public static class HelperExtensions
 {
+    public static void SetRect(this RectTransform self, Rect toSet)
+    {
+        self.sizeDelta = toSet.size;
+        self.position = toSet.center;
+    }
+    public static Rect GetRect(this RectTransform self)
+    {
+        var ret = self.rect;
+        ret.min += self.position.xy();
+        return ret;
+    }
+
     public static IEnumerable<ContactPoint> IterateContacts(this Collision self)
     {
         for (int t = 0; t < self.contactCount; ++t) yield return self.GetContact(t);

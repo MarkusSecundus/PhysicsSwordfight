@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Op;
 
-public class PlayerMovement : MonoBehaviour
+public class SwordsmanMovement : MonoBehaviour
 {
     [System.Serializable]
     public struct KeyPair

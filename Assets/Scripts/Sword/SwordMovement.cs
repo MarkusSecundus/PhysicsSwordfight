@@ -24,7 +24,6 @@ public class SwordMovement : MonoBehaviour
     public SwordsmanDescriptor swordsmanDescriptor;
     private Transform swordAnchor => descriptor.SwordCenterOfMass;
 
-    public WeaponDebugger debugger;
     public Transform debuggerPoint;
 
     public float inputCircleRadius = 0.3f;
@@ -51,7 +50,6 @@ public class SwordMovement : MonoBehaviour
         jointRotationHelper = joint.MakeRotationHelper();
 
         swordAnchor.localPosition = joint.anchor;
-        debugger.AdjustPosition(joint);
 
         InitAnchorSetter();
 
@@ -110,7 +108,6 @@ public class SwordMovement : MonoBehaviour
 
     public void SetSwordRotation(Quaternion rotation) 
     {
-        debugger?.RotateDebugger(rotation);
         jointRotationHelper.SetTargetRotation(Quaternion.Inverse(joint.connectedBody.transform.rotation) * rotation);
     }
     public void SetDebugPointPosition(Vector3 v)

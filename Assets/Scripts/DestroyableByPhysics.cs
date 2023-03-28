@@ -68,9 +68,10 @@ public class DestroyableByPhysics : MonoBehaviour
         AlreadyCollided.Add(collision.gameObject);
 
 
-        var damager = GetDamager(collision);
-        var multiplier = damager?.DamageMultiplier ?? DefaultMultiplier;
-        if (damager != null) multiplier = ExceptionsFromRule.FirstOrDefault(r => damager.CompareTag(r.Tag))?.Multiplier ?? multiplier;
+        //var damager = GetDamager(collision);
+        //var multiplier = damager?.DamageMultiplier ?? DefaultMultiplier;
+        //if (damager != null) multiplier = ExceptionsFromRule.FirstOrDefault(r => damager.CompareTag(r.Tag))?.Multiplier ?? multiplier;
+        var multiplier = 1f;
 
         var force = collision.relativeVelocity.magnitude;
         var damage = force * multiplier;
@@ -82,11 +83,11 @@ public class DestroyableByPhysics : MonoBehaviour
         this.Impact(damage);
     }
 
-    private PhysicsDamager GetDamager(Collision collision)
+    /*private PhysicsDamager GetDamager(Collision collision)
     {
         return collision.collider.gameObject.GetComponent<PhysicsDamager>() 
             ?? collision.gameObject.GetComponent<PhysicsDamager>();
-    }
+    }*/
 
 
     public void Impact(float force)

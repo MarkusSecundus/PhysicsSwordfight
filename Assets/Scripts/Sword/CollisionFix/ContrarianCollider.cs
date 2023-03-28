@@ -146,7 +146,7 @@ public abstract class ContrarianColliderBase : MonoBehaviour
 
 
 #if true
-        ScaledRay thisSwordPrediction = AccountForCurrentMotion(thisSword, HostRigidbody, Time.fixedDeltaTime);
+        ScaledRay thisSwordPrediction = thisSword;//AccountForCurrentMotion(thisSword, HostRigidbody, Time.fixedDeltaTime);
         Debug.DrawLine(thisSwordPrediction.origin, thisSwordPrediction.end, Color.yellow);
         thisSword = thisSwordPrediction;
 #endif

@@ -9,7 +9,6 @@ namespace Assets.Scripts.Utils
 {
     public class RepeatList<T> : IReadOnlyList<T>
     {
-
         public RepeatList(T value, int count)
         {
             if (count < 0) throw new ArgumentOutOfRangeException(nameof(count), $"Must not be negative number (but is {count})");
