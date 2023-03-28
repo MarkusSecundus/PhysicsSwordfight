@@ -5,16 +5,22 @@ using UnityEngine.UI;
 
 public class ResourceBar : MonoBehaviour
 {
-    Scrollbar scrollbar;
-    // Start is called before the first frame update
-    void Start()
+    Slider slider;
+    void Awake()
     {
-        scrollbar = GetComponent<Scrollbar>();
+        slider = GetComponentInChildren<Slider>();
     }
+
+#if false
+    private void Update()
+    {
+        Value = (-Time.time).Mod(1f);
+    }
+#endif
 
     public float Value
     {
-        get => scrollbar.size;
-        set => scrollbar.size = Mathf.Clamp01(value);
+        get => slider.normalizedValue;
+        set => slider.normalizedValue = Mathf.Clamp01(value);
     }
 }
