@@ -44,8 +44,6 @@ GameObject:
   - component: {fileID: 5692771888074364033}
   - component: {fileID: 5692771888074364094}
   - component: {fileID: 5692771888074364034}
-  - component: {fileID: 5692771888074364093}
-  - component: {fileID: 5692771888074364095}
   - component: {fileID: 5692771888074364088}
   - component: {fileID: 7146665888130828464}
   m_Layer: 11
@@ -313,7 +311,6 @@ MonoBehaviour:
   joint: {fileID: 5692771888074364033}
   HandleMovementInterpolationFactor: 9
   swordsmanDescriptor: {fileID: 0}
-  debugger: {fileID: 0}
   debuggerPoint: {fileID: 0}
   inputCircleRadius: 0.42
   Input: {fileID: 0}
@@ -333,35 +330,6 @@ MonoBehaviour:
       StabDistance: 0.8
       StabKey: 323
     StabbingKey: 306
---- !u!114 &5692771888074364093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5692771888074364038}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1689c3542bbdb1f458614c0e9afb4e9c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DamageMultiplier: 1
---- !u!114 &5692771888074364095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5692771888074364038}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef2a4d5352dd1c247a75cd7ff3f0eee1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NonIdleTravelSpeed: 1
-  DamageWhenActive: 10
-  DamageWhenIdle: 1
-  swordTip: {fileID: 7058973195999071761}
 --- !u!114 &5692771888074364088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -486,10 +454,5 @@ MonoBehaviour:
 --- !u!4 &7058973195966507338 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5692771887622551250, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
-  m_PrefabInstance: {fileID: 3383975071566798744}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7058973195999071761 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5692771887655113097, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
   m_PrefabInstance: {fileID: 3383975071566798744}
   m_PrefabAsset: {fileID: 0}

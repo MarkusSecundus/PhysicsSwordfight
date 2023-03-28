@@ -7,6 +7,39 @@ using static UnityEngine.Networking.UnityWebRequest;
 
 
 [System.Serializable]
+public struct Vector3Interval
+{
+    public Vector3 Min, Max;
+}
+
+public struct TransformSnapshot
+{
+    public Vector3 position;
+    public Quaternion rotation;
+    public Vector3 localScale;
+
+    public TransformSnapshot(Transform t)
+    {
+        (position, rotation, localScale) = (t.position, t.rotation, t.localScale);
+    }
+    public TransformSnapshot(Rigidbody r)
+    {
+        (position, rotation, localScale) = (r.position, r.rotation, default);
+    }
+
+    public void SetTo(Transform t)
+    {
+        (t.position, t.rotation) = (position, rotation);
+        if (localScale != default) t.localScale = localScale;
+    }
+    public void SetTo(Rigidbody r)
+    {
+        (r.position, r.rotation) = (position, rotation);
+    }
+}
+
+
+[System.Serializable]
 public struct Sphere
 {
 	public Sphere(Vector3 center, float radius) => (Center, Radius) = (center, radius);
@@ -129,38 +162,6 @@ public static class ConfigurableJointExtensions
 		// Set target rotation to our newly calculated rotation
 		joint.targetRotation = ComputeTargetRotationInternal(joint, targetRotation, startRotation, space);
 	}
-
-
-	/*
-	 * TODO: implement!
-	 * internal static void GetTargetRotationInternal(ConfigurableJoint joint, Quaternion targetRotation, Quaternion startRotation, Space space)
-	{
-		// Calculate the rotation expressed by the joint's axis and secondary axis
-		var right = joint.axis;
-		var forward = Vector3.Cross(joint.axis, joint.secondaryAxis).normalized;
-		var up = Vector3.Cross(forward, right).normalized;
-		Quaternion worldToJointSpace = Quaternion.LookRotation(forward, up);
-
-		// Transform into world space
-		Quaternion resultRotation = Quaternion.Inverse(worldToJointSpace);
-
-		// Counter-rotate and apply the new local rotation.
-		// Joint space is the inverse of world space, so we need to invert our value
-		if (space == Space.World)
-		{
-			resultRotation *= startRotation * Quaternion.Inverse(targetRotation);
-		}
-		else
-		{
-			resultRotation *= Quaternion.Inverse(targetRotation) * startRotation;
-		}
-
-		// Transform back into joint space
-		resultRotation *= worldToJointSpace;
-
-		// Set target rotation to our newly calculated rotation
-		joint.targetRotation = resultRotation;
-	}*/
 }
 
 public static class VectorUtils

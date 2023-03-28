@@ -16,38 +16,6 @@ public static class RotationUtil
 }
 
 
-[System.Serializable]
-public struct Vector3Interval
-{
-    public Vector3 Min, Max;
-}
-
-public struct TransformSnapshot
-{
-    public Vector3 position;
-    public Quaternion rotation;
-    public Vector3 localScale;
-
-    public TransformSnapshot(Transform t)
-    {
-        (position, rotation, localScale) = (t.position, t.rotation, t.localScale);
-    }
-    public TransformSnapshot(Rigidbody r)
-    {
-        (position, rotation, localScale) = (r.position, r.rotation, default);
-    }
-
-    public void SetTo(Transform t)
-    {
-        (t.position, t.rotation) = (position, rotation);
-        if (localScale != default) t.localScale = localScale;
-    }
-    public void SetTo(Rigidbody r)
-    {
-        (r.position, r.rotation) = (position, rotation);
-    }
-}
-
 public static class Op
 {
     public static T post_assign<T>(ref T variable, T newValue)
