@@ -13,9 +13,9 @@ public class BloodStains : MonoBehaviour
 
     private readonly System.Random rand = new System.Random();
 
-    public RectTransform Show(float duration, float? buildupTime=null)
+    public RectTransform Show(float totalDuration, float? buildupTime=null, float maxAlpha=1f)
     {
-        var buildup = buildupTime??= Mathf.Min(0.1f, duration * 0.1f);
+        var buildup = buildupTime??= Mathf.Min(0.1f, totalDuration * 0.1f);
         
         var instance = Instantiate(InstancePrefab);
         instance.rectTransform.SetParent(transform);
@@ -30,7 +30,7 @@ public class BloodStains : MonoBehaviour
 
         var color = instance.color;
         instance.color = color.With(a: 0f);
-        instance.DOColor(color, buildup).OnComplete(() => instance.DOColor(color.With(a: 0f), duration - buildup).OnComplete(()=>Destroy(instance.gameObject)));
+        instance.DOColor(color.With(a:color.a*maxAlpha), buildup).OnComplete(() => instance.DOColor(color.With(a: 0f), totalDuration - buildup).OnComplete(()=>Destroy(instance.gameObject)));
 
         return instance.rectTransform;
     }

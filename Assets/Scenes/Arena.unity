@@ -35785,7 +35785,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1833221616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44018,19 +44018,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2434716039824422151, guid: 4e9ded1b873d798488e4f3f4f0a2a22c, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2434716039824422151, guid: 4e9ded1b873d798488e4f3f4f0a2a22c, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4377445097888152906, guid: 4e9ded1b873d798488e4f3f4f0a2a22c, type: 3}
       propertyPath: m_Pivot.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4377445097888152906, guid: 4e9ded1b873d798488e4f3f4f0a2a22c, type: 3}
       propertyPath: m_Pivot.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4377445097888152906, guid: 4e9ded1b873d798488e4f3f4f0a2a22c, type: 3}
       propertyPath: m_RootOrder
@@ -44090,11 +44090,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4377445097888152906, guid: 4e9ded1b873d798488e4f3f4f0a2a22c, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 245.19995
+      value: 45.69995
       objectReference: {fileID: 0}
     - target: {fileID: 4377445097888152906, guid: 4e9ded1b873d798488e4f3f4f0a2a22c, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 97.599976
+      value: 48.099976
       objectReference: {fileID: 0}
     - target: {fileID: 4377445097888152906, guid: 4e9ded1b873d798488e4f3f4f0a2a22c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
