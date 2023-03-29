@@ -26,12 +26,12 @@ public static class Op
     }
 }
 
-public struct Vector3Field
+public struct VectorField
 {
     public float Value { get; }
     public FieldType Field { get; }
-    public Vector3Field(float value) => (Value, Field) = (value, FieldType.UseProvidedValue);
-    public Vector3Field(FieldType type)
+    public VectorField(float value) => (Value, Field) = (value, FieldType.UseProvidedValue);
+    public VectorField(FieldType type)
     {
         if (type == FieldType.UseProvidedValue)
             throw new System.ArgumentException($"To use the type {nameof(FieldType.UseProvidedValue)}, use the other constructor that provides the value!");
@@ -40,22 +40,28 @@ public struct Vector3Field
 
     public enum FieldType : byte
     {
-        UseOriginal=default, UseProvidedValue, X, Y, Z
+        UseOriginal=default, UseProvidedValue,
+        X=100, Y, Z,
+        R=200, G, B, A
     }
 
-    public static implicit operator Vector3Field(float value) => new Vector3Field(value);
-    public static implicit operator Vector3Field(float? value) => value == null? V.Null : new Vector3Field(value.Value);
+    public static implicit operator VectorField(float value) => new VectorField(value);
+    public static implicit operator VectorField(float? value) => value == null? V.Null : new VectorField(value.Value);
 
-    static Vector3Field()
+    static VectorField()
     {
-        if (default(Vector3Field).Field != FieldType.UseOriginal)
-            throw new System.InvalidProgramException($"Assert failed: default({nameof(Vector3Field)}) must be equal to Null");
+        if (default(VectorField).Field != FieldType.UseOriginal)
+            throw new System.InvalidProgramException($"Assert failed: default({nameof(VectorField)}) must be equal to Null");
     }
 }
 
 public static class V
 {
-    public static readonly Vector3Field X = new Vector3Field(Vector3Field.FieldType.X), Y = new Vector3Field(Vector3Field.FieldType.Y), Z = new Vector3Field(Vector3Field.FieldType.Z), Null = default;
+    public static readonly VectorField X = new VectorField(VectorField.FieldType.X), Y = new VectorField(VectorField.FieldType.Y), Z = new VectorField(VectorField.FieldType.Z), Null = default;
+}
+public static class C
+{
+    public static readonly VectorField R = new VectorField(VectorField.FieldType.R), G = new VectorField(VectorField.FieldType.G), B = new VectorField(VectorField.FieldType.B), A = new VectorField(VectorField.FieldType.A), Null = default;
 }
 
 
@@ -175,18 +181,6 @@ public static class GameObjectUtils
 
 public static class HelperExtensions
 {
-    public static void SetRect(this RectTransform self, Rect toSet)
-    {
-        self.sizeDelta = toSet.size;
-        self.position = toSet.center;
-    }
-    public static Rect GetRect(this RectTransform self)
-    {
-        var ret = self.rect;
-        ret.min += self.position.xy();
-        return ret;
-    }
-
     public static IEnumerable<ContactPoint> IterateContacts(this Collision self)
     {
         for (int t = 0; t < self.contactCount; ++t) yield return self.GetContact(t);
@@ -348,21 +342,36 @@ public static class HelperExtensions
         return $"{magnitude}*{normalized}";//$"({v.x};{v.y};{v.z})";
     }
 
-    public static Vector3 With(this Vector3 self, Vector3Field x = default, Vector3Field y = default, Vector3Field z = default)
+    public static Vector3 With(this Vector3 self, VectorField x = default, VectorField y = default, VectorField z = default)
     {
-        float FieldValue(Vector3Field field, float original) => field.Field switch
+        float FieldValue(VectorField field, float original) => field.Field switch
         {
-            Vector3Field.FieldType.UseOriginal => original,
-            Vector3Field.FieldType.UseProvidedValue => field.Value,
-            Vector3Field.FieldType.X => self.x,
-            Vector3Field.FieldType.Y => self.y,
-            Vector3Field.FieldType.Z => self.z,
+            VectorField.FieldType.UseOriginal => original,
+            VectorField.FieldType.UseProvidedValue => field.Value,
+            VectorField.FieldType.X => self.x,
+            VectorField.FieldType.Y => self.y,
+            VectorField.FieldType.Z => self.z,
             _ => throw new System.ArgumentException($"Provided ")
         };
         return new Vector3(FieldValue(x,self.x), FieldValue(y, self.y), FieldValue(z, self.z));
     }
 
-    public static Quaternion WithEuler(this Quaternion self, Vector3Field x = default, Vector3Field y = default, Vector3Field z = default) 
+    public static Color With(this Color self, VectorField r = default, VectorField g = default, VectorField b = default, VectorField a = default)
+    {
+        float FieldValue(VectorField field, float original) => field.Field switch
+        {
+            VectorField.FieldType.UseOriginal => original,
+            VectorField.FieldType.UseProvidedValue => field.Value,
+            VectorField.FieldType.R => self.r,
+            VectorField.FieldType.G => self.g,
+            VectorField.FieldType.B => self.b,
+            VectorField.FieldType.A => self.a,
+            _ => throw new System.ArgumentException($"Provided ")
+        };
+        return new Color(FieldValue(r,self.r), FieldValue(g, self.g), FieldValue(b, self.b), FieldValue(a, self.a));
+    }
+
+    public static Quaternion WithEuler(this Quaternion self, VectorField x = default, VectorField y = default, VectorField z = default) 
         => Quaternion.Euler(self.eulerAngles.With(x, y, z));
     public static void Log(this string self, bool shouldLog = true)
     {
@@ -434,6 +443,7 @@ public static class HelperExtensions
     public static Vector2 NextVector2(this System.Random self, Vector2 min, Vector2 max) 
         => new Vector2((float)(min.x + self.NextDouble() * (max.x - min.x)), (float)(min.y + self.NextDouble() * (max.y - min.y)));
 
+    public static Vector2 NextVector2(this System.Random self, Rect area) => self.NextVector2(area.min, area.max);
 
     public static float Mod(this float f, float mod, out float div)
     {
@@ -467,6 +477,7 @@ public static class HelperExtensions
         //    else return Mathf.Clamp(f, min, max + modulo).Mod(modulo);
         //}
     }
+
 }
 
 

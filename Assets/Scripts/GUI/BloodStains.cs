@@ -1,0 +1,41 @@
+using DG.Tweening;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class BloodStains : MonoBehaviour
+{
+    [SerializeField] Image InstancePrefab;
+    [SerializeField] Quaternion[] Rotations = new Quaternion[] { Quaternion.Euler(0f,0f, 0f), Quaternion.Euler(0f, 0f, 90f), Quaternion.Euler(0f, 0f, 180f), Quaternion.Euler(0f, 0f, 270f) };
+
+    new RectTransform transform => (RectTransform)base.transform;
+
+    private readonly System.Random rand = new System.Random();
+
+    public RectTransform Show(float duration, float? buildupTime=null)
+    {
+        var buildup = buildupTime??= Mathf.Min(0.1f, duration * 0.1f);
+        
+        var instance = Instantiate(InstancePrefab);
+        instance.rectTransform.SetParent(transform);
+        instance.gameObject.SetActive(true);
+        if(Rotations.Length > 0) instance.rectTransform.rotation = Rotations[rand.Next(0, Rotations.Length)];
+
+        var range = instance.rectTransform.GetRect().PositionsWherePlacingThisRectCoversTheWholeOfSmallerRect(transform.GetRect());
+
+        Debug.Log($"range:{range}", this);
+
+        instance.rectTransform.position = rand.NextVector2(range);
+
+        var color = instance.color;
+        instance.color = color.With(a: 0f);
+        instance.DOColor(color, buildup).OnComplete(() => instance.DOColor(color.With(a: 0f), duration - buildup).OnComplete(()=>Destroy(instance.gameObject)));
+
+        return instance.rectTransform;
+    }
+    public void ShowFromEditor(float duration)
+    {
+        Show(duration);
+    }
+}
