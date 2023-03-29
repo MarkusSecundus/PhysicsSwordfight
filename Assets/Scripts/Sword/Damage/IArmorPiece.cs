@@ -17,14 +17,4 @@ public abstract class IArmorPiece : MonoBehaviour
     }
 
     public virtual Vector3 CalculateDamage(Collision collision, Vector3 damageAccordingToWeapon, IWeapon weapon) => damageAccordingToWeapon;
-
-    public record Derived(IArmorPiece Base)
-    {
-        public int Iii { get; init; }
-    
-        public void f()
-        {
-            Base.BaseDamageable.ReportDamage(default, null, null);
-        }
-    }
 }

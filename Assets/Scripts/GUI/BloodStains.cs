@@ -23,9 +23,6 @@ public class BloodStains : MonoBehaviour
         if(Rotations.Length > 0) instance.rectTransform.rotation = Rotations[rand.Next(0, Rotations.Length)];
 
         var range = instance.rectTransform.GetRect().PositionsWherePlacingThisRectCoversTheWholeOfSmallerRect(transform.GetRect());
-
-        Debug.Log($"range:{range}", this);
-
         instance.rectTransform.position = rand.NextVector2(range);
 
         var color = instance.color;

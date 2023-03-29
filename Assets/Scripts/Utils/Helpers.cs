@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -438,12 +439,26 @@ public static class HelperExtensions
                 yield return item;
     }
 
+    public static Color AsHSV(this Vector3 v) => Color.HSVToRGB(v.x, v.y, v.z);
+    public static Vector3 AsVectorHSV(this Color c)
+    {
+        Color.RGBToHSV(c, out var h, out var s, out var v);
+        return new Vector3(h, s, v);
+    }
+
+    public static float NextFloat(this System.Random self, float min, float max) => (float)(min + self.NextDouble() * (max - min));
+
     public static Vector3 NextVector3(this System.Random self, Vector3 min, Vector3 max)
-        => new Vector3((float)(min.x + self.NextDouble() * (max.x - min.x)), (float)(min.y + self.NextDouble() * (max.y - min.y)), (float)(min.z + self.NextDouble() * (max.z - min.z)));
+        => new Vector3(self.NextFloat(min.x, max.x), self.NextFloat(min.y, max.y), self.NextFloat(min.z, max.z));
     public static Vector2 NextVector2(this System.Random self, Vector2 min, Vector2 max) 
-        => new Vector2((float)(min.x + self.NextDouble() * (max.x - min.x)), (float)(min.y + self.NextDouble() * (max.y - min.y)));
+        => new Vector2(self.NextFloat(min.x, max.x), self.NextFloat(min.y, max.y));
 
     public static Vector2 NextVector2(this System.Random self, Rect area) => self.NextVector2(area.min, area.max);
+
+    public static Color NextRGBA(this System.Random self, Color min, Color max)
+        => new Color(self.NextFloat(min.r, max.r), self.NextFloat(min.g, max.g), self.NextFloat(min.b, max.b), self.NextFloat(min.a, max.a));
+    public static Color NextHSVA(this System.Random self, Color min, Color max)
+        => self.NextVector3(min.AsVectorHSV(), max.AsVectorHSV()).AsHSV().With(a: self.NextFloat(min.a, max.a));
 
     public static float Mod(this float f, float mod, out float div)
     {
@@ -476,6 +491,21 @@ public static class HelperExtensions
         //    if (min <= max) return Mathf.Clamp(f, min, max);
         //    else return Mathf.Clamp(f, min, max + modulo).Mod(modulo);
         //}
+    }
+
+    public static TResult Maximum<TResult, TCompare>(this IEnumerable<TResult> self, System.Func<TResult, TCompare> selector) where TCompare: IComparable<TCompare>
+    {
+        using var it = self.GetEnumerator();
+        if (!it.MoveNext()) throw new IndexOutOfRangeException("Searching for max of an empty collection!");
+        var max = it.Current; 
+        var maxComparer = selector(max);
+
+        while (it.MoveNext())
+        {
+            var toCompare = selector(it.Current);
+            if (toCompare.CompareTo(maxComparer) > 0) (max, maxComparer) = (it.Current, toCompare);
+        }
+        return max;
     }
 
 }
