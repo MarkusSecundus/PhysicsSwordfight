@@ -1,6 +1,8 @@
 name: Build the Bachelors Thesis
 
 on:
+  push:
+    branches: [ thesis-text ]
   workflow_dispatch:
 
 jobs:
@@ -12,9 +14,9 @@ jobs:
         with:
           ref: "thesis-text"
           path: "."
-      - run: yes | sudo apt update ; yes | sudo apt upgrade
-      - run: sudo apt install make texlive-full -y
-      - run: cd cs ; make ; cd ..
+      - uses: xu-cheng/texlive-action/full@v1
+        with:
+          run: cd cs ; make ; cd ..
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token:  "${{ secrets.GITHUB_TOKEN }}"
