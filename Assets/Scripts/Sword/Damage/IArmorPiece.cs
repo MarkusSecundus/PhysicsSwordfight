@@ -4,17 +4,22 @@ using UnityEngine;
 
 public abstract class IArmorPiece : MonoBehaviour
 {
-    public abstract Damageable BaseDamageable { get; }
+    [field: SerializeField]
+    public virtual Damageable BaseDamageable { get; protected set; }
 
-    public virtual void OnCollisionEnter(Collision collision)
+    public void OnCollisionEnter(Collision collision)
     {
-        var weapon = collision.gameObject.GetComponentInParent<IWeapon>();
+        var weapon = IWeapon.Get(collision.collider);
+        if (!weapon) return;
+
 
         var damage = weapon.CalculateDamage(collision);
         damage = this.CalculateDamage(collision, damage, weapon);
 
-        BaseDamageable.ReportDamage(damage, this, weapon);
+        BaseDamageable.ChangeHP(-damage.magnitude, weapon);
     }
 
-    public virtual Vector3 CalculateDamage(Collision collision, Vector3 damageAccordingToWeapon, IWeapon weapon) => damageAccordingToWeapon;
+    public abstract Vector3 CalculateDamage(Collision collision, Vector3 damageAccordingToWeapon, IWeapon weapon);
+
+    public static IArmorPiece Get(Collider c) => !c?null: c.GetComponentInParent<IArmorPiece>();
 }

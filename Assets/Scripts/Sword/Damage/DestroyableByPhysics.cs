@@ -18,17 +18,6 @@ public class DestroyableByPhysics : MonoBehaviour
 
     public UnityEvent OnDestroyed, OnHit;
 
-
-    public AudioClip[] soundsOnDamaged, soundsOnDestroyed;
-
-
-    private MeshRenderer[] rend;
-
-    private Color colorOnDamaged = Color.red;
-    private const float damagedBlinkSegmentDuration = 0.1f, damagedNonBlinkSegmentDuration=0.1f;
-
-    private AudioSource audioSrc;
-
     public DamageException[] ExceptionsFromRule;
 
     [System.Serializable]
@@ -38,11 +27,6 @@ public class DestroyableByPhysics : MonoBehaviour
         public float Multiplier;
     }
 
-    private void Start()
-    {
-        rend = GetComponentsInChildren<MeshRenderer>();
-        audioSrc = GetComponent<AudioSource>();
-    }
 
     private HashSet<GameObject> AlreadyCollided = new HashSet<GameObject>();
     private int lastFrame = -1;
@@ -83,13 +67,6 @@ public class DestroyableByPhysics : MonoBehaviour
         this.Impact(damage);
     }
 
-    /*private PhysicsDamager GetDamager(Collision collision)
-    {
-        return collision.collider.gameObject.GetComponent<PhysicsDamager>() 
-            ?? collision.gameObject.GetComponent<PhysicsDamager>();
-    }*/
-
-
     public void Impact(float force)
     {
         if (force >= NeededForce)
@@ -100,44 +77,13 @@ public class DestroyableByPhysics : MonoBehaviour
 
     private void DamageSelf(float force)
     {
-        StartCoroutine(impl());
-        IEnumerator<YieldInstruction> impl()
-        {
-            if (soundsOnDamaged.IsNotNullNotEmpty() && audioSrc != null) audioSrc.PlayOneShot(soundsOnDamaged.RandomElement());
-            if (AccumulateDamage) NeededForce -= force;
-            OnHit.Invoke();
-            foreach (var b in doDamagedBlink(1)) yield return b;
-        }
+        if (AccumulateDamage) NeededForce -= force;
+        OnHit.Invoke();
     }
     public void DestroySelf()
     {
-        StartCoroutine(impl());
-        IEnumerator<YieldInstruction> impl()
-        {
-            if (soundsOnDestroyed.IsNotNullNotEmpty() && audioSrc != null) audioSrc.PlayOneShot(soundsOnDestroyed
-                .RandomElement());
-            foreach (var b in doDamagedBlink(3)) yield return b;
-            Debug.Log($"{gameObject.name} was destroyed!");
-            OnDestroyed.Invoke();
-            Destroy(this.gameObject);
-        }
-    }
-
-    private bool isBeingDestroyed = false;
-
-    private IEnumerable<YieldInstruction> doDamagedBlink(int segments)
-    {
-        if (isBeingDestroyed) yield break;
-        isBeingDestroyed = true;
-        var originalColor = rend[0].material.color;
-        for(; --segments>= 0;)
-        {
-            foreach(var r in rend)r.material.color = colorOnDamaged;
-            yield return new WaitForSeconds(damagedBlinkSegmentDuration);
-            foreach (var r in rend) r.material.color = originalColor;
-            if (segments > 0)
-                yield return new WaitForSeconds(damagedNonBlinkSegmentDuration);
-        }
-        isBeingDestroyed = false;
+        Debug.Log($"{gameObject.name} was destroyed!");
+        OnDestroyed.Invoke();
+        Destroy(this.gameObject);
     }
 }

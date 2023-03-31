@@ -14,9 +14,9 @@ public class SwordDescriptor : MonoBehaviour, IRayProvider
     public Transform SwordTip => tipPoint = tipPoint.IfNil(target?.SwordTip);
     public Transform SwordHandleUpHandTarget => upHandTarget = upHandTarget.IfNil(target?.SwordHandleUpHandTarget);
     public Transform SwordHandleDownHandTarget => downHandTarget = downHandTarget.IfNil(target?.SwordHandleDownHandTarget);
-    public Transform SwordBlockPoint => blockPoint = blockPoint.IfNil(target?.blockPoint);
-    public Transform SwordBottom => bottom = bottom.IfNil(target?.bottom);
-    public IReadOnlyList<Edge> Edges => edges = edges.IfNil(target?.edges);
+    public Transform SwordBlockPoint => blockPoint = blockPoint.IfNil(target?.SwordBlockPoint);
+    public Transform SwordBottom => bottom = bottom.IfNil(target?.SwordBottom);
+    public IReadOnlyList<Edge> Edges => (edges.IsNil() || edges.IsEmpty()) ? edges = (Edge[])target?.Edges : edges;
     public IReadOnlyList<Vector3> EdgeDirections => swordEdgeDirections ??= new RedirectedList<Edge, Vector3>(Edges, e=>e.Root.position - SwordAnchor.position);
 
     private RedirectedList<Edge, Vector3> swordEdgeDirections;

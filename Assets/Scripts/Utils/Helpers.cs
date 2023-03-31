@@ -1,6 +1,5 @@
 ﻿using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -493,10 +492,13 @@ public static class HelperExtensions
         //}
     }
 
-    public static TResult Maximum<TResult, TCompare>(this IEnumerable<TResult> self, System.Func<TResult, TCompare> selector) where TCompare: IComparable<TCompare>
+    public static TResult Maximum<TResult, TCompare>(this IEnumerable<TResult> self, System.Func<TResult, TCompare> selector) where TCompare: System.IComparable<TCompare>
     {
         using var it = self.GetEnumerator();
-        if (!it.MoveNext()) throw new IndexOutOfRangeException("Searching for max of an empty collection!");
+        if (!it.MoveNext())
+        {
+            throw new System.IndexOutOfRangeException("Searching for max of an empty collection!");
+        }
         var max = it.Current; 
         var maxComparer = selector(max);
 

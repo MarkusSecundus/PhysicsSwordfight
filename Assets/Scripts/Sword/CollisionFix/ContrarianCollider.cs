@@ -162,6 +162,7 @@ public abstract class ContrarianColliderBase : MonoBehaviour
         var planeToContainCollider = new Plane(bladeDirection, bladeCenter);
 
         var direction = (bladeCenter - planeToContainCollider.ClosestPointOnPlane(opposite)).normalized;
+        if (direction == Vector3.zero) return;
         if (direction.Dot(lastDirection) < 0 && directionRay.length < Config.Tolerance)
         {
             direction = -direction;

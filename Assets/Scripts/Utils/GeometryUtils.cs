@@ -591,6 +591,25 @@ public static class PlaneExtensions
 
 public static class PhysicsUtils
 {
+	public static Collider ThisCollider(this Collision self)
+	{
+		if (self.contactCount <= 0)
+		{
+			Debug.Log($"No contacts - total force was: {self.impulse.ToStringPrecise()} relVel{self.relativeVelocity.ToStringPrecise()}");
+			return null;// throw new System.InvalidOperationException($"This collision doesn't have any contacts! ({self.gameObject.name})");
+
+		}
+		var contact = self.GetContact(0);
+		var ret = contact.thisCollider;
+		if (ret == self.collider)
+		{
+			ret = contact.otherCollider;
+			Debug.Log("Had to try realy hard!", ret);
+		}
+		if (ret == self.collider) return null;// throw new System.InvalidOperationException($"All the colliders of this collision are the same one!");
+		return ret;
+	}
+
     public static void MoveToVelocity(this Rigidbody self, Vector3 velocity)
     {
         var toApply = velocity - self.velocity;

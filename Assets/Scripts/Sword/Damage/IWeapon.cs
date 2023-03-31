@@ -2,14 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IWeapon
+public abstract class IWeapon : MonoBehaviour
 {
-    public Vector3 CalculateDamage_impl(Collision collision);
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never), System.ComponentModel.Browsable(false)]
+    public abstract Vector3 CalculateDamage(Collision collision);
+    public static IWeapon Get(Collider c) => c.GetComponentInParent<IWeapon>();
 
-    public static Vector3 CalculateGenericDamage(Collision collision) => collision.impulse;
-}
+    public virtual void OnCollisionEnter(Collision collision)
+    {
+        var armorPiece = IArmorPiece.Get(collision.collider);
+        if (!armorPiece) return;
+        
 
-public static class WeaponExtensions
-{
-    public static Vector3 CalculateDamage(this IWeapon self, Collision collision) => self?.CalculateDamage_impl(collision) ?? IWeapon.CalculateGenericDamage(collision);
+        var damage = this.CalculateDamage(collision);
+        damage = armorPiece.CalculateDamage(collision, damage, this);
+
+        armorPiece.BaseDamageable.ChangeHP(-damage.magnitude, this);
+    }
+
 }

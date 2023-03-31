@@ -31,8 +31,4 @@ public class BloodStains : MonoBehaviour
 
         return instance.rectTransform;
     }
-    public void ShowFromEditor(float duration)
-    {
-        Show(duration);
-    }
 }

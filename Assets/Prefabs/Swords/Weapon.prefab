@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 5692771888074364094}
   - component: {fileID: 5692771888074364034}
   - component: {fileID: 5692771888074364088}
-  - component: {fileID: 7146665888130828464}
+  - component: {fileID: 7510546756384617997}
   m_Layer: 11
   m_Name: Weapon
   m_TagString: Untagged
@@ -68,7 +68,7 @@ Transform:
   - {fileID: 4829093479927053316}
   - {fileID: 5692771887854840067}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 270, y: 90, z: 90}
 --- !u!54 &5692771888074364039
 Rigidbody:
@@ -82,7 +82,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 0.05, y: 0.07, z: 0.02}
+  m_InertiaTensor: {x: 0.05, y: 0.05, z: 0.02}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
@@ -109,7 +109,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 17.408, y: 3.766, z: -0.83389}
+  m_ConnectedAnchor: {x: -0.0000012218952, y: 0.408, z: 0.57800025}
   serializedVersion: 3
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -197,7 +197,7 @@ ConfigurableJoint:
   m_BreakTorque: Infinity
   m_EnableCollision: 0
   m_EnablePreprocessing: 0
-  m_MassScale: 3
+  m_MassScale: 9
   m_ConnectedMassScale: 0.01
 --- !u!82 &5692771888074364094
 AudioSource:
@@ -307,12 +307,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  descriptor: {fileID: 7146665888130828464}
+  descriptor: {fileID: 7510546756384617997}
   joint: {fileID: 5692771888074364033}
-  HandleMovementInterpolationFactor: 9
+  HandleMovementInterpolationFactor: 9.5
   swordsmanDescriptor: {fileID: 0}
   debuggerPoint: {fileID: 0}
-  inputCircleRadius: 0.42
+  inputCircleRadius: 0.24
   Input: {fileID: 0}
   Modes:
     Basic:
@@ -349,7 +349,7 @@ MonoBehaviour:
     Overreach: 0.1
     ForceMultiplierForStandaloneMode: -1
   ActivationRadius: 3
---- !u!114 &7146665888130828464
+--- !u!114 &7510546756384617997
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -381,6 +381,10 @@ PrefabInstance:
     - target: {fileID: 1388242244446646439, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
       propertyPath: m_Name
       value: PlayerSword
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771887357732070, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7512588884811610476, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
       propertyPath: anchor

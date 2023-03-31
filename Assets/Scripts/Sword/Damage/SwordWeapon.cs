@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class SwordWeapon : MonoBehaviour, IWeapon
+public class SwordWeapon : IWeapon
 {
     [SerializeField] SwordDescriptor descriptor;
 
@@ -11,17 +11,21 @@ public class SwordWeapon : MonoBehaviour, IWeapon
 
     private void Awake()
     {
-        descriptor = descriptor.IfNil(GetComponentInParent<SwordDescriptor>());
+        descriptor = GetComponentInParent<SwordDescriptor>();
     }
 
-    public Vector3 CalculateDamage_impl(Collision collision)
+    public override Vector3 CalculateDamage(Collision collision)
     {
+        if(descriptor.EdgeDirections.Count <= 0)
+        {
+            Debug.Log($"No sword edges defined!", descriptor);
+            return default;
+        }
         return descriptor.EdgeDirections.Select(computeDamage).Maximum(v=>v.magnitude);
 
         Vector3 computeDamage(Vector3 edgeDirection)
         {
-            var directionRatio = edgeDirection.normalized.Dot(collision.impulse.normalized);
-            directionRatio = Mathf.Abs(directionRatio);
+            var directionRatio = Mathf.Abs(edgeDirection.normalized.Dot(collision.impulse.normalized));
             directionRatio = Mathf.Pow(directionRatio, SideDullingExponent);
             var sharpnessRatio = directionRatio * EdgeSharpness;
             return collision.impulse * sharpnessRatio;
