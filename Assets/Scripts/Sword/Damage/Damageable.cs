@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-[RequireComponent(typeof(CollisionMessageDistributionFix))]
 public class Damageable : MonoBehaviour
 {
     [System.Serializable] public class OnHpChangedEvent : UnityEvent<HpChangedArgs> { }
@@ -15,7 +14,6 @@ public class Damageable : MonoBehaviour
     {
         public Damageable Target;
         public float DeltaHP;
-        public string Message;
     }
 
     public const float MinHP = 0;
@@ -36,7 +34,7 @@ public class Damageable : MonoBehaviour
     public void ChangeHP(float deltaHP, [MaybeNull] IWeapon cause)
     {
         var resultHP = Mathf.Clamp(HP + deltaHP, MinHP, MaxHP);
-        deltaHP = resultHP - HP;
+        //deltaHP = resultHP - HP;
 
         var message = $"{this.name} ";
         OnHpChangedEvent eventToInvoke;
@@ -55,22 +53,13 @@ public class Damageable : MonoBehaviour
 
         Message(message);
 
-        eventToInvoke.Invoke(new HpChangedArgs { Target = this, DeltaHP = deltaHP, Message = message });
+        eventToInvoke?.Invoke(new HpChangedArgs { Target = this, DeltaHP = deltaHP});
+        if (resultHP <= 0)
+        {
+            Message($"{this.name} died!");
+            OnDeath?.Invoke();
+        }
     }
 
     void Message(string message) => Debug.Log(message, this);
-
-    public class CollisionMessageDistributionFix : MonoBehaviour
-    {
-        private void OnCollisionEnter(Collision collision)
-        {
-            var target = collision.ThisCollider();
-            if (!target) return;
-
-            var component = target.GetComponentInParent<IArmorPiece>();
-            if (!component || component.gameObject == gameObject) return;
-
-            component.OnCollisionEnter(collision);
-        }
-    }
 }
