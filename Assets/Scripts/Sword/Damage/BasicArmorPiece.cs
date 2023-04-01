@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class BasicArmorPiece : IArmorPiece
 {
+    public float MinDamage = 2f;
+
     public override Damageable BaseDamageable => base.BaseDamageable ??= GetComponentInParent<Damageable>();
 
-    public override Vector3 CalculateDamage(Collision collision, Vector3 damageAccordingToWeapon, IWeapon weapon)
-        => damageAccordingToWeapon;
+    protected override AttackDeclaration? ProcessAttackDeclaration(AttackDeclaration attack)
+    {
+        if (attack.Damage < MinDamage) return null;
+        return attack;
+    }
 }

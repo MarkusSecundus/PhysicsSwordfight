@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 5692771888074364034}
   - component: {fileID: 5692771888074364088}
   - component: {fileID: 7510546756384617997}
+  - component: {fileID: 5274441133362657300}
   m_Layer: 11
   m_Name: Weapon
   m_TagString: Untagged
@@ -370,6 +371,20 @@ MonoBehaviour:
   downHandTarget: {fileID: 0}
   bottom: {fileID: 0}
   edges: []
+--- !u!114 &5274441133362657300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5692771888074364038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45fc533ae5ece4244aecad97c8729b54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DamageMultiplier: 10
+  SecondsBetweenAttacks: 0.4
 --- !u!1001 &3383975071566798744
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1090,17 +1090,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6059301b4c8bd8f499e6da82de751ae5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <MaxHP>k__BackingField: 1
+  <MaxHP>k__BackingField: 200
   DestroySelfOnDeath: 0
-  OnDeath:
+  OnUpdated:
     m_PersistentCalls:
       m_Calls: []
   OnDamaged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 263654471}
+      - m_Target: {fileID: 1833221620}
         m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
-        m_MethodName: UpdateState
+        m_MethodName: ReportDamage
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1109,13 +1109,13 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 0
+        m_CallState: 2
   OnHealed:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 263654471}
+      - m_Target: {fileID: 1833221620}
         m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
-        m_MethodName: UpdateState
+        m_MethodName: ReportHeal
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1124,7 +1124,22 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 0
+        m_CallState: 2
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1833221620}
+        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
+        m_MethodName: ReportDeath
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &41081839
 GameObject:
   m_ObjectHideFlags: 0
@@ -5725,55 +5740,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.52, y: 3.73, z: 0.3}
   m_Center: {x: 0, y: 1.87, z: 0}
---- !u!1 &263654470
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 263654472}
-  - component: {fileID: 263654471}
-  m_Layer: 0
-  m_Name: DamageUIManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &263654471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 263654470}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45244f7a0e3a7a940987b247157004d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HealthBar: {fileID: 1934783367}
-  Bloodstains: {fileID: 1049016155}
-  MaxBloodstainsDuration: 5
-  BloodstainsBuildup: 0.1
-  MinimumHealthLossForBloodstains: 0.05
---- !u!4 &263654472
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 263654470}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 29.734808, y: 17.78614, z: 18.314314}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 12
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &265497192
 GameObject:
   m_ObjectHideFlags: 0
@@ -18327,7 +18293,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2808337140929654815, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: m_AngularYMotion
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2808337140929654815, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: m_EnablePreprocessing
@@ -18394,9 +18360,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2808337140929654817, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2808337141088222835}
-    - targetCorrespondingSourceObject: {fileID: 7636414052227803298, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7636414051381831416}
   m_SourcePrefab: {fileID: 100100000, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
 --- !u!1 &921818850
 GameObject:
@@ -20895,17 +20858,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61c4bb35266695447aed9df8f14cf876, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1053397359 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5692771888074364038, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
-  m_PrefabInstance: {fileID: 2787268392959032219}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1053397360 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
   m_PrefabInstance: {fileID: 2787268392959032219}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1053397359}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
@@ -35599,6 +35557,7 @@ GameObject:
   - component: {fileID: 1833221618}
   - component: {fileID: 1833221617}
   - component: {fileID: 1833221616}
+  - component: {fileID: 1833221620}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -35691,6 +35650,24 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1833221620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1833221615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45244f7a0e3a7a940987b247157004d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HealthBar: {fileID: 1934783367}
+  BloodstainsInstancer: {fileID: 1049016155}
+  Bloodstains:
+    MaxBloodstainsDuration: 5
+    BloodstainsBuildup: 0.1
+    MinimumHealthLossForBloodstains: 0.2
 --- !u!1 &1835524175 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7476593860372463170, guid: e13db369030361347bd070ab02652a64, type: 3}
@@ -39929,6 +39906,7 @@ GameObject:
   - component: {fileID: 2086466192}
   - component: {fileID: 2086466195}
   - component: {fileID: 2086466199}
+  - component: {fileID: 2086466200}
   m_Layer: 13
   m_Name: PlayerModel
   m_TagString: Untagged
@@ -40083,8 +40061,8 @@ MonoBehaviour:
     LookLeftRight: 4
     RotateLeftRight: 6
   Tweaks:
-    WalkForwardBackward: 10
-    StrafeLeftRight: 6
+    WalkForwardBackward: 5
+    StrafeLeftRight: 3
     WalkMidairMultiplier: 0.3
     RotateLeftRight: 222
     RotateLeftRightDecellerateThreshold: 0.001401298
@@ -40094,7 +40072,7 @@ MonoBehaviour:
     LookConstraints:
       Min: {x: -180, y: 0, z: 0}
       Max: {x: 180, y: 0, z: 0}
-    Jump: {x: 0, y: 10, z: 0}
+    Jump: {x: 0, y: 7, z: 0}
     Gravity: {x: 0, y: -20, z: 0}
     GravityWhenGrounded: {x: 0, y: -20, z: 0}
 --- !u!4 &2086466198
@@ -40132,17 +40110,94 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6059301b4c8bd8f499e6da82de751ae5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <MaxHP>k__BackingField: 1
+  <MaxHP>k__BackingField: 100
   DestroySelfOnDeath: 0
-  OnDeath:
+  OnUpdated:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1833221620}
+        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
+        m_MethodName: UpdateState
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnDamaged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1833221620}
+        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
+        m_MethodName: ReportDamage
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1833221620}
+        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
+        m_MethodName: TryShowBloodstains
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnHealed:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1833221620}
+        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
+        m_MethodName: ReportHeal
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1833221620}
+        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
+        m_MethodName: ReportDeath
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &2086466200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2086466190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <BaseDamageable>k__BackingField: {fileID: 2086466199}
+  MinDamage: 2
 --- !u!1 &2089091457
 GameObject:
   m_ObjectHideFlags: 0
@@ -41924,7 +41979,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1516407351263911922}
   - component: {fileID: 1289338774718694344}
-  - component: {fileID: 1516407351263911923}
   m_Layer: 12
   m_Name: Spine2
   m_TagString: Untagged
@@ -41978,19 +42032,6 @@ Transform:
   m_Father: {fileID: 3351064726874794905}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1516407351263911923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1289338774718694345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <BaseDamageable>k__BackingField: {fileID: 0}
 --- !u!136 &1639113370777673280
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -42518,7 +42559,6 @@ GameObject:
   - component: {fileID: 1639113371192361237}
   - component: {fileID: 2316758898686469234}
   - component: {fileID: 1909004235272572391}
-  - component: {fileID: 2316758898686469235}
   m_Layer: 12
   m_Name: SwordsmanDetailedBody
   m_TagString: Untagged
@@ -42581,25 +42621,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7510546756384617997, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
   m_PrefabInstance: {fileID: 2787268392959032219}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1053397359}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 059989545d7a5604fa921092316edae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2056266606240543160
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1053397359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45fc533ae5ece4244aecad97c8729b54, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DamageMultiplier: 1
 --- !u!136 &2060677542787135788
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -42633,7 +42660,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8350064306887105994}
   - component: {fileID: 2060677542787135788}
-  - component: {fileID: 8350064306887105995}
   m_Layer: 12
   m_Name: Head
   m_TagString: Untagged
@@ -42705,19 +42731,6 @@ MonoBehaviour:
   - m_Rig: {fileID: 4774357974393434207}
     m_Active: 1
   m_Effectors: []
---- !u!114 &2316758898686469235
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1909004235272572390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <BaseDamageable>k__BackingField: {fileID: 0}
 --- !u!1001 &2443900976398223203
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -42930,10 +42943,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5692771888074364038, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2056266606240543160}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
 --- !u!1 &2808337140985885783 stripped
 GameObject:
@@ -42953,6 +42963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <BaseDamageable>k__BackingField: {fileID: 0}
+  MinDamage: 2
 --- !u!1 &2808337141088222834 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2808337140929654817, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
@@ -42971,6 +42982,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <BaseDamageable>k__BackingField: {fileID: 0}
+  MinDamage: 2
 --- !u!1001 &2851752457280740427
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44294,26 +44306,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &7636414051381831409 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7636414052227803298, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
-  m_PrefabInstance: {fileID: 918326867}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7636414051381831416
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7636414051381831409}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c18167f7d70ed842b86a53b8a859f94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  descriptor: {fileID: 0}
-  EdgeSharpness: 1
-  SideDullingExponent: 0.3
 --- !u!4 &7891749942756689858
 Transform:
   m_ObjectHideFlags: 0
@@ -44376,19 +44368,6 @@ Transform:
   m_Father: {fileID: 1516407351263911922}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8350064306887105995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2060677542787135789}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <BaseDamageable>k__BackingField: {fileID: 0}
 --- !u!1 &8486907984688039715
 GameObject:
   m_ObjectHideFlags: 0

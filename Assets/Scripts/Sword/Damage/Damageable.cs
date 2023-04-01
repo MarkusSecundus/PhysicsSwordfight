@@ -22,42 +22,31 @@ public class Damageable : MonoBehaviour
 
     public bool DestroySelfOnDeath = false;
 
-    [SerializeField] UnityEvent OnDeath;
+    [SerializeField] OnHpChangedEvent OnUpdated;
     [SerializeField] OnHpChangedEvent OnDamaged;
     [SerializeField] OnHpChangedEvent OnHealed;
+    [SerializeField] OnHpChangedEvent OnDeath;
 
     private void Start()
     {
         HP = MaxHP;
+        OnUpdated.Invoke(new HpChangedArgs { Target = this, DeltaHP = 0});
     }
 
-    public void ChangeHP(float deltaHP, [MaybeNull] IWeapon cause)
+    public void ChangeHP(float deltaHP)
     {
-        var resultHP = Mathf.Clamp(HP + deltaHP, MinHP, MaxHP);
-        //deltaHP = resultHP - HP;
+        HP = Mathf.Clamp(HP + deltaHP, MinHP, MaxHP);
 
-        var message = $"{this.name} ";
-        OnHpChangedEvent eventToInvoke;
-        HP = resultHP;
-        if(deltaHP <= 0)
-        {
-            message += $"damaged for {-deltaHP} hp";
-            eventToInvoke = OnDamaged;
-        }
-        else
-        {
-            message += $"healed for {deltaHP} hp";
-            eventToInvoke = OnHealed;
-        }
-        if (cause != null) message += $" by {cause.name}";
+        var eventArgs = new HpChangedArgs { Target = this, DeltaHP = deltaHP };
 
-        Message(message);
-
-        eventToInvoke?.Invoke(new HpChangedArgs { Target = this, DeltaHP = deltaHP});
-        if (resultHP <= 0)
+        if (deltaHP < 0) OnDamaged.Invoke(eventArgs);
+        else if (deltaHP > 0) OnHealed.Invoke(eventArgs);
+        OnUpdated.Invoke(eventArgs);
+        if (HP <= 0)
         {
-            Message($"{this.name} died!");
-            OnDeath?.Invoke();
+            OnDeath.Invoke(eventArgs);
+            if (DestroySelfOnDeath)
+                Destroy(gameObject);
         }
     }
 
