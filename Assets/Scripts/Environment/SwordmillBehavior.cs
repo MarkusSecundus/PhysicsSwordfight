@@ -39,17 +39,19 @@ public class SwordmillBehavior : MonoBehaviour
 
     IEnumerable<ConfigurableJoint> MakeSwords(ConfigurableJoint proto, int count)
     {
-        List<ConfigurableJoint> ret = new List<ConfigurableJoint> {proto};
+        proto.gameObject.SetActive(false);
+        List<ConfigurableJoint> ret = new List<ConfigurableJoint> {};
 
         var angleToAdd = RotationUtil.MaxDegree / count;
         var angleAccumulator = 0f;
         proto.autoConfigureConnectedAnchor = false;
-        foreach (var v in GeometryUtils.PointsOnCircle(count, proto.connectedAnchor, Vector3.up, includeBegin:false))
+        foreach (var v in GeometryUtils.PointsOnCircle(count, proto.connectedAnchor, Vector3.up, includeBegin:true))
         {
             var s = proto.gameObject.InstantiateWithTransform().GetComponent<ConfigurableJoint>();
+            s.gameObject.SetActive(true);
             ret.Add(s);
             s.connectedAnchor = v;
-            s.targetRotation = s.targetRotation * Quaternion.AngleAxis(angleAccumulator += angleToAdd, Vector3.up);
+            s.targetRotation = s.targetRotation * Quaternion.AngleAxis(Op.post_assign(ref angleAccumulator, angleAccumulator + angleToAdd), Vector3.up);
         }
 
         return ret;
