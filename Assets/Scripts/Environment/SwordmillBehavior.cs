@@ -27,7 +27,8 @@ public class SwordmillBehavior : MonoBehaviour
     {
         //foreach (var s in swords) s.targetRotation = Quaternion.Euler(s.targetRotation.eulerAngles.With(x: SwordsAngle));
 
-        Rotor.connectedAnchor = originalConnectedAnchor + positionOffset;
+        if(Rotor!= null)
+            Rotor.connectedAnchor = originalConnectedAnchor + positionOffset;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -48,10 +49,11 @@ public class SwordmillBehavior : MonoBehaviour
         foreach (var v in GeometryUtils.PointsOnCircle(count, proto.connectedAnchor, Vector3.up, includeBegin:true))
         {
             var s = proto.gameObject.InstantiateWithTransform().GetComponent<ConfigurableJoint>();
-            s.gameObject.SetActive(true);
             ret.Add(s);
             s.connectedAnchor = v;
             s.targetRotation = s.targetRotation * Quaternion.AngleAxis(Op.post_assign(ref angleAccumulator, angleAccumulator + angleToAdd), Vector3.up);
+            //s.transform.position = s.connectedBody.transform.LocalToGlobal(s.connectedAnchor);
+            s.gameObject.SetActive(true);
         }
 
         return ret;

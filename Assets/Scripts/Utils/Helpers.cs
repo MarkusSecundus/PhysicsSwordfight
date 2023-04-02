@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -116,7 +117,7 @@ public static class GameObjectUtils
     public static bool IsDescendantOf(this Transform parent, Transform descendant) => descendant.IsChildOf(parent);
 
     private static readonly string UtilGameObjectRootTag = "UtilGameObjectRoot";
-    private static Transform GetUtilObjectParent()
+    public static Transform GetUtilObjectParent()
     {
         var ret = GameObject.FindWithTag(UtilGameObjectRootTag);
         if(ret == null)
@@ -138,6 +139,16 @@ public static class GameObjectUtils
             return ret;
         else 
             return parent.CreateChild(typeof(T).Name).AddComponent<T>();
+    }
+
+    public static void PerformWithDelay(this MonoBehaviour self, System.Action toPerform, object toYield)
+    {
+        self.StartCoroutine(impl());
+        IEnumerator impl()
+        {
+            yield return toYield;
+            toPerform();
+        }
     }
 
     public static GameObject CreateChild(this Transform father, string name, params System.Type[] componentsToAdd)

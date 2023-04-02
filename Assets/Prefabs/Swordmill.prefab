@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2808337140805761536}
   - component: {fileID: 1782504962106481662}
   - component: {fileID: 2808337140805761542}
+  - component: {fileID: 1577100530324287292}
   m_Layer: 0
   m_Name: MainBody
   m_TagString: Untagged
@@ -133,6 +134,35 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &1577100530324287292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2808337140805761540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <BaseDamageable>k__BackingField: {fileID: 0}
+  OnAttacked:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1085581082303384628}
+        m_TargetAssemblyTypeName: DamageParticleEmitHelper, Assembly-CSharp
+        m_MethodName: EmitDamage
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  MinDamage: 2
 --- !u!1 &2808337140929654817
 GameObject:
   m_ObjectHideFlags: 0
@@ -147,6 +177,7 @@ GameObject:
   - component: {fileID: 2808337140929654819}
   - component: {fileID: 2808337140929654818}
   - component: {fileID: 2808337140929654815}
+  - component: {fileID: 6761502239394520571}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -165,7 +196,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.62, z: 0}
   m_LocalScale: {x: 0.23542939, y: 0.23542939, z: 0.23542939}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3118589286586454300}
   m_Father: {fileID: 2808337142216687973}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -286,7 +318,7 @@ ConfigurableJoint:
   m_YMotion: 0
   m_ZMotion: 0
   m_AngularXMotion: 0
-  m_AngularYMotion: 2
+  m_AngularYMotion: 0
   m_AngularZMotion: 0
   m_LinearLimitSpring:
     spring: 0
@@ -366,9 +398,38 @@ ConfigurableJoint:
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
   m_EnableCollision: 0
-  m_EnablePreprocessing: 1
+  m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 0.00001
+--- !u!114 &6761502239394520571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2808337140929654817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <BaseDamageable>k__BackingField: {fileID: 0}
+  OnAttacked:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1085581082303384628}
+        m_TargetAssemblyTypeName: DamageParticleEmitHelper, Assembly-CSharp
+        m_MethodName: EmitDamage
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  MinDamage: 2
 --- !u!1 &2808337142216687972
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,6 +473,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2808337142474496025}
   - component: {fileID: 2808337142474496024}
+  - component: {fileID: 4933922005377982787}
   m_Layer: 0
   m_Name: Swordmill
   m_TagString: Untagged
@@ -453,6 +515,80 @@ MonoBehaviour:
   SwordsCount: 2
   positionOffset: {x: 0, y: 0, z: 0}
   SwordsAngle: 0
+--- !u!114 &4933922005377982787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2808337142474496031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6059301b4c8bd8f499e6da82de751ae5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <MaxHP>k__BackingField: 200
+  DestroySelfOnDeath: 1
+  OnUpdated:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDamaged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
+        m_MethodName: ReportDamage
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnHealed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
+        m_MethodName: ReportHeal
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
+        m_MethodName: ReportDeath
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1085581082303384628}
+        m_TargetAssemblyTypeName: DamageParticleEmitHelper, Assembly-CSharp
+        m_MethodName: EmitDeath
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!1001 &2808337140899281956
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -529,6 +665,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weapon
       objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364039, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364088, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -547,4 +687,81 @@ Transform:
 ConfigurableJoint:
   m_CorrespondingSourceObject: {fileID: 5692771888074364033, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
   m_PrefabInstance: {fileID: 2808337140899281956}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5367308194861561147
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2808337140929654814}
+    m_Modifications:
+    - target: {fileID: 1520393690955961318, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_Name
+      value: BloodParticles
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+--- !u!114 &1085581082303384628 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5002444082519734543, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+  m_PrefabInstance: {fileID: 5367308194861561147}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 083a50d202e43f646bbf1b1e495b478e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &3118589286586454300 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7006464345577563175, guid: 60a2c9d268c5cdf4a9db3a0afb7ef7cd, type: 3}
+  m_PrefabInstance: {fileID: 5367308194861561147}
   m_PrefabAsset: {fileID: 0}

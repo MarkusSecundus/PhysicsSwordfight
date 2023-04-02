@@ -9,7 +9,8 @@ public class BasicImpactWeapon : MonoBehaviour
     protected virtual AttackDeclaration CalculateAttackStats(Collision collision) => new AttackDeclaration 
     {
         Damage = collision.impulse.magnitude * DamageMultiplier,
-        AttackerIdentifier = this
+        AttackerIdentifier = this,
+        ImpactPoint = collision.GetContact(0).AsImpactPointData()
     };
 
 
