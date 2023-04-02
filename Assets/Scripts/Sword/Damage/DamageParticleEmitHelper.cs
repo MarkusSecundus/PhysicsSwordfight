@@ -24,6 +24,5 @@ public class DamageParticleEmitHelper : MonoBehaviour
         system.Emit(ParticlesOnDeath);
         if (makeSelfStandalone) 
             this.PerformWithDelay(() => Destroy(gameObject), new WaitWhile(() => system.isPlaying));
-        
     }
 }
