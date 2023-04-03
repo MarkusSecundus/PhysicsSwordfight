@@ -62,8 +62,8 @@ public partial class CollisionFix : MonoBehaviour
     {
         public CollisionFix Host, Target;
 
-        protected override ScaledRay GetHost() => Host.SwordDescriptor.SwordBladeAsRay();
-        protected override ScaledRay GetTarget() => Target.SwordDescriptor.SwordBladeAsRay();
+        protected override ScaledRay GetHost() => Host.SwordDescriptor.SwordAsRay();
+        protected override ScaledRay GetTarget() => Target.SwordDescriptor.SwordAsRay();
 
         public void SetIgnoreCollisions(CollisionFix fix) => fix.SetIgnoreCollisions(this.collider);
 

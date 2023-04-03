@@ -12,26 +12,10 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
     public Transform SwordDirectionHint;
     public IRayIntersectable InputIntersector;
 
-    public float SwordLength;
-    public bool RegisterOnlyInputOnSphere = true;
-
     public SwordMovementMode_Block(SwordMovement script) : base(script){}
 
-    public override void OnStart()
-    {
-        if (SwordLength <= 0) SwordLength = Script.SwordLength;
-    }
-
-
-    public override void OnDeactivated()
-    {
-        Script.MoveAnchorPosition(Script.FixedSwordHandlePoint);
-    }
-
-    public Vector3 fixedHandlePoint => Script.FixedSwordHandlePoint;
-    private Transform handleBegin => Script.descriptor.SwordAnchor;
-    private Transform bladeTip => Script.descriptor.SwordTip;
-    private Transform bladeEdgeBlockPoint => Script.descriptor.SwordBlockPoint;
+    SwordDescriptor Sword => Script.Sword;
+    private Transform bladeEdgeBlockPoint => Sword.SwordBlockPoint;
     public override void OnFixedUpdate(float delta)
     {
         var input = GetUserInput();
@@ -50,20 +34,15 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
     {
         var hitPoint = userInput.Value;
 
-        Ray localBladeAxis = new Ray(handleBegin.localPosition, bladeTip.localPosition - handleBegin.localPosition);
-        var localBlockPointProjection = localBladeAxis.GetRayPointWithLeastDistance(bladeEdgeBlockPoint.localPosition);
-        //Debug.Log($"quat: {Quaternion.LookRotation(SwordTip.localPosition - SwordHandle.localPosition, SwordEdgeBlockPoint.localPosition - localBlockPointProjection).eulerAngles}");
-
-
-        Ray bladeAxis = new Ray(handleBegin.position, bladeTip.position - handleBegin.position);
-        var blockPointProjection = bladeAxis.GetRayPointWithLeastDistance(bladeEdgeBlockPoint.position);
-        float blockPointDistance = blockPointProjection.Distance(bladeEdgeBlockPoint.position),
-              bladeTipDistance   = blockPointProjection.Distance(bladeTip.position),
-              handleDistance     = blockPointProjection.Distance(handleBegin.position)
+        var bladeAxis = Sword.SwordBladeAsRay();
+        var swordLength = bladeAxis.length;
+        var blockPointProjection = bladeAxis.AsRay().GetRayPointWithLeastDistance(bladeEdgeBlockPoint.position);
+        float bladeTipDistance   = blockPointProjection.Distance(bladeAxis.end),
+              handleDistance     = blockPointProjection.Distance(bladeAxis.origin)
             ;
 
-        var center = userInput.InputorCenter;//fixedHandlePoint;
-        Plane tangentialPlane = new Sphere(center, SwordLength).GetTangentialPlane(hitPoint);
+        var center = userInput.InputorCenter;
+        Plane tangentialPlane = new Sphere(center, swordLength).GetTangentialPlane(hitPoint);
         Vector3 normal = (hitPoint - center).normalized; //normal pointing in the direction outwards, away from the centre of the sphere
 
         var bestDirectionHint = getBestDirectionHint(hitPoint);
@@ -79,9 +58,6 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
 
         Script.MoveAnchorPosition(handlePosition);
         Script.SetSwordRotation(swordRotation);
-
-
-        Script.SetDebugPointPosition(hitPoint);
 
         Vector3 computeUpVector()
         {

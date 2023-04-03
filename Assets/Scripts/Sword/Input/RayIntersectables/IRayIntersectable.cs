@@ -65,12 +65,12 @@ public abstract class IRayIntersectable : MonoBehaviour
 
 public static class RayIntersectableExtensions
 {
-    public static Vector3? GetIntersection(this IRayIntersectable self, Ray? r)
+    public static RayIntersection GetIntersection(this IRayIntersectable self, Ray? r)
     {
-        if (r == null) return null;
+        if (r == null) return RayIntersection.Null;
         var ret = self.GetIntersection(r.Value);
-        if (!ret.IsValid) return null;
-        return ret.Value;
+        if (!ret.IsValid) return RayIntersection.Null;
+        return ret;
     }
 
     public static void Visualize(this IRayIntersectable self, Camera camera, DrawHelpers.LineDrawer<Vector3> drawLine, int segments=24, float overshoot = 1f)

@@ -8,71 +8,54 @@ using DG.Tweening.Plugins.Options;
 using System.Linq;
 
 using Submodule = IScriptSubmodule<SwordMovement>;
-
+using Interpolator = RetargetableInterpolator<UnityEngine.Vector3, RetargetableInterpolator.VectorInterpolationPolicy>;
 
 
 public class SwordMovement : MonoBehaviour
 {
-    public SwordDescriptor descriptor;
-
-
-    public ConfigurableJoint joint;
-    private JointRotationHelper jointRotationHelper;
-
-    public float HandleMovementInterpolationFactor = 9f;
-
-    public SwordsmanDescriptor swordsmanDescriptor;
-    private Transform swordAnchor => descriptor.SwordCenterOfMass;
-
-    public Transform debuggerPoint;
-
-    public float inputCircleRadius = 0.3f;
-
+    public SwordDescriptor Sword;
+    public ConfigurableJoint Joint;
     public ISwordInput Input;
 
-    public Vector3 FixedSwordHandlePoint => joint.connectedBody.transform.LocalToGlobal(originalConnectedAnchor);
-    public Vector3 FlexSwordHandlePoint => swordAnchor.position;
-    public float SwordLength => inputCircleRadius;
-    public Rigidbody swordsmanBody => joint.connectedBody;
 
-    private Submodule activeMode;
+
+
+    void Start()
+    {
+        Sword ??= GetComponent<SwordDescriptor>();
+        Joint ??= GetComponent<ConfigurableJoint>();
+        Input ??= GetComponent<ISwordInput>();
+
+        InitSwordMovers();
+        InitModes();
+    }
+
+    #region Modes
+
+    Submodule activeMode;
     public SwordMovementModesContainer Modes;
-    public Dictionary<KeyCode, Submodule> modes;
+    Dictionary<KeyCode, Submodule> modes;
     public SwordMovement()
     {
         Modes = new SwordMovementModesContainer(this);
     }
-
-    void Start()
+    void InitModes()
     {
         modes = Modes.MakeMap();
-        joint ??= GetComponent<ConfigurableJoint>();
-        jointRotationHelper = joint.MakeRotationHelper();
-
-        swordAnchor.localPosition = joint.anchor;
-
-        InitAnchorSetter();
-
         foreach (var mode in modes.Values) mode.OnStart();
     }
-
 
     void Update()
     {
         MakeSureRightModeIsActive();
         activeMode?.OnUpdate(Time.deltaTime);
     }
-
-    // Update is called once per frame
     void FixedUpdate()
     {
         MakeSureRightModeIsActive();
-        var delta = Time.fixedDeltaTime;
-        
-        UpdateAnchorPosition(delta);
-        activeMode?.OnFixedUpdate(delta);
+        activeMode?.OnFixedUpdate(Time.fixedDeltaTime);
     }
-
+    void OnDrawGizmos() => activeMode?.OnDrawGizmos();
 
     void MakeSureRightModeIsActive()
     {
@@ -83,14 +66,30 @@ public class SwordMovement : MonoBehaviour
             (activeMode = mode)?.OnActivated();
         }
     }
+    #endregion
 
 
+    #region SwordMovement
+    [SerializeField]RetargetableInterpolator.Config HandleMovementInterpolationConfig = new RetargetableInterpolator.Config { InterpolationFactor = 9f };
 
-
-    private void OnDrawGizmos()
+    JointRotationHelper jointRotationHelper;
+    Interpolator connectedAnchorPositioner;
+    private void InitSwordMovers()
     {
-        activeMode?.OnDrawGizmos();
+        jointRotationHelper = Joint.MakeRotationHelper();
+
+        Joint.autoConfigureConnectedAnchor = false;
+        StartCoroutine(connectedAnchorPositioner = new Interpolator
+        {
+            ToYield = new WaitForFixedUpdate(),
+            DeltaGetter = () => Time.deltaTime,
+            Getter = () => this.Joint.connectedAnchor,
+            Setter = value => this.Joint.connectedAnchor = value,
+            Config = this.HandleMovementInterpolationConfig,
+            Target = this.Joint.connectedAnchor
+        });
     }
+
 
 
     /// <summary>
@@ -101,81 +100,24 @@ public class SwordMovement : MonoBehaviour
     /// <param name="up">upvector for blade rotation, interpolated from this and last movement if null</param>
     public void SetSwordPosition(Vector3 lookAt, Vector3? anchor=null, Vector3? up=null)
     {
-        //TODO: implement
+        Vector3 anchorPoint;
+        if (anchor != null)
+            MoveAnchorPosition(anchorPoint = anchor.Value);
+        else anchorPoint = this.Joint.connectedBody.transform.LocalToGlobal(connectedAnchorPositioner.Target);
+
+
     }
 
 
 
     public void SetSwordRotation(Quaternion rotation) 
     {
-        jointRotationHelper.SetTargetRotation(Quaternion.Inverse(joint.connectedBody.transform.rotation) * rotation);
+        jointRotationHelper.SetTargetRotation(Quaternion.Inverse(Joint.connectedBody.transform.rotation) * rotation);
     }
-    public void SetDebugPointPosition(Vector3 v)
-    {
-        if (debuggerPoint != null) debuggerPoint.position = v;
-
-    }
-
-    public (Vector3? First, Vector3? Second) GetUserInput(Sphere inputSphere)
-    {
-        if (!(Input.GetInputRay() is Ray ray)) return (null, null);
-
-        
-        Debug.DrawRay(ray.origin, ray.direction, Color.yellow);
-
-        var intersection = ray.IntersectSphere(inputSphere); 
-        intersection.First ??= UserInputFallback(ray, inputSphere);
-        intersection.First = ClampInput(intersection.First, inputSphere);
-
-        return intersection;
-    }
-
-
-    private Vector3 UserInputFallback(Ray inputRay, Sphere inputSphere)
-    {
-        var pointWithLeastDistance = inputRay.GetRayPointWithLeastDistance(inputSphere.Center);
-
-        return pointWithLeastDistance;
-    }
-
-    private Vector3? ClampInput(Vector3? v, Sphere inputSphere)
-    {
-        if (!(v is Vector3 input)) return null;
-
-        var clampingPlane = new Plane(swordsmanBody.transform.forward, swordsmanDescriptor.InputClampingBoundary.position);
-
-        if (clampingPlane.SameSide(input, inputSphere.Center)) 
-            return input;
-        else
-            return clampingPlane.ClosestPointOnPlane(input);
-    }
-
-
-
-
-
-
-
-
-
-
-
-    private void InitAnchorSetter()
-    {
-        joint.autoConfigureConnectedAnchor = false;
-        this.targetConnectedAnchor=this.originalConnectedAnchor = joint.connectedAnchor;
-    }
-
-    private Vector3 originalConnectedAnchor;
-    private Vector3 targetConnectedAnchor;
     public void MoveAnchorPosition(Vector3 absolutePosition)
     {
-        var relative = joint.connectedBody.transform.GlobalToLocal(absolutePosition);
-        targetConnectedAnchor = relative;
+        var relative = this.Joint.connectedBody.transform.GlobalToLocal(absolutePosition);
+        connectedAnchorPositioner.Target = relative;
     }
-
-    void UpdateAnchorPosition(float delta)
-    {
-        joint.connectedAnchor += (targetConnectedAnchor - joint.connectedAnchor) * delta * HandleMovementInterpolationFactor;
-    }
+    #endregion
 }

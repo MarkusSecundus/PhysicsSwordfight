@@ -7,8 +7,8 @@ using static UnityEngine.GraphicsBuffer;
 public class ContrarianCollider : ContrarianColliderBase
 {
     public SwordDescriptor Target, Host;
-    protected override ScaledRay GetTarget() => Target.SwordBladeAsRay();
-    protected override ScaledRay GetHost() => Host.SwordBladeAsRay();
+    protected override ScaledRay GetTarget() => Target.SwordAsRay();
+    protected override ScaledRay GetHost() => Host.SwordAsRay();
 
     protected override void Awake()
     {

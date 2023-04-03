@@ -31,15 +31,23 @@ public class SwordDescriptor : MonoBehaviour, IRayProvider
         public Transform Root, Direction;
     }
 
-    ScaledRay IRayProvider.GetRay() => this.SwordBladeAsRay();
+    ScaledRay IRayProvider.GetRay() => this.SwordAsRay();
 }
 
 public static class SwordDescriptorExtensions
 {
-    public static ScaledRay SwordBladeAsRay(this SwordDescriptor self)
+    public static ScaledRay SwordAsRay(this SwordDescriptor self)
     {
         var botom = self.SwordBottom.position;
         var direction = self.SwordTip.position - botom;
         return new ScaledRay(botom, direction);
     }
+    
+    public static ScaledRay SwordBladeAsRay(this SwordDescriptor self)
+    {
+        var botom = self.SwordAnchor.position;
+        var direction = self.SwordTip.position - botom;
+        return new ScaledRay(botom, direction);
+    }
+
 }

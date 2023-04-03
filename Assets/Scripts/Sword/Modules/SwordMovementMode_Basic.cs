@@ -25,30 +25,25 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
         return ret;
     }
 
-    private Vector3 swordHandlePoint => Script.FlexSwordHandlePoint;
-    private float swordLength => Script.SwordLength;
-
 
     public float minLastVectorDiff = 0.3f;
     private Vector3 lastForward = Vector3.zero;
     void SetSwordRotation(float delta)
     {
-        //var inputSphere = new Sphere(swordHandlePoint, swordLength);
-        //var input = Script.GetUserInput(inputSphere);
         var inputRay = Script.Input.GetInputRay();
         var input = InputIntersectable.GetIntersection(inputRay);
 
-        if (input != null)
+        if (input.IsValid)
         {
             var hitPoint = input.Value;
-            
+            var handlePoint = input.InputorCenter;
 #if false            
             {//debug
                 var plane = new Sphere(swordHandlePoint, swordLength).GetTangentialPlane(hitPoint);
                 DrawHelpers.DrawPlaneSegment(plane, hitPoint, (v, w) => Debug.DrawLine(v, w, Color.green));
             }
 #endif
-            var hitDirectionVector = (hitPoint - swordHandlePoint);
+            var hitDirectionVector = (hitPoint - handlePoint);
 
             Vector3 forward = hitDirectionVector, up = computeUpVector(forward);
             if (Vector3.Distance(lastForward, forward) >= minLastVectorDiff)
@@ -58,9 +53,8 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
 
             //Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
 
-
+            Script.MoveAnchorPosition(handlePoint);
             Script.SetSwordRotation(tr);
-            Script.SetDebugPointPosition(hitPoint);
         }
     }
 

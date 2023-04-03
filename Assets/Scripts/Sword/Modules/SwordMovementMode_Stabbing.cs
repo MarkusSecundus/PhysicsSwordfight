@@ -16,20 +16,10 @@ public class SwordMovementMode_Stabbing : IScriptSubmodule<SwordMovement>
 
     public SwordMovementMode_Stabbing(SwordMovement script) : base(script){}
 
-    public override void OnStart()
-    {
-    }
 
-
-    public override void OnDeactivated()
-    {
-        Script.MoveAnchorPosition(Script.FixedSwordHandlePoint);
-    }
-
-    public Vector3 fixedHandlePoint => Script.FixedSwordHandlePoint;
-    private Transform handleBegin => Script.descriptor.SwordAnchor;
-    private Transform bladeTip => Script.descriptor.SwordTip;
-    private Transform bladeEdgeBlockPoint => Script.descriptor.SwordBlockPoint;
+    private Transform handleBegin => Script.Sword.SwordAnchor;
+    private Transform bladeTip => Script.Sword.SwordTip;
+    private Transform bladeEdgeBlockPoint => Script.Sword.SwordBlockPoint;
     public override void OnFixedUpdate(float delta)
     {
         var input = GetUserInput();
@@ -42,7 +32,7 @@ public class SwordMovementMode_Stabbing : IScriptSubmodule<SwordMovement>
         var inputRay = Script.Input.GetInputRay();
         //var input = (Input.GetKey(StabKey)?ref InputIntersectorWhenStabbing: ref InputIntersector).GetIntersection(inputRay.Value);
         var input = InputIntersector.GetIntersection(inputRay);
-        if (input != null)
+        if (input.IsValid)
             return input.Value;
 
         return null;
@@ -59,9 +49,6 @@ public class SwordMovementMode_Stabbing : IScriptSubmodule<SwordMovement>
 
         Script.MoveAnchorPosition(handlePosition);
         Script.SetSwordRotation(swordRotation);
-
-
-        Script.SetDebugPointPosition(hitPoint);
     }
 
 
