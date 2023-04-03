@@ -53,11 +53,7 @@ public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
         var tipPosition = hitPoint + bladeDirection * bladeTipDistance;
         var handlePosition = hitPoint + (-bladeDirection) * handleDistance;
 
-        var upVector = computeUpVector();
-        var swordRotation = Quaternion.LookRotation(tipPosition - handlePosition, upVector);
-
-        Script.MoveAnchorPosition(handlePosition);
-        Script.SetSwordRotation(swordRotation);
+        Script.MoveSword(tipPosition - handlePosition, anchorPoint: handlePosition, upDirection: computeUpVector());
 
         Vector3 computeUpVector()
         {

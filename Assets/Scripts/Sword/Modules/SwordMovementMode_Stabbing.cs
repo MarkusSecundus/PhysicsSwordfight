@@ -44,11 +44,8 @@ public class SwordMovementMode_Stabbing : IScriptSubmodule<SwordMovement>
         var handlePosition = hitPoint;
         var lookDirection = (bestDirectionHint - handlePosition).normalized;
         if (Input.GetKey(StabKey)) handlePosition += lookDirection * StabDistance;
-        var swordRotation = Quaternion.LookRotation(lookDirection, Vector3.up);
 
-
-        Script.MoveAnchorPosition(handlePosition);
-        Script.SetSwordRotation(swordRotation);
+        Script.MoveSword(lookDirection, handlePosition);
     }
 
 

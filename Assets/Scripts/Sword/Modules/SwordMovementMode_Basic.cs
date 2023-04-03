@@ -37,33 +37,13 @@ public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
         {
             var hitPoint = input.Value;
             var handlePoint = input.InputorCenter;
-#if false            
-            {//debug
-                var plane = new Sphere(swordHandlePoint, swordLength).GetTangentialPlane(hitPoint);
-                DrawHelpers.DrawPlaneSegment(plane, hitPoint, (v, w) => Debug.DrawLine(v, w, Color.green));
-            }
-#endif
             var hitDirectionVector = (hitPoint - handlePoint);
 
             Vector3 forward = hitDirectionVector, up = computeUpVector(forward);
             if (Vector3.Distance(lastForward, forward) >= minLastVectorDiff)
                 lastForward = hitDirectionVector;
 
-            var tr = Quaternion.LookRotation(hitDirectionVector, up);
-
-            //Debug.DrawLine(swordHandlePoint, swordHandlePoint + up, Color.magenta);
-
-            Script.MoveAnchorPosition(handlePoint);
-            Script.SetSwordRotation(tr);
+            Script.MoveSword(hitDirectionVector, anchorPoint: handlePoint, upDirection: up);
         }
     }
-
-    public override void OnDrawGizmos()
-    {
-        Gizmos.color = Color.cyan;
-        //Gizmos.DrawSphere(swordHandlePoint, 0.01f);
-
-        //DrawHelpers.DrawWireSphere(swordHandlePoint, swordLength, Gizmos.DrawLine);
-    }
-
 }

@@ -18,13 +18,11 @@ public class SwordMovement : MonoBehaviour
     public ISwordInput Input;
 
 
-
-
     void Start()
     {
         Sword ??= GetComponent<SwordDescriptor>();
         Joint ??= GetComponent<ConfigurableJoint>();
-        Input ??= GetComponent<ISwordInput>();
+        Input ??= GetComponentInParent<ISwordInput>();
 
         InitSwordMovers();
         InitModes();
@@ -70,7 +68,7 @@ public class SwordMovement : MonoBehaviour
 
 
     #region SwordMovement
-    [SerializeField]RetargetableInterpolator.Config HandleMovementInterpolationConfig = new RetargetableInterpolator.Config { InterpolationFactor = 9f };
+    [SerializeField] RetargetableInterpolator.Config HandleMovementInterpolationConfig = new RetargetableInterpolator.Config { InterpolationFactor = 9f };
 
     JointRotationHelper jointRotationHelper;
     Interpolator connectedAnchorPositioner;
@@ -91,30 +89,39 @@ public class SwordMovement : MonoBehaviour
     }
 
 
+    [System.Serializable] public struct MovementCommand
+    {
+        [field: SerializeField]public Vector3 LookDirection { get; init; }
+        [field: SerializeField]public Vector3? AnchorPoint { get; init; }
+        [field: SerializeField]public Vector3? UpDirection { get; init; }
+    }
 
     /// <summary>
     /// ..takes all global coords
     /// </summary>
-    /// <param name="lookAt">what the blade should point at</param>
-    /// <param name="anchor">where the swords anchor should move - remains unchanged if null</param>
-    /// <param name="up">upvector for blade rotation, interpolated from this and last movement if null</param>
-    public void SetSwordPosition(Vector3 lookAt, Vector3? anchor=null, Vector3? up=null)
+    /// <param name="lookDirection">what the blade should point at</param>
+    /// <param name="anchorPoint">where the swords anchor should move - remains unchanged if null</param>
+    /// <param name="upDirection">upvector for blade rotation, interpolated from this and last movement if null</param>
+    public void MoveSword(Vector3 lookDirection, Vector3? anchorPoint=null, Vector3? upDirection=null) => MoveSword(new MovementCommand { LookDirection = lookDirection, AnchorPoint = anchorPoint, UpDirection = upDirection });
+    public void MoveSword(MovementCommand m)
     {
-        Vector3 anchorPoint;
-        if (anchor != null)
-            MoveAnchorPosition(anchorPoint = anchor.Value);
-        else anchorPoint = this.Joint.connectedBody.transform.LocalToGlobal(connectedAnchorPositioner.Target);
+        Vector3 anchor;
+        if (m.AnchorPoint != null)
+            MoveAnchorPosition(anchor = m.AnchorPoint.Value);
+        else anchor = this.Joint.connectedBody.transform.LocalToGlobal(connectedAnchorPositioner.Target);
 
+        Vector3 up = m.UpDirection??computeUpVector(m.LookDirection, anchor);
+        SetSwordRotation(Quaternion.LookRotation(m.LookDirection, up));
 
+        Vector3 computeUpVector(Vector3 lookAt, Vector3 anchor) => Vector3.up;
     }
 
 
-
-    public void SetSwordRotation(Quaternion rotation) 
+    private void SetSwordRotation(Quaternion rotation) 
     {
         jointRotationHelper.SetTargetRotation(Quaternion.Inverse(Joint.connectedBody.transform.rotation) * rotation);
     }
-    public void MoveAnchorPosition(Vector3 absolutePosition)
+    private void MoveAnchorPosition(Vector3 absolutePosition)
     {
         var relative = this.Joint.connectedBody.transform.GlobalToLocal(absolutePosition);
         connectedAnchorPositioner.Target = relative;

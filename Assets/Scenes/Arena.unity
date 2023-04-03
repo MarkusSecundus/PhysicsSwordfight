@@ -42996,6 +42996,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: SwordInts.values.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: Modes.Block.InputIntersector
       value: 
       objectReference: {fileID: 1357201251}
@@ -43012,9 +43016,45 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 987969251}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: SwordInts.values.Array.data[0].s
+      value: fdsfds
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: SwordInts.values.Array.data[1].s
+      value: fdsfds
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: SwordInts.values.Array.data[2].s
+      value: jghfjgh
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: Modes.Stabbing.SwordDirectionHint
       value: 
       objectReference: {fileID: 174504739}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: SwordInts.values.Array.data[0].Key
+      value: 278
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: SwordInts.values.Array.data[1].Key
+      value: 273
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: SwordInts.values.Array.data[2].Key
+      value: 281
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: SwordInts.values.Array.data[0].Value
+      value: 654
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: SwordInts.values.Array.data[1].Value
+      value: 545
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: SwordInts.values.Array.data[2].Value
+      value: 45
+      objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364038, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Name
       value: Weapon
