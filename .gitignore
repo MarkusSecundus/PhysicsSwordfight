@@ -6,6 +6,7 @@
 /[Tt]emp/
 /[Oo]bj/
 /[Bb]uild/
+/build_BurstDebugInformation_DoNotShip/
 /[Bb]uilds/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
