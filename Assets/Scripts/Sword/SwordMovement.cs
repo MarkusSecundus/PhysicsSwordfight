@@ -7,12 +7,13 @@ using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using System.Linq;
 
-using Submodule = IScriptSubmodule<SwordMovement>;
 using Interpolator = RetargetableInterpolator<UnityEngine.Vector3, RetargetableInterpolator.VectorInterpolationPolicy>;
 
 
 public class SwordMovement : MonoBehaviour
 {
+    [System.Serializable] public abstract class Submodule : IScriptSubmodule<SwordMovement>{}
+
     public SwordDescriptor Sword;
     public ConfigurableJoint Joint;
     public ISwordInput Input;
@@ -32,15 +33,9 @@ public class SwordMovement : MonoBehaviour
 
     Submodule activeMode;
     public SwordMovementModesContainer Modes;
-    Dictionary<KeyCode, Submodule> modes;
-    public SwordMovement()
-    {
-        Modes = new SwordMovementModesContainer(this);
-    }
     void InitModes()
     {
-        modes = Modes.MakeMap();
-        foreach (var mode in modes.Values) mode.OnStart();
+        foreach (var mode in Modes.Values.Values) mode.Init(this);
     }
 
     void Update()
@@ -57,7 +52,7 @@ public class SwordMovement : MonoBehaviour
 
     void MakeSureRightModeIsActive()
     {
-        var mode = modes[modes.Keys.FirstOrDefault(Input.GetKey)];
+        var mode = Modes.Values[Modes.Values.Keys.FirstOrDefault(Input.GetKey)];
         if (activeMode != mode)
         {
             activeMode?.OnDeactivated();

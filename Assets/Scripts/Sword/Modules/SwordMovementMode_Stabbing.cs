@@ -7,14 +7,12 @@ using UnityEngine;
 using System.Linq;
 
 [System.Serializable]
-public class SwordMovementMode_Stabbing : IScriptSubmodule<SwordMovement>
+public class SwordMovementMode_Stabbing : SwordMovement.Submodule
 {
     public Transform SwordDirectionHint;
     public IRayIntersectable InputIntersector;
     public float StabDistance = 0.8f;
     public KeyCode StabKey = KeyCode.Mouse0;
-
-    public SwordMovementMode_Stabbing(SwordMovement script) : base(script){}
 
 
     private Transform handleBegin => Script.Sword.SwordAnchor;

@@ -30564,6 +30564,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1599572141}
   - component: {fileID: 1599572142}
+  - component: {fileID: 1599572143}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -30603,6 +30604,45 @@ MonoBehaviour:
   Player: {fileID: 2086466197}
   Sword: {fileID: 1053397360}
   IsMainPlayer: 1
+  sub:
+    rid: 1235461928565342209
+  references:
+    version: 2
+    RefIds:
+    - rid: 1235461928565342209
+      type: {class: SwordMovementMode_Stabbing, ns: , asm: Assembly-CSharp}
+      data:
+        SwordDirectionHint: {fileID: 0}
+        InputIntersector: {fileID: 0}
+        StabDistance: 0.8
+        StabKey: 323
+--- !u!114 &1599572143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599572140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad08fc1c794f23f49a90127cea1c1aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ToRun:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1599572142}
+        m_TargetAssemblyTypeName: SwordsmanAssembly, Assembly-CSharp
+        m_MethodName: Printout
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
 --- !u!1 &1602568324
 GameObject:
   m_ObjectHideFlags: 0
@@ -42988,12 +43028,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2056266606240543155}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: Modes.Default
+      value: 1235461928565342240
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: debuggerPoint
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: swordsmanDescriptor
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: Modes.values.Array.size
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: SwordInts.values.Array.size
@@ -43012,9 +43060,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1993847116}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: Modes.values.Array.data[0].Key
+      value: 304
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: Modes.values.Array.data[1].Key
+      value: 306
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: Modes.Stabbing.InputIntersector
       value: 
       objectReference: {fileID: 987969251}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: Modes.values.Array.data[0].Value
+      value: 1235461928565342242
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: Modes.values.Array.data[1].Value
+      value: 1235461928565342245
+      objectReference: {fileID: 0}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: SwordInts.values.Array.data[0].s
       value: fdsfds
@@ -43055,6 +43119,74 @@ PrefabInstance:
       propertyPath: SwordInts.values.Array.data[2].Value
       value: 45
       objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342240]
+      value: Assembly-CSharp SwordMovementMode_Basic
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342241]
+      value: Assembly-CSharp SwordMovementMode_Basic
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342242]
+      value: Assembly-CSharp SwordMovementMode_Block
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342244]
+      value: Assembly-CSharp SwordMovementMode_Basic
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342245]
+      value: Assembly-CSharp SwordMovementMode_Stabbing
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342245].StabKey
+      value: 323
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342245].StabDistance
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342242].InputIntersector
+      value: 
+      objectReference: {fileID: 1357201251}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342245].InputIntersector
+      value: 
+      objectReference: {fileID: 987969251}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342240].minLastVectorDiff
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342241].minLastVectorDiff
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342244].minLastVectorDiff
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342240].InputIntersectable
+      value: 
+      objectReference: {fileID: 408652134}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342241].InputIntersectable
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342242].SwordDirectionHint
+      value: 
+      objectReference: {fileID: 1993847116}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342244].InputIntersectable
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235461928565342245].SwordDirectionHint
+      value: 
+      objectReference: {fileID: 174504739}
     - target: {fileID: 5692771888074364038, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Name
       value: Weapon

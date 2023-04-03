@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class SwordMovementMode_Basic : IScriptSubmodule<SwordMovement>
+public class SwordMovementMode_Basic : SwordMovement.Submodule
 {
     public IRayIntersectable InputIntersectable;
-    public SwordMovementMode_Basic(SwordMovement script) : base(script){}
 
     public override void OnFixedUpdate(float delta)
     {

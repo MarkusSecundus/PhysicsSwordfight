@@ -7,12 +7,10 @@ using UnityEngine;
 using System.Linq;
 
 [System.Serializable]
-public class SwordMovementMode_Block : IScriptSubmodule<SwordMovement>
+public class SwordMovementMode_Block : SwordMovement.Submodule
 {
     public Transform SwordDirectionHint;
     public IRayIntersectable InputIntersector;
-
-    public SwordMovementMode_Block(SwordMovement script) : base(script){}
 
     SwordDescriptor Sword => Script.Sword;
     private Transform bladeEdgeBlockPoint => Sword.SwordBlockPoint;

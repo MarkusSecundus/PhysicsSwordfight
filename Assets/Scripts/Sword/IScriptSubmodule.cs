@@ -5,14 +5,20 @@ using UnityEngine;
 [System.Serializable]
 public abstract class IScriptSubmodule<TScript> where TScript: MonoBehaviour
 {
-    public TScript Script { get; }
+    public TScript Script { get; private set; }
 
     protected Transform transform => Script.transform;
     protected GameObject gameObject => Script.gameObject;
 
-    public IScriptSubmodule(TScript script) => this.Script = script;
+    public IScriptSubmodule<TScript> Init(TScript script)
+    {
+        if (this.Script != null) Debug.LogError($"{this} was already initialized by '{this.Script}'!");
+        this.Script = script;
+        OnStart();
+        return this;
+    }
+    protected virtual void OnStart() { }
 
-    public virtual void OnStart() { }
     public virtual void OnUpdate(float delta) { }
     public virtual void OnFixedUpdate(float delta) { }
 
