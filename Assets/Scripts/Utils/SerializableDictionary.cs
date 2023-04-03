@@ -4,31 +4,35 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[System.Serializable]
-public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiver
+
+public class SerializableDictionary
 {
-    [System.Serializable] struct Entry
+     public interface IEntry<TKey, TValue>
     {
-        public TKey Key;
-        public TValue Value;
+        public TKey Key { get; init; }
+        public TValue Value { get; init; }
     }
-    [SerializeField] Entry[] values = Array.Empty<Entry>();
 
-
-    [NonSerialized] bool isDirty = false;
-
-    [NonSerialized] Dictionary<TKey, TValue> valuesRaw = new Dictionary<TKey, TValue>();
-    public Dictionary<TKey, TValue> Values { get { isDirty = true; return valuesRaw; } }
-
-    public void OnBeforeSerialize()
+    [System.Serializable] public struct Entry<TKey, TValue> : IEntry<TKey, TValue>
     {
-        if (Op.post_assign(ref isDirty, false))
-            values = valuesRaw.Select(kv => new Entry { Key = kv.Key, Value = kv.Value }).ToArray();
+        [field: SerializeField] public TKey Key { get; init; }
+        [field: SerializeField] public TValue Value { get; init; }
     }
+}
+
+
+[System.Serializable]
+public class SerializableDictionary<TKey, TValue, TEntry> : ISerializationCallbackReceiver where TEntry: struct, SerializableDictionary.IEntry<TKey, TValue>
+{
+    [SerializeField] TEntry[] values = Array.Empty<TEntry>();
+
+    public Dictionary<TKey, TValue> Values { get; } = new Dictionary<TKey, TValue>();
+
+    public void OnBeforeSerialize(){}
     public void OnAfterDeserialize()
     {
-        valuesRaw.Clear();
-        FillDictionaryValues(valuesRaw);
+        Values.Clear();
+        FillDictionaryValues(Values);
     }
 
     protected virtual void FillDictionaryValues(Dictionary<TKey, TValue> dictionary)
@@ -37,3 +41,4 @@ public class SerializableDictionary<TKey, TValue> : ISerializationCallbackReceiv
             dictionary.TryAdd(entry.Key, entry.Value);
     }
 }
+[System.Serializable] public class SerializableDictionary<TKey, TValue> : SerializableDictionary<TKey, TValue, SerializableDictionary.Entry<TKey, TValue>> { }
