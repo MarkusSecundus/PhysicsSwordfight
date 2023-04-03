@@ -13,3 +13,4 @@ Credits:
  - [Math.NET Numerics](https://numerics.mathdotnet.com/)
  - [mstevenson](https://github.com/mstevenson) (because he posted [this](https://gist.github.com/mstevenson/4958837))
  - [guy who answered this](https://answers.unity.com/questions/1066291/invertreverse-ui-mask.html)
+ - [lordconstant](https://github.com/lordconstant) (for implementing [SubclassPropertyDrawer](https://github.com/lordconstant/SubclassPropertyDrawer))
