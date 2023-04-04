@@ -12,12 +12,6 @@ public class SerializableDictionary
         public TKey Key { get; init; }
         public TValue Value { get; init; }
     }
-
-    [System.Serializable] public struct Entry<TKey, TValue> : IEntry<TKey, TValue>
-    {
-        [field: SerializeField] public TKey Key { get; init; }
-        [field: SerializeField] public TValue Value { get; init; }
-    }
 }
 
 
@@ -26,7 +20,8 @@ public class SerializableDictionary<TKey, TValue, TEntry> : ISerializationCallba
 {
     [SerializeField] TEntry[] values = Array.Empty<TEntry>();
 
-    public Dictionary<TKey, TValue> Values { get; } = new Dictionary<TKey, TValue>();
+    Dictionary<TKey, TValue> _values = new Dictionary<TKey, TValue>();
+    public Dictionary<TKey, TValue> Values { get=>_values; set { values = value.Select(kv=>new TEntry { Key=kv.Key, Value = kv.Value}).ToArray(); OnAfterDeserialize(); } } 
 
     public void OnBeforeSerialize(){}
     public void OnAfterDeserialize()
@@ -41,4 +36,14 @@ public class SerializableDictionary<TKey, TValue, TEntry> : ISerializationCallba
             dictionary.TryAdd(entry.Key, entry.Value);
     }
 }
-[System.Serializable] public class SerializableDictionary<TKey, TValue> : SerializableDictionary<TKey, TValue, SerializableDictionary.Entry<TKey, TValue>> { }
+[System.Serializable] public class SerializableDictionary<TKey, TValue> : SerializableDictionary<TKey, TValue, SerializableDictionary<TKey, TValue>.Entry>
+{
+    [System.Serializable]
+    public struct Entry : SerializableDictionary.IEntry<TKey, TValue>
+    {
+        [SerializeField] TKey key;
+        [SerializeField] TValue value;
+        public TKey Key { get=>key; init=>key=value; }
+        public TValue Value { get=>value; init=>this.value=value; }
+    }
+}

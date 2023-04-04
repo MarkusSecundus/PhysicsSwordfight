@@ -5,26 +5,16 @@ using UnityEngine.Events;
 
 public class KeyPressEvent : MonoBehaviour
 {
-    public EventInfo[] Events;
-
-    [System.Serializable]
-    public struct EventInfo
-    {
-        public UnityEvent Event;
-        public string KeyCode;
-
-        private KeyCode? _code;
-        public KeyCode? Code => string.IsNullOrWhiteSpace(KeyCode) ? null : _code ??= (KeyCode?) System.Enum.Parse(typeof(KeyCode), KeyCode);
-    }
+    public SerializableDictionary<KeyCode, UnityEvent> Events;
 
     void Update()
     {
         if (Input.anyKeyDown)
         {
-            foreach(var e in Events)
+            foreach(var (key, @event) in Events.Values)
             {
-                if (e.Code == null || Input.GetKeyDown(e.Code.Value))
-                    e.Event.Invoke();
+                if (Input.GetKeyDown(key))
+                    @event.Invoke();
             }
         }
     }
