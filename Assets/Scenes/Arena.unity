@@ -30103,6 +30103,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Target: {fileID: 0}
+  BeginRecordKey: 287
+  EndRecordKey: 288
+  SaveAllKey: 282
+  ResultPath: data.json
 --- !u!1 &1602568324
 GameObject:
   m_ObjectHideFlags: 0
@@ -40003,8 +40007,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputToRecord: {fileID: 2086466194}
-  startRecordingKey: 288
-  finishRecordingKey: 289
+  startRecordingKey: 278
+  finishRecordingKey: 279
   onRecordFinished:
     m_PersistentCalls:
       m_Calls:
@@ -43990,6 +43994,26 @@ PrefabInstance:
     - target: {fileID: 3503112823625887361, guid: d951808dc03e8d64aac081c2c11dcfeb, type: 3}
       propertyPath: m_Name
       value: GUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 3525082089367642793, guid: d951808dc03e8d64aac081c2c11dcfeb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4529306203930364889, guid: d951808dc03e8d64aac081c2c11dcfeb, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 1623
+      objectReference: {fileID: 0}
+    - target: {fileID: 4529306203930364889, guid: d951808dc03e8d64aac081c2c11dcfeb, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 570
+      objectReference: {fileID: 0}
+    - target: {fileID: 6212250271309273395, guid: d951808dc03e8d64aac081c2c11dcfeb, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 6212250271309273395, guid: d951808dc03e8d64aac081c2c11dcfeb, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 642
       objectReference: {fileID: 0}
     - target: {fileID: 7058905551372713924, guid: d951808dc03e8d64aac081c2c11dcfeb, type: 3}
       propertyPath: m_AnchorMax.x

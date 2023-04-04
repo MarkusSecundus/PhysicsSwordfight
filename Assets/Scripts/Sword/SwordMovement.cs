@@ -9,6 +9,7 @@ using System.Linq;
 
 using Interpolator = RetargetableInterpolator<UnityEngine.Vector3, RetargetableInterpolator.VectorInterpolationPolicy>;
 using UnityEngine.Events;
+using Newtonsoft.Json;
 
 public class SwordMovement : MonoBehaviour, ISwordMovement
 {
@@ -101,9 +102,13 @@ public interface ISwordMovement
     [System.Serializable]
     public struct MovementCommand
     {
-        [field: SerializeField] public Vector3 LookDirection { get; init; }
-        [field: SerializeField] public Vector3? AnchorPoint { get; init; }
-        [field: SerializeField] public Vector3? UpDirection { get; init; }
+        [JsonIgnore] public Vector3 LookDirection;
+        [JsonIgnore] public Vector3? AnchorPoint;
+        [JsonIgnore] public Vector3? UpDirection;
+
+        [JsonProperty] SerializableVector3 Look { get => LookDirection; set => LookDirection = value; }
+        [JsonProperty] SerializableVector3? Anchor { get => AnchorPoint; set => AnchorPoint = value; }
+        [JsonProperty] SerializableVector3? Up { get => UpDirection; set => UpDirection = value; }
     }
     public void MoveSword(MovementCommand m);
 }

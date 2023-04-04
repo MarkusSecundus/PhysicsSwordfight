@@ -515,6 +515,7 @@ public static class GeometryUtils
 	public static bool IsNegligible(this float f, float? epsilon=null) => Mathf.Abs(f) < (epsilon?? Mathf.Epsilon);
 	public static bool IsCloseTo(this float f, float g, float? epsilon=null) => (f-g).IsNegligible(epsilon);
 	public static bool IsCloseTo(this Vector3 v, Vector3 w, float? epsilon=null) => v.x.IsCloseTo(w.x, epsilon) && v.y.IsCloseTo(w.y, epsilon) && v.z.IsCloseTo(w.z, epsilon);
+	public static bool IsNaN(this Vector3 v) => v.x.IsNaN() || v.y.IsNaN() || v.z.IsNaN();
 
 	public static Vector3 Abs(this Vector3 v) => new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
 

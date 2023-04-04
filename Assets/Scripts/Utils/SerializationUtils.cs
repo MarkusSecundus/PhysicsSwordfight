@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class SerializationUtils {}
 
 [System.Serializable]
 public struct SerializableRay
