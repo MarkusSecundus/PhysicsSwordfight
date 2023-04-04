@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6624123375563233653}
   - component: {fileID: 7348666731720634697}
+  - component: {fileID: 945472641174656368}
   m_Layer: 0
   m_Name: TrainingDummy
   m_TagString: Untagged
@@ -31,7 +32,7 @@ Transform:
   m_Children:
   - {fileID: 3819205054559317819}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 28.215, z: 0}
 --- !u!114 &7348666731720634697
 MonoBehaviour:
@@ -49,7 +50,19 @@ MonoBehaviour:
   DestroySelfOnDeath: 1
   OnUpdated:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 945472641174656368}
+        m_TargetAssemblyTypeName: Bloodstainifier, Assembly-CSharp
+        m_MethodName: UpdateBloodstains
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnDamaged:
     m_PersistentCalls:
       m_Calls:
@@ -107,6 +120,22 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &945472641174656368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4788598586442215087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a4ea52b493af21408578f32eb600953, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Renderers:
+  - {fileID: 2558332784931931342}
+  ColorOfBlood: {r: 0.1792453, g: 0.17868163, b: 0.17868163, a: 1}
+  TransitionDuration: 0.3
 --- !u!1 &5778619533062050916
 GameObject:
   m_ObjectHideFlags: 0

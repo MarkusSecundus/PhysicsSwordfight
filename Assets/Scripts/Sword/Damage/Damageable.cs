@@ -22,6 +22,7 @@ public class Damageable : MonoBehaviour
 
     public bool DestroySelfOnDeath = false;
 
+    [SerializeField] OnHpChangedEvent OnSpawn;
     [SerializeField] OnHpChangedEvent OnUpdated;
     [SerializeField] OnHpChangedEvent OnDamaged;
     [SerializeField] OnHpChangedEvent OnHealed;
@@ -30,7 +31,9 @@ public class Damageable : MonoBehaviour
     private void Start()
     {
         HP = MaxHP;
-        OnUpdated.Invoke(new HpChangedArgs { Target = this, DeltaHP = 0});
+        var args = new HpChangedArgs { Target = this, DeltaHP = 0 };
+        OnSpawn.Invoke(args);
+        OnUpdated.Invoke(args);
     }
 
     public void ChangeHP(float deltaHP)
@@ -49,8 +52,4 @@ public class Damageable : MonoBehaviour
                 Destroy(gameObject);
         }
     }
-
-    void Message(string message) => Debug.Log(message, this);
-
-    public void DestroySelfWithoutCallback() { Destroy(gameObject); }
 }
