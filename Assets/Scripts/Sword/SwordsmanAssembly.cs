@@ -15,4 +15,13 @@ public class SwordsmanAssembly : MonoBehaviour
 
         }
     }
+
+    public void DestroyTheSwordsman()
+    {
+        Sword.GetComponent<Rigidbody>().useGravity = true;
+        Sword.transform.SetParent(null);
+        Destroy(Sword.Joint);
+        Destroy(Sword);
+        Destroy(gameObject);
+    }
 }

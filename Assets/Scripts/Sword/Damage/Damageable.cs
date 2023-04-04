@@ -51,4 +51,6 @@ public class Damageable : MonoBehaviour
     }
 
     void Message(string message) => Debug.Log(message, this);
+
+    public void DestroySelfWithoutCallback() { Destroy(gameObject); }
 }
