@@ -8,57 +8,37 @@ using DG.Tweening.Plugins.Options;
 using System.Linq;
 
 using Interpolator = RetargetableInterpolator<UnityEngine.Vector3, RetargetableInterpolator.VectorInterpolationPolicy>;
+using UnityEngine.Events;
 
-
-public class SwordMovement : MonoBehaviour
+public class SwordMovement : MonoBehaviour, ISwordMovement
 {
-    [System.Serializable] public abstract class Submodule : IScriptSubmodule<SwordMovement>{}
+    [System.Serializable] public abstract class Submodule : IScriptSubmodule<ISwordMovement>{}
 
-    public SwordDescriptor Sword;
-    public ConfigurableJoint Joint;
-    public ISwordInput Input;
+    [field: SerializeField] public SwordDescriptor Sword { get; private set; }
+    [field: SerializeField] public ConfigurableJoint Joint { get; private set; }
+    [field: SerializeField] public ISwordInput Input { get; private set; }
 
 
     void Start()
     {
-        Sword ??= GetComponent<SwordDescriptor>();
-        Joint ??= GetComponent<ConfigurableJoint>();
-        Input ??= GetComponentInParent<ISwordInput>();
+        Sword = Sword.IfNil(GetComponent<SwordDescriptor>());
+        Joint = Joint.IfNil(GetComponent<ConfigurableJoint>());
+        Input = Input.IfNil(GetComponentInParent<ISwordInput>());
 
         InitSwordMovers();
         InitModes();
     }
 
     #region Modes
-
-    Submodule activeMode;
-    public SwordMovementModesContainer Modes;
+    public ScriptSubmodulesContainer<KeyCode, Submodule, ISwordMovement> Modes;
+    IScriptSubmodule<ISwordMovement> submoduleManager;
     void InitModes()
     {
-        foreach (var mode in Modes.Values.Values) mode.Init(this);
+        submoduleManager = new ScriptSubmoduleListManager<KeyCode, Submodule, ISwordMovement>() { ActivityPredicate = Input.GetKey, Modes = Modes }.Init(this);
     }
-
-    void Update()
-    {
-        MakeSureRightModeIsActive();
-        activeMode?.OnUpdate(Time.deltaTime);
-    }
-    void FixedUpdate()
-    {
-        MakeSureRightModeIsActive();
-        activeMode?.OnFixedUpdate(Time.fixedDeltaTime);
-    }
-    void OnDrawGizmos() => activeMode?.OnDrawGizmos();
-
-    void MakeSureRightModeIsActive()
-    {
-        var mode = Modes.Values[Modes.Values.Keys.FirstOrDefault(Input.GetKey)];
-        if (activeMode != mode)
-        {
-            activeMode?.OnDeactivated();
-            (activeMode = mode)?.OnActivated();
-        }
-    }
+    void Update() => submoduleManager.OnUpdate(Time.deltaTime);
+    void FixedUpdate() => submoduleManager.OnFixedUpdate(Time.fixedDeltaTime);
+    void OnDrawGizmos() => submoduleManager?.OnDrawGizmos();
     #endregion
 
 
@@ -84,21 +64,8 @@ public class SwordMovement : MonoBehaviour
     }
 
 
-    [System.Serializable] public struct MovementCommand
-    {
-        [field: SerializeField]public Vector3 LookDirection { get; init; }
-        [field: SerializeField]public Vector3? AnchorPoint { get; init; }
-        [field: SerializeField]public Vector3? UpDirection { get; init; }
-    }
 
-    /// <summary>
-    /// ..takes all global coords
-    /// </summary>
-    /// <param name="lookDirection">what the blade should point at</param>
-    /// <param name="anchorPoint">where the swords anchor should move - remains unchanged if null</param>
-    /// <param name="upDirection">upvector for blade rotation, interpolated from this and last movement if null</param>
-    public void MoveSword(Vector3 lookDirection, Vector3? anchorPoint=null, Vector3? upDirection=null) => MoveSword(new MovementCommand { LookDirection = lookDirection, AnchorPoint = anchorPoint, UpDirection = upDirection });
-    public void MoveSword(MovementCommand m)
+    public void MoveSword(ISwordMovement.MovementCommand m)
     {
         Vector3 anchor;
         if (m.AnchorPoint != null)
@@ -122,4 +89,25 @@ public class SwordMovement : MonoBehaviour
         connectedAnchorPositioner.Target = relative;
     }
     #endregion
+}
+
+
+
+public interface ISwordMovement
+{
+    public SwordDescriptor Sword { get;  }
+    public ISwordInput Input { get; }
+
+    [System.Serializable]
+    public struct MovementCommand
+    {
+        [field: SerializeField] public Vector3 LookDirection { get; init; }
+        [field: SerializeField] public Vector3? AnchorPoint { get; init; }
+        [field: SerializeField] public Vector3? UpDirection { get; init; }
+    }
+    public void MoveSword(MovementCommand m);
+}
+public static class SwordMovementExtensions
+{
+    public static void MoveSword(this ISwordMovement self, Vector3 lookDirection, Vector3? anchorPoint = null, Vector3? upDirection = null) => self.MoveSword(new ISwordMovement.MovementCommand { LookDirection = lookDirection, AnchorPoint = anchorPoint, UpDirection = upDirection });
 }

@@ -1,14 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using static SwordMovement;
 
 [System.Serializable]
-public abstract class IScriptSubmodule<TScript> where TScript: MonoBehaviour
+public abstract class IScriptSubmodule<TScript>
 {
     public TScript Script { get; private set; }
-
-    protected Transform transform => Script.transform;
-    protected GameObject gameObject => Script.gameObject;
 
     public IScriptSubmodule<TScript> Init(TScript script)
     {
