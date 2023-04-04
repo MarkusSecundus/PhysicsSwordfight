@@ -12,10 +12,10 @@ public class SwordMovementMode_Recording : SwordMovement.Submodule, ISwordMoveme
     public UnityEvent<ISwordMovement.MovementCommand> MovementReporter = new UnityEvent<ISwordMovement.MovementCommand>();
     public ScriptSubmodulesContainer<KeyCode, Submodule, ISwordMovement> Modes;
     IScriptSubmodule<ISwordMovement> submoduleManager;
-    protected override void OnStart()
+    protected override void OnStart(bool wasForced)
     {
-        base.OnStart();
-        submoduleManager = new ScriptSubmoduleListManager<KeyCode, Submodule, ISwordMovement>() { ActivityPredicate = Input.GetKey, Modes = Modes }.Init(this);
+        base.OnStart(wasForced);
+        submoduleManager = new ScriptSubmoduleListManager<KeyCode, Submodule, ISwordMovement>() { ActivityPredicate = Input.GetKey, ModesSupplier =()=> Modes }.Init(this, wasForced);
     }
     public override void OnUpdate(float delta) => submoduleManager.OnUpdate(delta);
     public override void OnDrawGizmos() => submoduleManager?.OnDrawGizmos();

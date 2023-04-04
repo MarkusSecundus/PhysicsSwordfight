@@ -34,7 +34,7 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
     IScriptSubmodule<ISwordMovement> submoduleManager;
     void InitModes()
     {
-        submoduleManager = new ScriptSubmoduleListManager<KeyCode, Submodule, ISwordMovement>() { ActivityPredicate = Input.GetKey, Modes = Modes }.Init(this);
+        submoduleManager = new ScriptSubmoduleListManager<KeyCode, Submodule, ISwordMovement>() { ActivityPredicate = Input.GetKey, ModesSupplier = ()=>Modes }.Init(this);
     }
     void Update() => submoduleManager.OnUpdate(Time.deltaTime);
     void FixedUpdate() => submoduleManager.OnFixedUpdate(Time.fixedDeltaTime);

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +9,15 @@ public abstract class IScriptSubmodule<TScript>
 {
     public TScript Script { get; private set; }
 
-    public IScriptSubmodule<TScript> Init(TScript script)
+    public IScriptSubmodule<TScript> Init(TScript script, bool forceReInit = false)
     {
-        if (this.Script != null) Debug.LogError($"{this} was already initialized by '{this.Script}'!");
+        if (this.Script != null && !forceReInit)
+            Debug.LogWarning($"Initializing {this} by {script} - but it was already initialized by '{this.Script}'!", script as Object);
         this.Script = script;
-        OnStart();
+        OnStart(forceReInit);
         return this;
     }
-    protected virtual void OnStart() { }
+    protected virtual void OnStart(bool wasForced) { }
 
     public virtual void OnUpdate(float delta) { }
     public virtual void OnFixedUpdate(float delta) { }

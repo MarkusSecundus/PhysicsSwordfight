@@ -21,13 +21,13 @@ public class SerializableDictionary<TKey, TValue, TEntry> : ISerializationCallba
     [SerializeField] TEntry[] values = Array.Empty<TEntry>();
 
     Dictionary<TKey, TValue> _values = new Dictionary<TKey, TValue>();
-    public Dictionary<TKey, TValue> Values { get=>_values; set { values = value.Select(kv=>new TEntry { Key=kv.Key, Value = kv.Value}).ToArray(); OnAfterDeserialize(); } } 
+    public IReadOnlyDictionary<TKey, TValue> Values { get=>_values; set { values = value.Select(kv=>new TEntry { Key=kv.Key, Value = kv.Value}).ToArray(); OnAfterDeserialize(); } } 
 
     public void OnBeforeSerialize(){}
     public void OnAfterDeserialize()
     {
-        Values.Clear();
-        FillDictionaryValues(Values);
+        _values.Clear();
+        FillDictionaryValues(_values);
     }
 
     protected virtual void FillDictionaryValues(Dictionary<TKey, TValue> dictionary)
@@ -43,7 +43,7 @@ public class SerializableDictionary<TKey, TValue, TEntry> : ISerializationCallba
     {
         [SerializeField] TKey key;
         [SerializeField] TValue value;
-        public TKey Key { get=>key; init=>key=value; }
+        public TKey Key { get=>key; init=>key=value; }  //for some god-known reason, [field: SerializeField] doesn't work here as it does in all other places
         public TValue Value { get=>value; init=>this.value=value; }
     }
 }

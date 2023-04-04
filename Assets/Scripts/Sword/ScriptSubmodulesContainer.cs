@@ -29,13 +29,13 @@ public class ScriptSubmodulesContainer<TKey, TSubmodule, TScript> : Serializable
 
 public class ScriptSubmoduleListManager<TKey, TSubmodule, TScript> : IScriptSubmodule<TScript> where TSubmodule : IScriptSubmodule<TScript>
 {
-    public ScriptSubmodulesContainer<TKey, TSubmodule, TScript> Modes { get; init; }
-    public Func<TKey, bool> ActivityPredicate { protected get; init; }
+    public System.Func<ScriptSubmodulesContainer<TKey, TSubmodule, TScript>> ModesSupplier { protected get; init; }
+    public System.Func<TKey, bool> ActivityPredicate { protected get; init; }
 
     TSubmodule activeMode;
-    protected override void OnStart()
+    protected override void OnStart(bool wasForced)
     {
-        foreach (var mode in Modes.Values.Values) mode.Init(Script);
+        foreach (var mode in ModesSupplier().Values.Values) mode.Init(Script);
     }
 
     public override void OnUpdate(float delta)
@@ -52,7 +52,8 @@ public class ScriptSubmoduleListManager<TKey, TSubmodule, TScript> : IScriptSubm
     public override void OnDrawGizmos() => activeMode?.OnDrawGizmos();
     void MakeSureRightModeIsActive()
     {
-        var mode = Modes.Values[Modes.Values.Keys.FirstOrDefault(ActivityPredicate)];
+        var modes = this.ModesSupplier();
+        var mode = modes.Values[modes.Values.Keys.FirstOrDefault(ActivityPredicate)];
         if (activeMode != mode)
         {
             activeMode?.OnDeactivated();
