@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -188,6 +189,44 @@ public static class GameObjectUtils
             foreach (var y in buffer) yield return y;
         }
     }
+}
+
+public static class IndirectionUtils
+{
+    public struct IndirectMessage
+    {
+        static readonly Regex Format = new Regex(@"^(?<Callee>[a-zA-Z][a-zA-Z0-9]*)\.(?<MessageName>[a-zA-Z][a-zA-Z0-9]*)$");
+
+        public string CalleeName { get; init; }
+        public string Message { get; init; }
+
+        public object Invoke(object callee, System.Action<string> logError = null)
+        {
+            var methodToInvoke = callee.GetType().GetMethod(Message);
+            if (methodToInvoke == null)
+                logError?.Invoke($"Called message '{Message}' does not exist on object '{callee}'({CalleeName})");
+            else
+                return methodToInvoke.Invoke(callee, System.Array.Empty<object>());
+            return null;
+        }
+        public static IndirectMessage? Make(string calleeAndMessage, System.Action<string> logError=null)
+        {
+            var parsed = Format.Match(calleeAndMessage);
+            if (!parsed.Success)
+            {
+                logError?.Invoke($"Invalid message declaration: '{calleeAndMessage}'");
+                return null;
+            }
+            return new IndirectMessage
+            {
+                CalleeName = parsed.Groups["Callee"].Value,
+                Message = parsed.Groups["MessageName"].Value,
+            };
+        }
+    }
+
+
+
 }
 
 public static class HelperExtensions
