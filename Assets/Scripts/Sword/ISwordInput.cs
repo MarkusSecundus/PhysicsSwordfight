@@ -13,4 +13,6 @@ public abstract class ISwordInput : MonoBehaviour
     public abstract float GetAxisRaw(InputAxis axis);
 
     public abstract Ray? GetInputRay();
+
+    public static ISwordInput Get(GameObject self) => self.GetComponentInParent<ISwordInput>();
 }

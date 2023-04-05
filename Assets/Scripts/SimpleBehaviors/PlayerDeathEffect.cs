@@ -7,19 +7,22 @@ using UnityEngine.Events;
 public class PlayerDeathEffect : MonoBehaviour
 {
     public Transform CameraDestination;
-    public float MovementDuration, PopupDuration;
-    public float DeathDuration => Mathf.Max(MovementDuration, PopupDuration) * 2f;
+    public float MovementDuration;
+    public FloatSymbol PopupDuration;
 
-    public UnityEvent OnComplete;
+    public UnityEvent OnPopup;
 
     public void DoPlay()
     {
+        float popupDuration = PopupDuration.TryGet(out var ret) ? ret : 0f;
+        float deathDuration = Mathf.Max(MovementDuration, popupDuration) * 2f;
+
         transform.SetParent(null);
         CameraDestination.SetParent(null);
         transform.DOScale(CameraDestination.localScale, MovementDuration);
         transform.DORotateQuaternion(CameraDestination.rotation, MovementDuration);
         transform.DOMove(CameraDestination.position, MovementDuration);
-        this.PerformWithDelay(OnComplete.Invoke, PopupDuration);
-        this.PerformWithDelay(() => { Destroy(transform.gameObject); Destroy(CameraDestination.gameObject); }, DeathDuration);
+        this.PerformWithDelay(OnPopup.Invoke, popupDuration);
+        this.PerformWithDelay(() => { Destroy(transform.gameObject); Destroy(CameraDestination.gameObject); }, deathDuration);
     }
 }

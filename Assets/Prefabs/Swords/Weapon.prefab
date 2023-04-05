@@ -1,36 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5692771887854840066
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5692771887854840067}
-  m_Layer: 11
-  m_Name: BlockPosition
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5692771887854840067
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5692771887854840066}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.34401315, y: 0.22755796, z: 0.07228303}
-  m_LocalScale: {x: 0, y: 0, z: 0}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5692771888074364032}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5692771888074364038
 GameObject:
   m_ObjectHideFlags: 0
@@ -67,7 +36,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4829093479927053316}
-  - {fileID: 5692771887854840067}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 270, y: 90, z: 90}
@@ -308,29 +276,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  descriptor: {fileID: 7510546756384617997}
-  joint: {fileID: 5692771888074364033}
-  HandleMovementInterpolationFactor: 9.5
-  swordsmanDescriptor: {fileID: 0}
-  debuggerPoint: {fileID: 0}
-  inputCircleRadius: 0.24
-  Input: {fileID: 0}
+  <Sword>k__BackingField: {fileID: 0}
+  <Joint>k__BackingField: {fileID: 5692771888074364033}
+  <Input>k__BackingField: {fileID: 0}
   Modes:
-    Basic:
-      InputIntersectable: {fileID: 0}
-      minLastVectorDiff: 0.3
-    Block:
-      SwordDirectionHint: {fileID: 0}
-      InputIntersector: {fileID: 0}
-      SwordLength: 0.59
-      RegisterOnlyInputOnSphere: 1
-    BlockKey: 304
-    Stabbing:
-      SwordDirectionHint: {fileID: 0}
-      InputIntersector: {fileID: 0}
-      StabDistance: 0.8
-      StabKey: 323
-    StabbingKey: 306
+    values:
+    - Key: 304
+      Value:
+        rid: 1235461945467076621
+    Default:
+      rid: 1235461945467076618
+  references:
+    version: 2
+    RefIds:
+    - rid: 1235461945467076618
+      type: {class: SwordMovementMode_Basic, ns: , asm: Assembly-CSharp}
+      data:
+        InputIntersectable: {fileID: 0}
+        minLastVectorDiff: 0.3
+    - rid: 1235461945467076621
+      type: {class: SwordMovementMode_Block, ns: , asm: Assembly-CSharp}
+      data:
+        SwordDirectionHint: {fileID: 0}
+        InputIntersector: {fileID: 0}
 --- !u!114 &5692771888074364088
 MonoBehaviour:
   m_ObjectHideFlags: 0

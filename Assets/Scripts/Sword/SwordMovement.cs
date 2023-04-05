@@ -22,9 +22,9 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
 
     void Start()
     {
+        Input = Input.IfNil(ISwordInput.Get(this.gameObject));
         Sword = Sword.IfNil(GetComponent<SwordDescriptor>());
         Joint = Joint.IfNil(GetComponent<ConfigurableJoint>());
-        Input = Input.IfNil(GetComponentInParent<ISwordInput>());
 
         InitSwordMovers();
         InitModes();
@@ -68,10 +68,8 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
 
     public void MoveSword(ISwordMovement.MovementCommand m)
     {
-        Vector3 anchor;
-        if (m.AnchorPoint != null)
-            MoveAnchorPosition(anchor = m.AnchorPoint.Value);
-        else anchor = this.Joint.connectedBody.transform.LocalToGlobal(connectedAnchorPositioner.Target);
+        Vector3 anchor = m.AnchorPoint;
+        MoveAnchorPosition(anchor);
 
         Vector3 up = m.UpDirection??computeUpVector(m.LookDirection, anchor);
         SetSwordRotation(Quaternion.LookRotation(m.LookDirection, up));
@@ -90,6 +88,14 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
         connectedAnchorPositioner.Target = relative;
     }
     #endregion
+
+    public void DropTheSword()
+    {
+        GetComponent<Rigidbody>().useGravity = true;
+        transform.SetParent(null);
+        Destroy(Joint);
+        Destroy(this);
+    }
 }
 
 
@@ -102,17 +108,13 @@ public interface ISwordMovement
     [System.Serializable]
     public struct MovementCommand
     {
-        [JsonIgnore] public Vector3 LookDirection;
-        [JsonIgnore] public Vector3? AnchorPoint;
-        [JsonIgnore] public Vector3? UpDirection;
-
-        [JsonProperty] SerializableVector3 Look { get => LookDirection; set => LookDirection = value; }
-        [JsonProperty] SerializableVector3? Anchor { get => AnchorPoint; set => AnchorPoint = value; }
-        [JsonProperty] SerializableVector3? Up { get => UpDirection; set => UpDirection = value; }
+        public Vector3 LookDirection;
+        public Vector3 AnchorPoint;
+        public Vector3? UpDirection;
     }
     public void MoveSword(MovementCommand m);
 }
 public static class SwordMovementExtensions
 {
-    public static void MoveSword(this ISwordMovement self, Vector3 lookDirection, Vector3? anchorPoint = null, Vector3? upDirection = null) => self.MoveSword(new ISwordMovement.MovementCommand { LookDirection = lookDirection, AnchorPoint = anchorPoint, UpDirection = upDirection });
+    public static void MoveSword(this ISwordMovement self, Vector3 lookDirection, Vector3 anchorPoint, Vector3? upDirection = null) => self.MoveSword(new ISwordMovement.MovementCommand { LookDirection = lookDirection, AnchorPoint = anchorPoint, UpDirection = upDirection });
 }

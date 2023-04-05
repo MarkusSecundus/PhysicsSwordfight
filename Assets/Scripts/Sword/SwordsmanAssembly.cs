@@ -6,22 +6,24 @@ public class SwordsmanAssembly : MonoBehaviour
 {
     public SwordsmanMovement Player;
     public SwordMovement Sword;
+    public CameraFollowPoint Camera;
+    public DamageHUD DamageReport;
 
-    public bool IsMainPlayer = false;
     void Start()
     {
-        if (IsMainPlayer)
+        if (Camera.IsNotNil() && Player.CameraToUse.IsNotNil())
         {
-
+            Camera.Target = Player.CameraToUse;
+        }
+        if (DamageReport.IsNotNil())
+        {
+            DamageReport.Target = Player.GetComponent<Damageable>();
         }
     }
 
     public void DestroyTheSwordsman()
     {
-        Sword.GetComponent<Rigidbody>().useGravity = true;
-        Sword.transform.SetParent(null);
-        Destroy(Sword.Joint);
-        Destroy(Sword);
+        Sword.DropTheSword();
         Destroy(gameObject);
     }
 }

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class DieScreen : MonoBehaviour
 {
+    public static DieScreen Get() => GameObject.FindAnyObjectByType<DieScreen>();
+
     public float FadeInDuration = 1f;
     public void StartAndFadeIn()
     {

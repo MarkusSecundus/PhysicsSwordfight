@@ -73,6 +73,6 @@ public class SwordMovementRecorder : MonoBehaviour
     void DoRecord(ISwordMovement.MovementCommand c)
     {
         if (isRecording)
-            currentFrame.Add(new SwordMovementRecord.Frame { Timestamp = Time.timeAsDouble - beginTime, Value = c });
+            currentFrame.Add(new SwordMovementRecord.Frame { Timestamp = Time.timeAsDouble - beginTime, Value = SwordMovementRecord.Command.Make(c, Target.transform) });
     }
 }

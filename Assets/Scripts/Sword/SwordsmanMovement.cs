@@ -65,6 +65,7 @@ public class SwordsmanMovement : MonoBehaviour
 
     void Start()
     {
+        Input = Input.IfNil(ISwordInput.Get(this.gameObject));
         rigidbody = GetComponent<Rigidbody>();
         rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationY;
     }
