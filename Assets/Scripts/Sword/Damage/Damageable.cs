@@ -22,11 +22,11 @@ public class Damageable : MonoBehaviour
 
     public bool DestroySelfOnDeath = false;
 
-    [SerializeField] OnHpChangedEvent OnSpawn;
-    [SerializeField] OnHpChangedEvent OnUpdated;
-    [SerializeField] OnHpChangedEvent OnDamaged;
-    [SerializeField] OnHpChangedEvent OnHealed;
-    [SerializeField] OnHpChangedEvent OnDeath;
+    [SerializeField] public OnHpChangedEvent OnSpawn;
+    [SerializeField] public OnHpChangedEvent OnUpdated;
+    [SerializeField] public OnHpChangedEvent OnDamaged;
+    [SerializeField] public OnHpChangedEvent OnHealed;
+    [SerializeField] public OnHpChangedEvent OnDeath;
 
     private void Start()
     {

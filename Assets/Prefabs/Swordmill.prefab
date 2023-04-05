@@ -474,6 +474,7 @@ GameObject:
   - component: {fileID: 2808337142474496025}
   - component: {fileID: 2808337142474496024}
   - component: {fileID: 4933922005377982787}
+  - component: {fileID: 6739671978813183505}
   - component: {fileID: 8957703133165910477}
   m_Layer: 0
   m_Name: Swordmill
@@ -530,6 +531,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <MaxHP>k__BackingField: 200
   DestroySelfOnDeath: 1
+  OnSpawn:
+    m_PersistentCalls:
+      m_Calls: []
   OnUpdated:
     m_PersistentCalls:
       m_Calls:
@@ -602,6 +606,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &6739671978813183505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2808337142474496031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24a82a88f24e2834db21ee16fd435db9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &8957703133165910477
 MonoBehaviour:
   m_ObjectHideFlags: 0

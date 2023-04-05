@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6624123375563233653}
   - component: {fileID: 7348666731720634697}
+  - component: {fileID: 3454754592216810716}
   - component: {fileID: 945472641174656368}
   m_Layer: 0
   m_Name: TrainingDummy
@@ -48,6 +49,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <MaxHP>k__BackingField: 200
   DestroySelfOnDeath: 1
+  OnSpawn:
+    m_PersistentCalls:
+      m_Calls: []
   OnUpdated:
     m_PersistentCalls:
       m_Calls:
@@ -120,6 +124,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &3454754592216810716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4788598586442215087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24a82a88f24e2834db21ee16fd435db9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &945472641174656368
 MonoBehaviour:
   m_ObjectHideFlags: 0
