@@ -30,7 +30,7 @@ public class VisualEffectsHelper : MonoBehaviour
             tween.OnComplete(() => 
             {
                 mat.DOColor(originalColor, Blinking.FadeTime); 
-                if (tween == last) CurrentlyInProgress = false; 
+                CurrentlyInProgress = false; 
             });
         }
     }
