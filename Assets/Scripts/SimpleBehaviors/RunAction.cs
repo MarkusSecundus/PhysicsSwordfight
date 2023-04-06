@@ -5,20 +5,22 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [ExecuteInEditMode]
-public class RunActionInEditor : MonoBehaviour
+public class RunAction : MonoBehaviour
 {
+    public string Description;
     public UnityEvent ToRun;
 
+    public void Invoke() => ToRun.Invoke();
 
 #if UNITY_EDITOR
-    [CustomEditor(typeof(RunActionInEditor))]
+    [CustomEditor(typeof(RunAction))]
     public class Inspector : Editor
     {
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
             if (GUILayout.Button("Run"))
-                ((RunActionInEditor)target).ToRun?.Invoke();
+                ((RunAction)target)?.Invoke();
         }
     }
 #endif
