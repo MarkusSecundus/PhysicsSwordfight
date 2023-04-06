@@ -1,5 +1,6 @@
 using DG.Tweening;
 using DG.Tweening.Core;
+using DG.Tweening.CustomPlugins;
 using DG.Tweening.Plugins.Core;
 using DG.Tweening.Plugins.Options;
 using System.Collections;
@@ -19,6 +20,8 @@ public static class DoTweenExtensions
         => DOTween.To(() => joint.targetAngularVelocity, v => joint.targetAngularVelocity = v, endValue, duration).SetTarget(joint).SetUpdate(UpdateType.Fixed);
     public static TweenerCore<Quaternion, Vector3, QuaternionOptions> DOTargetRotation(this ConfigurableJoint joint, Vector3 endValue, float duration) 
         => DOTween.To(() => joint.targetRotation, v => joint.targetRotation = v, endValue, duration).SetTarget(joint).SetUpdate(UpdateType.Fixed);
+    public static TweenerCore<Quaternion, Quaternion, NoOptions> DOTargetRotation(this JointRotationHelper joint, Quaternion endValue, float duration) 
+        => DOTween.To(PureQuaternionPlugin.Plug(), () => joint.CurrentRotation, v => joint.SetTargetRotation(v), endValue, duration).SetTarget(joint).SetUpdate(UpdateType.Fixed);
 
 
 

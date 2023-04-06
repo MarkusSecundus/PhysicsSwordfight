@@ -1,46 +1,57 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.Sockets;
 using UnityEngine;
 
+[RequireComponent(typeof(SwordmillAssembly))]
 public class SwordmillBehavior : MonoBehaviour
 {
-    public ConfigurableJoint Rotor;
-    public ConfigurableJoint SwordPrototype;
-    public int SwordsCount = 1;
+    SwordmillAssembly assembly;
 
-    public float SwordsAngle = 0f;
-
-    private IEnumerable<ConfigurableJoint> swords;
-    void Start()
+    ConfigurableJoint rotor => assembly.Rotor;
+    JointRotationHelper rotationHelper;
+    [System.Serializable] public struct MovementStep
     {
-        swords = MakeSwords(SwordPrototype, SwordsCount);
+        public Vector3 Offset;
+        public float Duration;
+    }
+    [System.Serializable] public struct RotationStep
+    {
+        public Vector3 Rotation;
+        public float Duration;
     }
 
+    public MovementStep[] Movements;
+    public RotationStep[] Rotations;
 
-    IEnumerable<ConfigurableJoint> MakeSwords(ConfigurableJoint proto, int count)
+    Vector3 originalConnectedAnchor, originalTargetAngularVelocity;
+    void Start()
     {
-        proto.gameObject.SetActive(false);
-        List<ConfigurableJoint> ret = new List<ConfigurableJoint> {};
+        assembly = GetComponent<SwordmillAssembly>();
+        rotationHelper = rotor.MakeRotationHelper();
+        originalConnectedAnchor = rotor.connectedAnchor;
+        rotor.autoConfigureConnectedAnchor = false;
+        rotor.connectedAnchor = originalConnectedAnchor;
+        originalTargetAngularVelocity = rotor.targetAngularVelocity;
+        UpdateMovement(0);
+        AnimateRotation(0);
+    }
 
-        var angleToAdd = RotationUtil.MaxDegree / count;
-        var angleAccumulator = 0f;
-        proto.autoConfigureConnectedAnchor = false;
-        foreach (var v in GeometryUtils.PointsOnCircle(count, proto.connectedAnchor, Vector3.up, includeBegin:true))
-        {
-            var s = proto.gameObject.InstantiateWithTransform().GetComponent<ConfigurableJoint>();
-            var rotationHelper = s.MakeRotationHelper();
-            ret.Add(s);
+    void UpdateMovement(int index)
+    {
+        if (Movements.Length <= 0) return;
+        
+        var order = Movements[index %= Movements.Length];
+        rotor.DOConnectedAnchor(originalConnectedAnchor + order.Offset, order.Duration)
+            .OnComplete(()=>UpdateMovement(index+1));
+    }
 
-            s.connectedAnchor = v;
-            s.transform.position = s.connectedBody.transform.LocalToGlobal(s.connectedAnchor);
-            var angle = s.targetRotation * Quaternion.AngleAxis(Op.post_assign(ref angleAccumulator, angleAccumulator + angleToAdd), Vector3.up) ;
-            rotationHelper.SetTargetRotation(angle);
-            s.transform.rotation = angle;
-            
-            s.gameObject.SetActive(true);
-        }
+    void AnimateRotation(int index)
+    {
+        if (Rotations.Length <= 0) return;
 
-        return ret;
+        var order = Rotations[index %= Rotations.Length];
+        rotor.DOTargetAngularVelocity(originalTargetAngularVelocity + order.Rotation, order.Duration)
+            .OnComplete(() => AnimateRotation(index + 1));
     }
 }

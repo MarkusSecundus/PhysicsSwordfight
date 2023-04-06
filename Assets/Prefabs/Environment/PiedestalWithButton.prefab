@@ -224,9 +224,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1222135357898914258}
-        m_TargetAssemblyTypeName: VisualEffectsHelper, Assembly-CSharp
-        m_MethodName: Blink
+      - m_Target: {fileID: 4987422749570786461}
+        m_TargetAssemblyTypeName: RunAction, Assembly-CSharp
+        m_MethodName: Invoke
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -287,7 +287,7 @@ Transform:
   - {fileID: 8000159161002903109}
   - {fileID: 1895486480834265493}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 111.167, z: 0}
 --- !u!114 &4987422749570786461
 MonoBehaviour:

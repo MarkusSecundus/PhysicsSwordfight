@@ -11,6 +11,31 @@ public struct Vector3Interval
 {
     public Vector3 Min, Max;
 }
+[System.Serializable] public struct Interval<T>
+{
+	public Interval(T min, T max) => (Min, Max) = (min, max);
+
+	public T Min, Max;
+}
+
+public static class IntervalExtensions
+{
+	public static float Next(this System.Random self, Interval<float> i) => self.NextFloat(i.Min, i.Max);
+	public static int Next(this System.Random self, Interval<int> i) => self.Next(i.Min, i.Max+1);
+	public static Vector2 Next(this System.Random self, Interval<Vector2> i) => self.NextVector2(i.Min, i.Max);
+	public static Vector3 Next(this System.Random self, Interval<Vector3> i) => self.NextVector3(i.Min, i.Max);
+
+	public static bool Next(this System.Random self, Interval<bool> i) => i.Min == i.Max ? i.Min : (self.Next() & 1) == 0;
+
+    public static int NextBitmap(this System.Random self, Interval<int> i)
+	{
+		var changeable = i.Max & ~i.Min;
+		var randomBitmap = self.Next(int.MinValue, int.MaxValue);
+		var toChange = changeable & randomBitmap;
+		return i.Min | toChange;
+	}
+	public static T NextBitmap<T>(this System.Random self, Interval<T> i) where T : System.Enum => (T)(object)self.NextBitmap(new Interval<int>((int)(object)i.Min, (int)(object)i.Max));
+}
 
 public struct TransformSnapshot
 {
@@ -76,7 +101,6 @@ public class JointRotationHelper
 
 	[SerializeField]
     internal Quaternion startRotation;
-
     public JointRotationHelper(ConfigurableJoint joint)
     {
         this.Space = joint.configuredInWorldSpace? Space.World : Space.Self;
@@ -87,13 +111,13 @@ public class JointRotationHelper
             Space.World => joint.transform.rotation,
             _ => throw new ArgumentException($"Invalid value `{Space}` provided for {nameof(Space)}")
         };
-		CurrentRotation = startRotation;
+		CurrentRotation = Quaternion.identity;
     }
 
 	public Quaternion CurrentRotation { get; private set; }
 
-    public void SetTargetRotation(Quaternion newTargetRotation)
-        => ConfigurableJointExtensions.SetTargetRotationInternal(Joint, CurrentRotation = newTargetRotation, startRotation, Space);
+    public void SetTargetRotation(Quaternion newTargetRotation) 
+		=> ConfigurableJointExtensions.SetTargetRotationInternal(Joint, CurrentRotation = newTargetRotation, startRotation, Space);
 }
 
 

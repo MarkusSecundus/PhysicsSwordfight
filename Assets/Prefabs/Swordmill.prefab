@@ -473,6 +473,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2808337142474496025}
   - component: {fileID: 2808337142474496024}
+  - component: {fileID: 7473588216747227809}
   - component: {fileID: 4933922005377982787}
   - component: {fileID: 6739671978813183505}
   - component: {fileID: 8957703133165910477}
@@ -515,7 +516,20 @@ MonoBehaviour:
   Rotor: {fileID: 2808337140929654815}
   SwordPrototype: {fileID: 7636414052227803301}
   SwordsCount: 6
-  SwordsAngle: 0
+--- !u!114 &7473588216747227809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2808337142474496031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eae0b156d67216429a3a6ec5154f0b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Movements: []
+  Rotations: []
 --- !u!114 &4933922005377982787
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,30 +16,30 @@ public class PlaceObjectsOnPoints : MonoBehaviour
     public void PlaceObjects() => PlaceObjects(CircleDefinition.IteratePoints());
     public void PlaceObjectsRandom(int count) => PlaceObjects(count, () => CircleDefinition.GetRandomPoint(new System.Random(RealSeed)));
     public void PlaceObjectsRandomVolume(int count) => PlaceObjects(count, () => CircleDefinition.GetRandomPointInVolume(new System.Random(RealSeed)));
-    public void PlaceObjects(int count, System.Func<Vector3> supplier) => supplier.Repeat(count);
+    public void PlaceObjects(int count, System.Func<Vector3> supplier) => PlaceObjects(supplier.Repeat(count));
 
-    private void PlaceObjects(IEnumerable<Vector3> points)
+    public void ClearAndPlaceObjects()
+    {
+        ClearParent();
+        PlaceObjects(CircleDefinition.IteratePoints());
+    }
+    private void PlaceObjects(IEnumerable<Vector3> points, bool shouldClear=false)
     {
         var random = new System.Random(RealSeed);
 
-        Debug.Log("Running the event! - Parent count: {ParentToFill.childCount}");
-        ClearParent();
-        Debug.Log($"Parent count: {ParentToFill.childCount}");
-
-        foreach (var v in CircleDefinition.IteratePoints())
+        foreach (var v in points)
         {
-            var obj = ToPlace.InstantiateWithTransform(copyParent: false);
-            obj.transform.position = v;
+            var obj = ToPlace.InstantiateWithTransform();
+            obj.transform.position = v + obj.transform.localPosition;
             obj.transform.SetParent(ParentToFill);
+            obj.SetActive(true);
             foreach (var randomizer in obj.GetComponentsInChildren<IRandomizer>())
                 randomizer.Randomize(random);
         }
-        Debug.Log($"Finished - Parent count: {ParentToFill.childCount}");
     }
 
     public void ClearParent()
     {
-        Debug.Log("Clearing the pallisade!");
         while (ParentToFill.childCount > 0)
         {
             foreach (Transform t in ParentToFill)

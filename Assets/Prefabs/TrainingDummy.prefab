@@ -33,7 +33,7 @@ Transform:
   m_Children:
   - {fileID: 3819205054559317819}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 28.215, z: 0}
 --- !u!114 &7348666731720634697
 MonoBehaviour:
@@ -421,7 +421,6 @@ GameObject:
   - component: {fileID: 9021706458058020928}
   - component: {fileID: 3651011642251615099}
   - component: {fileID: 8995820205276539806}
-  - component: {fileID: 655627323451179520}
   m_Layer: 0
   m_Name: TrainingDummyStick
   m_TagString: Untagged
@@ -543,23 +542,8 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 126
   m_CollisionDetection: 0
---- !u!138 &655627323451179520
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6657151368897320164}
-  m_ConnectedBody: {fileID: 0}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 0
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!1001 &7741954542061928313
 PrefabInstance:
   m_ObjectHideFlags: 0

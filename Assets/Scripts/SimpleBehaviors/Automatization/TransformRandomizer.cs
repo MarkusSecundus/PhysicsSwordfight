@@ -6,8 +6,8 @@ using UnityEngine;
 public class TransformRandomizer : MonoBehaviour, IRandomizer
 {
     public Vector2 ScaleMin = Vector2.one, ScaleMax = Vector2.one;
-    public Vector3 RotationMin = Vector3.one, RotationMax = Vector3.one;
-    public Vector3 PlaceOffsetMin = Vector3.one, PlaceOffsetMax = Vector3.one;
+    public Vector3 RotationMin = Vector3.zero, RotationMax = new Vector3(0,360f, 0);
+    public Vector3 PlaceOffsetMin = Vector3.zero, PlaceOffsetMax = Vector3.zero;
     public void Randomize(System.Random random)
     {
         var scale = random.NextVector2(ScaleMin, ScaleMax).xyx();
