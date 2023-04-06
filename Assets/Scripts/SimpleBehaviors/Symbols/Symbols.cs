@@ -7,19 +7,21 @@ using SymbolKey = System.String;
 
 public interface ISymbol<TValue>
 {
-    public bool TryGet(out TValue ret);
+    public TValue Get();
 }
 
 [System.Serializable] public struct ComponentSymbol<TComponent> : ISymbol<TComponent> where TComponent: Component
 {
     [SerializeField] SymbolMap Map;
     [SerializeField] SymbolKey Key;
-    public bool TryGet(out TComponent ret) => Map.TryGet(Key, out ret);
+    [SerializeField] public TComponent Default;
+    public TComponent Get() => Map.TryGet<TComponent>(Key, out var ret)?ret:Default;
 }
 
 [System.Serializable] public struct FloatSymbol : ISymbol<float>
 {
     [SerializeField] SymbolMap Map;
     [SerializeField] SymbolKey Key;
-    public bool TryGet(out float ret) => Map.TryGetFloat(Key, out ret);
+    [SerializeField] public float Default;
+    public float Get() => Map.TryGetFloat(Key, out var ret)?ret:Default;
 }

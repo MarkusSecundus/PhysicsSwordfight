@@ -8,13 +8,13 @@ public class PlayerDeathEffect : MonoBehaviour
 {
     public Transform CameraDestination;
     public float MovementDuration;
-    public FloatSymbol PopupDuration;
+    public FloatSymbol PopupDuration = new FloatSymbol { Default = 1.3f };
 
     public UnityEvent OnPopup;
 
     public void DoPlay()
     {
-        float popupDuration = PopupDuration.TryGet(out var ret) ? ret : 0f;
+        float popupDuration = PopupDuration.Get();
         float deathDuration = Mathf.Max(MovementDuration, popupDuration) * 2f;
 
         transform.SetParent(null);
