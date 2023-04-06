@@ -1,6 +1,7 @@
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using MarkusSecundus.Util;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,22 +16,28 @@ public class VisualEffectsHelper : MonoBehaviour
         public Color Color;
     }
 
+    private class InternalBlinkingInfo
+    {
+        public TweenerCore<Color, Color, ColorOptions> CurrentlyPlaying;
+        public Color OriginalColor;
+    }
+    private DefaultValDict<Renderer, InternalBlinkingInfo> rendererMetadata = new DefaultValDict<Renderer, InternalBlinkingInfo>(r => new InternalBlinkingInfo());
 
-    private bool CurrentlyInProgress = false;
     public void Blink()
     {
-        if (Op.post_assign(ref CurrentlyInProgress, true)) return;
-
-        TweenerCore<Color, Color, ColorOptions> last = null;
         foreach(var renderer in AffectedRenderers)
         {
+            var data = rendererMetadata[renderer];
             var mat = renderer.material;
-            var originalColor = mat.color;
-            var tween = mat.DOColor(Blinking.Color, Blinking.TotalDuration - Blinking.FadeTime);
-            tween.OnComplete(() => 
+            if (data.CurrentlyPlaying == null)
             {
-                mat.DOColor(originalColor, Blinking.FadeTime); 
-                CurrentlyInProgress = false; 
+                data.OriginalColor = mat.color;
+            }
+            data.CurrentlyPlaying = mat.DOColor(Blinking.Color, Blinking.TotalDuration - Blinking.FadeTime)
+                .OnComplete(() => 
+            {
+                data.CurrentlyPlaying = mat.DOColor(data.OriginalColor, Blinking.FadeTime)
+                        .OnComplete(()=> data.CurrentlyPlaying = null);
             });
         }
     }
