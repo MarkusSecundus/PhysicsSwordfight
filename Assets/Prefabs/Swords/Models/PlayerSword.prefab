@@ -104,7 +104,7 @@ Transform:
   - {fileID: 5955246431918318715}
   - {fileID: 4163327867573818165}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4982396076474686166
 MeshFilter:
@@ -460,7 +460,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5692771887357732071
 Transform:
   m_ObjectHideFlags: 0

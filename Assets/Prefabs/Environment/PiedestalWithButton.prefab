@@ -37,7 +37,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8000159161002903109}
+  m_Father: {fileID: 1309314885312088605}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8607519516012501396
@@ -124,7 +124,7 @@ FixedJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1011800393826792791}
-  m_ConnectedBody: {fileID: 0}
+  m_ConnectedBody: {fileID: 39514488089330956}
   m_ConnectedArticulationBody: {fileID: 0}
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
@@ -160,7 +160,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1011800393826792791}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b5cac3fb44170d548b8170f97e0a6dc8, type: 3}
   m_Name: 
@@ -285,8 +285,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8000159161002903109}
+  - {fileID: 1895486480834265493}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 111.167, z: 0}
 --- !u!114 &4987422749570786461
 MonoBehaviour:
@@ -316,6 +317,7 @@ GameObject:
   - component: {fileID: 2183463335504527618}
   - component: {fileID: 8202761299176544934}
   - component: {fileID: 5439793232361923185}
+  - component: {fileID: 39514488089330956}
   m_Layer: 0
   m_Name: Piedestal
   m_TagString: Untagged
@@ -334,8 +336,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1895486480834265493}
+  m_Children: []
   m_Father: {fileID: 1309314885312088605}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -410,3 +411,30 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.1, y: 1.014323, z: 0.1}
   m_Center: {x: 0, y: 0.49216172, z: -0.019999998}
+--- !u!54 &39514488089330956
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2893637635162386705}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0

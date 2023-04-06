@@ -10,16 +10,17 @@ public class PlaceObjectsOnPoints : MonoBehaviour
     public GameObject ToPlace;
 
     public int Seed = 0;
+    public bool RandomSeed = false;
+    private int RealSeed => RandomSeed ? Random.Range(int.MinValue, int.MaxValue) : Seed;
 
-    public Vector2 ScaleMin = Vector2.one, ScaleMax = Vector2.one;
-    public Vector3 RotationMin = Vector3.one, RotationMax = Vector3.one;
-    public Vector3 PlaceOffsetMin = Vector3.one, PlaceOffsetMax = Vector3.one;
+    public void PlaceObjects() => PlaceObjects(CircleDefinition.IteratePoints());
+    public void PlaceObjectsRandom(int count) => PlaceObjects(count, () => CircleDefinition.GetRandomPoint(new System.Random(RealSeed)));
+    public void PlaceObjectsRandomVolume(int count) => PlaceObjects(count, () => CircleDefinition.GetRandomPointInVolume(new System.Random(RealSeed)));
+    public void PlaceObjects(int count, System.Func<Vector3> supplier) => supplier.Repeat(count);
 
-
-
-    public void PlaceObjects()
+    private void PlaceObjects(IEnumerable<Vector3> points)
     {
-        var random = new System.Random(Seed);
+        var random = new System.Random(RealSeed);
 
         Debug.Log("Running the event! - Parent count: {ParentToFill.childCount}");
         ClearParent();
@@ -28,12 +29,10 @@ public class PlaceObjectsOnPoints : MonoBehaviour
         foreach (var v in CircleDefinition.IteratePoints())
         {
             var obj = ToPlace.InstantiateWithTransform(copyParent: false);
-            var scale = random.NextVector2(ScaleMin, ScaleMax).xyx();
-            var rotation = random.NextVector3(RotationMin, RotationMax);
-            obj.transform.localScale = obj.transform.localScale.MultiplyElems(scale);
-            obj.transform.localRotation *= Quaternion.Euler(rotation);
+            obj.transform.position = v;
             obj.transform.SetParent(ParentToFill);
-            obj.transform.position = v + random.NextVector3(PlaceOffsetMin, PlaceOffsetMax);
+            foreach (var randomizer in obj.GetComponentsInChildren<IRandomizer>())
+                randomizer.Randomize(random);
         }
         Debug.Log($"Finished - Parent count: {ParentToFill.childCount}");
     }

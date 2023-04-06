@@ -498,7 +498,7 @@ Transform:
   - {fileID: 2808337142216687973}
   - {fileID: 7636414052227803300}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2808337142474496024
 MonoBehaviour:
@@ -514,8 +514,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Rotor: {fileID: 2808337140929654815}
   SwordPrototype: {fileID: 7636414052227803301}
-  SwordsCount: 2
-  positionOffset: {x: 0, y: 0, z: 0}
+  SwordsCount: 6
   SwordsAngle: 0
 --- !u!114 &4933922005377982787
 MonoBehaviour:
@@ -551,49 +550,13 @@ MonoBehaviour:
         m_CallState: 2
   OnDamaged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
-        m_MethodName: ReportDamage
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnHealed:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
-        m_MethodName: ReportHeal
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnDeath:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: DamageUIManager, Assembly-CSharp
-        m_MethodName: ReportDeath
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1085581082303384628}
         m_TargetAssemblyTypeName: DamageParticleEmitHelper, Assembly-CSharp
         m_MethodName: EmitDeath

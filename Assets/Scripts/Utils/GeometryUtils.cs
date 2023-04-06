@@ -682,4 +682,10 @@ public static class CollectionsUtils
 			for (int u = 0/*t+1*/; u < l.Count; ++u)
 				yield return (l[t], l[u]);
 	}
+
+	public static IEnumerable<T> Repeat<T>(this System.Func<T> supplier, int count)
+	{
+		while (--count >= 0)
+			yield return supplier();
+	}
 }
