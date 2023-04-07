@@ -59,9 +59,17 @@ public class SwordsmanMovement : MonoBehaviour
     public InputMultipliers Tweaks = new InputMultipliers();
 
 
-    private Vector3 WalkForwardBackwardBase => transform.forward;
-    private Vector3 StrafeLeftRightBase => transform.right;
-    private Vector3 RotateLeftRightBase => transform.up;
+    public readonly struct MovementDirectionBasesList
+    {
+        readonly SwordsmanMovement self;
+        public MovementDirectionBasesList(SwordsmanMovement self) => this.self = self;
+
+        public Vector3 WalkForwardBackwardBase => self.transform.forward;
+        public Vector3 StrafeLeftRightBase => self.transform.right;
+        public Vector3 RotateLeftRightAxis => self.transform.up;
+    }
+    public MovementDirectionBasesList MovementDirectionBases => new MovementDirectionBasesList(this);
+
 
     void Start()
     {
@@ -106,7 +114,7 @@ public class SwordsmanMovement : MonoBehaviour
         var walkForward = Input.GetAxis(Mapping.WalkForwardBackward) * Tweaks.WalkForwardBackward;
         var strafeLeftRight = Input.GetAxis(Mapping.StrafeLeftRight) * Tweaks.StrafeLeftRight;
 
-        var toMove = (walkForward*WalkForwardBackwardBase + strafeLeftRight*StrafeLeftRightBase); //*delta !!velocity should not be multiplied by delta (opposed to applied force)!
+        var toMove = (walkForward*MovementDirectionBases.WalkForwardBackwardBase + strafeLeftRight* MovementDirectionBases.StrafeLeftRightBase); //*delta !!velocity should not be multiplied by delta (opposed to applied force)!
 
         rigidbody.MoveToVelocity(toMove.With(y: toMove.y + rigidbody.velocity.y));
     }
@@ -122,7 +130,7 @@ public class SwordsmanMovement : MonoBehaviour
 
         rigidbody.MoveRotation(rigidbody.rotation.WithEuler(x: 0f, z: 0f)); //?! (because the axis locking doesn't actaully work 100%) - for reason see docs ( https://docs.unity3d.com/2022.2/Documentation/ScriptReference/Rigidbody-inertiaTensor.html )
 
-        var rotateLeftRight = toRotate *delta  * Tweaks.RotateLeftRight * RotateLeftRightBase;
+        var rotateLeftRight = toRotate *delta  * Tweaks.RotateLeftRight * MovementDirectionBases.RotateLeftRightAxis;
         rigidbody.MoveToAngularVelocity(rotateLeftRight);
     }
 

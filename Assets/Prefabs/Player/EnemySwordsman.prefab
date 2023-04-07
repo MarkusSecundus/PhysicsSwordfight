@@ -56,6 +56,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3836743927791828073, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: <MaxHP>k__BackingField
+      value: 5000
+      objectReference: {fileID: 0}
     - target: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_Name
       value: EnemySwordsman
@@ -91,7 +95,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 6
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -100,7 +104,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 2
-  m_BaseOffset: 0
+  m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!1 &4543054913315952623 stripped
@@ -135,6 +139,43 @@ MonoBehaviour:
   Target: {fileID: 0}
   SwordsmanAssembly: {fileID: 6556055066981990781}
   Input: {fileID: 5886704879907408248}
+  Tweaks:
+    SidewaysRotationMultiplier: 1
+    AgentSync: 0.9
+    MelleeReachMultiplier: 1.1
+    RotationAccuracyByDistance:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: -0.045833588
+        value: 1.0094299
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1.3745761
+        value: 0.55330193
+        inSlope: -0.39793843
+        outSlope: -0.39793843
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.3198225
+        outWeight: 0.28264618
+      - serializedVersion: 3
+        time: 3.0233603
+        value: 0.3221993
+        inSlope: -0.023300603
+        outSlope: -0.023300603
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.36464334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
 --- !u!114 &6556055066981990781 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 164561265376294913, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
