@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class InputSimulator : ISwordInput
 {
+    private static float ClampAxis(float axis) => Mathf.Clamp(axis, -1f, 1f);
     private static int CurrentFrame => Time.frameCount;
     public void StartKey(KeyCode code)
     {
@@ -21,7 +22,7 @@ public class InputSimulator : ISwordInput
 
     public void SetAxisValue(InputAxis axis, float value)
     {
-        value = Mathf.Clamp01(value);
+        value = ClampAxis(value);
         axes[axis] = new AxisState { Value = value };
     }
 
