@@ -13,6 +13,7 @@ public class SwordMovementRecorder : MonoBehaviour
                        SaveAllKey = KeyCode.F1;
     public string ResultPath = "data.json";
     ISwordInput Input => Target.Input;
+    Transform SwordWielder => Target.Joint.connectedBody.transform;
 
     private void Start()
     {
@@ -76,7 +77,7 @@ public class SwordMovementRecorder : MonoBehaviour
         if (isRecording)
         {
             var currentTime = Time.timeAsDouble;
-            currentFrame.Add(new SwordMovementRecord.Frame { DeltaTime = currentTime - beginTime, Value = SwordMovementRecord.Command.Make(c, Target.Transform) });
+            currentFrame.Add(new SwordMovementRecord.Frame { DeltaTime = currentTime - beginTime, Value = SwordMovementRecord.Command.Make(c, SwordWielder) });
             beginTime = currentTime;
         }
     }

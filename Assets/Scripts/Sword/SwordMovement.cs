@@ -18,7 +18,6 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
     [field: SerializeField] public SwordDescriptor Sword { get; private set; }
     [field: SerializeField] public ConfigurableJoint Joint { get; private set; }
     [field: SerializeField] public ISwordInput Input { get; private set; }
-    public Transform Transform => transform;
 
 
     void Start()
@@ -106,14 +105,15 @@ public interface ISwordMovement
     public SwordDescriptor Sword { get;  }
     public ISwordInput Input { get; }
 
-    public Transform Transform { get; }
-
     [System.Serializable]
     public struct MovementCommand
     {
         public Vector3 LookDirection;
         public Vector3 AnchorPoint;
         public Vector3? UpDirection;
+
+        public override string ToString()
+            => $"{{look{LookDirection}, anchor{AnchorPoint}, up{UpDirection}}}";
     }
     public void MoveSword(MovementCommand m);
 }

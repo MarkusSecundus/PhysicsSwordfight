@@ -18,6 +18,7 @@ public class SwordsmanAI : MonoBehaviour
 
     [System.Serializable] public class SwordConfig
     {
+        [SerializeField] public SwordRecordUsecase Usecase = SwordRecordUsecase.Idle;
         [SerializeField] public SerializableDictionary<SwordRecordUsecase, string> Records;
     }
 
@@ -121,7 +122,7 @@ public class SwordsmanAI : MonoBehaviour
         ).ToDictionary();
         foreach(var (usecase, arr) in recordsList) Debug.Log($"Loaded {arr.Count} records for section {usecase}", this);
         
-        recordPlayer = new SwordMovementMode_PlayRecord { Records = recordsList};
+        recordPlayer = new SwordMovementMode_PlayRecord { Records = recordsList, SwordWielder = Swordsman.transform};
         recordPlayer.Init(Sword);
 
         Sword.Modes = new ScriptSubmodulesContainer<KeyCode, SwordMovement.Submodule, ISwordMovement> { Default = recordPlayer };
@@ -129,7 +130,7 @@ public class SwordsmanAI : MonoBehaviour
 
     void SetSwordRecord()
     {
-        recordPlayer.CurrentUsecase = SwordRecordUsecase.Idle;
+        recordPlayer.CurrentUsecase = SwordControl.Usecase;
     } 
     #endregion
 }

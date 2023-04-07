@@ -6,6 +6,7 @@ using UnityEngine.Events;
 public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
 {
     public IDictionary<SwordRecordUsecase, IReadOnlyList<SwordMovementRecord>> Records { protected get; set; }
+    public Transform SwordWielder { protected get; init; }
 
     private SwordRecordUsecase _currentUsecase = SwordRecordUsecase.Idle;
         public SwordRecordUsecase CurrentUsecase { get=>_currentUsecase; set {
@@ -60,7 +61,7 @@ public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
                 --currentFrameIndex;
                 break;
             }
-            Script.MoveSword(currentFrame.Value.ToCommand(Script.Transform));
+            Script.MoveSword(currentFrame.Value.ToCommand(SwordWielder));
             deltaLeftower -= currentFrame.DeltaTime;
         }
     }

@@ -22380,6 +22380,7 @@ Transform:
   - {fileID: 1788359389}
   - {fileID: 1570618620}
   - {fileID: 1027187751}
+  - {fileID: 1246118270}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -26230,7 +26231,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!208 &1246118266
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -26305,12 +26306,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1246118265}
   m_LocalRotation: {x: -0, y: -0.51285815, z: -0, w: 0.8584734}
-  m_LocalPosition: {x: 24.3, y: 1.25, z: 26.82}
+  m_LocalPosition: {x: -1.8782864, y: 1.0281107, z: 1.0174885}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_Father: {fileID: 1104950307}
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1248115359
 GameObject:
@@ -48171,7 +48172,15 @@ PrefabInstance:
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: Target
       value: 
-      objectReference: {fileID: 1246118266}
+      objectReference: {fileID: 1049901431}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Usecase
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: Tweaks.MelleeReachMultiplier
       value: 1.2
