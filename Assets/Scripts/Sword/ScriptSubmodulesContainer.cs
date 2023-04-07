@@ -18,7 +18,9 @@ public class ScriptSubmodulesContainer<TKey, TSubmodule, TScript> : Serializable
         TSubmodule SerializableDictionary.IEntry<TKey, TSubmodule>.Value { get => this.Value; init => this.Value = value; }
     }
 
-    [SerializeField, SerializeReference, Subclass] public TSubmodule Default;
+    [SerializeField, SerializeReference, Subclass] private TSubmodule _default;
+    public TSubmodule Default { get => _default; set { _default = value; FillDictionaryValues(this._values); } }
+
 
     protected override void FillDictionaryValues(Dictionary<TKey, TSubmodule> dictionary)
     {

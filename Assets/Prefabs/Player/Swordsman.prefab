@@ -2492,6 +2492,7 @@ MonoBehaviour:
   PopupDuration:
     Map: {fileID: 3536922733085809816}
     Key: DeathDuration
+    Default: 1.3
   OnPopup:
     m_PersistentCalls:
       m_Calls:
@@ -4065,6 +4066,10 @@ PrefabInstance:
       propertyPath: managedReferences[1235461945467076621].SwordDirectionHint
       value: 
       objectReference: {fileID: 1522047124718315795}
+    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235462021595267073].InputIntersectable
+      value: 
+      objectReference: {fileID: 7627317987970479869}
     - target: {fileID: 5692771888074364038, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Name
       value: Weapon

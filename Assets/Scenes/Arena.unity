@@ -17203,6 +17203,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 857371105}
   m_Mesh: {fileID: -2432090755550338912, guid: 1ee74fdf47e56f34997a5c8eb8b9b81e, type: 3}
+--- !u!1 &866325701 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4543054913315952623, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+  m_PrefabInstance: {fileID: 3545870202978320026}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &866325706 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4698584832093357472, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
@@ -26225,7 +26230,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!208 &1246118266
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -38206,7 +38211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CircleDefinition: {fileID: 606088777}
   ParentToFill: {fileID: 745027555}
-  ToPlace: {fileID: 4543054913315952623, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+  ToPlace: {fileID: 866325701}
   Seed: 0
   RandomSeed: 1
 --- !u!1 &1760584469
@@ -48115,6 +48120,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prototype
       objectReference: {fileID: 0}
+    - target: {fileID: 4543054913315952623, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4698584832093357472, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: m_RootOrder
       value: -1
@@ -48162,7 +48171,39 @@ PrefabInstance:
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: Target
       value: 
-      objectReference: {fileID: 1049901431}
+      objectReference: {fileID: 1246118266}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Tweaks.MelleeReachMultiplier
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[0].key
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[2].key
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[0].value
+      value: Assets/SwordRecords/Idle
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[1].value
+      value: Assets/SwordRecords/Slash
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[2].value
+      value: Assets/SwordRecords/Block
+      objectReference: {fileID: 0}
+    - target: {fileID: 7612990731850032612, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Floats.values.Array.data[0].value
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -48230,7 +48271,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3021719034865037462, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3536922733085809816, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: Components.values.Array.data[0].value

@@ -54,9 +54,9 @@ public class SwordMovementRecorder : MonoBehaviour
         void finishRecording()
         {
             if (!isRecording) return;
-            records.Add(new SwordMovementRecord { Frames = currentFrame.ToArray() });
+            records.Add(new SwordMovementRecord { Loop = new SwordMovementRecord.Segment { Frames = currentFrame.ToArray() } });
             currentFrame = null;
-            Debug.Log($"Finished recording - current record count is {records.Count}, added record is {records[^1].Frames.Length} long", this);
+            Debug.Log($"Finished recording - current record count is {records.Count}, added record is {records[^1].Loop.Frames.Length} long", this);
         }
         void saveAll()
         {
@@ -70,9 +70,14 @@ public class SwordMovementRecorder : MonoBehaviour
         }
     }
 
+
     void DoRecord(ISwordMovement.MovementCommand c)
     {
         if (isRecording)
-            currentFrame.Add(new SwordMovementRecord.Frame { Timestamp = Time.timeAsDouble - beginTime, Value = SwordMovementRecord.Command.Make(c, Target.transform) });
+        {
+            var currentTime = Time.timeAsDouble;
+            currentFrame.Add(new SwordMovementRecord.Frame { DeltaTime = currentTime - beginTime, Value = SwordMovementRecord.Command.Make(c, Target.Transform) });
+            beginTime = currentTime;
+        }
     }
 }

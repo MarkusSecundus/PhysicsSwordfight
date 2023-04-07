@@ -1,15 +1,29 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
-public struct SwordMovementRecord 
+public class SwordMovementRecord 
 {
-    public Frame[] Frames { get; init; }
+    [System.Serializable] public class Segment
+    {
+        [JsonProperty] public Frame[] Frames { get; init; }
+        [JsonProperty] string __SegmentEndMarker { get => "END OF SEGMENT"; set { } }
+        
+        [JsonIgnore] double? _totalDuration;
+        [JsonIgnore]public double TotalDuration =>Frames.IsEmpty()?0f: _totalDuration??=Frames.Select(f => f.DeltaTime).Sum();
+    }
+
+    [JsonProperty] public Segment Begin { get; init; }
+    [JsonProperty] public Segment Loop { get; init; }
+    [JsonProperty] public Segment End { get; init; }
+    [JsonProperty] string _Record_EndMarker { get => "END OF RECORD"; set { } }
     [System.Serializable] public struct Frame
     {
-        [field: SerializeField] public double Timestamp { get; init; }
+        [field: SerializeField] public double DeltaTime { get; init; }
         [field: SerializeField] public Command Value { get; init; }
 
     }

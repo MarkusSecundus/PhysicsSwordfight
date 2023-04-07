@@ -1,7 +1,10 @@
 ﻿using JetBrains.Annotations;
+using MarkusSecundus.Util;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -225,13 +228,20 @@ public static class IndirectionUtils
             };
         }
     }
+}
 
+public static class SerializationUtils
+{
 
-
+    static readonly DefaultValDict<(string, System.Type), object> JsonDeserializerCache = new DefaultValDict<(string Path, System.Type Type), object>(
+        k => JsonConvert.DeserializeObject(File.ReadAllText(k.Path), k.Type)
+    );
+    public static T JsonFromFileCached<T>(string path) => (T)JsonDeserializerCache[(path, typeof(T))];
 }
 
 public static class HelperExtensions
 {
+
     public static void DisableAllUpdates(this NavMeshAgent self)
     {
         self.updatePosition = false;

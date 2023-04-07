@@ -37,7 +37,7 @@ Transform:
   m_Children:
   - {fileID: 4829093479927053316}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 270, y: 90, z: 90}
 --- !u!54 &5692771888074364039
 Rigidbody:
@@ -284,21 +284,21 @@ MonoBehaviour:
     - Key: 304
       Value:
         rid: 1235461945467076621
-    Default:
-      rid: 1235461945467076618
+    _default:
+      rid: 1235462021595267073
   references:
     version: 2
     RefIds:
-    - rid: 1235461945467076618
-      type: {class: SwordMovementMode_Basic, ns: , asm: Assembly-CSharp}
-      data:
-        InputIntersectable: {fileID: 0}
-        minLastVectorDiff: 0.3
     - rid: 1235461945467076621
       type: {class: SwordMovementMode_Block, ns: , asm: Assembly-CSharp}
       data:
         SwordDirectionHint: {fileID: 0}
         InputIntersector: {fileID: 0}
+    - rid: 1235462021595267073
+      type: {class: SwordMovementMode_Basic, ns: , asm: Assembly-CSharp}
+      data:
+        InputIntersectable: {fileID: 0}
+        minLastVectorDiff: 0.3
 --- !u!114 &5692771888074364088
 MonoBehaviour:
   m_ObjectHideFlags: 0

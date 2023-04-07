@@ -18,7 +18,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -7.95
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.y
@@ -26,7 +26,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 6.84
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalRotation.w
@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3836743927791828073, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: <MaxHP>k__BackingField
-      value: 5000
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_Name
@@ -149,7 +149,7 @@ MonoBehaviour:
   Tweaks:
     SidewaysRotationMultiplier: 1
     AgentSync: 0.9
-    MelleeReachMultiplier: 1.1
+    MelleeReachMultiplier: 1.3
     RotationAccuracyByDistance:
       serializedVersion: 2
       m_Curve:

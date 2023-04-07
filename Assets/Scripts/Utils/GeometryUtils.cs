@@ -18,7 +18,7 @@ public struct Vector3Interval
 	public T Min, Max;
 }
 
-public static class IntervalExtensions
+public static class RandomUtils
 {
 	public static float Next(this System.Random self, Interval<float> i) => self.NextFloat(i.Min, i.Max);
 	public static int Next(this System.Random self, Interval<int> i) => self.Next(i.Min, i.Max+1);
@@ -35,6 +35,8 @@ public static class IntervalExtensions
 		return i.Min | toChange;
 	}
 	public static T NextBitmap<T>(this System.Random self, Interval<T> i) where T : System.Enum => (T)(object)self.NextBitmap(new Interval<int>((int)(object)i.Min, (int)(object)i.Max));
+
+	public static T NextElement<T>(this System.Random self, IReadOnlyList<T> list) => list[self.Next(0, list.Count)];
 }
 
 public struct TransformSnapshot

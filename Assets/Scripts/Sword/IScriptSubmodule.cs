@@ -17,7 +17,7 @@ public abstract class IScriptSubmodule<TScript>
         OnStart(forceReInit);
         return this;
     }
-    protected virtual void OnStart(bool wasForced) { }
+    protected virtual void OnStart(bool wasForced=false) { }
 
     public virtual void OnUpdate(float delta) { }
     public virtual void OnFixedUpdate(float delta) { }

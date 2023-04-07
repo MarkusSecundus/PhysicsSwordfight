@@ -20,7 +20,7 @@ public class SerializableDictionary<TKey, TValue, TEntry> : ISerializationCallba
 {
     [SerializeField] TEntry[] values = Array.Empty<TEntry>();
 
-    Dictionary<TKey, TValue> _values = new Dictionary<TKey, TValue>();
+    protected Dictionary<TKey, TValue> _values = new Dictionary<TKey, TValue>();
     public IReadOnlyDictionary<TKey, TValue> Values { get=>_values; set { values = value.Select(kv=>new TEntry { Key=kv.Key, Value = kv.Value}).ToArray(); OnAfterDeserialize(); } } 
 
     public void OnBeforeSerialize(){}

@@ -1,5 +1,8 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,9 +12,14 @@ public class SwordsmanAI : MonoBehaviour
     [SerializeField] SwordsmanAssembly SwordsmanAssembly;
     [SerializeField] InputSimulator Input;
     NavMeshAgent agent;
-
+    SwordMovementMode_PlayRecord recordPlayer;
     SwordsmanMovement Swordsman => SwordsmanAssembly.Player;
     SwordMovement Sword => SwordsmanAssembly.Sword;
+
+    [System.Serializable] public class SwordConfig
+    {
+        [SerializeField] public SerializableDictionary<SwordRecordUsecase, string> Records;
+    }
 
     [System.Serializable]public struct TweaksList
     {
@@ -22,19 +30,31 @@ public class SwordsmanAI : MonoBehaviour
         public static readonly TweaksList Default = new TweaksList { SidewaysRotationMultiplier = 1f, AgentSync = 0.9f , MelleeReachMultiplier = 1.1f};
     }
     public TweaksList Tweaks = TweaksList.Default;
+    public SwordConfig SwordControl = new SwordConfig();
 
     void Start()
     {
-        agent = GetComponentInChildren<NavMeshAgent>();
-        agent.DisableAllUpdates();
-        agent.Warp(agent.transform.position);
+        SetupNavmeshAgent();
+        SetupSwordRecordPlayer();
     }
-
-
     void Update()
     {
         SetNavmeshTarget();
         SetSwordsmanMoveInput();
+    }
+
+    private void FixedUpdate()
+    {
+        SetSwordRecord();
+    }
+
+
+    #region Navigation
+    void SetupNavmeshAgent()
+    {
+        agent = GetComponentInChildren<NavMeshAgent>();
+        agent.DisableAllUpdates();
+        agent.Warp(agent.transform.position);
     }
 
     void SetNavmeshTarget()
@@ -86,6 +106,30 @@ public class SwordsmanAI : MonoBehaviour
         }
         
     }
-
     private static float ClampAxis(float f) => Mathf.Clamp(f, -1f, 1f);
+    #endregion
+
+    #region Sword
+    void SetupSwordRecordPlayer()
+    {
+        var recordsList = SwordControl.Records.Values.Select(
+            kv => new KeyValuePair<SwordRecordUsecase, IReadOnlyList<SwordMovementRecord>>(kv.Key,
+                Directory.EnumerateFiles(kv.Value, "*.json").Select(
+                    SerializationUtils.JsonFromFileCached<SwordMovementRecord>
+                ).ToArray()
+            )
+        ).ToDictionary();
+        foreach(var (usecase, arr) in recordsList) Debug.Log($"Loaded {arr.Count} records for section {usecase}", this);
+        
+        recordPlayer = new SwordMovementMode_PlayRecord { Records = recordsList};
+        recordPlayer.Init(Sword);
+
+        Sword.Modes = new ScriptSubmodulesContainer<KeyCode, SwordMovement.Submodule, ISwordMovement> { Default = recordPlayer };
+    }
+
+    void SetSwordRecord()
+    {
+        recordPlayer.CurrentUsecase = SwordRecordUsecase.Idle;
+    } 
+    #endregion
 }
