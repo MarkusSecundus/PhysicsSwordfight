@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
 public static class RotationUtil
@@ -231,6 +232,12 @@ public static class IndirectionUtils
 
 public static class HelperExtensions
 {
+    public static void DisableAllUpdates(this NavMeshAgent self)
+    {
+        self.updatePosition = false;
+        self.updateRotation = false;
+        self.updateUpAxis = false;
+    }
     public static IEnumerable<ContactPoint> IterateContacts(this Collision self)
     {
         for (int t = 0; t < self.contactCount; ++t) yield return self.GetContact(t);

@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.x
@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_Name
-      value: EnemySwordsman Variant
+      value: EnemySwordsman
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4640498443265189015, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
@@ -68,14 +68,47 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       insertIndex: 2
-      addedObject: {fileID: 5322648061058190339}
+      addedObject: {fileID: 5886704879907408248}
+    - targetCorrespondingSourceObject: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7423523000244946951}
+    - targetCorrespondingSourceObject: {fileID: 8687631165635705314, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6592666131606512909}
   m_SourcePrefab: {fileID: 100100000, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+--- !u!1 &2315906033207361694 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8687631165635705314, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+  m_PrefabInstance: {fileID: 6391569670206814588}
+  m_PrefabAsset: {fileID: 0}
+--- !u!195 &6592666131606512909
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2315906033207361694}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &4543054913315952623 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
   m_PrefabInstance: {fileID: 6391569670206814588}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5322648061058190339
+--- !u!114 &5886704879907408248
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -84,6 +117,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 4543054913315952623}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4eb1dae1de8c86c41a84f96195b077a4, type: 3}
+  m_Script: {fileID: 11500000, guid: 822c86303ee1e224c805746aec2679fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7423523000244946951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4543054913315952623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad4a0506fd79a004daa91286b2033375, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Target: {fileID: 0}
+  SwordsmanAssembly: {fileID: 6556055066981990781}
+  Input: {fileID: 5886704879907408248}
+--- !u!114 &6556055066981990781 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 164561265376294913, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+  m_PrefabInstance: {fileID: 6391569670206814588}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4543054913315952623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5843b20dbff9a642a223053a2c6db5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

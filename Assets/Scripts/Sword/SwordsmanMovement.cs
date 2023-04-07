@@ -77,16 +77,7 @@ public class SwordsmanMovement : MonoBehaviour
     void FixedUpdate()
     {
         DoMoveStep(Time.fixedDeltaTime);
-        ///*Debug.Log($"intertia{rigidbody.inertiaTensor}-euler{rigidbody.inertiaTensorRotation}, depenetr{rigidbody.maxDepenetrationVelocity}");*/
     }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        //Debug.Log($"{collision.gameObject}...impulse: {collision.impulse}, r.velocity{collision.relativeVelocity}");
-    }
-
-
-
     bool IsGrounded => Feet.ActiveNormalCollidersCount > 0;
     
 
@@ -109,17 +100,6 @@ public class SwordsmanMovement : MonoBehaviour
         HandleGravity(delta);
     }
 
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        //Debug.Log($"Entering collision: {collision.collider}"); 
-    }
-    private void OnCollisionExit(Collision collision)
-    {
-        //Debug.Log($"Exiting  collision: {collision.collider}");
-    }
-
-
     void HandleWalkingInputs(float delta) { }
     void HandleWalking(float delta)
     {
@@ -140,11 +120,10 @@ public class SwordsmanMovement : MonoBehaviour
     {
         float toRotate = Input.GetAxis(Mapping.RotateLeftRight);
 
-        rigidbody.MoveRotation(rigidbody.rotation.WithEuler(x: 0f, z: 0f)); //?! (because the axis locking doesn't actaully work 100%) Ex-TODO: figure out if and why this is necessary! (especially since those rotation axes are already locked)
+        rigidbody.MoveRotation(rigidbody.rotation.WithEuler(x: 0f, z: 0f)); //?! (because the axis locking doesn't actaully work 100%) - for reason see docs ( https://docs.unity3d.com/2022.2/Documentation/ScriptReference/Rigidbody-inertiaTensor.html )
 
         var rotateLeftRight = toRotate *delta  * Tweaks.RotateLeftRight * RotateLeftRightBase;
         rigidbody.MoveToAngularVelocity(rotateLeftRight);
-        //Debug.Log($"   applied{rotateLeftRight.ToStringPrecise()} -> velocity{rigidbody.angularVelocity.ToStringPrecise()} {{{toRotate}}} base{RotateLeftRightBase}");
     }
 
 

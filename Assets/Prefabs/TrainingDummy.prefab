@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7348666731720634697}
   - component: {fileID: 3454754592216810716}
   - component: {fileID: 945472641174656368}
+  - component: {fileID: 6465865928668282894}
   m_Layer: 0
   m_Name: TrainingDummy
   m_TagString: Untagged
@@ -33,7 +34,7 @@ Transform:
   m_Children:
   - {fileID: 3819205054559317819}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 28.215, z: 0}
 --- !u!114 &7348666731720634697
 MonoBehaviour:
@@ -128,6 +129,22 @@ MonoBehaviour:
   - {fileID: 2558332784931931342}
   ColorOfBlood: {r: 0.1792453, g: 0.17868163, b: 0.17868163, a: 1}
   TransitionDuration: 0.3
+--- !u!208 &6465865928668282894
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4788598586442215087}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.43, y: 1.1, z: 0.43}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 1, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &5778619533062050916
 GameObject:
   m_ObjectHideFlags: 0
