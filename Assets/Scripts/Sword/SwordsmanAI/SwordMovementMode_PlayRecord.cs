@@ -5,20 +5,23 @@ using UnityEngine.Events;
 
 public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
 {
-    public IDictionary<SwordRecordUsecase, IReadOnlyList<SwordMovementRecord>> Records { protected get; set; }
+    public IDictionary<SwordRecordUsecase, SwordMovementRecord[]> Records { protected get; set; }
     public float PlaySpeed = 1f;
 
-    private SwordRecordUsecase _currentUsecase = SwordRecordUsecase.Generic;
+    private SwordRecordUsecase _currentUsecase = (SwordRecordUsecase)(-43);
         public SwordRecordUsecase CurrentUsecase { get=>_currentUsecase; set {
             if (_currentUsecase == value) return;
             _currentUsecase = value;
+            recordsRandomizer = new RandomUtils.Shuffler<SwordMovementRecord>(rand, Records[_currentUsecase], 2);
             StartPlaying();
         } }
 
 
+    private RandomUtils.Shuffler<SwordMovementRecord> recordsRandomizer; 
 
     protected override void OnStart(bool wasForced=false)
     {
+        CurrentUsecase = SwordRecordUsecase.Generic;
         StartPlaying();
     }
     public override void OnFixedUpdate(float delta)
@@ -31,13 +34,14 @@ public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
 
     private System.Random rand = new System.Random();
     private SwordMovementRecord currentlyPlaying = null;
+
     private SwordMovementRecord.Frame[] currentSegment => currentlyPlaying.Loop.Frames;
     private int currentFrameIndex = -2;
 
     private void StartPlaying()
     {
         if (Records[CurrentUsecase].IsEmpty()) currentlyPlaying = null;
-        else currentlyPlaying = rand.NextElement(Records[CurrentUsecase]);
+        else currentlyPlaying = recordsRandomizer.Next();
         currentFrameIndex = -1;
     }
 

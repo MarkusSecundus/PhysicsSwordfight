@@ -123,11 +123,11 @@ public class SwordsmanAI : MonoBehaviour
     void SetupSwordRecordPlayer()
     {
         var recordsList = SwordControl.Records.Values.Select(
-            kv => new KeyValuePair<SwordRecordUsecase, IReadOnlyList<SwordMovementRecord>>(kv.Key,
+            kv => new KeyValuePair<SwordRecordUsecase, SwordMovementRecord[]>(kv.Key,
                 kv.Value.Select(t => recordCache[t]).ToArray()
             )
         ).ToDictionary();
-        foreach(var (usecase, arr) in recordsList) Debug.Log($"Loaded {arr.Count} records for section {usecase}", this);
+        foreach(var (usecase, arr) in recordsList) Debug.Log($"Loaded {arr.Length} records for section {usecase}", this);
         
         recordPlayer = new SwordMovementMode_PlayRecord { Records = recordsList};
         recordPlayer.Init(Sword);

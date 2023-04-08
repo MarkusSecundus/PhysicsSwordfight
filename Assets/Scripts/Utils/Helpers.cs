@@ -408,7 +408,11 @@ public static class HelperExtensions
 
         return ret.ToString();
     }
-
+    public static IEnumerable<T> RepeatList<T>(this IEnumerable<T> self, int repeatCount)
+    {
+        while (--repeatCount >= 0)
+            foreach (var i in self) yield return i;
+    }
     
     public static string ToStringPrecise(this Vector3 v)
     {

@@ -1,7 +1,9 @@
 using JetBrains.Annotations;
+using MathNet.Numerics.Random;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static UnityEngine.Networking.UnityWebRequest;
 
@@ -20,11 +22,12 @@ public struct Vector3Interval
 
 public static class RandomUtils
 {
+	public static bool NextBool(this System.Random self) => self.Next(0, 2) ==1;
 	public static float Next(this System.Random self, Interval<float> i) => self.NextFloat(i.Min, i.Max);
 	public static int Next(this System.Random self, Interval<int> i) => self.Next(i.Min, i.Max+1);
 	public static Vector2 Next(this System.Random self, Interval<Vector2> i) => self.NextVector2(i.Min, i.Max);
 	public static Vector3 Next(this System.Random self, Interval<Vector3> i) => self.NextVector3(i.Min, i.Max);
-
+	
 	public static bool Next(this System.Random self, Interval<bool> i) => i.Min == i.Max ? i.Min : (self.Next() & 1) == 0;
 
     public static int NextBitmap(this System.Random self, Interval<int> i)
@@ -37,6 +40,45 @@ public static class RandomUtils
 	public static T NextBitmap<T>(this System.Random self, Interval<T> i) where T : System.Enum => (T)(object)self.NextBitmap(new Interval<int>((int)(object)i.Min, (int)(object)i.Max));
 
 	public static T NextElement<T>(this System.Random self, IReadOnlyList<T> list) => list[self.Next(0, list.Count)];
+
+	public static void Shuffle<T>(this System.Random self, System.Span<T> toShuffle)
+	{
+		for(int t = 0; t < toShuffle.Length; ++t)
+		{
+			for (int u = t + 1; u < toShuffle.Length; ++u)
+				if (self.NextBool())
+					(toShuffle[t], toShuffle[u]) = (toShuffle[u], toShuffle[t]);
+		}
+	}
+
+	public struct Shuffler<T>
+	{
+		public IReadOnlyList<T> Items { get; }
+
+		public Shuffler(System.Random randomizer, IReadOnlyList<T> items, int windowSize)
+		{
+			(Items, rand) = (items, randomizer);
+			window = items.RepeatList(windowSize).ToArray();
+			nextIndex = window.Length;
+		}
+
+		private void Reshuffle()
+		{
+			nextIndex = 0;
+			rand.Shuffle(window.AsSpan());
+		}
+
+        private System.Random rand;
+        private T[] window;
+		private int nextIndex;
+		public T Next()
+		{
+			if (window.Length <= 0) return default;
+			if (nextIndex >= window.Length)
+				Reshuffle();
+			return window[nextIndex++];
+		}
+	}
 }
 
 public struct TransformSnapshot

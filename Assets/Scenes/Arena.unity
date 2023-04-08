@@ -48169,11 +48169,15 @@ PrefabInstance:
       objectReference: {fileID: 1049901431}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: SwordControl.PlaySpeed
-      value: 0.5
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: Tweaks.MelleeReachMultiplier
       value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.MelleeReachMultiplier
+      value: 1.05
       objectReference: {fileID: 0}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: SwordControl.Recordss.values.Array.size
