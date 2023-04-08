@@ -6,11 +6,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  run:
+  build-windows64:
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/cache@v2
+        with:
+          path: ./Library
+          key: Library-PhysicsSwordfight-StandaloneWindows64
+          restore-keys: |
+            Library-MyProjectName-
+            Library-
       - uses: game-ci/unity-builder@v2
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -18,6 +24,21 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneWindows64
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build-Windows64
+          path: build
+  build-linux64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v2
+        with:
+          path: ./Library
+          key: Library-PhysicsSwordfight-StandaloneLinux64
+          restore-keys: |
+            Library-MyProjectName-
+            Library-
       - uses: game-ci/unity-builder@v2
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -25,6 +46,21 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneLinux64
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Build-Linux64
+          path: build
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v2
+        with:
+          path: ./Library
+          key: Library-PhysicsSwordfight-Android
+          restore-keys: |
+            Library-MyProjectName-
+            Library-
       - uses: game-ci/unity-builder@v2
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -34,7 +70,7 @@ jobs:
           targetPlatform: Android
       - uses: actions/upload-artifact@v2
         with:
-          name: Build
+          name: Build-Android
           path: build
        
       
