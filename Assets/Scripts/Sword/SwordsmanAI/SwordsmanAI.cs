@@ -36,15 +36,15 @@ public class SwordsmanAI : MonoBehaviour
 
     #region Navigation
 
-    [System.Serializable] public struct TweaksList
+    [System.Serializable] public struct NavigationConfigurator
     {
         public float SidewaysRotationMultiplier;
         public float AgentSync;
         public float MelleeReachMultiplier;
         public AnimationCurve RotationAccuracyByDistance;
-        public static readonly TweaksList Default = new TweaksList { SidewaysRotationMultiplier = 1f, AgentSync = 0.9f, MelleeReachMultiplier = 1.1f };
+        public static readonly NavigationConfigurator Default = new NavigationConfigurator { SidewaysRotationMultiplier = 1f, AgentSync = 0.9f, MelleeReachMultiplier = 1.1f };
     }
-    public TweaksList Tweaks = TweaksList.Default;
+    public NavigationConfigurator Navigation = NavigationConfigurator.Default;
 
     void SetupNavmeshAgent()
     {
@@ -71,7 +71,7 @@ public class SwordsmanAI : MonoBehaviour
         var tr = Swordsman.transform;
         var directionToTarget = Target.transform.position - tr.position;
         var distanceToTarget = directionToTarget.magnitude;
-        var melleeDistance = (Target.size.xz().magnitude * 0.5f + agent.radius) * Tweaks.MelleeReachMultiplier;
+        var melleeDistance = (Target.size.xz().magnitude * 0.5f + agent.radius) * Navigation.MelleeReachMultiplier;
         var distanceRatio = distanceToTarget / melleeDistance;
 
         var deltaPosition = agent.nextPosition - tr.position;
@@ -81,8 +81,8 @@ public class SwordsmanAI : MonoBehaviour
         var sideways = ClampAxis(deltaPosition.Dot(Swordsman.MovementDirectionBases.StrafeLeftRightBase));
         
         var rotate = ClampAxis(directionToTarget.Dot(Swordsman.MovementDirectionBases.StrafeLeftRightBase));
-        var rotateSideways = ClampAxis(sideways * Tweaks.SidewaysRotationMultiplier);
-        rotate = ClampAxis(Mathf.Lerp(rotateSideways, rotate, Tweaks.RotationAccuracyByDistance.Evaluate(distanceRatio)));
+        var rotateSideways = ClampAxis(sideways * Navigation.SidewaysRotationMultiplier);
+        rotate = ClampAxis(Mathf.Lerp(rotateSideways, rotate, Navigation.RotationAccuracyByDistance.Evaluate(distanceRatio)));
 
         if (distanceToTarget> melleeDistance)
         {
@@ -113,6 +113,7 @@ public class SwordsmanAI : MonoBehaviour
     {
         [SerializeField] public SwordRecordUsecase Usecase = SwordRecordUsecase.Idle;
         [SerializeField] public float PlaySpeed = 1f;
+        [SerializeField] public float DistanceToIdle = 5f;
         [SerializeField] public SerializableDictionary<SwordRecordUsecase, TextAsset[]> Records;
     }
 
@@ -136,8 +137,11 @@ public class SwordsmanAI : MonoBehaviour
 
     void SetSwordRecord()
     {
-        recordPlayer.CurrentUsecase = SwordControl.Usecase;
         recordPlayer.PlaySpeed = SwordControl.PlaySpeed;
+        if (Swordsman.transform.position.Distance(Target.transform.position) > SwordControl.DistanceToIdle)
+            recordPlayer.CurrentUsecase = SwordControl.Usecase = SwordRecordUsecase.Idle;
+        else
+            recordPlayer.CurrentUsecase = SwordControl.Usecase = SwordRecordUsecase.Generic;
     } 
     #endregion
 }

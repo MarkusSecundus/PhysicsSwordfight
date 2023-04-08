@@ -11,7 +11,7 @@ public class SwordMovementRecorder : MonoBehaviour
     public KeyCode BeginRecordKey = KeyCode.F6,
                      EndRecordKey = KeyCode.F7;
 
-    [SerializeField] public class ResultFilePathDescriptor
+    [System.Serializable] public class ResultFilePathDescriptor
     {
         public string Path = "/data/", Extension = ".json";
         public int NextIndex = 1;

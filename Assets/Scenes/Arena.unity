@@ -40048,6 +40048,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1830004577}
   m_Mesh: {fileID: -2432090755550338912, guid: 1ee74fdf47e56f34997a5c8eb8b9b81e, type: 3}
+--- !u!4 &1832114567 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3971623083861692181, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+  m_PrefabInstance: {fileID: 4579615370407642763}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1833221620 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8510876982289789953, guid: d951808dc03e8d64aac081c2c11dcfeb, type: 3}
@@ -48154,6 +48159,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6556055066981990781, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: DeathInstructions.SwordDestroyDelay
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: Target
       value: 
@@ -48175,12 +48184,28 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[0].key
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[1].key
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: SwordControl.Recordss.values.Array.data[1].key
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[0].value.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: SwordControl.Records.values.Array.data[1].value.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: SwordControl.Recordss.values.Array.data[0].value.Array.size
@@ -48191,13 +48216,29 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[0].value.Array.data[0]
+      value: 
+      objectReference: {fileID: 4900000, guid: e51a37f203508ad4c8338767fff5cb32, type: 3}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[0].value.Array.data[1]
+      value: 
+      objectReference: {fileID: 4900000, guid: 223bfb063625d0f4eb601dbfda521e0b, type: 3}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[0].value.Array.data[2]
+      value: 
+      objectReference: {fileID: 4900000, guid: 5e15efb5fc4c4b6448cc12f186d24222, type: 3}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.Records.values.Array.data[0].value.Array.data[3]
+      value: 
+      objectReference: {fileID: 4900000, guid: 5e15efb5fc4c4b6448cc12f186d24222, type: 3}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: SwordControl.Records.values.Array.data[1].value.Array.data[0]
       value: 
-      objectReference: {fileID: 4900000, guid: dcaa9ab0c805ae9439d9a98414a1734f, type: 3}
+      objectReference: {fileID: 4900000, guid: 3c7cc30b9517dd74b8b3c2084e8f704e, type: 3}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: SwordControl.Records.values.Array.data[1].value.Array.data[1]
       value: 
-      objectReference: {fileID: 4900000, guid: 2f51c55c619398442887947af15fcb7a, type: 3}
+      objectReference: {fileID: 4900000, guid: ea0bd7eb53c39bd46b6c88ddf338f69d, type: 3}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: SwordControl.Records.values.Array.data[1].value.Array.data[2]
       value: 
@@ -48217,6 +48258,30 @@ PrefabInstance:
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: SwordControl.RecordAssets.values.Array.data[0].value.Array.size
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[0].time
+      value: -0.045833588
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[1].time
+      value: 1.3745761
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[2].time
+      value: 3.0233603
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[0].value
+      value: 1.0094299
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[1].value
+      value: 0.55330193
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[2].value
+      value: 0.3221993
       objectReference: {fileID: 0}
     - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: SwordControl.RecordAssets.values.Array.data[0].value.Array.data[0]
@@ -48250,6 +48315,34 @@ PrefabInstance:
       propertyPath: SwordControl.RecordAssets.values.Array.data[0].value.Array.data[7]
       value: 
       objectReference: {fileID: 4900000, guid: f9acabc18e6dbb34e99fd23f8b431188, type: 3}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[1].inSlope
+      value: -0.39793843
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[2].inSlope
+      value: -0.023300603
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[1].inWeight
+      value: 0.3198225
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[1].outSlope
+      value: -0.39793843
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[2].inWeight
+      value: 0.36464334
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[2].outSlope
+      value: -0.023300603
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: Navigation.RotationAccuracyByDistance.m_Curve.Array.data[1].outWeight
+      value: 0.28264618
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2332436629987499248, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
     - {fileID: 2349734344079448317, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
@@ -48274,6 +48367,10 @@ PrefabInstance:
       propertyPath: DamageReport
       value: 
       objectReference: {fileID: 1833221620}
+    - target: {fileID: 1163073859920178584, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: anchor
+      value: 
+      objectReference: {fileID: 1832114567}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -48318,10 +48415,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3021719034865037462, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: ResultDestination.Path
+      value: Assets/SwordRecords/Idle/HoldSword
+      objectReference: {fileID: 0}
     - target: {fileID: 3536922733085809816, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: Components.values.Array.data[0].value
       value: 
       objectReference: {fileID: 480126527}
+    - target: {fileID: 3971623083861692183, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: Modes.values.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3971623083861692183, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: Modes.values.Array.data[1].Key
+      value: 304
+      objectReference: {fileID: 0}
+    - target: {fileID: 3971623083861692183, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: Modes.values.Array.data[1].Value
+      value: 1235462039853858816
+      objectReference: {fileID: 0}
+    - target: {fileID: 3971623083861692183, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: managedReferences[1235462039853858816]
+      value: Assembly-CSharp SwordMovementMode_Basic
+      objectReference: {fileID: 0}
+    - target: {fileID: 3971623083861692183, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: managedReferences[1235462039853858816].minLastVectorDiff
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3971623083861692183, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: managedReferences[1235462039853858816].InputIntersectable
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4640498443265189015, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: inputCamera
       value: 

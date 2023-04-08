@@ -2988,8 +2988,6 @@ MonoBehaviour:
   Target: {fileID: 0}
   BeginRecordKey: 287
   EndRecordKey: 288
-  SaveAllKey: 282
-  ResultPath: data.json
 --- !u!114 &3536922733085809816
 MonoBehaviour:
   m_ObjectHideFlags: 0
