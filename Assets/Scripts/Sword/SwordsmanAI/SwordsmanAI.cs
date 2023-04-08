@@ -1,3 +1,4 @@
+using MarkusSecundus.Util;
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
@@ -106,24 +107,23 @@ public class SwordsmanAI : MonoBehaviour
 
     #region Sword
 
+
     [System.Serializable]
     public class SwordConfig
     {
         [SerializeField] public SwordRecordUsecase Usecase = SwordRecordUsecase.Idle;
         [SerializeField] public float PlaySpeed = 1f;
-        [SerializeField] public SerializableDictionary<SwordRecordUsecase, string> Records;
+        [SerializeField] public SerializableDictionary<SwordRecordUsecase, TextAsset[]> Records;
     }
 
     public SwordConfig SwordControl = new SwordConfig();
 
-
+    private static readonly DefaultValDict<TextAsset, SwordMovementRecord> recordCache = new DefaultValDict<TextAsset, SwordMovementRecord>(t => JsonConvert.DeserializeObject<SwordMovementRecord>(t.text));
     void SetupSwordRecordPlayer()
     {
         var recordsList = SwordControl.Records.Values.Select(
             kv => new KeyValuePair<SwordRecordUsecase, IReadOnlyList<SwordMovementRecord>>(kv.Key,
-                Directory.EnumerateFiles(kv.Value, "*.json").Select(
-                    SerializationUtils.JsonFromFileCached<SwordMovementRecord>
-                ).ToArray()
+                kv.Value.Select(t => recordCache[t]).ToArray()
             )
         ).ToDictionary();
         foreach(var (usecase, arr) in recordsList) Debug.Log($"Loaded {arr.Count} records for section {usecase}", this);

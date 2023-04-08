@@ -8,10 +8,17 @@ using UnityEngine;
 public class SwordMovementRecorder : MonoBehaviour
 {
     [SerializeField] SwordMovement Target;
-    public KeyCode BeginRecordKey = KeyCode.F6, 
-                     EndRecordKey = KeyCode.F7,
-                       SaveAllKey = KeyCode.F1;
-    public string ResultPath = "data.json";
+    public KeyCode BeginRecordKey = KeyCode.F6,
+                     EndRecordKey = KeyCode.F7;
+
+    [SerializeField] public class ResultFilePathDescriptor
+    {
+        public string Path = "/data/", Extension = ".json";
+        public int NextIndex = 1;
+        public string GetNextPath() => $"{Path}{NextIndex++}{Extension}";
+    }
+    public ResultFilePathDescriptor ResultDestination;
+
     ISwordInput Input => Target.Input;
     Transform SwordWielder => Target.Joint.connectedBody.transform;
 
@@ -29,7 +36,6 @@ public class SwordMovementRecorder : MonoBehaviour
         Target.Modes = new ScriptSubmodulesContainer<KeyCode, SwordMovement.Submodule, ISwordMovement> { Default = recorderModule, Values = new Dictionary<KeyCode, SwordMovement.Submodule>() };
     }
 
-    public List<SwordMovementRecord> records { get; } = new List<SwordMovementRecord>();
     List<SwordMovementRecord.Frame> currentFrame = null;
     bool isRecording => currentFrame != null;
     double beginTime;
@@ -39,35 +45,31 @@ public class SwordMovementRecorder : MonoBehaviour
             startRecording();
         if (isRecording && Input.GetKeyDown(EndRecordKey))
             finishRecording();
-        if (Input.GetKeyDown(SaveAllKey))
-        {
-            finishRecording();
-            saveAll();
-        }
 
         void startRecording()
         {
             if (isRecording) return;
             currentFrame = new();
             beginTime = Time.timeAsDouble;
-            Debug.Log($"Started recording - current record count is {records.Count}", this);
         }
         void finishRecording()
         {
             if (!isRecording) return;
-            records.Add(new SwordMovementRecord { Loop = new SwordMovementRecord.Segment { Frames = currentFrame.ToArray() } });
+            var finishedRecord = new SwordMovementRecord { Loop = new SwordMovementRecord.Segment { Frames = currentFrame.ToArray() } };
             currentFrame = null;
-            Debug.Log($"Finished recording - current record count is {records.Count}, added record is {records[^1].Loop.Frames.Length} long", this);
+            Debug.Log($"Finished recording - new record is {finishedRecord.Loop.Frames.Length} long", this);
+            saveRecord(finishedRecord);
         }
-        void saveAll()
+        void saveRecord(SwordMovementRecord toSave)
         {
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(records, Newtonsoft.Json.Formatting.Indented);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(toSave, Newtonsoft.Json.Formatting.Indented);
 
-            var dir = Path.GetDirectoryName(ResultPath);
-            if(!string.IsNullOrWhiteSpace(dir)) Directory.CreateDirectory(Path.GetDirectoryName(ResultPath));
-            File.WriteAllText(ResultPath, json);
+            var path = ResultDestination.GetNextPath();
+            var dir = Path.GetDirectoryName(path);
+            if(!string.IsNullOrWhiteSpace(dir)) Directory.CreateDirectory(Path.GetDirectoryName(path));
+            File.WriteAllText(path, json);
 
-            Debug.Log($"Saved records to file '{ResultPath}'", this);
+            Debug.Log($"Saved record to file '{path}'", this);
         }
     }
 

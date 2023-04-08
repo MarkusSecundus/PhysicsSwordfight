@@ -8,7 +8,7 @@ public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
     public IDictionary<SwordRecordUsecase, IReadOnlyList<SwordMovementRecord>> Records { protected get; set; }
     public float PlaySpeed = 1f;
 
-    private SwordRecordUsecase _currentUsecase = SwordRecordUsecase.Idle;
+    private SwordRecordUsecase _currentUsecase = SwordRecordUsecase.Generic;
         public SwordRecordUsecase CurrentUsecase { get=>_currentUsecase; set {
             if (_currentUsecase == value) return;
             _currentUsecase = value;
@@ -36,7 +36,8 @@ public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
 
     private void StartPlaying()
     {
-        currentlyPlaying = rand.NextElement(Records[CurrentUsecase]);
+        if (Records[CurrentUsecase].IsEmpty()) currentlyPlaying = null;
+        else currentlyPlaying = rand.NextElement(Records[CurrentUsecase]);
         currentFrameIndex = -1;
     }
 
@@ -45,6 +46,7 @@ public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
     double deltaLeftower = 0f;
     private void PlayCurrentMovementSteps(double delta)
     {
+        if (currentlyPlaying == null) return;
         delta *= PlaySpeed;
         deltaLeftower += delta;
 
