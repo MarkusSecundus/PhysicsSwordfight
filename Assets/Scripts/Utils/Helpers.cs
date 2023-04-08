@@ -118,6 +118,14 @@ public static class GameObjectUtils
         return ret;
     }
 
+    public static GameObject FindTagInAncestors(this GameObject o, string tag)
+    {
+        for (; o != null; o = o?.transform?.parent?.gameObject)
+            if (o.CompareTag(tag)) 
+                return o;
+        return null;
+    }
+
     //IsChildOf is a terrible name for what it is actually checking
     public static bool IsDescendantOf(this Transform parent, Transform descendant) => descendant.IsChildOf(parent);
 

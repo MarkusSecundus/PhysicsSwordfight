@@ -19,6 +19,7 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
     [field: SerializeField] public ConfigurableJoint Joint { get; private set; }
     [field: SerializeField] public ISwordInput Input { get; private set; }
 
+    public Rigidbody SwordWielder => Joint.connectedBody;
 
     void Start()
     {
@@ -80,11 +81,11 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
 
     private void SetSwordRotation(Quaternion rotation) 
     {
-        jointRotationHelper.SetTargetRotation(Quaternion.Inverse(Joint.connectedBody.transform.rotation) * rotation);
+        jointRotationHelper.SetTargetRotation(Quaternion.Inverse(SwordWielder.transform.rotation) * rotation);
     }
     private void MoveAnchorPosition(Vector3 absolutePosition)
     {
-        var relative = this.Joint.connectedBody.transform.GlobalToLocal(absolutePosition);
+        var relative = SwordWielder.transform.GlobalToLocal(absolutePosition);
         connectedAnchorPositioner.Target = relative;
     }
     #endregion
@@ -104,6 +105,7 @@ public interface ISwordMovement
 {
     public SwordDescriptor Sword { get;  }
     public ISwordInput Input { get; }
+    public Rigidbody SwordWielder { get; }
 
     [System.Serializable]
     public struct MovementCommand

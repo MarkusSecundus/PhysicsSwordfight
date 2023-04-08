@@ -16,23 +16,6 @@ public class SwordsmanAI : MonoBehaviour
     SwordsmanMovement Swordsman => SwordsmanAssembly.Player;
     SwordMovement Sword => SwordsmanAssembly.Sword;
 
-    [System.Serializable] public class SwordConfig
-    {
-        [SerializeField] public SwordRecordUsecase Usecase = SwordRecordUsecase.Idle;
-        [SerializeField] public SerializableDictionary<SwordRecordUsecase, string> Records;
-    }
-
-    [System.Serializable]public struct TweaksList
-    {
-        public float SidewaysRotationMultiplier;
-        public float AgentSync;
-        public float MelleeReachMultiplier;
-        public AnimationCurve RotationAccuracyByDistance;
-        public static readonly TweaksList Default = new TweaksList { SidewaysRotationMultiplier = 1f, AgentSync = 0.9f , MelleeReachMultiplier = 1.1f};
-    }
-    public TweaksList Tweaks = TweaksList.Default;
-    public SwordConfig SwordControl = new SwordConfig();
-
     void Start()
     {
         SetupNavmeshAgent();
@@ -51,6 +34,17 @@ public class SwordsmanAI : MonoBehaviour
 
 
     #region Navigation
+
+    [System.Serializable] public struct TweaksList
+    {
+        public float SidewaysRotationMultiplier;
+        public float AgentSync;
+        public float MelleeReachMultiplier;
+        public AnimationCurve RotationAccuracyByDistance;
+        public static readonly TweaksList Default = new TweaksList { SidewaysRotationMultiplier = 1f, AgentSync = 0.9f, MelleeReachMultiplier = 1.1f };
+    }
+    public TweaksList Tweaks = TweaksList.Default;
+
     void SetupNavmeshAgent()
     {
         agent = GetComponentInChildren<NavMeshAgent>();
@@ -111,6 +105,18 @@ public class SwordsmanAI : MonoBehaviour
     #endregion
 
     #region Sword
+
+    [System.Serializable]
+    public class SwordConfig
+    {
+        [SerializeField] public SwordRecordUsecase Usecase = SwordRecordUsecase.Idle;
+        [SerializeField] public float PlaySpeed = 1f;
+        [SerializeField] public SerializableDictionary<SwordRecordUsecase, string> Records;
+    }
+
+    public SwordConfig SwordControl = new SwordConfig();
+
+
     void SetupSwordRecordPlayer()
     {
         var recordsList = SwordControl.Records.Values.Select(
@@ -122,7 +128,7 @@ public class SwordsmanAI : MonoBehaviour
         ).ToDictionary();
         foreach(var (usecase, arr) in recordsList) Debug.Log($"Loaded {arr.Count} records for section {usecase}", this);
         
-        recordPlayer = new SwordMovementMode_PlayRecord { Records = recordsList, SwordWielder = Swordsman.transform};
+        recordPlayer = new SwordMovementMode_PlayRecord { Records = recordsList};
         recordPlayer.Init(Sword);
 
         Sword.Modes = new ScriptSubmodulesContainer<KeyCode, SwordMovement.Submodule, ISwordMovement> { Default = recordPlayer };
@@ -131,6 +137,7 @@ public class SwordsmanAI : MonoBehaviour
     void SetSwordRecord()
     {
         recordPlayer.CurrentUsecase = SwordControl.Usecase;
+        recordPlayer.PlaySpeed = SwordControl.PlaySpeed;
     } 
     #endregion
 }

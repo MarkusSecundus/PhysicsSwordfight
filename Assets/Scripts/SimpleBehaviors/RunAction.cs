@@ -12,6 +12,8 @@ public class RunAction : MonoBehaviour
 
     public void Invoke() => ToRun.Invoke();
 
+    public void NestInto(RunAction parent) => parent.ToRun.AddListener(this.Invoke);
+
 #if UNITY_EDITOR
     [CustomEditor(typeof(RunAction))]
     public class Inspector : Editor

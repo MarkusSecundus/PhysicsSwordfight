@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
 {
     public IDictionary<SwordRecordUsecase, IReadOnlyList<SwordMovementRecord>> Records { protected get; set; }
-    public Transform SwordWielder { protected get; init; }
+    public float PlaySpeed = 1f;
 
     private SwordRecordUsecase _currentUsecase = SwordRecordUsecase.Idle;
         public SwordRecordUsecase CurrentUsecase { get=>_currentUsecase; set {
@@ -45,6 +45,7 @@ public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
     double deltaLeftower = 0f;
     private void PlayCurrentMovementSteps(double delta)
     {
+        delta *= PlaySpeed;
         deltaLeftower += delta;
 
         while (true)
@@ -61,7 +62,7 @@ public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
                 --currentFrameIndex;
                 break;
             }
-            Script.MoveSword(currentFrame.Value.ToCommand(SwordWielder));
+            Script.MoveSword(currentFrame.Value.ToCommand(Script.SwordWielder.transform));
             deltaLeftower -= currentFrame.DeltaTime;
         }
     }

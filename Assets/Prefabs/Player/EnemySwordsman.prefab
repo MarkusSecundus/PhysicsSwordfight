@@ -96,6 +96,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4845799088450682644}
+    - targetCorrespondingSourceObject: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2349734344079448317}
+    - targetCorrespondingSourceObject: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2996365520992299893}
     - targetCorrespondingSourceObject: {fileID: 8687631165635705314, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6592666131606512909}
@@ -198,6 +204,7 @@ MonoBehaviour:
       m_RotationOrder: 4
   SwordControl:
     Usecase: 0
+    PlaySpeed: 1
     Records:
       values:
       - key: 1
@@ -224,6 +231,49 @@ MonoBehaviour:
   RotationMax: {x: 0, y: 360, z: 0}
   PlaceOffsetMin: {x: 0, y: 0, z: 0}
   PlaceOffsetMax: {x: 0, y: 0, z: 0}
+--- !u!114 &2349734344079448317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4543054913315952623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ec34146c6eec2043b955479c90ffb58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ToInvoke:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &2996365520992299893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4543054913315952623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad08fc1c794f23f49a90127cea1c1aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Description: 
+  ToRun:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &6556055066981990781 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 164561265376294913, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
