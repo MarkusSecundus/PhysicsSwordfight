@@ -15,7 +15,7 @@ jobs:
           path: ./Library
           key: Library-PhysicsSwordfight-StandaloneWindows64
           restore-keys: |
-            Library-MyProjectName-
+            Library-PhysicsSwordfight-
             Library-
       - uses: game-ci/unity-builder@v2
         env:
@@ -24,10 +24,11 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneWindows64
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Build-Windows64
           path: build
+          
   build-linux64:
     runs-on: ubuntu-latest
     steps:
@@ -37,7 +38,7 @@ jobs:
           path: ./Library
           key: Library-PhysicsSwordfight-StandaloneLinux64
           restore-keys: |
-            Library-MyProjectName-
+            Library-PhysicsSwordfight-
             Library-
       - uses: game-ci/unity-builder@v2
         env:
@@ -46,31 +47,43 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneLinux64
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: Build-Linux64
           path: build
-  build-android:
+          
+  publish-all:
+    if: ${{ always() }}
+    needs: [build-windows64, build-linux64]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v2
+      - uses: actions/download-artifact@v3
         with:
-          path: ./Library
-          key: Library-PhysicsSwordfight-Android
-          restore-keys: |
-            Library-MyProjectName-
-            Library-
-      - uses: game-ci/unity-builder@v2
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          name: Build-Windows64
+          path: ./Windows64
+      - uses: actions/download-artifact@v3
         with:
-          targetPlatform: Android
-      - uses: actions/upload-artifact@v2
+          name: Build-Linux64
+          path: ./Linux64
+          
+      - name: Zip Windows64
+        uses: papeloto/action-zip@v1
         with:
-          name: Build-Android
-          path: build
-       
+          files: ./Windows64
+          dest: zips/Windows64.zip
+      - name: Zip Linux64
+        uses: papeloto/action-zip@v1
+        with:
+          files: ./Linux64
+          dest: zips/Linux64.zip
       
+      - name: Github Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "Game (Latest nightly)"
+          prerelease: false
+          files: |
+            zips/Windows64.zip
+            zips/Linux64.zip
+
