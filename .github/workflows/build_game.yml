@@ -18,7 +18,6 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneWindows64
-          unityVersion: 2022.2.14f1
       - uses: actions/upload-artifact@v2
         with:
           name: Build
