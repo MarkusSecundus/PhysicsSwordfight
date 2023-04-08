@@ -2,7 +2,7 @@
 
 Work in progress of my bachelor's thesis  
 
-Everything, including all 2D, 3D, sound etc. assets is opensource under MIT license - Only exception is some 3rd party code in [Assets/ExternalAssets](https://github.com/MarkusSecundus/PhysicsSwordfight/tree/master/Assets/ExternalAssets) where the licencing terms are explicitly stated.   
+Everything, including all 2D, 3D and music assets is opensource under MIT license - Only exception is some 3rd party code in [Assets/ExternalAssets](https://github.com/MarkusSecundus/PhysicsSwordfight/tree/master/Assets/ExternalAssets) where the licencing terms are explicitly stated.   
 
 To open, use [Unity 2022.2.13](https://unity.com/releases/editor/archive)  
   
