@@ -4059,10 +4059,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 567612465991787014}
     - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
-      propertyPath: managedReferences[1235461945467076618].InputIntersectable
-      value: 
-      objectReference: {fileID: 7627317987970479869}
-    - target: {fileID: 5692771888074364034, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: managedReferences[1235461945467076621].SwordDirectionHint
       value: 
       objectReference: {fileID: 1522047124718315795}
