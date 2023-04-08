@@ -2573,6 +2573,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7677878546112751462}
   - component: {fileID: 9193873934272247753}
+  - component: {fileID: 8713638452967892364}
   m_Layer: 13
   m_Name: SimpleCollider
   m_TagString: Untagged
@@ -2618,6 +2619,22 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!208 &8713638452967892364
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6769643503943091855}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 1, y: 1, z: 1}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &6869248656472093076
 GameObject:
   m_ObjectHideFlags: 0
@@ -2913,7 +2930,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7475771558839725715}
-  m_LocalRotation: {x: -0, y: -0.51285815, z: -0, w: 0.8584734}
+  m_LocalRotation: {x: 0, y: -0.51285964, z: 0, w: 0.85847247}
   m_LocalPosition: {x: 29.257719, y: 1.319, z: 25.624912}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2921,7 +2938,7 @@ Transform:
   - {fileID: 3189567614048849711}
   - {fileID: 3971623083861692181}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -61.709, z: 0}
 --- !u!114 &164561265376294913
 MonoBehaviour:
@@ -2939,6 +2956,8 @@ MonoBehaviour:
   Sword: {fileID: 3971623083861692183}
   Camera: {fileID: 0}
   DamageReport: {fileID: 0}
+  DeathInstructions:
+    SwordDestroyDelay: 5
 --- !u!114 &4640498443265189015
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20997,27 +20997,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.52, y: 3.73, z: 0.3}
   m_Center: {x: 0, y: 1.87, z: 0}
---- !u!1 &1049901428 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6769643503943091855, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+--- !u!208 &1049901431 stripped
+NavMeshObstacle:
+  m_CorrespondingSourceObject: {fileID: 8713638452967892364, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
   m_PrefabInstance: {fileID: 4579615370407642763}
   m_PrefabAsset: {fileID: 0}
---- !u!208 &1049901431
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1049901428}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 1, y: 1, z: 1}
-  m_MoveThreshold: 0.1
-  m_Carve: 0
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!1 &1054644238
 GameObject:
   m_ObjectHideFlags: 0
@@ -48121,17 +48105,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Prototype
       objectReference: {fileID: 0}
-    - target: {fileID: 4543054913315952623, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4698584832093357472, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: m_RootOrder
       value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 4698584832093357472, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.95
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4698584832093357472, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -48139,7 +48119,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4698584832093357472, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.84
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4698584832093357472, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: m_LocalRotation.w
@@ -48173,47 +48153,8 @@ PrefabInstance:
       propertyPath: Target
       value: 
       objectReference: {fileID: 1049901431}
-    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: SwordControl.Usecase
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: Tweaks.MelleeReachMultiplier
-      value: 1.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: SwordControl.Records.values.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: SwordControl.Records.values.Array.data[0].key
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: SwordControl.Records.values.Array.data[2].key
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: SwordControl.Records.values.Array.data[0].value
-      value: Assets/SwordRecords/Idle
-      objectReference: {fileID: 0}
-    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: SwordControl.Records.values.Array.data[1].value
-      value: Assets/SwordRecords/Slash
-      objectReference: {fileID: 0}
-    - target: {fileID: 7423523000244946951, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: SwordControl.Records.values.Array.data[2].value
-      value: Assets/SwordRecords/Block
-      objectReference: {fileID: 0}
-    - target: {fileID: 7612990731850032612, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
-      propertyPath: Floats.values.Array.data[0].value
-      value: 0.2
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2332436629987499248, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -48278,10 +48219,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3021719034865037462, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3536922733085809816, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: Components.values.Array.data[0].value
       value: 
@@ -48290,10 +48227,6 @@ PrefabInstance:
       propertyPath: inputCamera
       value: 
       objectReference: {fileID: 2116216860}
-    - target: {fileID: 5788189351282036927, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
-      propertyPath: PopupDuration.Default
-      value: 1.3
-      objectReference: {fileID: 0}
     - target: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_Name
       value: Player
@@ -48301,10 +48234,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6769643503943091855, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1049901431}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
 --- !u!1001 &7242234420301652757
 PrefabInstance:

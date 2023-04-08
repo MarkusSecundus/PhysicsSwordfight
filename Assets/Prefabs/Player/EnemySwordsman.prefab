@@ -12,13 +12,17 @@ PrefabInstance:
       propertyPath: DamageReport
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 164561265376294913, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: DeathInstructions.SwordDestroyDelay
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_RootOrder
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.95
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.y
@@ -26,7 +30,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.84
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalRotation.w
@@ -56,6 +60,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3536922733085809816, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: Floats.values.Array.data[0].value
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 3836743927791828073, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: <MaxHP>k__BackingField
       value: 150
@@ -68,9 +76,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8713638452967892364, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4640498443265189015, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
     - {fileID: 3021719034865037462, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+    - {fileID: 8713638452967892364, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -149,7 +162,7 @@ MonoBehaviour:
   Tweaks:
     SidewaysRotationMultiplier: 1
     AgentSync: 0.9
-    MelleeReachMultiplier: 1.3
+    MelleeReachMultiplier: 1.2
     RotationAccuracyByDistance:
       serializedVersion: 2
       m_Curve:
@@ -183,6 +196,16 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+  SwordControl:
+    Usecase: 0
+    Records:
+      values:
+      - key: 1
+        value: Assets/SwordRecords/Idle
+      - key: 0
+        value: Assets/SwordRecords/Slash
+      - key: 2
+        value: Assets/SwordRecords/Block
 --- !u!114 &4845799088450682644
 MonoBehaviour:
   m_ObjectHideFlags: 0

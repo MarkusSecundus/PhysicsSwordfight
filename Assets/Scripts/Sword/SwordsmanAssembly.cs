@@ -9,6 +9,12 @@ public class SwordsmanAssembly : MonoBehaviour
     public CameraFollowPoint Camera;
     public DamageHUD DamageReport;
 
+    [System.Serializable] public struct InstructionsOnDeath
+    {
+        public float SwordDestroyDelay;
+    }
+    public InstructionsOnDeath DeathInstructions;
+
     void Start()
     {
         if (Camera.IsNotNil() && Player.CameraToUse.IsNotNil())
@@ -23,6 +29,7 @@ public class SwordsmanAssembly : MonoBehaviour
 
     public void DestroyTheSwordsman()
     {
+        if (DeathInstructions.SwordDestroyDelay.IsNormalNumber()) Destroy(Sword.gameObject, DeathInstructions.SwordDestroyDelay);
         Sword.DropTheSword();
         Destroy(gameObject);
     }
