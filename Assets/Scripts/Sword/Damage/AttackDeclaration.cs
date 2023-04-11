@@ -20,4 +20,7 @@ public struct AttackDeclaration
 public static class AttackDeclarationExtensions
 {
     public static AttackDeclaration.ImpactPointData AsImpactPointData(this ContactPoint self) => new AttackDeclaration.ImpactPointData { Point = self.point, Normal = self.normal };
+
+    public static AttackDeclaration With(this AttackDeclaration self, float? damage = null, Object attackIdentifier = null, AttackDeclaration.ImpactPointData? impactPoint = null) =>
+        new AttackDeclaration { Damage = damage ?? self.Damage, AttackerIdentifier = attackIdentifier ?? self.AttackerIdentifier, ImpactPoint = impactPoint ?? self.ImpactPoint };
 }

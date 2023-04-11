@@ -18223,6 +18223,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.75
       objectReference: {fileID: 0}
+    - target: {fileID: 2808337140929654815, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      propertyPath: m_SlerpDrive.positionSpring
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 2808337142474496025, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: m_RootOrder
       value: -1
@@ -18283,17 +18287,23 @@ PrefabInstance:
       propertyPath: <MaxHP>k__BackingField
       value: 3.402823e+38
       objectReference: {fileID: 0}
+    - target: {fileID: 7636414052227803292, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      propertyPath: ActivationRadius
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 7636414052227803300, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.7269999
+      objectReference: {fileID: 0}
+    - target: {fileID: 7636414052227803301, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      propertyPath: m_ConnectedMassScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8055712145311810608, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: DamageMultiplier
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 8055712145311810608, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
-    - {fileID: 7636414052227803292, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -48427,6 +48437,10 @@ PrefabInstance:
       propertyPath: Components.values.Array.data[0].value
       value: 
       objectReference: {fileID: 480126527}
+    - target: {fileID: 3971623083861692180, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: m_SlerpDrive.positionSpring
+      value: 120
+      objectReference: {fileID: 0}
     - target: {fileID: 3971623083861692183, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: Modes.values.Array.size
       value: 1

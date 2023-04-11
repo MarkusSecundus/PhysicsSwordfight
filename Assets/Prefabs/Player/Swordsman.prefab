@@ -996,6 +996,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6442520220100030463}
+  - component: {fileID: 5985864196622773237}
   m_Layer: 12
   m_Name: UpperArm.L
   m_TagString: Untagged
@@ -1020,6 +1021,36 @@ Transform:
   m_Father: {fileID: 2102688771951070819}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5985864196622773237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3024533862879545404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <BaseDamageable>k__BackingField: {fileID: 3836743927791828073}
+  OnAttacked:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8535913291208804296}
+        m_TargetAssemblyTypeName: DamageParticleEmitHelper, Assembly-CSharp
+        m_MethodName: EmitDamage
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  MinDamage: 2
+  DamageMultiplier: 0.4
 --- !u!1 &3067797100086737654
 GameObject:
   m_ObjectHideFlags: 0
@@ -1458,6 +1489,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4557563488556544557}
+  - component: {fileID: 6658764240638760977}
   m_Layer: 12
   m_Name: UpperArm.R
   m_TagString: Untagged
@@ -1482,6 +1514,36 @@ Transform:
   m_Father: {fileID: 5992450100391410472}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6658764240638760977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3577694496845699588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <BaseDamageable>k__BackingField: {fileID: 3836743927791828073}
+  OnAttacked:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 8535913291208804296}
+        m_TargetAssemblyTypeName: DamageParticleEmitHelper, Assembly-CSharp
+        m_MethodName: EmitDamage
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  MinDamage: 2
+  DamageMultiplier: 0.4
 --- !u!1 &3713245710903951694
 GameObject:
   m_ObjectHideFlags: 0
@@ -2988,6 +3050,10 @@ MonoBehaviour:
   Target: {fileID: 0}
   BeginRecordKey: 287
   EndRecordKey: 288
+  ResultDestination:
+    Path: /data/
+    Extension: .json
+    NextIndex: 1
 --- !u!114 &3536922733085809816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3785,6 +3851,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   MinDamage: 2
+  DamageMultiplier: 1
 --- !u!114 &362989103554143435
 MonoBehaviour:
   m_ObjectHideFlags: 0
