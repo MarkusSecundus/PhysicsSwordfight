@@ -14,6 +14,12 @@
 % \openright zařídí, aby následující text začínal na pravé straně knihy
 \let\openright=\clearpage
 
+\makeatletter
+\newcommand\iraggedright{%
+  \let\\\@centercr\@rightskip\@flushglue \rightskip\@rightskip
+  \leftskip\z@skip}
+\makeatother
+
 %% Pokud tiskneme oboustranně:
 % \documentclass[12pt,a4paper,twoside,openright]{report}
 % \setlength\textwidth{145mm}
@@ -59,8 +65,9 @@
 \usepackage{paralist}       % lepší enumerate a itemize
 \usepackage{xcolor}         % barevná sazba
 
+\usepackage[none]{hyphenat}
+\iraggedright
 \usepackage{acro}	% seznam zkratek
-
 \include{seznamzkratek}
 
 \addbibresource{literatura.bib}
