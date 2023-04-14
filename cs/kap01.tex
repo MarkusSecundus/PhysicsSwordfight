@@ -83,7 +83,7 @@ Nyní, když máme rámcovou představu, jak boj s chladnou zbraní vypadá v re
 
 \subsection{Obecný přehled}
 
-Účinkujícími ve hře jsou \textbf{herní postavy}. Ty mohou být ovládané buď hráčem (takovou nazveme \acs{PC}\footnote{\Acl{PC}}), nebo počítačovým algoritmem (tu označíme jako \acs{NPC}\footnote{\Acl{NPC}}), a lze je popsat nějakým jejich \textbf{vnitřním stavem}. Nyní si představíme základní veličiny, které jsou typickou součástí vnitřního stavu postavy ve všech akčních hrách bez ohledu na to, zda jde o hru zaměřenou na boj se střelnou zbraní, chladnou zbraní, či boj jakýkoliv jiný:
+Účinkujícími ve hře jsou \textbf{herní postavy}. Ty mohou být ovládané buď hráčem (takovou nazveme \textbf{\acs{PC}}\footnote{\Acl{PC}}), nebo počítačovým algoritmem (tu označíme jako \textbf{\acs{NPC}}\footnote{\Acl{NPC}}), a lze je popsat nějakým jejich \textbf{vnitřním stavem}. Nyní si představíme základní veličiny, které jsou typickou součástí vnitřního stavu postavy ve všech akčních hrách bez ohledu na to, zda jde o hru zaměřenou na boj se střelnou zbraní, chladnou zbraní, či boj jakýkoliv jiný:
 
 \begin{itemize}
     \item \textbf{\ac{HP}}... Číslo udávající zdravotní stav a životaschopnost postavy. \textbf{Pokud klesne na nulu, postava umírá.} Hráči jsou jeho HP obvykle v reálném čase explicitně komunikovány skrze ukazatel na obrazovce. V průběhu boje typicky nejsou doplňovány\footnote{Popřípadě prostředky, skrze které je lze doplnit, jsou vzácné.} a postava musí vystačit s tím, co má - jde tedy o zdroj vybízející k dlouhodobějšímu plánování.
@@ -99,15 +99,15 @@ Implikace, které takto jednoduché rozhraní přináší \textbf{pro hráče}, 
 \begin{itemize}
     \item \textbf{Intuitivnost} - Každý hráč, který spustí hru a zkusí náhodně mačkat tlačítka, rychle ovládání pochopí a začne být ve hře použitelný - žádná nutnost procházet úmorným tutoriálem.
     \item \textbf{Uniformní rozhraní pro všechny zbraně} - Tímto způsobem lze ovládat libovolnou zbraň, ať už jde o dvoumetrovou halapartnu či pěsti hráčovy postavy. Hráč tedy není přehlcen množstvím jednoúčelových herních systémů a z výhod, které získá svým zdokonalováním v použití tohoto systému, může těžit po celou hru.
-    \item \textbf{Nespecifičnost rozhraní} - Rozhraní hráči neumožňuje těžit ze silných stránek žádné konkrétní zbraně. Hra mu skrze bojový systém není schopna poskytnout vzdělávací lekci ohledně vlastností zbraně v reálném světě.
-    \item \textbf{Limitovaná předvídatelnost} - Vzhledem k tomu, že akci, která bude vykonána, nevybírá hráč, ale jeho herní postava, vnáší se tím do hry prvek náhody, který může hru emocionálně okořenit.\footnote{Pokud však výběr akce probíhá nějakým deterministickým způsobem, hráč v něm brzy intuitivně vypozoruje určité vzory a naučí se akce své postavy do jisté míry předvídat a kalkulovat s nimi při plánování svého postupu - tím může bojový systém získat na hloubce.}
+    \item \textbf{Nízká specifičnost} - Rozhraní hráči neumožňuje těžit ze silných stránek žádné konkrétní zbraně. Hra mu skrze bojový systém není schopna poskytnout vzdělávací lekci ohledně vlastností zbraně v reálném světě.
+    \item \textbf{Limitovaná předvídatelnost} - Vzhledem k tomu, že akci, která bude vykonána, nevybírá hráč, ale jeho herní postava, vnáší se tím do hry prvek náhody, který má potenciál hru emocionálně okořenit.\footnote{Pokud však výběr akce probíhá nějakým deterministickým způsobem, hráč v něm brzy intuitivně vypozoruje určité vzory a naučí se akce své postavy do jisté míry předvídat a kalkulovat s nimi při plánování svého postupu - tím může bojový systém získat na hloubce.}
 \end{itemize}
 
 A co důsledky, které tento přístup přináší z pohledu \textbf{tvůrce hry}?:
 \begin{itemize}
     \item \textbf{Předvídatelnost} - Tvůrce hry má přesnou kontrolu nad tím, jaké akce může jakákoliv postava potenciálně provádět. Tím se zmenšuje prostor pro výskyt neošetřených okrajových případů.
-    \item \textbf{Uniformní rozhraní pro všechny zbraně} - 
-    \item \textbf{Nespecifičnost rozhraní} - Zbraň je tím zpravidla smrštěna do listu statů\footnote{Povrchní veličiny typu dosah, poškození, rychlost úderu}, které ji popisují.
+    \item \textbf{Uniformní rozhraní pro všechny zbraně} - Herní logika, která umí pracovat s jednou zbraní, umí pracovat s každou zbraní. To může dopomoci k čistému kódu a značně se tím snižuje námaha s přidáváním dalších zbraní (mohou být i procedurálně generované za běhu).
+    \item \textbf{Nízká specifičnost} - Není možné uspokojivě ztvárnit veškerá zajímavá specifika konkrétní zbraně. Všechny zbraně se musejí chovat do jisté míry podobně. Často je tak zbraň smrštěna do pouhé tabulky statů\footnote{Povrchní veličiny typu dosah, ostrost, rychlost úderu, typ úderu (prvek výčtového typu - bodný|sečný|tupý|magický|...), které zbraň formálně popisují}.
 \end{itemize}
 
 Představili jsme si.. Jak vidno, je obtížné dosáhnout, aby takto jedoduchý bojový systém posloužil sám o sobě jako nosná herní mechanika. Chceme-li mu dodat hloubku... Jak mu lze dodat hloubku si nyní názorně předvedeme na příkladě komerčně úspěšné hry z nedávných let.
