@@ -105,8 +105,8 @@ Implikace, které takto jednoduché rozhraní přináší \textbf{pro hráče}, 
 
 A co důsledky, které tento přístup přináší z pohledu \textbf{tvůrce hry}?:
 \begin{itemize}
-    \item \textbf{Předvídatelnost} - Tvůrce hry má přesnou kontrolu nad tím, jaké akce může jakákoliv postava potenciálně provádět. Tím se zmenšuje prostor pro výskyt neošetřených okrajových případů.
-    \item \textbf{Uniformní rozhraní pro všechny zbraně} - Herní logika, která umí pracovat s jednou zbraní, umí pracovat s každou zbraní. To může dopomoci k celkově čistému a kvalitnímu kódu a značně se tím snižuje námaha s přidáváním dalších zbraní (mohou být i procedurálně generované za běhu).
+    \item \textbf{Předvídatelnost} - Tvůrce hry má přesnou kontrolu nad tím, jaké akce může jakákoliv postava potenciálně vykonat. Tím se zmenšuje prostor pro výskyt neošetřených okrajových případů.
+    \item \textbf{Uniformní rozhraní pro všechny zbraně} - Herní logika, která umí pracovat s jednou zbraní, umí pracovat s každou zbraní. To může dopomoci k celkově čistému a kvalitnímu kódu a značně se tím snižuje námaha s přidáváním dalších zbraní (či jejich procedurální generací za běhu).
     \item \textbf{Nízká specifičnost} - Není možné uspokojivě ztvárnit veškerá zajímavá specifika konkrétní zbraně. Všechny zbraně se musejí chovat do jisté míry podobně. Často je tak zbraň smrštěna do pouhé tabulky statů\footnote{Povrchní veličiny typu dosah, rychlost úderu, míra způsobeného zranění, typ zranění (prvek výčtového typu - bodné|sečné|tupé|magické|apod.), které zbraň formálně popisují}.
 \end{itemize}
 
@@ -117,6 +117,11 @@ Hloubka bývá tomuto systému zpravidla dodávána výběrem mezi několika rů
 Toto si nyní názorně předvedeme na příkladě komerčně úspěšné hry z nedávných let.
 
 \subsection{Zaklínač 3 - vzorový příklad}
+Zaklínač 3 \cite{Wiedzmin3} je akční \acs{RPG} hra, která byla vydána r. 2015 polským studiem CD Projekt. Mezi její hlavní důrazy patří otevřený fantasy svět, propracovaný nelineární příběh\footnote{Hra vychází z knižní série Zaklínač Andrzeje Sapkowského \cite{SapkowskiZaklinac}} a v neposlední řadě také dynamický bojový systém.
+
+Hráč se zde ujímá role Geralta z Rivie - zaklínače, profesionálního lovce monster. Ten je kromě svých dvou mečů\footnote{stříbrného pro boj s nestvůrami a železného proti lidem} vybaven flexibilními možnostmi pohybu, jednoduchými kouzly (tzv. zaklínačská znamení) a širokou škálou ručně vařených lektvarů. Na své cestě bojuje s lidmi, upíry, bazilišky i nepředstavitelnými monstry z nočních můr
+
+
 
 \subsection{Chladná zbraň jako doplňkový prvek}
 
