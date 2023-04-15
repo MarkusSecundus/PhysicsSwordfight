@@ -147,7 +147,7 @@ Mezi možné příčiny úspěchu hry můžeme zařadit také pozorování, že 
 
 \subsection{Chladná zbraň jako doplňkový prvek}
 
-Chladnou zbraň najdeme také v mnoha hrách, ve kterých není stěžejním prvkem. Například ve většině her žánru \textbf{\acs{FPS}} najdeme kromě širokého výběru palných zbraní i nějaký nůž jako poslední zálohu když dojde munice, v žánru \textbf{stealth} často vidíme chladnou zbraň jako prostředek k tiché likvidaci nepřátel a takto bychom mohli pokračovat. Mnohdy taková zbraň odpovídá popisu z 1.2.1 - cílem není, aby chladná zbraň sama o sobě byla zajímavou mechanikou, naopak \textbf{tvoří pouze jeden dílek} ve skládačce herního systému a pro hráče musí být jednoduše uchopitelná. 
+Chladnou zbraň najdeme také v mnoha hrách, ve kterých není stěžejním prvkem. Například ve většině her žánru \textbf{\acs{FPS}} najdeme kromě širokého výběru palných zbraní i nějaký nůž jako poslední zálohu když dojde munice, v žánru \textbf{stealth} často vidíme chladnou zbraň jako prostředek k tiché likvidaci nepřátel a takto bychom mohli pokračovat. Mnohdy taková zbraň odpovídá popisu z 1.2.1 - cílem není, aby chladná zbraň sama o sobě byla zajímavou mechanikou, naopak \textbf{tvoří pouze jeden dílek} ve skládačce herního systému a pro hráče musí především být jednoduše uchopitelná. 
 
 Přesto najdeme mnoho takových zbraní, které se staly \textbf{ikonickým symbolem} své hry - zmínit můžeme například hru DOOM \cite{DOOM1993} a motorovou pilu, či páčidlo ze série Half-Life \cite{HalfLife}.
 
@@ -156,33 +156,37 @@ Přesto najdeme mnoho takových zbraní, které se staly \textbf{ikonickým symb
 
 Nyní víme, jakým způsobem je typicky chladná zbraň v akčních hrách ztvárňována, známe pozitiva, která tato cesta přináší, a rovněž některé triky, jak jejím prostřednictvím dosáhnout poutavého bojového systému. Co nás ale čeká, kdybychom chtěli sejít z vyšlapané cesty a nabídnout hráči nad jeho zbraní větší míru kontroly?
 
-Neprve se zamysleme, proč by hráč o větší kontrolu mohl mít zájem:
+\subsection{Benefity a výzvy}
+
+Neprve se zamysleme, \textbf{proč by hráč o větší kontrolu mohl mít zájem}:
 \begin{itemize}
     \item \textbf{Je to poučné} - Jedním z hlavních cílů videoher celkově je zprostředkování zážitku, který je pro hráče z různých důvodů nedosažitelný v reálném světě. Skrze hru, která mu zprostředkuje přímou kontrolu nad mečem, může hráč získat větší pochopení k problematice historického vedení boje.
     \item \textbf{Šerm ho baví v reálném světě} - Naopak, hráč může být aktivním šermířem, avšak chce si zážitek z boje užít ve zjednodušené podobě i v pohodlí domova.
     \item \textbf{Nemá rád když ho hra omezuje} - Nemalá skupina hráčů si ráda hledá vlastní cestu hrou a vyžaduje od hry plnou svobodu v tom, co jim je umožněno dělat. 
-    \item \textbf{Chce zkusit něco nového} - Mnoho hráčů se již zkrátka nudí z donekonečna omýlaného klišé, jakým se boj s chladnou zbraní stal - líbí se jim téma, ale zároveň ho chtějí zkusit pojaté neotřelým způsobem.
+    \item \textbf{Chce zkusit něco nového} - Mnoho hráčů se již zkrátka nudí z donekonečna omýlaného klišé, jakým se v jejich očích boj s chladnou zbraní stal - líbí se jim téma, ale zároveň ho chtějí zkusit pojaté neotřelým způsobem.
 \end{itemize}
 
-Dále, jaké benefity by takový přístup mohl přinést tvůrci hry:
+Dále, jaké benefity by takový přístup mohl přinést \textbf{tvůrci hry}:
 \begin{itemize}
     \item \textbf{Emergentní gameplay} - Tvůrci hry stačí, aby zprovoznil robustní systém, který hráči umožní obecný pohyb meče. Najít zajímavou metodiku jak systém použít, je již úkolem hráčské komunity. Takto může dojít k živelnému objevení mechanik, které tvůrce hry nikdy ani neplánoval, čímž hra může být značně obohacena.  
     \item \textbf{Nástroj interakce s okolním prostředím} - Pohybem meče v 3D prostoru se dá zprostředkovat široká škála interakcí s okolním prostředím, které by jinak musely být implementovány odděleně (zmíníme např. mačkání tlačítek či páčení víka truhlice). Také se tím otevírá cesta pro zcela nové interakce, které se s použitím meče jeví přirozené, bez něj by však bylo těžké najít cestu, jak je do hry zakomponovat (např. odrážení střel, srážení hledí protivníkovy přilby, odpalování předmětů na protivníka apod) .   
 \end{itemize}
 
-Vidíme, že motivace k umožnění větší kontroly je silně nezanedbatelná. Očividně tedy takovým tendencím musí stát v cestě výrazné překážky vzhledem k tomu, že víme, že se jim dosud nepodařilo ovládnout herní mainstream.
+Vidíme, že motivace k umožnění větší kontroly je silně nezanedbatelná. Očividně tedy takovým pokusům musí stát v cestě výrazné překážky vzhledem k tomu, že víme, že se jim dosud nepodařilo ovládnout herní mainstream.
 
+\textbf{Jaké očividné problémy je tedy třeba vyřešit?}
+\bigbreak
+Prvním je \textbf{ovládání}. Meč je obecný objekt v 3D prostoru, má tři stupně volnosti pro polohu a další tři pro rotaci. Nemluvě o dalších vlastnostech - např. jak pevně ho šermíř drží. Pro žádnou z těchto veličin se nenabízí očividný způsob, jak ji zanedbat či odvozodit z těch ostatních. Abychom mohli mečem sekat, bodat a blokovat údery, potřebujeme pohybovat rukojetí a natáčet čepel, obojí po všech třech osách. Rotace meče kolem jeho středové osy by se zdála jako vhodný kandidát k implicitnímu odvozování, avšak např. k odpalování projektilů je velmi vhodné moci zajistit, že do nich udeříme plohou stranou meče, místo abychom je rozsekli ostrou hranou čepele.
 
-
-\clearpage
-
-(Problémy co je při tom potřeba vyřešit)
-- narativní disonance (pc má být zkušený šermíř)
-- hratelnost (telegrafování nepřátelských úderů apod.)
-- podchycení edge casů
-- (hráči jsou zvyklí na click->action z FPS)?
-- kompromisní ovládání s myší+klávesnicí/ovladačem
-
+Oproti tomu \textbf{počítačové periferie}, které se běžně používají jako zdroj hráčského vstupu - tedy myš a klávesnice, popřípadě ovladače u herní konzole - poskytují informaci nanejvýše dvourozměrnou (horizontální a vertikální osa). Neexistuje tedy přímočarý a intuitivní způsob, jak na ně pohyb meče namapovat - je nutné učinit kompromis a nějakým způsobem volnost pohybu meče omezit. Alternativní metody ovládání, které tento problém nemají, existují, a stručně se na ně podíváme později v této kapitole, jejich rozšířenost mezi hráči však není taková, aby bylo rozumné spoléhat, že jimi naše cílová skupina disponuje.
+\bigbreak
+Pokud se nám podaří problém ovládání uspokojivě vyřešit, narazíme na další v oblasti \textbf{hratelnosti}. Důležitou součástí dynamiky boje s chladnou zbraní je předvídání protivníkových úderů a reagování na ně ještě dříve, než se stanou. V reálném světě je šermíř schopen pozorovat drobné pohyby svalů a očí protivníka, které v tomto ohledu mnohé napoví. V počítačové hře samozřejmě je hráčova schopnost vnímat takovéto detaily velmi omezená. Tento problém je ve hrách typicky řešen tak, že animace úderů zahrnují jako počáteční fázi výrazný nápřah. Jak však zajistíme takovéto výrazné telegrafování útoků, pokud má nepřítel nad mečem jemnou kontrolu a může z principu věci dělat co si jen zachce? Chceme vůbec ve hře mít výrazné telegrafování vzhledem k tomu, že neodpovídá realitě? Rozlousknutí tohoto problému si vyžaduje kompromisy.
+\bigbreak
+V neposlední řadě, plná kontrola nad mečem nemusí vhodně ladit s \textbf{narativní} složkou hry. V mnoha akčních hrách prezentuje příběh hráčovu postavu jako zkušeného šermíře, ne-li rovnou virtuosa meče, jakému se v herním světě vyrovná jen hrstka dalších. Problémem však je, že většinový hráč srovnatelně zkušeným šermířem s největší pravděpodobností není. Je-li šermířská dovednost postavy fakticky přímo úměrná hráčově dovednosti, může tím tedy docházet k narativní disonanci. Zahrnutím takového bojového systému se designérům, kteří mají narativ na starosti, citelně komplikuje práce. 
+\bigbreak
+Finálně, pokud jsme všechny tyto problémy vyřešili, čeká nás implementace systému. Hráči jsme nabídli v podstatě neomezené možnosti, nabízí se tedy otázka, jakým způsobem se hodláme ujistit, že možnosti skutečně neomezené jsou a nevyskytly se nějaké \textbf{neočekávané okrajové případy}, které nebyly ošetřeny a povedou k nedefinovanému chování? Jednou z cest je přeci jen kontrolu nad mečem omezit a smrsknout ji na stále velkou, avšak \textbf{konečnou množinu stavů}, které jsou tvůrci schopni projít jednu po druhé a ujistit se, že každý funguje, jak zamýšleli. Jedinou další alternativou se zdá být \textbf{plně realistická fyzikální simulace meče} - problémům, které tato cesta přináší, je věnována převážná část této práce.  
+\bigbreak
+Vidíme, že poskytnout hráči přímou kontrolu nad mečem, je nevděčná práce vyžadující mnoho kompromisů. V historii najdeme pouze několik her, které se pokusily s ním popasovat, každá svým unikátním způsobem. Na ty se nyní podíváme blíže.
 
 \subsection{Die by the Sword}
 
