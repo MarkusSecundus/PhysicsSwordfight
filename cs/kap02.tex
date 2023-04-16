@@ -19,6 +19,8 @@
 - (vs UnityEvent)
 
 (game loop)
+- zpráva Update, deltaTime
+- skripty běží všechny na main threadu
 
 (scéna)
 
@@ -29,20 +31,22 @@
 (vlastní API postavené nad backendem nVidia PhysX)
 - letmo zmínit 2D Physics, co jsou úplně odděleně a za backend maj Box2D 
 - ale neexposuje z něj všechnu funkcionalitu
+- FixedUpdate
 - běží ve vlastním vlákně (/na GPU), ale API to od uživatele víceméně odstiňuje
 - vede si vlastní reprezentaci celé scény, při počítání vychází jenom z ní, před a po každém kroku se provede synchronizace s herním světem (updatnou transformy apod.)
 
 (Rigidbody)
 - non-kinematic VS kinematic
 - properties (mass, center-of-mass, inertia-tensor, (angular) drag, axis-lock, iteration count,...)
-- ?? pozice objektu (používá globální souřadnice), rb.transfrm.position =.. VS rb.position =.. VS rb.MovePosition(..)
+- jak se chová vůči transform-hierarchii
+- pozice objektu (používá globální souřadnice); rb.transfrm.position =.. VS rb.position =.. VS rb.MovePosition(..)
 
 (Colliders)
 - zmínit že to je nejvíc základní a nosná funkcionalita physics systému, kvůli který ho spousta her includuje i když nepoužívají žádný non-kinematic rigidbodies a tak.  
-- primitivní tvary, jejich skládání, nefunkčnost maticové deformace
-- statické vs dynamické collidery (úplně samostatné / kinematic / non-kinematic)
-- NEodpovídá(!) přesně tvaru meshe
-- mesh collidery - omezení (256 vertices max, statické) a situace kdy stojí za to je používat (statický terén)
+- primitivní tvary, jejich skládání, nefunkčnost obecné maticové deformace (vždy zachovává kvádrovost, kulovost, kapsulovost)
+- statické vs dynamické collidery (úplně samostatné / kinematic / non-kinematic) - co s čím koliduje a jak se chovaj když se pohybujou (pohyblivé collidery by měly být na nějakém, klidně kinematickém rigidbody)
+- NEodpovídá(!) přesně tvaru meshe a v tom je pointa, ale když se umístěj šikovně, nijak to nekazí hráčský zážitek
+- (velmi stručně) mesh collidery - omezení (256 vertices max, musí být statické) a situace kdy stojí za to je používat (statický terén)
 - trigger collidery
 - auto počítání center-of-mass a intertia tensor podle colliderů
 
@@ -50,7 +54,7 @@
 - aproximace pro tření povrchů apod.
 
 (Joints)
-- co je constraint solver a jaký používá unity
+- (velmi stručně) co je constraint solver a jaký používá Unity
 - velmi stručný výčet jmen jointů a že všechny jsou to speciální případ Configurable Jointu (neboli D6 jointu jak ho zná PhysX)
 - představení Configurable Jointu
     - anchor, connectedAnchor

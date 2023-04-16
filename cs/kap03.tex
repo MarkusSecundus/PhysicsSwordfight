@@ -1,16 +1,50 @@
 \chapter{Návrh}
 
-\subsection{Jaké jsme si dali cíle}
+\subsection{Stanovení cíle}
 
 (neodsžitelným ideálem, ke kterému se snažíme směřovat, je dokonalé zachycení zážitku, co šerm poskytuje v reálném světě)
 
 (meč by se měl chovat fyzikálně věrně)
 
+(chceme obecný systém, co nebude potřebovat specifické úpravy pokaždé, když vytvoříme nový typ nepřítele, a co půjde použít k interakci s herním prostředím)
+
 (z pohledu backendu by meč měl zvládat plně volný pohyb na všech 6 stupních volnosti)
+- zkusíme znovu to, co Die by the Sword, avšak tentokrát vytvoříme otevřenou platformu, na které bude moci jakýkoliv programátor z komunity experimentovat s metodami ovládání (nedoladěné ovládání (a nemožnost ho spravit komunitou) byl hlavní kámen úrazu DbtS)
+    - pokud se nám osobně nepodaří najít opravdu dobré a zábavné ovládání, někomu jinému z komunity se to povést může. i kdyby ne, na hru vždycky půjde napasovat VR ovladač ;)
 
 (frontend - ovládání pro klávesnici a myš)
 - stanovíme nějakou podmnožinu, v rámci které bude frontend backendu rozkazovat jak má mečem pohnout
+- nějaký pěkný formalismus jak mapovat kurzor na polohu meče
 
+
+\subsection{Co k tomu použijeme}
+
+- herní engine Unity (mature; nejrozšířenější -> největší šance že se najde jinej vývojář, co pro naší práci najde využití)
+- chceme na všech místech práce používat co nejvíc rozšířené a standardní systémy a knihovny (-> kompatibilita s prací ostatních lidí)
+- myslet na modularitu
+
+\subsection{Myšlenky o mapování vstupu}
+- k dispozici máme myš a klávesnici
+- musí být pro hráče jednoduše uchopitelné (- ideálně tedy nějaký pěkně spojitý matematický formalizmus, co se dá dobře vizualizovat)
+- diskuze variant co používalo Die by the Sword:
+    - Klávesnice - zastaralý koncept, moderní hráč počítá že k něčemu využije myš; stejně to tehdy byl jenom slabý odvar z toho co uměla myš
+    - Myš - ze všech možností zvládá největší podmnožinu pohybů; vyžaduje cvik, ale umožňuje kreativitu a flexibilní reakce v nezvyklé situaci
+    - Nahrávky - na první pohled pěkná myšlenka, v praxi však neumožňují flexibilně reagovat na specifickou situaci (hráč je schopen si vést okamžitý myšlenkový přehled o příliš malém množství nahrávek)
+
+- výsledek diskuze: 
+    - pro hráče chceme ovládání myší
+        - jinou možnost než něco s myší, nebo něco s klávesnicí stejně nemáme
+        - myš jediná má potenciál umožnit jemnou a flexibilní kontrolu (klávesnice má konečný počet kláves - konečný počet stavů)
+    - interně implementujeme i přehrávání nahrávek - bude se hodit pro AI nepřítele (dává nám přímou, dobře uchopitelnou kontrolu nad jeho chováním a tedy obtížností hry) (jednoduchý systém, vhodný pro to v budoucnu sloužit jako základ, proti kterému budeme testovat sofistikovanější AI)
+    - nějaké kreativnější nápady než s čím už přišlo DbtS necháme na později. teď chceme mít něco, co už víme, že je základně použitelné, abysme vůči tomu později nové výstřelky mohli porovnávat
+
+- jakým formalizmem mapovat polohu myši na polohu meče:
+    - nevíme jak přesně to na pozadí dělá DbtS
+    - jednoduchý, dobře vizualizovatelný formalismus.. střílet paprsek z kamery z místa kurzoru a protnout ho s nějakým útvarem 
+    - po dlouhé úvaze jsme se rozhodli, že pěkný útvar k protínání je kulová plocha
+    - ...
+
+\subsection{Jak bude vypadat výsledek}
 
 
 \section{Shrnutí}
