@@ -190,21 +190,28 @@ Vidíme, že poskytnout hráči přímou kontrolu nad mečem, je nevděčný úk
 
 \subsection{Die by the Sword}
 
-Průkopníkem v této oblasti je Die by the Sword \cite{DieByTheSword}, hra vydaná Kalifornskou společností Treyarch Corporation již v roce 1998.
+Průkopníkem v této oblasti je Die by the Sword \cite{DieByTheSword}, hra vydaná kalifornskou společností Treyarch Corporation roku 1998. 
 
-\clearpage
-(stručné představení hry)
+Jde o jedinou hru, kterou si zde představíme, jež se nevydala cestou omezení množiny stavů meče na konečné množství, ale nabídla hráči skutečně \textbf{jemnou, spojitou kontrolu}. Ta byla umožněna zapojením jednoduchého \textbf{realistického fyzikálního subsystému}, což byl na tehdejší dobu úkaz vskutku nevídaný vzhledem k hardwarovým omezením, v jejichž rámci bylo nutno operovat.
 
-(popis bojového systému)
+\textbf{Backend hry} umožňoval \textbf{plně volný pohyb} všech objektů třímaných herní postavou (postava mohla např. v jedné ruce držet meč a ve druhé štít či druhý meč), přičemž tělo postavy bylo \textbf{procedurálně animováno} (další na tuto dobu vzácný úkaz), aby poloha jejích rukou s polohou objektů korespondovala.
 
-(jaké výhody z tohoto plynou)
+Tento přístup k implementaci přinesl některé \textbf{zajímavé důsledky}. Hráč se nemusel učit používat dedikovanou mechaniku pro blokování nepřítelských úderů, stačilo meč napolohovat tak, aby tomu nepřátelskému stál v cestě. Podobným způsobem zde byl nepřeberný prostor pro další zajímavé techniky, vyvíjené a zdokonalované plně hráčskou komunitou. Dále, díky obecnosti systému nebyl problém, mít nepřátele všech představitelných tvarů a velikostí - dokud měl nepřítel hmotné tělo, mohli jste ho mečem trefit; dokud měl nějakou končetinu, mohl sám držet zbraň. Spojením se systémem procedurální animace, nestvůrám bylo možné velmi efektně odsekávat kusy těla a kochat se jejich zvýšenou nemotorností\footnote{případně rovnou neschopností hráče zranit, pokud byla odseknuta končetina třímající zbraň}. K dovršení dojmu vás hra nechala chopit se odseknuté končetiny jako zbraně, stále při stejném ovládání, jaké vám nabídl meč.
 
-(jaké výhody se nepodařilo získat)
-
+Kamenem úrazu pro hru však nesporně bylo \textbf{ovládání}. Tvůrci hry si byli zřejmě vědomi, o jak náročnou výzvu vyžadující dlouhodobý výzkum v případě této hry jde, a nabídli hned několik velmi odlišných metod vstupu pro udání pohybu zbraně:
+\begin{itemize}
+    \item \textbf{Numerická klávesnice}\footnote{V době vzniku hry nebyl grafický operační systém ovládaný myší běžnou součástí výbavy každého hráče. Od her se očekávalo, že budou podporovat možnost ovládání čistě pomocí klávesnice.} - Obdélník číselných kláves symbolizoval obdélník obrazovky, stisknutí dvou kláves (poloh na obrazovce) v rychlém sledu znamenalo švih mečem z jedné polohy na druhou.
+    \item \textbf{Myš} - Myší bylo možné udávat pohyb spojitým způsobem. Poloha kurzoru na obrazovce se mapovala na polohu v herním světě, kam se má švihem meč přesunout. 
+    \item \textbf{Nahrávky} - Ve hře byl obsažen dedikovaný nástroj umožňující na časové ose, pomocí klíčových snímků - způsobem klasicky používaným v nástrojích pro tvorbu animací - vytvářet a editovat vlastní zcela libovolné pohyby zbraně. Hotové nahrávce bylo následně možné přiřadit klávesu, jejímž stisknutím ji postave ve hře přehrála. 
+\end{itemize}   
+Přes značné úsilí, které tvůrci této oblasti věnovali, stalo se ovládání hlavním předmětem hráčské kritiky. Mnoho hráčů si stěžovalo, že je hra jeho vinou nadmíru těžká, případně že si zkrátka \textbf{nehodlají na neotřelý způsob ovládání zvykat}. Přestože hra byla značně oceněna kritiky, mezi širokou herní veřejností se jí výrazných ohlasů nedostalo. Kromě datadisku Limb from Limb se již na její odkaz žádná další hra nepokusila navázat, pokud je autorovi této práce známo.
 
 \subsection{Mount\&Blade}
 
-Kultovní klasikou v této oblasti je Mount\&Blade. Jeho první verzi vydalo turecké studio TaleWorlds v roce 2008, později se hra pro velkou oblíbenost mezi hráči dočkala obsáhlého datadisku Warband a velmi nedávno i druhého dílu Bannerlord, který mnoho mechanik hrubě nastíněných v původní hře dále rozvádí a prohlubuje.
+Kultovní klasikou je Mount\&Blade. První verzi této hry vydalo turecké studio TaleWorlds v roce 2008, později se hra pro velkou oblíbenost mezi hráči dočkala obsáhlého datadisku Warband a velmi nedávno i druhého dílu Bannerlord, který mnoho mechanik hrubě nastíněných v původní hře dále rozvádí a prohlubuje. My se zde budeme věnovat prvnímu dílu, protože ten je v kombinaci s datadiskem Warband i v dnešní době mezi hráči velmi oblíbený a materiálů pro analýzu nám poskytne zcela dostatečné množství.
+
+
+
 
 \clearpage
 (stručné představení hry)
