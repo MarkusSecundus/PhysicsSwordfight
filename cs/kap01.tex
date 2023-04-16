@@ -131,7 +131,7 @@ Proti chaotickým útokům vedeným změtí zubů a drápů nestvůry však blok
 
 Zaklínačská Znamení do boje přinášejí další vrstvu komplexity. Jde o \textbf{5 kouzel}, která spotřebovávají velkou porci výdrže a na oplátku zaklínači mocně pomohou - např. může jít o ochranné silové pole, poryv větru, který má šanci omráčit zasažené protivníky, či zmatení, které přiměje nepřítele bojovat na vaší straně.
 
-Výčet Znamení je pevně stanoven, avšak klasicky pro žánr RPG, hra zahrnuje \textbf{prvky progrese}, pomocí kterých lze Znamení v průběhu hry vylepšovat a modifikovat. Stejné platí i pro boj s mečem - rychlý i silný úder mají každý své vlastní stromy dovedností, které jsou schopny zajímavými způsoby ovlivnit gameplay. 
+Výčet Znamení je pevně stanoven, avšak klasicky pro žánr \acs{RPG}, hra zahrnuje \textbf{prvky progrese}, pomocí kterých lze Znamení v průběhu hry vylepšovat a modifikovat. Stejné platí i pro boj s mečem - rychlý i silný úder mají každý své vlastní stromy dovedností, které jsou schopny zajímavými způsoby ovlivnit gameplay. 
 
 Poslední částí zaklínačova repertoáru, kterou zmíníme, jsou lektvary a oleje. Jde o \textbf{konzumovatelné předměty}, které hráč v průběhu hry sám vyrábí, a po jejich konzumaci (požití lektvaru postavou / namazání oleje na meč) mu je na určitý časový limit poskytnut nějaký bonus (př. regenerace zdraví, bonusové zranění proti upírům apod.). Jde tedy o zdroje, se kterými hráč hospodaří v dlouhodobějším horizontu, ale použity v kritickém okamžiku mohou zvrátit výsledek boje. 
 
@@ -208,30 +208,53 @@ Přes značné úsilí, které tvůrci této oblasti věnovali, stalo se ovlád�
 
 \subsection{Mount\&Blade}
 
-Kultovní klasikou je Mount\&Blade. První verzi této hry vydalo turecké studio TaleWorlds v roce 2008, později se hra pro velkou oblíbenost mezi hráči dočkala obsáhlého datadisku Warband a velmi nedávno i druhého dílu Bannerlord, který mnoho mechanik hrubě nastíněných v původní hře dále rozvádí a prohlubuje. My se zde budeme věnovat prvnímu dílu, protože ten je v kombinaci s datadiskem Warband i v dnešní době mezi hráči velmi oblíbený a materiálů pro analýzu nám poskytne zcela dostatečné množství.
+Kultovní klasikou je Mount\&Blade. První verzi této hry vydalo turecké studio TaleWorlds v roce 2008, později se hra pro velkou oblíbenost mezi hráči dočkala datadisku Warband a velmi nedávno i druhého dílu Bannerlord, který mnoho mechanik hrubě nastíněných v původní hře dále rozvádí a prohlubuje. My se zde budeme věnovat prvnímu dílu, který je v kombinaci s datadiskem Warband i v dnešní době mezi hráči velmi oblíbený a materiálů pro analýzu nám poskytne zcela dostatečné množství.
 
+Jde o \textbf{sandbox} s \acs{RPG} prvky, kde se hráč ujímá role vůdce žoldnéřské skupiny. V jeho kůži putuje od království ke království, verbuje vojáky, plní úkoly pro okolní šlechtice a účastní se po jejich boku bitev se šlechtici znepřátelených zemí. Svět je velmi silně inspirován středověkou Evropou, nenajdeme zde žádnou magii, nepřáteli jsou výhradně lidé. 
 
+Ovládání vlastní hráčské postavy zde tvoří pouze polovinu skládačky bojového systému - tou druhou je udílení rozkazů zverbovaným vojákům. V bitvách se zde střetávají typicky vyšší desítky až nižší stovky bojovníků spřátelených a nepřátelských. \textbf{Hráčská postava je zde pouze jedním z mnoha} - počítačem řízení bojovníci mají shodné možnosti pohybu i ovládání zbraně a podléhají stejnému systému RPG progrese. 
 
+Jak tedy vypadá ovládání zbraně? Každá zbraň má definovanou množinu útoků, které lze provádět. Hráč stiskem tlačítka myši zahájí nápřah, dle polohy kurzoru je vyberáno, který z útoků bude vykonán (např. nápřah nad hlavou kurzorem uprostřed nahoře, bodnutí kurzorem uprostřed obrazovky apod.), následně uvolněním tlačítka myši je útok vykonán.
+
+Zbraně jsou rozděleny na několik typů
 
 \clearpage
 (stručné představení hry)
 
 (popis bojového systému)
+- hráč je jedním z mnoha
+- diskrétní - útokové zóny vybrané podle natočení obrazovky
+- blokování - zbraň kontextové; štít blokuje všechno ale dá se rozbít
+- různé typy zbraní - mohou mít pouze podmnožinu ze všech útokových zón
+
 
 (jaké výhody z tohoto plynou)
+- celkem jednoduché a jednoduše uchopitelné, přitom má hráč pocit velké kontroly
+- máme celkem uniformní rozhraní, ale i tak každá zbraň má do jisté míry osobitý charakter a vede k jinému způsobu hraní
 
 (jaké výhody se nepodařilo získat)
+- drobnost - změna nápřahu mění natočení kamery
+- interakce s okolním prostředím je dost omezená
+- skupinová formace musí být separátní typ akce která se pro zbraň naimplementuje
+- přidání nehumanoidní postavy by vyžadovalo pro ni vytvořit úplně nové útokové zóny, v některých případech (např. proti koni funguje tak jak je) by se pak musely překopat/přidat i útokové zóny pro současné lidi (možná dokonce udělat z nich kontextové), aby se proti té nestvůře dalo efektivně bojovat
 
 \subsection{Kingdom Come: Deliverance}
-
-Kingdom Come: Deliverance bylo vydáno roku 2018 českými Warhorse Studios. 
+Poslední hrou, kterou si představíme, je Kingdom Come: Deliverance, vydáné roku 2018 českými Warhorse Studios. Jde o akční \acs{RPG} odehrávající se v českém Posázaví roku 1403. Jedním z hlavních důrazů hry byla historická věrnost a celková realističnost zážitku - z tohoto rozhodnutí plynou přirozeně dalekosáhlé důsledky pro bojový systém.
 
 \clearpage
 (stručné představení hry)
 
 (popis bojového systému)
+- diskrétní - útokové zóny
+- uzamčení na jednoho protivníka
+- velký důraz na hospodaření s výdrží (dokud je výdrž, zásah do velké míry ubírá z ní a ne z HP)
 
 (jaké výhody z tohoto plynou)
+- velká hloubka
+- vzhledově pohyby postav vypadají plynule a realisticky
+- celkově nejvíc dokonalé pro 1v1 duel
+- při boji proti skupině do jisté míry pěkně ukazuje zmatenost, jakou taková situace má v reálném světě (ale pocitově se hra tváří, že to nebyl umělecký záměr)
+
 
 (jaké výhody se nepodařilo získat)
 
