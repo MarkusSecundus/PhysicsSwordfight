@@ -42,6 +42,7 @@
 
 \textbf{vlastní API postavené nad backendem nVidia PhysX}
 \begin{itemize}
+    \item reference na Unity a na PhysX dokumentaci
     \item letmo zmínit 2D Physics, co jsou úplně odděleně a za backend maj Box2D 
     \item ale neexposuje z něj všechnu funkcionalitu
     \item FixedUpdate
@@ -64,9 +65,10 @@
     \item primitivní tvary, jejich skládání, nefunkčnost obecné maticové deformace (vždy zachovává kvádrovost, kulovost, kapsulovost)
     \item NEodpovídá(!) přesně tvaru meshe a v tom je pointa, ale když se umístěj šikovně, nijak to nekazí hráčský zážitek
     \item statické vs dynamické collidery (úplně samostatné / kinematic / non-kinematic) - co s čím koliduje a jak se chovaj když se pohybujou (pohyblivé collidery by měly být na nějakém, klidně kinematickém rigidbody)
-    \item (velmi stručně) mesh collidery - omezení (256 vertices max, musí být statické) a situace kdy stojí za to je používat (statický terén)
+    \item (velmi stručně) mesh collidery - musí být statické, mají smysl jenom na terén apod.
     \item trigger collidery
-    \item auto počítání center-of-mass a intertia tensor podle colliderů
+%    \item auto počítání center-of-mass a intertia tensor podle colliderů
+    \item discrete VS continuous collision detection (jenom že existuje, podrobněji v ch.4 při diskuzi CollisionFixu)
 \end{itemize}
 
 \textbf{Physics Material}
@@ -77,9 +79,8 @@
 \textbf{Joints}
 \begin{itemize}
     \item (velmi stručně) co je constraint solver a jaký používá Unity
-    \item velmi stručný výčet jmen jointů a že všechny jsou to speciální případ Configurable Jointu (neboli D6 jointu jak ho zná PhysX)
+    \item strohý výčet jmen jointů a že všechny jsou to speciální případ Configurable Jointu (neboli D6 jointu jak ho zná PhysX)
     \item představení Configurable Jointu
-    \item reference na Unity a na PhysX dokumentaci
     \item anchor, connectedAnchor
     \item locked/limited/free pro každý degree of freedom
     \item primary, secondary, tertiary axis, vůči čemu jsou rotace relativní, jak převést z rotace v globálním úhlu nebo relativní vůči transformu, ConfiguredInWorldSpace flag
