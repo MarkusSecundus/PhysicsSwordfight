@@ -127,7 +127,7 @@ public static class GameObjectUtils
     }
 
     //IsChildOf is a terrible name for what it is actually checking
-    public static bool IsDescendantOf(this Transform parent, Transform descendant) => descendant.IsChildOf(parent);
+    public static bool IsDescendantOf(this Transform descendant, Transform parent) => descendant.IsChildOf(parent);
 
     private static readonly string UtilGameObjectRootTag = "UtilGameObjectRoot";
     public static Transform GetUtilObjectParent()

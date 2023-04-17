@@ -237,6 +237,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   MinDamage: 0
+  DamageMultiplier: 1
 --- !u!114 &7142956747880459907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,7 +253,7 @@ MonoBehaviour:
   AffectedRenderers:
   - {fileID: 272195822731886331}
   Blinking:
-    TotalDuration: 0.5
+    TotalDuration: 0.2
     FadeTime: 0.1
     Color: {r: 0.6226415, g: 0.050907757, b: 0.050907757, a: 0}
 --- !u!1 &1222135357898914258
@@ -279,8 +280,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1222135357898914258}
-  m_LocalRotation: {x: -0, y: 0.8249528, z: -0, w: 0.5652017}
-  m_LocalPosition: {x: 29.92, y: 0.152, z: 23.47}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.3338377, y: 1.3338377, z: 1.3338377}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -288,7 +289,7 @@ Transform:
   - {fileID: 1895486480834265493}
   m_Father: {fileID: 0}
   m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 111.167, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4987422749570786461
 MonoBehaviour:
   m_ObjectHideFlags: 0

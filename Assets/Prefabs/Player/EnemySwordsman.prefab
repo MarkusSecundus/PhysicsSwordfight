@@ -14,11 +14,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 164561265376294913, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: DeathInstructions.SwordDestroyDelay
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 1839668508508617948, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.x
@@ -159,54 +159,28 @@ MonoBehaviour:
   Target: {fileID: 0}
   SwordsmanAssembly: {fileID: 6556055066981990781}
   Input: {fileID: 5886704879907408248}
-  Tweaks:
+  Navigation:
     SidewaysRotationMultiplier: 1
     AgentSync: 0.9
-    MelleeReachMultiplier: 1.2
+    MelleeReachMultiplier: 1.1
     RotationAccuracyByDistance:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: -0.045833588
-        value: 1.0094299
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1.3745761
-        value: 0.55330193
-        inSlope: -0.39793843
-        outSlope: -0.39793843
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.3198225
-        outWeight: 0.28264618
-      - serializedVersion: 3
-        time: 3.0233603
-        value: 0.3221993
-        inSlope: -0.023300603
-        outSlope: -0.023300603
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.36464334
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
   SwordControl:
     Usecase: 0
     PlaySpeed: 1
+    DistanceToIdle: 5
     Records:
       values:
       - key: 1
-        value: Assets/SwordRecords/Idle
+        value: []
       - key: 0
-        value: Assets/SwordRecords/Slash
+        value: []
       - key: 2
-        value: Assets/SwordRecords/Block
+        value: []
 --- !u!114 &4845799088450682644
 MonoBehaviour:
   m_ObjectHideFlags: 0

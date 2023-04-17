@@ -55,7 +55,8 @@ public class SwordMovementRecord
             {
                 LookDirection = (Vector3)LookPoint - AnchorPoint,
                 AnchorPoint = AnchorPoint,
-                UpDirection = UpPoint == null ? null : (Vector3)UpPoint - (Vector3)AnchorPoint
+                UpDirection = UpPoint == null ? null : (Vector3)UpPoint - (Vector3)AnchorPoint,
+                HoldingForce = 0f //TODO: add as a field to the recording when I'm sure I want to be doing it this way
             };
         }
     }

@@ -7,7 +7,8 @@ using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using System.Linq;
 
-using Interpolator = RetargetableInterpolator<UnityEngine.Vector3, RetargetableInterpolator.VectorInterpolationPolicy>;
+using HoldingForceInterpolator = RetargetableInterpolator<float, RetargetableInterpolator.FloatInterpolationPolicy>;
+using ConnectedAnchorInterpolator = RetargetableInterpolator<UnityEngine.Vector3, RetargetableInterpolator.VectorInterpolationPolicy>;
 using UnityEngine.Events;
 using Newtonsoft.Json;
 
@@ -45,24 +46,59 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
 
 
     #region SwordMovement
-    [SerializeField] RetargetableInterpolator.Config HandleMovementInterpolationConfig = new RetargetableInterpolator.Config { InterpolationFactor = 9f };
+
+    [SerializeField] HandleTweaker HandleTweaks;
+    [System.Serializable] public class HandleTweaker
+    {
+        public RetargetableInterpolator.Config HandleMovementInterpolationConfig = new RetargetableInterpolator.Config { InterpolationFactor = 9f };
+        public RetargetableInterpolator.Config HandleForceInterpolationConfig = new RetargetableInterpolator.Config { InterpolationFactor = 9f };
+        public float DamperFactor = 0.01f;
+    }
 
     JointRotationHelper jointRotationHelper;
-    Interpolator connectedAnchorPositioner;
+    ConnectedAnchorInterpolator connectedAnchorPositioner;
+    HoldingForceInterpolator holdingForceSetter;
     private void InitSwordMovers()
     {
         jointRotationHelper = Joint.MakeRotationHelper();
 
-        Joint.autoConfigureConnectedAnchor = false;
-        StartCoroutine(connectedAnchorPositioner = new Interpolator
+        //Setup setter for connectedAnchor
         {
-            ToYield = new WaitForFixedUpdate(),
-            DeltaGetter = () => Time.deltaTime,
-            Getter = () => this.Joint.connectedAnchor,
-            Setter = value => this.Joint.connectedAnchor = value,
-            Config = this.HandleMovementInterpolationConfig,
-            Target = this.Joint.connectedAnchor
-        });
+            Joint.autoConfigureConnectedAnchor = false;
+            StartCoroutine(connectedAnchorPositioner = new ConnectedAnchorInterpolator
+            {
+                ToYield = new WaitForFixedUpdate(),
+                DeltaGetter = () => Time.fixedDeltaTime,
+                Getter = () => this.Joint.connectedAnchor,
+                Setter = value => this.Joint.connectedAnchor = value,
+                Config = this.HandleTweaks.HandleMovementInterpolationConfig,
+                Target = this.Joint.connectedAnchor
+            });
+        }
+
+        //Setup setter for holding force
+        {
+            var originalSlerpDrive = this.Joint.slerpDrive;
+            var holdingForceRatio = 1f;
+            holdingForceSetter = new HoldingForceInterpolator
+            {
+                ToYield = new WaitForFixedUpdate(),
+                DeltaGetter = () => Time.fixedDeltaTime,
+                Getter = () => holdingForceRatio,
+                Setter = value =>
+                {
+                    holdingForceRatio = value;
+                    var drive = originalSlerpDrive;
+                    drive.positionSpring += drive.positionSpring*value;
+                    drive.positionDamper += drive.positionDamper * (this.HandleTweaks.DamperFactor * value);
+                    this.Joint.slerpDrive = drive;
+                    //Debug.Log($"target({holdingForceSetter.Target}), dr({value}), spring({originalSlerpDrive.positionSpring} => {drive.positionSpring} => {this.Joint.slerpDrive.positionSpring})", this);
+                },
+                Config = this.HandleTweaks.HandleForceInterpolationConfig,
+                Target = holdingForceRatio
+            };
+            StartCoroutine(holdingForceSetter);
+        }
     }
 
 
@@ -74,6 +110,8 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
 
         Vector3 up = m.UpDirection??computeUpVector(m.LookDirection, anchor);
         SetSwordRotation(Quaternion.LookRotation(m.LookDirection, up));
+
+        MoveHoldingForce(m.HoldingForce);
 
         Vector3 computeUpVector(Vector3 lookAt, Vector3 anchor) => Vector3.up;
     }
@@ -88,6 +126,8 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
         var relative = SwordWielder.transform.GlobalToLocal(absolutePosition);
         connectedAnchorPositioner.Target = relative;
     }
+    private void MoveHoldingForce(float multiplier) => holdingForceSetter.Target = multiplier;
+
     #endregion
 
     public void DropTheSword()
@@ -113,6 +153,7 @@ public interface ISwordMovement
         public Vector3 LookDirection;
         public Vector3 AnchorPoint;
         public Vector3? UpDirection;
+        public float HoldingForce;
 
         public override string ToString()
             => $"{{look{LookDirection}, anchor{AnchorPoint}, up{UpDirection}}}";
@@ -121,5 +162,5 @@ public interface ISwordMovement
 }
 public static class SwordMovementExtensions
 {
-    public static void MoveSword(this ISwordMovement self, Vector3 lookDirection, Vector3 anchorPoint, Vector3? upDirection = null) => self.MoveSword(new ISwordMovement.MovementCommand { LookDirection = lookDirection, AnchorPoint = anchorPoint, UpDirection = upDirection });
+    public static void MoveSword(this ISwordMovement self, Vector3 lookDirection, Vector3 anchorPoint, Vector3? upDirection = null, float holdingForce=0f) => self.MoveSword(new ISwordMovement.MovementCommand { LookDirection = lookDirection, AnchorPoint = anchorPoint, UpDirection = upDirection, HoldingForce = holdingForce });
 }

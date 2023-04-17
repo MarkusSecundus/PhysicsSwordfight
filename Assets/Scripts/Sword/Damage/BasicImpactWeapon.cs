@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicImpactWeapon : MonoBehaviour
+public abstract class ImpactWeapon<TStats> : MonoBehaviour
 {
-    public float DamageMultiplier = 1f;
     public float SecondsBetweenAttacks = 0.2f;
-    protected virtual AttackDeclaration CalculateAttackStats(Collision collision) => new AttackDeclaration 
-    {
-        Damage = collision.impulse.magnitude * DamageMultiplier,
-        AttackerIdentifier = this,
-        ImpactPoint = collision.GetContact(0).AsImpactPointData()
-    };
+
+    public TStats Stats;
+
+    public ExceptionsList Exceptions;
+
+    [System.Serializable] public class ExceptionsList : SerializableDictionary<Damageable, TStats> { }
+    protected abstract AttackDeclaration CalculateAttackStats(Collision collision, TStats stats);
 
 
     private readonly HashSet<IArmorPiece> targeted = new HashSet<IArmorPiece>();
@@ -31,7 +31,22 @@ public class BasicImpactWeapon : MonoBehaviour
 
     private void ProcessCollision(Collision collision, IArmorPiece hit)
     {
-        var attack = CalculateAttackStats(collision);
+        var statsToUse = Exceptions.Values.GetValueOrDefault(hit.BaseDamageable, Stats);
+        var attack = CalculateAttackStats(collision, statsToUse);
         hit.ProcessAttack(attack);
     }
+}
+
+public class BasicImpactWeapon : ImpactWeapon<BasicImpactWeapon.StatsDefinition>
+{
+    [System.Serializable] public struct StatsDefinition
+    {
+        public float DamageMultiplier;
+    }
+    protected override AttackDeclaration CalculateAttackStats(Collision collision, StatsDefinition stats) => new AttackDeclaration 
+    {
+        Damage = collision.impulse.magnitude * stats.DamageMultiplier,
+        AttackerIdentifier = this,
+        ImpactPoint = collision.GetContact(0).AsImpactPointData()
+    };
 }

@@ -11,7 +11,7 @@ public class SwordMovementMode_Block : SwordMovement.Submodule
 {
     public Transform SwordDirectionHint;
     public IRayIntersectable InputIntersector;
-
+    public float HoldingForceMultiplier = 3f;
     SwordDescriptor Sword => Script.Sword;
     private Transform bladeEdgeBlockPoint => Sword.SwordBlockPoint;
     public override void OnFixedUpdate(float delta)
@@ -51,7 +51,7 @@ public class SwordMovementMode_Block : SwordMovement.Submodule
         var tipPosition = hitPoint + bladeDirection * bladeTipDistance;
         var handlePosition = hitPoint + (-bladeDirection) * handleDistance;
 
-        Script.MoveSword(tipPosition - handlePosition, anchorPoint: handlePosition, upDirection: computeUpVector());
+        Script.MoveSword(tipPosition - handlePosition, anchorPoint: handlePosition, upDirection: computeUpVector(), holdingForce: HoldingForceMultiplier);
 
         Vector3 computeUpVector()
         {

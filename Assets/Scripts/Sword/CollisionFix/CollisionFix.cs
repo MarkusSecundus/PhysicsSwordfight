@@ -13,6 +13,8 @@ public partial class CollisionFix : MonoBehaviour
 
     [SerializeField] private float ActivationRadius = 3f;
 
+    [SerializeField] Transform[] HierarchiesToIgnore;
+
     public IReadOnlyList<Collider> AllColliders { get; private set; }
     private Rigidbody Rigidbody { get; set; }
     private SwordDescriptor SwordDescriptor { get; set; }
@@ -39,9 +41,11 @@ public partial class CollisionFix : MonoBehaviour
         manager.Unregister(this);
     }
 
+    private bool IsInIgnoreList(Transform t) => t== this.transform || HierarchiesToIgnore.Any(h => t.IsDescendantOf(h));
+
     void AreaEntered(Collider collider)
     {
-        if(manager.TryFindFixer(collider, out var other) && other != this)
+        if(manager.TryFindFixer(collider, out var other) && !IsInIgnoreList(other.transform))
         {
             manager.EnableFixer(this, other);
             foreach (var c in InstanceCreator.Colliders) other.SetIgnoreCollisions(c);

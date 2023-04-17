@@ -6,12 +6,16 @@ public static class RetargetableInterpolator
 {
     [System.Serializable] public struct Config
     {
-        [field: SerializeField] public float InterpolationFactor { get; init; }
+        [SerializeField] public float InterpolationFactor;
     }
 
     public struct VectorInterpolationPolicy : IFunc<Vector3, Vector3, float, Vector3>
     {
         public Vector3 Invoke(Vector3 a, Vector3 b, float c) => Vector3.Lerp(a, b, c);
+    }
+    public struct FloatInterpolationPolicy : IFunc<float, float, float, float>
+    {
+        public float Invoke(float a, float b, float c) => Mathf.Lerp(a, b, c);
     }
 }
 
