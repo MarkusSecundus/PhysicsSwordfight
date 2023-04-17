@@ -3,71 +3,97 @@
 
 \section{Herní engine Unity}
 
-(představení herního enginu Unity)
-- že je na malý projekty zadarmo, ale není opensource a přístup ke zdrojáku je dost těžký získat
-- všestranný (2D i 3D), existuje už celkem dost dlouho - je tam dost kostrbatostí kvůli zpětné kompatibilitě, věci se dají dělat hodně různýma způsobama
-- podporované platformy
 
-(zákl. úvod)
-- struktura projektu: modely, textury, C\# skripty
-- použitá verze C\# a .NET runtime
+\textbf{představení herního enginu Unity}
+\begin{itemize}
+    \item že je na malý projekty zadarmo, ale není opensource a přístup ke zdrojáku je dost těžký získat
+    \item  všestranný (2D i 3D), existuje už celkem dost dlouho - je tam dost kostrbatostí kvůli zpětné kompatibilitě, věci se dají dělat hodně různýma způsobama
+    \item  podporované platformy
+\end{itemize}
 
-(model gameobjectů a herních komponent)
-- builtin VS custom MonoBehavior
+\textbf{zákl. úvod}
+\begin{itemize}
+    \item struktura projektu: modely, textury, C\# skripty
+    \item použitá verze C\# a .NET runtime
+\end{itemize}
 
-(posílání zpráv)
-- (vs UnityEvent)
+\textbf{model gameobjectů a herních komponent}
+\begin{itemize}
+    \item builtin komponenty vs MonoBehavior
+\end{itemize}
 
-(game loop)
-- zpráva Update, deltaTime
-- skripty běží všechny na main threadu
 
-(scéna)
+\textbf{posílání zpráv}
+\begin{itemize}
+    \item srovnání VS UnityEvent VS C\# delegáti 
+\end{itemize}
 
+\textbf{game loop}
+\begin{itemize}
+    \item zpráva Update, deltaTime
+    \item skripty běží všechny na main threadu
+\end{itemize}
+
+
+\textbf{scéna}
 
 
 \section{Fyzika}
 
-(vlastní API postavené nad backendem nVidia PhysX)
-- letmo zmínit 2D Physics, co jsou úplně odděleně a za backend maj Box2D 
-- ale neexposuje z něj všechnu funkcionalitu
-- FixedUpdate
-- běží ve vlastním vlákně (/na GPU), ale API to od uživatele víceméně odstiňuje
-- vede si vlastní reprezentaci celé scény, při počítání vychází jenom z ní, před a po každém kroku se provede synchronizace s herním světem (updatnou transformy apod.)
+\textbf{vlastní API postavené nad backendem nVidia PhysX}
+\begin{itemize}
+    \item letmo zmínit 2D Physics, co jsou úplně odděleně a za backend maj Box2D 
+    \item ale neexposuje z něj všechnu funkcionalitu
+    \item FixedUpdate
+    \item běží ve vlastním vlákně (/na GPU), ale API to od uživatele víceméně odstiňuje
+    \item vede si vlastní reprezentaci celé scény, při počítání vychází jenom z ní, před a po každém kroku se provede synchronizace s herním světem (updatnou transformy apod.)
+\end{itemize}
 
-(Rigidbody)
-- non-kinematic VS kinematic
-- properties (mass, center-of-mass, inertia-tensor, (angular) drag, axis-lock, iteration count,...)
-- jak se chová vůči transform-hierarchii
-- pozice objektu (používá globální souřadnice); rb.transfrm.position =.. VS rb.position =.. VS rb.MovePosition(..)
 
-(Colliders)
-- zmínit že to je nejvíc základní a nosná funkcionalita physics systému, kvůli který ho spousta her includuje i když nepoužívají žádný non-kinematic rigidbodies a tak.  
-- primitivní tvary, jejich skládání, nefunkčnost obecné maticové deformace (vždy zachovává kvádrovost, kulovost, kapsulovost)
-- statické vs dynamické collidery (úplně samostatné / kinematic / non-kinematic) - co s čím koliduje a jak se chovaj když se pohybujou (pohyblivé collidery by měly být na nějakém, klidně kinematickém rigidbody)
-- NEodpovídá(!) přesně tvaru meshe a v tom je pointa, ale když se umístěj šikovně, nijak to nekazí hráčský zážitek
-- (velmi stručně) mesh collidery - omezení (256 vertices max, musí být statické) a situace kdy stojí za to je používat (statický terén)
-- trigger collidery
-- auto počítání center-of-mass a intertia tensor podle colliderů
+\textbf{Rigidbody}
+\begin{itemize}
+    \item non-kinematic VS kinematic
+    \item properties (mass, center-of-mass, inertia-tensor, (angular) drag, axis-lock, iteration count,...)
+    \item jak se chová vůči transform-hierarchii
+    \item pozice objektu (používá globální souřadnice); rb.transfrm.position =.. VS rb.position =.. VS rb.MovePosition(..)
+\end{itemize}
 
-(Physics Material)
-- aproximace pro tření povrchů apod.
+\textbf{Colliders}
+\begin{itemize}
+    \item zmínit že to je nejvíc základní a nosná funkcionalita physics systému, kvůli který ho spousta her includuje i když nepoužívají žádný non-kinematic rigidbodies a tak.  
+    \item primitivní tvary, jejich skládání, nefunkčnost obecné maticové deformace (vždy zachovává kvádrovost, kulovost, kapsulovost)
+    \item NEodpovídá(!) přesně tvaru meshe a v tom je pointa, ale když se umístěj šikovně, nijak to nekazí hráčský zážitek
+    \item statické vs dynamické collidery (úplně samostatné / kinematic / non-kinematic) - co s čím koliduje a jak se chovaj když se pohybujou (pohyblivé collidery by měly být na nějakém, klidně kinematickém rigidbody)
+    \item (velmi stručně) mesh collidery - omezení (256 vertices max, musí být statické) a situace kdy stojí za to je používat (statický terén)
+    \item trigger collidery
+    \item auto počítání center-of-mass a intertia tensor podle colliderů
+\end{itemize}
 
-(Joints)
-- (velmi stručně) co je constraint solver a jaký používá Unity
-- velmi stručný výčet jmen jointů a že všechny jsou to speciální případ Configurable Jointu (neboli D6 jointu jak ho zná PhysX)
-- představení Configurable Jointu
-    - anchor, connectedAnchor
-    - locked/limited/free pro každý degree of freedom
-    - primary, secondary, tertiary axis, vůči čemu jsou rotace relativní, jak převést z rotace v globálním úhlu nebo relativní vůči transformu, ConfiguredInWorldSpace flag
-    - positional\&angular drive - síly (spring VS damper), cílová pozice (nestabilní, alternativa nastavení connectedAnchoru) a rotace, RotationDriveMode (Slerp VS X+YZ - jenom letmo zmínit, "Slerp se choval pěkně a tak jsme ho vybrali"), Target (angular) velocity
-    - massScale VS connectedMassScale
-    - stabilita, flag EnablePreprocessing, projekce (projection mode+distance+angle)
+\textbf{Physics Material}
+\begin{itemize}
+    \item aproximace pro tření povrchů apod.
+\end{itemize}
 
-(Globální vlastnosti)
-- fixed frame duration
-- iteration count
-- constraint solver co se má použít
+\textbf{Joints}
+\begin{itemize}
+    \item (velmi stručně) co je constraint solver a jaký používá Unity
+    \item velmi stručný výčet jmen jointů a že všechny jsou to speciální případ Configurable Jointu (neboli D6 jointu jak ho zná PhysX)
+    \item představení Configurable Jointu
+    \item reference na Unity a na PhysX dokumentaci
+    \item anchor, connectedAnchor
+    \item locked/limited/free pro každý degree of freedom
+    \item primary, secondary, tertiary axis, vůči čemu jsou rotace relativní, jak převést z rotace v globálním úhlu nebo relativní vůči transformu, ConfiguredInWorldSpace flag
+    \item positional\&angular drive - síly (spring VS damper), cílová pozice (nestabilní, alternativa nastavení connectedAnchoru) a rotace, RotationDriveMode (Slerp VS X+YZ - jenom letmo zmínit, "Slerp se choval pěkně a tak jsme ho vybrali"), Target (angular) velocity
+    \item massScale VS connectedMassScale
+    \item stabilita, flag EnablePreprocessing, projekce (projection mode+distance+angle)
+\end{itemize}
+
+\textbf{Globální vlastnosti}
+\begin{itemize}
+    \item fixed frame duration
+    \item iteration count
+    \item constraint solver co se má použít
+\end{itemize}
 
 
 \section{Shrnutí}
