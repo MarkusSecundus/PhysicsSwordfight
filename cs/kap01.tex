@@ -255,47 +255,17 @@ Systém však přinesl i některá nepohodlí a promarněné příležitosti:
     \item \textbf{Flexibilita} - Do hry by bylo obtížné přidat např. specifický typ nehumanoidních postav - celý systém útočných zón by se musel překopat, aby byl boj s nimi schopen poskytnou stejně realistický zážitek jako boj s lidmi.
 \end{itemize}
 
-Celkově tedy vidíme, že hře se podařilo najít \textbf{pěkný kompromis mezi realističností, pocitem kontroly, a hráčskou přívětivostí}. O jeho kvalitách svědčí dlouhodobě velmi pozitivní ohlasy hráčské komunity. Bylo toho však dosaženo obětováním jisté vnitřní flexibility - systém velmi dobře vystihuje boj lidí s lidmi, použití zbraně k jakémukoliv jinému účelu by však žádalo jeho významné překopání. 
+Celkově tedy vidíme, že hře se podařilo najít \textbf{zajímavý kompromis mezi realističností, pocitem kontroly, a hráčskou přívětivostí}. O jeho kvalitách svědčí dlouhodobě velmi pozitivní ohlasy hráčské komunity. Bylo toho však dosaženo obětováním jisté vnitřní flexibility - systém velmi dobře vystihuje boj lidí s lidmi, použití zbraně k jakémukoliv jinému účelu by však žádalo jeho významné překopání. 
 
-
-\clearpage
-
-(popis bojového systému)
-%- hráč je jedním z mnoha
-%- diskrétní - útokové zóny vybrané podle natočení obrazovky
-%- blokování - zbraň kontextové; štít blokuje všechno ale dá se rozbít
-%- různé typy zbraní - mohou mít pouze podmnožinu ze všech útokových zón
-%- vyhodnocování dmg - bere v úvahu rychlost zbraně, za každou kolizi kterou zbraň při cestě potkala, je velký postih
-
-%(jaké výhody z tohoto plynou)
-%- celkem jednoduché a jednoduše uchopitelné, přitom má hráč pocit velké kontroly
-%- máme celkem uniformní rozhraní, ale i tak každá zbraň má do jisté míry osobitý charakter a vede k jinému způsobu hraní
-
-%(jaké výhody se nepodařilo získat)
-%- drobnost - změna nápřahu mění natočení kamery
-%- interakce s okolním prostředím je dost omezená
-%- skupinová formace musí být separátní typ akce která se pro zbraň naimplementuje
-%- přidání nehumanoidní postavy by vyžadovalo pro ni vytvořit úplně nové útokové zóny, v některých případech (např. proti koni funguje tak jak je) by se pak musely překopat/přidat i útokové zóny pro současné lidi (možná dokonce udělat z nich kontextové), aby se proti té nestvůře dalo efektivně bojovat
 
 \subsection{Kingdom Come: Deliverance}
-Poslední hrou, kterou si představíme, je Kingdom Come: Deliverance, vydáné roku 2018 českými Warhorse Studios. Jde o akční \acs{RPG} odehrávající se v českém Posázaví roku 1403. Jedním z hlavních důrazů hry byla historická věrnost a celková realističnost zážitku - z tohoto rozhodnutí plynou přirozeně dalekosáhlé důsledky pro bojový systém.
+Poslední hrou, kterou zmíníme, je Kingdom Come: Deliverance \cite{KCD}, vydáné roku 2018 českými Warhorse Studios. Jde o akční \acs{RPG} odehrávající se v českém Posázaví roku 1403. Jedním z hlavních důrazů hry byla historická věrnost a celková realističnost zážitku - z tohoto rozhodnutí plynou přirozeně dalekosáhlé důsledky pro bojový systém.
 
-\clearpage
-(stručné představení hry)
+Ústřední myšlenka je zde podobná jako u Mount\&Blade, s tím rozdílem, že na její implementaci bylo věnováno \textbf{řádově více zdrojů a lidského úsilí}. Najdeme zde velmi podobný systém zón útoku, mezi kterými hráč vybírá pohybem kurzoru, tvůrci zde však vytvořili tisíce dílčích animací, které jsou skládány do naprosto realisticky působícího pohybu zbraně i šermíře. Systém byl vyvíjen na základě konzultace s odborníky na středověký způsob boje, animace tedy i odpovídají skutečným historickým technikám. Dále systém zahrnuje neznámý avšak pravděpodobně značný počet rozličných heuristik, které se pro hráče neviditelným způsobem starají o vyšší responzivitu, další realističnost atd. .
 
-(popis bojového systému)
-- diskrétní - útokové zóny
-- uzamčení na jednoho protivníka
-- velký důraz na hospodaření s výdrží (dokud je výdrž, zásah do velké míry ubírá z ní a ne z HP)
+Celkově jde o systém nabízející značnou hloubku. Najdeme zde například propracovaný systém komb, velký důraz na správu výdrže a časovací události pro blokování nepřátelských úderů. Hráčské ohlasy dávají za pravdu, že hra nabízí nejrealističtější zážitek boje s chladnou zbraní, jaký najdeme na trhu.
 
-(jaké výhody z tohoto plynou)
-- velká hloubka
-- vzhledově pohyby postav vypadají plynule a realisticky
-- celkově nejvíc dokonalé pro 1v1 duel
-- při boji proti skupině do jisté míry pěkně ukazuje zmatenost, jakou taková situace má v reálném světě (ale pocitově se hra tváří, že to nebyl umělecký záměr)
-
-
-(jaké výhody se nepodařilo získat)
+Pokoušet se zde o hloubkový rozbor však nemá valný smysl - byl by to úkol obtížný a jeho splnění by nám nepřineslo mnoho užitku, protože implementace jakéhokoliv jednoho dílčího aspektu takového bojového systému se naprosto vymyká finančním i časovým možnostem autora této práce.
 
 
 \section{Alternativní ovladače}
