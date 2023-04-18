@@ -1,4 +1,4 @@
-\chapter{Základy}
+\chapter{Příparava}
 V této kapitole uvedeme čtenáře do problematiky boje s chladnou zbraní - velmi stručně nastíníme jeho vývoj a metodiku v reálném světě a následně do hloubky rozebereme mechaniky, skrze které ho adaptuje svět akčních videoher, a problémy, které při tom musí řešit.
 
 
@@ -172,10 +172,10 @@ Výhodami toho přístupu je vysoká \textbf{přívětivost a nenáročnost} pro
 
 V mnoha hrách (např. žánry \acs{FPS}, stealth) slouží chladná zbraň pouze jako \textbf{doplňující prvek}, jednoduchost tohoto přístupu je tedy ideálním stavem. Chce-li hra takovémuto systému přidat na hloubce, aby mohl sloužit jako její \textbf{nosná herní mechanika}, dosahuje se toho typicky důrazem na pohyb, časování, kombinací s dalšími prvky (magie, lektvary, pasti v herním prostředí) a osobitým designem nepřátel.
 
+
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
  % xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx %
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
-
 
 
 \section{Hry s větší kontrolou}
@@ -283,9 +283,8 @@ Existuje mnoho dobrých důvodů, proč by hráč měl mít zájem o přímějš
 
 Největším problémem se zdá být \textbf{ovládání}. Všechny hry, které jsme si představili, jež měly mezi hráčskou komunitou úspěch, se ubíraly cestou \textbf{omezení množiny stavů}, ve kterých se zbraň může nalézat, na nemalou ale \textbf{konečnou} velikost. Tato cesta se zdá v reálném světě fungovat, neposkytuje však vysokou flexibilitu, bojový systém musí být hardcodován pro lidské nepřátele a nenabízí vysoké možnosti emergentního gameplaye. 
 
-O plně flexibilní systém umožňující \textbf{volný pohyb zbraně} a boj jakýchkoliv dvou entit majících končetiny schopné ji třímat se pokusilo Die by the Sword \cite{DieByTheSword} - to se však stalo živoucím důkazem, že navrhnout použitelné ovládání pro takový typ systému je \textbf{těžkým problémem}, jehož uspokojivé řešení vyžaduje více výzkumu. Pokud je autorovi této práce známo, žádné výzkumné snahy v tomto směru dosud nebyly vyvinuty.
+O plně flexibilní systém umožňující \textbf{volný pohyb zbraně} a boj jakýchkoliv dvou entit majících končetiny schopné zbraň třímat se pokusilo Die by the Sword \cite{DieByTheSword} - to se však stalo živoucím důkazem, že navrhnout použitelné ovládání pro takový typ systému je \textbf{těžkým problémem}, jehož uspokojivé řešení si vyžaduje více výzkumu. Pokud je autorovi této práce známo, žádné výzkumné snahy v tomto směru dosud nebyly vyvinuty.
 
-\clearpage
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
  % xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx %
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
@@ -293,39 +292,52 @@ O plně flexibilní systém umožňující \textbf{volný pohyb zbraně} a boj j
 
 \section{Alternativní ovladače}
 
-(představení - ovladače co mohou být pro náš účel ovládání meče víc vhodné - existují ovladače co se postupně dostávají do mainstreamu, co jsou state-of-the art ve svém obskurním niche oboru, i naprosto experimentální ovladače co jsou teprve předmětem výzkumu)
+Jak jsme si nastínili v předchozí sekci, \textbf{ovládání} je těžkým problémem, který musí vyřešit každá hra, která se hráči pokouší poskytnout nad zbraní větší kontrolu. V dosavadní části práce jsme však brali v úvahu výhradně běžné ovladací periferie - počítačovou myš a klávesnici, popř. ovladač u herní konzole. Jejich společným znakem je dvourozměrný charakter informace, kterou poskytují. Hlavní problém pak plyne z potřeby namapovat tuto 2D hodnotu na 3D polohu meče. 
+
+Existuje však mnoho dalších způsobů ovládání - některé se pomalu rozšiřují směrem k mainstreamu, některé jsou předmětem experimentálního výzkumu. 
+V této sekci se podíváme na dva takové méně obvyklé způsoby ovládání, které mají potenciál posloužit jako zdroj 3D vstupu.
 
 \subsection{Virtuální realita}
 
-(jaké má výhody)
+Očividnou oblastí, kde můžeme najít ovladač poskytující 3D vstup, je virtuální realita (dále jen \acs{VR}). 
 
-(příklad hry kde se s ním ovládá meč) (swords\&sorcery, gorn, beatsaber)
 
-(nevýhody)
-- disonance "meč narazil do něčeho a není tam kde ovladač"
+%(jaké má výhody)
 
-(proč se jí nebudeme při výzkumu zabývat)
-- pořád není mainstream
-- (zjistit) uzavřenost platforem?
+%(příklad hry kde se s ním ovládá meč) (swords\&sorcery, gorn, beatsaber)
+
+%(nevýhody)
+%- disonance "meč narazil do něčeho a není tam kde ovladač"
+
+%(proč se jí nebudeme při výzkumu zabývat)
+%- pořád není mainstream
+%- (zjistit) uzavřenost platforem?
 
 
 \subsection{Pohybové senzory ve smartphonu}
 
-(výhody)
-- dostupnost
-- otevřenost platformy, programátorská flexibilita (hackovatelnost)
+%(výhody)
+%- dostupnost
+%- otevřenost platformy, programátorská flexibilita (hackovatelnost)
 
-(nevýhody)
-- fragmentace mobilního trhu, nekonzistence výstupu senzorů mezi různými mobily
-- způsob připojení (ne každej desktop má bluetooth nebo wifi, kabel je nepraktickej; celkově mobily asi maj problém s nízkolatenčním přenosem po místní síti)
-- najít nějakej článek
+%(nevýhody)
+%- fragmentace mobilního trhu, nekonzistence výstupu senzorů mezi různými mobily
+%- způsob připojení (ne každej desktop má bluetooth nebo wifi, kabel je nepraktickej; celkově mobily asi maj problém s nízkolatenčním přenosem po místní síti)
+%- najít nějakej článek
 
-\subsection{Obskurní periferie}
+\subsection{Shrnutí}
+Provedli jsme zamyšlení nad alternativními způsoby ovládání, které by usnadnily náš úkol poskytnout hráči intuitivní a jemnou kontrolu nad mečem. Ovladače pro \acs{VR} jsou očividným řešením, dokonce již existuje několik her, které jejich velmi dobrou použitelnost demonstrují v praxi. Stále však jde o malý trh, který se jen velmi pomalu rozšiřuje do mainstreamu - omezíme-li se na něj, citelně se zůží potenciální hráčské publikum.
 
-3d myš
-- extrémně drahá 
-- stavěná pro 3d modelováni
-- nemá 6 ale jenom 3 stupně volnosti
+Problém dostupnosti by se dal vyřešit emulací takového ovladače pomocí běžného chytrého telefonu. Moderní mobilní zařízení jsou vybaveny škálou senzorů, s jejichž použitím by to neměl být problém. V praxi však jsou senzory náchylné na šum, narážíme rovněž na fragmentaci mobilního trhu, každý model trpí na šum trochu jiným způsobem. Dovedení této metody do použitelného stavu by vyžadovalo další výzkum, kterého se příliš nedostává.
 
+Docházíme tedy k závěru, že bude nejlépe, když naší hře umožníme podporovat klasické ovládání pomocí klávesnice a myši. Možnost podporovat někdy v budoucnu i \acs{VR} ovladač neuškodí, nejde však o prioritu.
 
 \section{Shrnutí}
+
+Uvedli jsme čtenáře do problematiky boje s chladnou zbraní v reálném světě, tento náhled jsme následně zkontrastovali s tím, jak je tato problematika zachycena ve videohrách.
+
+V reálném světě jde o extrémně komplexní oblast, která za sebou má mnoho tisíciletí vývoje, nespočet technik vedoucích k jedinému cíli - vyřadit protivníka z bojeschopného stavu dříve než on vás. Naprostými základy jsou orientace na bojišti, správná technika pohybu, obratné a kreativní použití zbraně, a předvídání protivníka. V případě hromadného boje pak koordinace a disciplína vojenského celku. 
+
+Ve videohře chladná zbraň typicky figuruje jako "černá skříňka" - hráči je poskytnuto jediné tlačítko - \textbf{Zaútoč!} - jeho stisknutím postava provede útok jak sama uzná za vhodné. Výhodami tohoto systému jsou jednoduchost použití a univerzální aplikovatelnost i pro škálu velmi vzájemně odlišných zbraní. Má-li boj s chladnou zbraní sloužit jako nosná herní mechanika, hloubka mu je typicky dodávána důrazem na pohyb, celkový přehled o bojišti, přesné časování a kombinací s dalšími systémy (magie, lektvary, pasti).
+
+Takový systém tedy pěkně vystihuje některé z aspektů, které hrají roli v reálném světě, jedním
