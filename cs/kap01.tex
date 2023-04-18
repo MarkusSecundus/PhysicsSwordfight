@@ -213,19 +213,18 @@ Jde o jedinou hru, kterou si zde představíme, jež se nevydala cestou omezení
 
 \textbf{Backend hry} umožňoval \textbf{plně volný pohyb} všech objektů třímaných herní postavou (postava mohla např. v jedné ruce držet meč a ve druhé štít či druhý meč), přičemž tělo postavy bylo \textbf{procedurálně animováno} (další na tuto dobu vzácný úkaz), aby poloha jejích rukou s polohou objektů korespondovala.
 
-Tento přístup k implementaci přinesl některé \textbf{zajímavé důsledky}. Hráč se nemusel učit používat dedikovanou mechaniku pro blokování nepřítelských úderů, stačilo meč napolohovat tak, aby tomu nepřátelskému stál v cestě. Podobným způsobem zde byl nepřeberný prostor pro další zajímavé techniky, vyvíjené a zdokonalované plně hráčskou komunitou. Dále, díky obecnosti systému nebyl problém, mít nepřátele všech představitelných tvarů a velikostí - dokud měl nepřítel hmotné tělo, mohli jste ho mečem trefit; dokud měl nějakou končetinu, mohl sám držet zbraň. Spojením se systémem procedurální animace, nestvůrám bylo možné velmi efektně odsekávat kusy těla a kochat se jejich zvýšenou nemotorností\footnote{případně rovnou neschopností hráče zranit, pokud byla odseknuta končetina třímající zbraň}. K dovršení dojmu vás hra nechala chopit se odseknuté končetiny jako zbraně, stále při stejném ovládání, jaké vám nabídl meč.
+Tento přístup k implementaci přinesl některé \textbf{zajímavé důsledky}. Hráč se nemusel učit používat dedikovanou mechaniku pro blokování nepřátelských úderů, stačilo meč napolohovat tak, aby tomu nepřátelskému stál v cestě. Podobným způsobem zde byl nepřeberný prostor pro další zajímavé techniky, vyvíjené a zdokonalované plně hráčskou komunitou. Dále, díky obecnosti systému nebyl problém mít nepřátele všech představitelných tvarů a velikostí - dokud měl nepřítel hmotné tělo, mohli jste ho mečem trefit; dokud měl nějakou končetinu, mohl sám držet zbraň. Spojením se systémem procedurální animace nestvůrám bylo možné velmi efektně odsekávat kusy těla a kochat se jejich zvýšenou nemotorností\footnote{případně rovnou neschopností hráče zranit, pokud byla odseknuta končetina třímající zbraň}. K dovršení dojmu vás hra nechala chopit se odseknuté končetiny jako zbraně, stále při stejném ovládání, jaké vám nabídl meč.
 
 Kamenem úrazu pro hru však nesporně bylo \textbf{ovládání}. Tvůrci hry si byli zřejmě vědomi, o jak náročnou výzvu vyžadující dlouhodobý výzkum v případě této hry jde, a nabídli hned několik velmi odlišných metod vstupu pro udání pohybu zbraně:
 \begin{itemize}
     \item \textbf{Numerická klávesnice}\footnote{V době vzniku hry nebyl grafický operační systém ovládaný myší běžnou součástí výbavy každého hráče. Od her se očekávalo, že budou podporovat možnost ovládání čistě pomocí klávesnice.} - Obdélník číselných kláves symbolizoval obdélník obrazovky, stisknutí dvou kláves (poloh na obrazovce) v rychlém sledu znamenalo švih mečem z jedné polohy na druhou.
     \item \textbf{Myš} - Myší bylo možné udávat pohyb spojitým způsobem. Poloha kurzoru na obrazovce se mapovala na polohu v herním světě, kam se má švihem meč přesunout. 
-    \item \textbf{Nahrávky} - Ve hře byl obsažen dedikovaný nástroj umožňující na časové ose, pomocí klíčových snímků - způsobem klasicky používaným v nástrojích pro tvorbu animací - vytvářet a editovat vlastní zcela libovolné pohyby zbraně. Hotové nahrávce bylo následně možné přiřadit klávesu, jejímž stisknutím ji postave ve hře přehrála. 
+    \item \textbf{Nahrávky} - Ve hře byl obsažen dedikovaný nástroj umožňující pomocí časové osy a klíčových snímků - způsobem známým z profesionálního softwaru pro tvorbu animací - vytvářet a editovat vlastní zcela libovolné pohyby zbraně. Hotové nahrávce bylo následně možné přiřadit klávesu, jejímž stisknutím ji postava ve hře přehrála. 
 \end{itemize}   
-Přes značné úsilí, které tvůrci této oblasti věnovali, stalo se ovládání hlavním předmětem hráčské kritiky. Mnoho hráčů si stěžovalo, že je hra jeho vinou nadmíru těžká, případně že si zkrátka \textbf{nehodlají na neotřelý způsob ovládání zvykat}. Přestože hra byla značně oceněna kritiky, mezi širokou herní veřejností se jí výrazných ohlasů nedostalo. Kromě datadisku Limb from Limb se již na její odkaz žádná další hra nepokusila navázat, pokud je autorovi této práce známo.
+Přes značné úsilí, které tvůrci této oblasti věnovali, stalo se ovládání hlavním předmětem hráčské kritiky. Mnoho hráčů si stěžovalo, že je hra jeho vinou nadmíru těžká, případně že si zkrátka \textbf{nehodlají na neotřelý způsob ovládání zvykat}. Přestože hra byla značně oceněna profesionálními kritiky, mezi širokou herní veřejností se jí výrazných ohlasů nedostalo. Kromě datadisku Limb from Limb se již na její odkaz žádná další hra nepokusila navázat, pokud je autorovi této práce známo.
 
-
-
-
+\bigbreak
+Celkově vidíme, že hra přinesla systém poskytující \textbf{dodnes nepřekonanou flexibilitu}, nemající problém s nepřáteli všech tvarů, sofistikovanou interakcí s prostředím a umožňující vydatnou dávku emergentního gameplaye. Kamenem úrazu se jí však stalo ovládání. Celkově hra ukázala, že \textbf{návrh ovládání} pro takto flexibilní systém \textbf{je těžký problém}, který vyžaduje více výzkumu.
 
 \subsection{Mount\&Blade}
 
@@ -235,19 +234,28 @@ Jde o \textbf{sandbox} s \acs{RPG} prvky, kde se hráč ujímá role vůdce žol
 
 Ovládání vlastní hráčské postavy zde tvoří pouze polovinu skládačky bojového systému - tou druhou je udílení rozkazů zverbovaným vojákům. V bitvách se zde střetávají typicky vyšší desítky až nižší stovky bojovníků spřátelených a nepřátelských. \textbf{Hráčská postava je zde pouze jedním z mnoha} - počítačem řízení bojovníci mají shodné možnosti pohybu i ovládání zbraně a podléhají stejnému systému \acs{RPG} progrese. 
 
-Jak tedy vypadá ovládání zbraně? Každá zbraň má definovanou množinu útoků, které lze provádět. Hráč stiskem tlačítka myši zahájí nápřah, dle polohy kurzoru je vybráno, který z útoků bude vykonán (např. nápřah nad hlavou kurzorem uprostřed nahoře, bodnutí kurzorem uprostřed obrazovky apod.), následně uvolněním tlačítka myši je útok vykonán.
+Jak tedy vypadá ovládání zbraně? Každá zbraň má definovanou \textbf{množinu útoků}, které lze provádět. Hráč stiskem tlačítka myši zahájí nápřah, dle polohy kurzoru je vybráno, který z útoků bude vykonán (např. nápřah nad hlavou kurzorem uprostřed nahoře, bodnutí kurzorem uprostřed obrazovky apod.), následně uvolněním tlačítka myši je útok vykonán.
 
-Zbraní najdeme více druhů - meče, sekery, kyje, kopí a další. Útočné zóny jsou napříč zbraněmi shodné, pouze některé u některých zbraní chybí (meč poskytuje všechny, kyj neumožňuje bodání, s kopím lze pouze bodat apod.). Animace, která se přehraje pro útok v dané zóně, je však unikátní pro daný typ zbraně\footnote{Nedochází k žádnému náhodnému výběru, danému páru \textit{zbraň - útočná zóna} přísluší vždy právě jedna pevně daná animace.}.
+Zbraní najdeme více druhů - meče, sekery, kyje, kopí a další. Útočné zóny jsou napříč zbraněmi shodné, pouze \textbf{některé zóny u některých zbraní chybí} (meč poskytuje všechny, kyj neumožňuje bodání, s kopím lze pouze bodat apod.). Animace, která se přehraje pro útok v dané zóně, je však unikátní pro daný typ zbraně\footnote{Nedochází k žádnému náhodnému výběru, danému páru \textit{zbraň - útočná zóna} přísluší vždy právě jedna pevně daná animace.}.
 
-Druhým typem akce, který lze vykonávat, je \textbf{blokování}. Je-li hráč vybaven štítem, stačí držet stisknuté levé tlačítko myši a postava je kryta proti veškerým úderům, které na ni míří zepředu. Chce-li však postava provést útok se zbraní, musí nejprve kryt přerušit, čímž ochrany pozbyde. Dalším omezujícím faktorem je omezená odolnost štítu - utrží-li štít určité množství \acs{dmg}, je zničen a postava ho zahodí. Čímž přijde na řadu obtížnější situace - blokování pomocí zbraně. Zde se opět dostáváme k využití úderových zón - zkrátka zóna, ve které obránce blokuje, musí odpovídat zóně útočníka - jinak úder nebude vyblokován.
+Druhým typem akce, který lze vykonávat, je \textbf{blokování}. Je-li hráč vybaven štítem, stačí držet stisknuté levé tlačítko myši a postava je kryta proti veškerým úderům, které na ni míří zepředu. Chce-li však postava provést útok se zbraní, musí nejprve kryt přerušit, čímž ochrany pozbyde. Dalším omezujícím faktorem je omezená odolnost štítu - utrží-li štít určité množství \acs{dmg}, je zničen a postava ho zahodí. Čímž přijde na řadu obtížnější situace - blokování pomocí zbraně. Zde se opět dostáváme k využití úderových zón - zkrátka zóna, ve které obránce blokuje, musí odpovídat zóně útočníka - jinak k vyblokování úderu nedojde.
 
-Prvkem, který umocňuje hráčův dojem realističnosti, je výpočet zranění. Hra se obecně nepokouší o realistickou fyzikální simulaci, avšak způsobené zranění je přesto determinováno kombinací mnoha faktorů, které účinně aproximují realistické chování - zmíníme rychlost zbraně, délku její dráhy apod. . Dále je využíváno jemné detekce kolizí. Zaprvé k tomu, aby se určila zasažená část těla - různým částem těla postavy odpovídá různý kus zbroje, která určuje, jakou mírou má zranění být redukováno. Zadruhé, zranění je velmi silně redukováno, pokud při své cestě zbraň prošla skrze zeď či jiný prvek okolního prostředí. 
+Prvkem, který umocňuje hráčův dojem realističnosti, je \textbf{výpočet zranění}. Hra se obecně nepokouší o realistickou fyzikální simulaci, avšak způsobené zranění je přesto determinováno kombinací mnoha faktorů, které realistické chování účinně aproximují - zmíníme rychlost zbraně, délku její dráhy apod. . Dále je využíváno jemné detekce kolizí. Zaprvé k tomu, aby se určila zasažená část těla - různým částem těla postavy odpovídá různý kus zbroje, která určuje, jakou mírou má zranění být redukováno. Zadruhé, zranění je velmi silně redukováno, pokud při své cestě zbraň prošla skrze zeď či jiný prvek okolního prostředí. 
 
-Nyní rámcově víme, jak bojový systém funguje. Pojďme se tedy podívat na benefity, které z této implementace plynou. Vidíme, že hře se podařilo najít kompromis slučující některé prvky, které by se z naší předchozí anylýzy mohly zdát vzájemně protichůdné.
+Nyní rámcově víme, jak bojový systém funguje. Pojďme se tedy podívat na benefity, které z této implementace plynou. Vidíme, že hře se \textbf{podařilo najít kompromis} slučující některé prvky, které by se z naší předchozí anylýzy mohly zdát vzájemně protichůdné.
 \begin{itemize}
-    \item \textbf{Jednoduchost X Dostatečný realismus} - 
-    \item \textbf{Uniformní ovládání X Osobitost jednotlivých zbraní} - 
+    \item \textbf{Jednoduchost X Pocit kontroly} - Hráčova kontrola nad mečem je sice omezená na výběr z malé množiny úderových zón, těch je však stále dostatečné množství, aby pokryly většinu způsobů útoku, které by běžnému hráči rozumně mohly přijít na mysl. Protože správný výběr útoku má velmi reálný efekt na jeho úspěch, hráč je motivován svou možnost volby vzít plně na vědomí a ne ji přejít jako pouhý kosmetický detail. 
+    \item \textbf{Uniformní ovládání X Osobitost jednotlivých zbraní} - Ovládání odpovídá napříč zbraněmi totožné šabloně, konkrétní provedení vyžádaného útoku se však mezi typy zbraní liší dostatečně, aby to mělo citelný efekt na pocit ze hry. Rovněž fakt, že pro každý pár \textit{zbraň - typ útoku} existuje pouze jediná pevně daná animace, umocňuje předvídatelnost, která hráči umožňuje zbraň rychle pochopit a být si intuitivně vědom jejích specifik.
 \end{itemize}
+
+Systém však přinesl i některá nepohodlí a promarněné příležitosti:
+\begin{itemize}
+    \item \textbf{Ovládání kamery} - Pohyb myši plní současně dvě nesouvisející role - ovládání natočení kamery a výběr zóny útoku - což se ne vždy dobře slučuje. Nastávají situace, kdy hráč, aby vybral směr útoku, musí pohled přetočit pryč z místa zasluhujícího pozornost, což může vést k mírnému zmatení.  
+    \item \textbf{Emergentní gameplay} - Bojový systém je uzavřená bublina, která s okolními mechanikami ani sama se sebou neinteraguje natolik, aby vznikl prostor pro vznik zajímavých interakcí, jaké tvůrci hry úmyslně neplánovali.
+    \item \textbf{Flexibilita} - Do hry by bylo obtížné přidat např. specifický typ nehumanoidních postav - celý systém útočných zón by se musel překopat, aby byl boj s nimi schopen poskytnou stejně realistický zážitek jako boj s lidmi.
+\end{itemize}
+
+Celkově tedy vidíme, že hře se podařilo najít \textbf{pěkný kompromis mezi realističností, pocitem kontroly, a hráčskou přívětivostí}. O jeho kvalitách svědčí dlouhodobě velmi pozitivní ohlasy hráčské komunity. Bylo toho však dosaženo obětováním jisté vnitřní flexibility - systém velmi dobře vystihuje boj lidí s lidmi, použití zbraně k jakémukoliv jinému účelu by však žádalo jeho významné překopání. 
 
 
 \clearpage
@@ -259,15 +267,15 @@ Nyní rámcově víme, jak bojový systém funguje. Pojďme se tedy podívat na 
 %- různé typy zbraní - mohou mít pouze podmnožinu ze všech útokových zón
 %- vyhodnocování dmg - bere v úvahu rychlost zbraně, za každou kolizi kterou zbraň při cestě potkala, je velký postih
 
-(jaké výhody z tohoto plynou)
-- celkem jednoduché a jednoduše uchopitelné, přitom má hráč pocit velké kontroly
-- máme celkem uniformní rozhraní, ale i tak každá zbraň má do jisté míry osobitý charakter a vede k jinému způsobu hraní
+%(jaké výhody z tohoto plynou)
+%- celkem jednoduché a jednoduše uchopitelné, přitom má hráč pocit velké kontroly
+%- máme celkem uniformní rozhraní, ale i tak každá zbraň má do jisté míry osobitý charakter a vede k jinému způsobu hraní
 
-(jaké výhody se nepodařilo získat)
-- drobnost - změna nápřahu mění natočení kamery
-- interakce s okolním prostředím je dost omezená
-- skupinová formace musí být separátní typ akce která se pro zbraň naimplementuje
-- přidání nehumanoidní postavy by vyžadovalo pro ni vytvořit úplně nové útokové zóny, v některých případech (např. proti koni funguje tak jak je) by se pak musely překopat/přidat i útokové zóny pro současné lidi (možná dokonce udělat z nich kontextové), aby se proti té nestvůře dalo efektivně bojovat
+%(jaké výhody se nepodařilo získat)
+%- drobnost - změna nápřahu mění natočení kamery
+%- interakce s okolním prostředím je dost omezená
+%- skupinová formace musí být separátní typ akce která se pro zbraň naimplementuje
+%- přidání nehumanoidní postavy by vyžadovalo pro ni vytvořit úplně nové útokové zóny, v některých případech (např. proti koni funguje tak jak je) by se pak musely překopat/přidat i útokové zóny pro současné lidi (možná dokonce udělat z nich kontextové), aby se proti té nestvůře dalo efektivně bojovat
 
 \subsection{Kingdom Come: Deliverance}
 Poslední hrou, kterou si představíme, je Kingdom Come: Deliverance, vydáné roku 2018 českými Warhorse Studios. Jde o akční \acs{RPG} odehrávající se v českém Posázaví roku 1403. Jedním z hlavních důrazů hry byla historická věrnost a celková realističnost zážitku - z tohoto rozhodnutí plynou přirozeně dalekosáhlé důsledky pro bojový systém.
