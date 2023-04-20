@@ -28,9 +28,10 @@
         \begin{itemize}
           \item Jednoduché rozhraní, exposuje jenom to, co submodul může potřebovat
           \item šikovné ho mít pro účely mockování v unit testech a taky protože takhle jsme schopní mezi SwordMovement a jeho komponenty nacpat dekorátor (kterej se tváří jako jediná aktivní komponenta, původní komponenty si ukradne pro sebe, sám se stará o správu toho, která je aktivní, a místo oficiálního SwordMovementu do nich injectne sebe) - takhle se dá např. elegantně nahrávat rozkazy pro pohyb meče (využijeme v \ref{knightEnemySubsection})
+          \item věci, které exposuje: SwordDescriptor popisující meč, ISwordInput, Transform sword wieldera, metodu MoveSword()
         \end{itemize}
       \item Správu toho která komponenta je aktivní jsme enkapsulovali do třídy ScriptSubmodulesContainer -> dekorátor mezi SwordMovementem a jeho Submodulama se dá napsat celkem bez námahy
-      \item Nastavení submodulů z editoru - list párů klávesa-submodul ; submodule picker má dropdown, kde můžeme vybírat ze všech typů dědících ze SwordMovement.Submodule a pro vybraný typ se pak zobrazí defaultní picker - neskonalé díky: \href{https://github.com/lordconstant/SubclassPropertyDrawer}{lordconstant}
+      \item Konfigurace submodulů z editoru - list párů klávesa-submodul ; submodule picker má dropdown, kde můžeme vybírat ze všech typů dědících ze SwordMovement.Submodule a pro vybraný typ se pak zobrazí defaultní picker - neskonalé díky: \href{https://github.com/lordconstant/SubclassPropertyDrawer}{lordconstant}
     \end{itemize}
   \item \textbf{Metoda SwordMovement.MoveSword()}
     \begin{itemize}
@@ -67,20 +68,61 @@
     \end{itemize}
   \item \textbf{Modul pro blokování:} 
     \begin{itemize}
-      \item 
+      \item TODO: dopsat!
     \end{itemize}
 \end{itemize}
 
 
 \subsection{Animace šermíře}
 \begin{itemize}
-  \item 
+  \item detailní model šermíře.. klasický bone rig (SkinnedMeshRenderer vykresluje, vedle něj je hierarchie transformů - kosti), zahrnuje basic animaci dýchání vytvořenou v Blenderu
+  \item není problém přidat víc animací, SwordsmanMovement pak bude muset komunikovat s animatorem a říkat mu co za animaci má hrát
+  \item meč.. ovládaný fyzikálním systémem, může se hýbat dost libovolně VS ruce hráče fyzikálně simulované nejsou
+  \item potřebujeme v postprocessu zařídit, aby to vypadalo, že ruce meč drží
+  \item stanovili jsme 2 kontrolní body na meči - pozice držení pro pravou a levou ruku - uvedené ve SwordDescriptoru
+  \item posledních pár verzí Unity podporuje package \href{https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.3/manual/index.html}{Animation Rigging} - s ním je cca triviální tohle zařídit
+  \item k detailnímu modelu šermíře jsme přidali procedurální Rig z tohoto package
+  \item na každé z rukou je nastavená TwoBoneIK constraint (začíná UpperArm, končí Hand) + Multi-Aim Constraint (na kosti Hand)
+  \item skript SwordsmanBodyProceduralAnimation - každý snímek nastaví target pozici IK constrainty na místo na handlu, co má držet; target Multi-Aimu dá někam do dáli aby ruka zaručeně ukazovala stejným směrem co paže 
+  \item problém... nestabilní undefined behavior když je ruka kratší než vzdálenost k handlePointu
+  \item řešení - vlastní constraint: RigToExtendSwordsmanArmsToReachTheSword - spočítá celkovou délku ruky a prodlouží ji (vynásobí lokální pozice jednotlivých kostí) tak, aby vždycky dosáhla na target pozici (s mírným přesahem, který se nastaví z editoru) - vypadá mírně creepy, ale je stabilní a dobře předává informaci pozorovateli
 \end{itemize}
 
 
 \subsection{Počítání zranění}
 \begin{itemize}
-  \item 
+  \item Cíl... být tak jednoduché jak jenom jde, ale myslet na rozšiřitelnost do budoucnosti
+  \item \textbf{Damageable}
+    \begin{itemize}
+      \item float HP /*currentHP*/, MaxHP;
+      \item poskytuje UnityEventy OnSpawn, OnUpdated, OnDamaged, OnHealed, OnDeath.
+      \item metoda ChangeHP(float deltaHP) - řeší damageování i healování
+      \item volitelně může celý gameobject automaticky zničit když zemře
+    \end{itemize} 
+  \item \textbf{AttackDeclaration}
+      \begin{itemize}
+        \item univerzální deskriptor co popisuje vykonaný útok
+        \item zatím velmi jednoduchá, v případě potřeby možné do ní přidat další informace
+        \item float Damage, informace (místo+normála) o bodu kde došlo ke zranění
+      \end{itemize} 
+  \item \textbf{IArmorPiece}
+      \begin{itemize}
+        \item rozhraní pro jakýkoliv hmotný objekt (obsahující collider), na který může být zaútočeno
+        \item z collideru se kanonicky získává jako collider.GetComponentInParent<IArmorPiece>() - může být jeden obecný pro všechny collidery a ten overridovat potomci čistě jenom pro svoje vlastní collidery
+        \item nese odkaz na damageable ke kterému patří
+        \item metoda ProcessAttack(AttackDeclaration) - vyhodnoť provedený útok!, uber HP na svém Damageable
+        \item poskytuje UnityEvent OnAttack
+        \item \textbf{BasicArmorPiece} - konkrétní implementace - má DamageMultiplier a MinDamage (dmg pod hranicí je ignorováno), celkově se chová jak by člověk čekal
+      \end{itemize} 
+  \item \textbf{BasicImpactWeapon}
+      \begin{itemize}
+        \item jednoduchá zbraň, co útočí na jiný předmět tak, že s ním zkoliduje 
+        \item parametry: DamageMultiplier, SecondsBetweenAttacks
+        \item při kolizi (OnCollisionEnter) se podívá jestli druhý collider u sebe nemá IArmorPiece - když jo, tak na něm zavolá ProcessAttack()
+        \item dmg počítá jako collision.impulse.magnitude*DamageMultiplier, bod zranění je podle collision.GetContact(0)
+        \item metoda pro výpočet AttackDeclaration.. virtuální - možné nahradit sofistikovanější implementací
+      \end{itemize} 
+  
 \end{itemize}
 
 
@@ -124,12 +166,34 @@
 
 \subsection{GUI}
 \begin{itemize}
-  \item 
+  \item všechno pomocí klasického gameobjectového UI
+  \item PauseMenu.. naprostá klasika - root čeká na zmáčknutí Esc - pak nastaví Time.timeScale = 0 a enabluje svoje potomky
+  \item DieScreen.. taky nic zajímavého - při spuštění tweenem přes obrazovku zobrazí hardcoded bloodstains sprite a "Press F to Restart" (reloadne scénu)
+  \item HUD.. healthbar + bloodstains.. dvě drobné komponenty, nad nima kontroler - poskytuje callback, co se musí přidat do OnUpdate na nějakém Damageable
 \end{itemize}
+
 
 \subsection{Statičtí nepřátelé}
 \begin{itemize}
-  \item 
+  \item Nemohou se hýbat, stojí tam, kde byli spawnutí
+  \item \textbf{Trénovací panák}
+    \begin{itemize}
+      \item Jenom stojí a bere damage dokud není zničený
+    \end{itemize}
+  \item \textbf{Mečotoč}
+    \begin{itemize}
+      \item Koule, co rotuje dokola na tyči (uchycené configurable jointem, který má nastavenou targetVelocity a angularDrive)
+      \item Ke kouli je jointama připojených 1 nebo víc mečů - ty způsobují dmg úplně stejně jako šermířův meč
+      \item Na jointu meče - vysoká connectedMassScale -> hráč může zachytit meč mečotoče o ten svůj a celý pohyb mečotoče tím zastavit, příp. tlačit proti směru rotace
+      \item Při spawnu randomizován počet mečů, odkud kam se koule posunuje po tyči, a jakou má volnost rotace (- SwordmillRandomizer)
+    \end{itemize}
+  \item \textbf{IRandomizable}
+  \begin{itemize}
+    \item Libovolný skript, myšlenka je, že by měl při spawnu randomizovat parametry svého gameobjectu
+    \item Spawnovací skript na entitě ihned po spawnu (tedy před zavoláním Start()) iteruje přes všechny IRandomizable ve všech potomcích a volá na nich metodu Randomize()
+    \item Implementován např. pro randomizaci transformu (rotace, velikost trénovacího panáka, apod.), randomizaci HP, randomizaci mečotoče
+    \item Ten samý systém je použitý i pro náhodou generaci palisády, co ohraničuje arénu
+  \end{itemize}
 \end{itemize}
 
 
