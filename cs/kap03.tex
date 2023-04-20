@@ -1,6 +1,8 @@
 \chapter{Návrh}
 
-(pozn.: předpokládám, že tahle kapitola všechno rozebírá na myšlenkové rovině a k jejímu pochopení nejsou potřeba znalosti z kapitoly 2 - do té zabředneme až v příští kapitole při diskuzi implementace)
+V této kapitole provedeme zamyšlení a stanovíme cíle, o něž tato práce bude usilovat. Dále vybereme nástroje, které nám k dosažení těchto cílů poslouží.  
+
+Následně provedeme celkový návrh řešení - čtenáři představíme objektový návrh, který bude použit při jeho implementaci, a poté zevrubně prodiskutujeme metody zpracování uživatelského vstupu pro účely ovládání meče.
 
 \section{Stanovení cíle}
 
@@ -12,10 +14,10 @@
             \item kromě volného mávání mečem, ostatní aspekty co k boji v reálném světě patří, hry zvládají zachytit docela v pohodě -> ovládání meče poskytuje největší prostor k prozkoumání
             \item chceme obecný systém, co nebude potřebovat specifické úpravy pokaždé, když vytvoříme nový typ nepřítele, a co půjde použít k interakci s herním prostředím
             \item nechceme pro meč ručně vytvářet žádné animace (nemáme na to prostředky + to není programátorsky zajímavá činnost)
-            \item meč by se měl tvářit v rámci možností rozumně fyzikálně věrně 
+            \item meč by se měl tvářit v rámci možností rozumně fyzikálně věrně -> moderní herní enginy bývají vybaveny pokročilým fyzikálním subsystémem -> mohlo by být fajn nějakej takovej využít
         \end{itemize}
     
-    \item \textbf{z pohledu backendu by meč měl zvládat plně volný pohyb na všech 6 stupních volnosti}
+    \item \textbf{z pohledu backendu by meč měl zvládat plně volný pohyb na všech 6 stupních volnosti a měl by to být objekt plně ovládaný standardním fyzikálním subsystémem}
         \begin{itemize}
             \item zkusíme znovu to, co Die by the Sword, avšak tentokrát vytvoříme otevřenou platformu, na které bude moci jakýkoliv programátor z komunity experimentovat s metodami ovládání (nedoladěné ovládání (a nemožnost ho spravit komunitou) byl hlavní kámen úrazu DbtS)
             \item pokud se nám osobně nepodaří najít opravdu dobré a zábavné ovládání, někomu jinému z komunity se to povést může. i kdyby ne, na hru vždycky půjde napasovat VR ovladač ;)
@@ -35,6 +37,7 @@
         \begin{itemize}
             \item je mature
             \item nejrozšířenější (viz \ref{unityEngineIntroSection}) -> největší šance že se najde jiný vývojář, co pro naší práci najde využití
+            \item má spoustu standardních knihoven a subsystémů, co nám usnadní práci a zajistí rozumnou míru kompatibility s prací ostatních lidí
         \end{itemize}
     \item na všech místech práce chceme používat co nejvíc rozšířené a standardní systémy a knihovny (-> kompatibilita s prací ostatních lidí)
     \item myslet na dobré OOP practices a štábní kulturu
@@ -96,8 +99,9 @@
         \end{itemize} 
 \end{itemize}
 
-\subsection{Myšlenky o mapování uživatelského vstupu}
+\subsection{Zpracování uživatelského vstupu}
 \begin{itemize}
+    \item \textbf{Přednost má ovládání meče - na to se teď zaměříme}
     \item k dispozici máme myš a klávesnici
     \item musí být pro hráče jednoduše uchopitelné (- ideálně tedy nějaký pěkně spojitý matematický formalizmus, který jsme pro hráče schopní pěkně vizualizovat)
     \item diskuze variant co používalo Die by the Sword:
@@ -131,9 +135,52 @@
                     \item mávání s mečem naimplementujeme plnohodnotně jako v DbtS 
                     \item bude však možné přepínat na další mody ovládání
                     \item vždy bude aktivní jenom jeden mod - přepínání stiskem příhodné klávesy (např. shift)
-                    \item všechny mody berou na vstupu jeden bod - průnik kurzoru s kulovou plochou - a lyší se v algoritmu, pomocí kterého z tohoto bodu určí cílovou polohu meče
+                    \item všechny mody berou na vstupu jeden bod - průnik kurzoru s kulovou plochou - a liší se v algoritmu, pomocí kterého z tohoto bodu určí cílovou polohu meče
+                    \item přesnou matematiku na které stojí oba mody rozebereme později v implementační kapitole \textbf{\footnote{Je rozumný to takhle rozseknout?}} (viz \ref{modesOfSwordMovementSubsection})
                 \end{itemize}
+        \end{itemize}
+    \item ovládání střílením paprsku, který se protne s kulovou plochou jsme naimplementovali
+        \begin{itemize}
+            \item fungovalo rámcově pěkně, ale byly zde nežádoucí okrajové případy (-> např. hráč mohl meč natočit tak, aby probodával jeho tělo)
+            \item -> \textbf{kulová plocha je fajn, ale potřebuje zobecnit na něco trochu flexibilnějšího}
+            \item rozhraní \textbf{IRayIntersectable} (actually to je abstraktní třída - protože Unity serializer) - metoda GetIntersection(Ray) - vrací struct - ten obsahuje zda byl úspěch, příp. bod průniku, střed proniknuté kulové plochy a váhu výsledku (pro účely interpolace)
+            \item \textbf{RayIntersectableSphere}
+                \begin{itemize}
+                    \item definovaná středem a poloměrem
+                    \item volitelný parametr - \textbf{díra}
+                        \begin{itemize}
+                            \item jiná RayIntersectableSphere
+                            \item pokud se průnik paprsku nachází v díře (je vzdálený od jejího středu míň než její poloměr), nahlásí se jako netrefa, nebo se mu dle vzdálenosti od středu díry sníží váha
+                            \item váhu výsledku (float 0-1), příp. její závislost na vzdálenosti průniku od středu díry konfiguruje uživatel skrz AnimationCurve
+                            \item díry se ukázalo, že jsou potřeba, aby se při interpolaci (viz níže) mezi velkou a malou koulí dal udělat hladký přechod
+                        \end{itemize}
+                    \item další volitelný parametr - \textbf{center override}
+                    \begin{itemize}
+                        \item bod, který se bude ve výsledkovém structu hlásit jako centrum kulové plochy i když ve skutečnosti není
+                        \item potřeba když interpolujeme mezi hodně velkou a hodně malou koulí - aby obě hlásily stejný střed
+                    \end{itemize}
+                \end{itemize}
+            \item \textbf{RayIntersectableInterpolation}
+                \begin{itemize}
+                    \item list mnoha IRayIntersectables
+                    \item GetIntersection volá sebe na všech podprvcích - výsledek je pak vážený aritmetický průměr těch, které byly trefené (vážený podle váhy udané ve výsledkovém structu)
+                \end{itemize}
+            \item Vizualizace - musí se střílet spousta paprsků z kamery 
+            \item díky tomuhle jsme schopní hráči poskytnout průnikový tvar, co se pro něj tváří jako normální, intuitivní kulová plocha, ale proti ní zde máme spoustu dodatečné flexibility, která nám umožní vychytat okrajové případy
+            \item pomocí tohohle se dají poskládat dost komplexní útvary, co se pořád tváří pěkně plynule a spojitě - ale nejsou plynulé a spojité vždycky, člověk si musí trochu pohrát s AnimationCurve u děr aby nebyly ostré přechody tam kde končí/začíná nějaká koule
+            \item (insert vizualizaci jak vypadá IRayIntersectable kterej používá blocking mode)
+            \item poznámka: k tomuto řešení jsme došli živelně experimentováním v průběhu času - teď když už je hotové, dost pravděpodobně by šlo najít alternativu, co by byla jednodušší a srovnatelně mocná (kdyby to někomu stálo za práci)
+        \end{itemize}
+    \item nyní máme ovládání meče - \textbf{co ovládání postavy?}
+        \begin{itemize}
+            \item ideálně klasické WASD co všichni znají - funguje pro pohyb dopředu/dozadu a úskoky doleva/doprava
+            \item problém - vertikální i horizontální osa kurzoru jsou potřeba pro účely meče - jak se má hráč rozhlížet do stran?
+            \item rozhlížení nahoru/dolu - kosmetická záležitost kamery - když použijeme myš, zdá se být v pohodě
+            \item rozhlížení doleva/doprava - udává směr chůze - nemůžeme jen tak dělat kurzorem, to by hráče mátlo když chce jenom sekat mečem 
+            \item řešení - prostě na rozhlížení do stran použít klávesy QE - blbuvzdorné, dobře pochopitelné pro hráče, dobrý výchozí bod se kterým porovnávat při experimentech
+            \item lepší řešení - možné téma budoucí práce
         \end{itemize}
 \end{itemize}
 
 \section{Shrnutí}
+
