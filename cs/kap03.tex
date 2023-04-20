@@ -63,6 +63,7 @@ Následně provedeme celkový návrh řešení - čtenáři představíme objekt
                 \begin{itemize}
                     \item stavový automat
                     \item z editoru se konfiguruje seznam párů klávesa-stav + jeden defaultní stav
+                    \item stav... SwordMovement.Submodule
                     \item každý stav nese nějaká data konfigurovaná z editoru, další data může získat od instance ISwordMovement, která do něj je injectnuta
                     \item ISwordMovement - poskytuje deskriptor meče, zdroj vstupu, transform držitele meče a metodu MoveSword()
                     \item aktuální stav je ten, jehož klávesa je právě stisknutá - na tom jediném je volán OnUpdate()
@@ -87,8 +88,8 @@ Následně provedeme celkový návrh řešení - čtenáři představíme objekt
     \item \textbf{Důsledky tohoto přístupu} 
         \begin{itemize}
             \item Logika ovládání meče a ovládání hráčské postavy jsou dobře oddělené
-            \item Logika meče dobře rozšiřitelná - jednoduché přidat nový mod ovládání
-            \item Není problém mít ten samý mod několikrát na různých klávesách ale s jinými parametry
+            \item Logika meče dobře rozšiřitelná - jednoduché přidat nový ovládací submodul
+            \item Není problém mít ten samý ovládací submodul několikrát na různých klávesách ale s jinými parametry
             \item Mezi SwordMovement a jeho mody není problém vecpat dekorátory (např. pro nahrávání rozkazů k pohybu meče)
             \item Abstrakce uživatelského vstupu... není problém ho mockovat, simulovat apod.
             \item Nevýhoda - Data hráče a meče nejsou dobře oddělená

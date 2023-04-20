@@ -1,26 +1,142 @@
 \chapter{Implementace}
 
-\section{Návrh systému}
+\section{Implementace základních komponent}
+\begin{itemize}
+  \item \textbf{Šermíř}
+    \begin{itemize}
+      \item rigidbody (nekinematické)
+    \end{itemize}
+  \item \textbf{Meč}
+    \begin{itemize}
+      \item rigidbody (nekinematické)
+      \item 
+    \end{itemize}
+\end{itemize}
 
-\subsection{Stručný celkový přehled}
+\subsection{Moduly ovládání meče} \label{modesOfSwordMovementSubsection}
+\begin{itemize}
+  \item Co je modul z hlediska objektováho návrhu už čtenář ví, tady jenom popíšeme implementaci modulu pro sekání a modulu pro blokování
+  \item \textbf{Abstrakce} 
+    \begin{itemize}
+      \item SwordMovement.Submodule
+        \begin{itemize}
+          \item samostatná abstraktní třída, nedědí z Unity.Object
+          \item má metody jako OnUpdate, OnActivated, OnDeactivated apod. - za jejich volání nese zodpovědnost SwordMovement
+          \item může volat metody na SwordMovementu (je do ní injectnuta instance rozrhraní ISwordMovement)
+        \end{itemize}
+      \item ISwordMovement
+        \begin{itemize}
+          \item Jednoduché rozhraní, exposuje jenom to, co submodul může potřebovat
+          \item šikovné ho mít pro účely mockování v unit testech a taky protože takhle jsme schopní mezi SwordMovement a jeho komponenty nacpat dekorátor (kterej se tváří jako jediná aktivní komponenta, původní komponenty si ukradne pro sebe, sám se stará o správu toho, která je aktivní, a místo oficiálního SwordMovementu do nich injectne sebe) - takhle se dá např. elegantně nahrávat rozkazy pro pohyb meče (využijeme v \ref{knightEnemySubsection})
+        \end{itemize}
+      \item Správu toho která komponenta je aktivní jsme enkapsulovali do třídy ScriptSubmodulesContainer -> dekorátor mezi SwordMovementem a jeho Submodulama se dá napsat celkem bez námahy
+      \item Nastavení submodulů z editoru - list párů klávesa-submodul ; submodule picker má dropdown, kde můžeme vybírat ze všech typů dědících ze SwordMovement.Submodule a pro vybraný typ se pak zobrazí defaultní picker - neskonalé díky: \href{https://github.com/lordconstant/SubclassPropertyDrawer}{lordconstant}
+    \end{itemize}
+  \item \textbf{Metoda SwordMovement.MoveSword()}
+    \begin{itemize}
+      \item vstupy: anchorPoint (poloha meče) + swordDirection (směr kam je namířený) + upDirection (směr nahoru - podle něj se počítá natočení kolem vlastní osy) + holdingForce (faktor síly držení)
+      \item podle směru namíření a směru nahoru se nastaví cílová rotace mečového jointu
+        \begin{itemize}
+          \item stačí podle nich spočítat cílovou rotaci a tu nastavit jako targetRotation ConfigurableJointu (spočítat jí je ale netriviální problém - viz \ref{howToSetJointsTargetRotationSection})
+        \end{itemize}
+      \item nastavení polohy meče podle vyžádané cílové polohy...
+        \begin{itemize}
+          \item ConfigurableJoint podporuje stejně jako targetRotation i targetPosition - ta se ale při testování zdála nestabilní (čas od času meč odskočil 10 metrů vedle)
+          \item ConfigurableJoint má property connectedAnchor - pozice místa kam je předmět jointem ukotvený, relativní vůči rigidbody ke kterému je joint ukotvený - jeho změnou můžeme efektivně mečem pohybovat
+          \item potřeba nastavit Joint.autoConfigureConnectedAnchor = false
+          \item chceme plynulý pohyb konzistentní rychlostí VS Joint.connectedAnchor se dá jenom natvrdo nastavit, neexistuje žádný targetConnectedAnchor 
+          \item DOTween nejde použít (cílová pozice connectedAnchoru se potenciálně mění každý snímek - DOTween je stavěný na to, že cíl je známý od začátku a nemění se)
+          \item řešení - vést si prostě target hodnotu a každý snímek connectedAnchor posunout o (target - currentConnectedAnchor)*deltaTime*speedFactor/*nastavitelný z editoru*/
+          \item celou tuhle logiku jsme enkapsulovali do třídy RetargetableInterpolator - ta běží na pozadí jako korutina a jenom nastavujeme její target hodnotu
+        \end{itemize}
+      \item faktor síly držení
+        \begin{itemize}
+          \item důvod: někdy je správně defaultní síla, jakou hráč meč drží, někdy (modul blokování) ale např. potřebujeme, aby byl meč drženej tak silně, že rána druhého meče ho nedokáže srazit dolů
+          \item na začátku si uložíme původní Joint.slerpDrive.positionSpring - nastavení faktoru síly držení znamená kolikanásobek téhle původní hodnoty se má začít používat
+          \item plynulá změna - interpolujeme stejně jako Joint.connectedAnchor
+          \item volitelný parametr - když není, bere se to jako by byla dodána hodnota 1 (-> 1-násobek původní síly)
+        \end{itemize}
+    \end{itemize}
+  \item \textbf{Modul pro sekání:} 
+    \begin{itemize}
+      \item velmi jednoduchý
+      \item má z editoru nastavitelný IRayIntersectable - prostě jenom vezme paprsek ze vstupu a intersectne ho
+      \item když průnik není, nic neudělá
+      \item když průnik je, nastaví hlášený střed koule jako handlePoint, lookDirection je (intersection.Value - intersection.Center)
+      \item upVector je lookDirection.Cross(lastLookDirection) 
+    \end{itemize}
+  \item \textbf{Modul pro blokování:} 
+    \begin{itemize}
+      \item 
+    \end{itemize}
+\end{itemize}
 
-
-\subsection{Zpracování uživatelského vstupu}
-
-\subsection{Mody ovládání} \label{modesOfSwordMovementSubsection}
 
 \subsection{Animace šermíře}
+\begin{itemize}
+  \item 
+\end{itemize}
+
 
 \subsection{Počítání zranění}
+\begin{itemize}
+  \item 
+\end{itemize}
 
 
 \section{Stabilita simulace}
+\begin{itemize}
+  \item 
+\end{itemize}
+
 
 \subsection{Jak nastavit cílovou rotaci jointu} \label{howToSetJointsTargetRotationSection}
+\begin{itemize}
+  \item cílová rotace configurable jointu se udává v souřadnicovém systému, co je relativní vůči jointu
+\end{itemize}
 
 \subsection{Ladění parametrů} \label{swordParameterTweaksSection}
+\begin{itemize}
+  \item 
+\end{itemize}
 
 \subsection{Kolize mečů} \label{swordCollisionsSection}
+\begin{itemize}
+  \item 
+\end{itemize}
+
+
+\section{Demo hra}
+\begin{itemize}
+  \item Pro testování a demonstraci funkčnosti našeho konceptu jsme vytvořili ukázkovou hru
+  \item herní svět - aréna + okolní les
+  \item PC - šermíř, může chodit po světě a používat libovolně meč
+  \item v aréně lze bojovat s jednoduchými NPC nepřáteli
+  \item všechny modely a textury byly vytvořené autorem této práce a vztahuje se na ně MIT licence jako na všechno ostatní
+\end{itemize}
+
+\subsection{Herní svět}
+\begin{itemize}
+  \item les jsou jenom pěkné kulisy
+  \item V aréně jsou sloupy s čudlíkama, po jejichž stisknutí mečem se uvnitř arény spawne nepřítel
+  \item několik druhů nepřátel: trénovací panák, mečotoč, rytíř (podrobně rozebereme v jejich vlastních sekcích)
+\end{itemize}
+
+\subsection{GUI}
+\begin{itemize}
+  \item 
+\end{itemize}
+
+\subsection{Statičtí nepřátelé}
+\begin{itemize}
+  \item 
+\end{itemize}
+
+
+\subsection{Rytíř} \label{knightEnemySubsection}
+\begin{itemize}
+  \item 
+\end{itemize}
 
 
 \section{Shrnutí}
