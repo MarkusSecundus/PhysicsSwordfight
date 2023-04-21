@@ -253,7 +253,7 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
   \begin{itemize}
     \item v každém framu pro všechny meče checkovat jestli třeba náhodou neprošly skrz a když jo, tak zařídit aby se vrátily
       \begin{itemize}
-        \item když uděláme chytře, dalo by se naimplementovat efektivněji než jak to zní (checkovat jenom s mečema v okolí - co jsou v trigger collideru apod.)
+        \item když uděláme chytře, dalo by se naimplementovat efektivněji než jak to zní (checkovat jenom s mečema v okolí - co jsou uvnitř trigger collideru apod.)
         \item jak chceme tu kolizi ručně rozřešit, aby se meče chovaly pěkně realisticky a nerozbila se celková stabilita simulace? - jenom vrátit rigidbody.position na poslední pozici před kolizí se nebude chovat pěkně
       \end{itemize}
     \item drobný skript co poslouchá na kolize a vrací meče na správnou stranu
@@ -277,7 +277,53 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
   \textbf{po troše experimentování a delší úvaze jsme se rozhodli pro možnost s dodatečným neviditelným colliderem}
   \item \textbf{průběh implementace:}
   \begin{itemize}
-    \item 
+    \item jak chceme aby to vypadalo: pro každý pár mečů - na jednom z nich velkej collider, co se v reálném čase natáčí tak, aby tomu druhému bráníl v protunelování 
+    \item který tvar z primitive colliderů? - vybíráme box collider - jedna jeho hrana bude procházet vlastní osou meče; zbytek collideru je vždycky přesně na opačné straně od osy meče než meč protivníka
+    \item pro potřeby zbytku sekce budeme meč považovat za úsečku odpovídající jeho středové ose - spojnici pataČepele<->špička (získaná ze SwordDescriptoru)
+    \item dále nechť collider s kterým pracujeme, se nazývá "fixovací collider" či krátce "fixer"
+    \item jak definujeme 'na opačné straně'?  
+      \begin{itemize}
+        \item meče - libovolně mimoběžné úsečky v prostoru
+        \item vzít nějakej jeden pevnej bod (např. střed čepele) a ten brát jako reprezentanta, kterému chceme být naproti - nefunguje (spusta případů, kdy to neodpovídá - např. kolize špiček dvou mečů)
+        \item co funguje: najít nejkratší spojnici obou mečů - na ní ležej ty 2 body, ve kterých by oba meče potenciálně mohly kolidovat
+        \item výpočet:
+          \begin{itemize}
+            \item meče M, N
+            \item X..nejkratší spojnice M,N musí být na oba kolmá - tedy X.direction = M.direction.CrossProduct(N.direction)
+            \item nyní stačí řešit soustavu 3 rovnic o 3 neznámých: M.origin + M.t * M.direction + X.direction*X.t = N.origin + N.t * N.direction // kde M.t, X.t, N.t jsou neznámé
+            \item tu strčíme do matice a předhodíme gaussovce - knihovna MathNet.Numerics
+            \item chceme úsečky -> M.t, N.t sesekáma do intervalu <0,1> - podle nich vypočítáme oba konce výsledné spojnice
+          \end{itemize}
+      \end{itemize}
+    \item pozici kam umístit střed collideru (offset relativní vůči středu meče) získáme takto: 
+      \begin{itemize}
+        \item let O = nejbližší bod protějšího meče
+        \item let P = plocha(bod: střed meče, normála:směr meče)
+        \item let H = hloubka collideru (parametr od uživatele - vzdálenost od hrany do středu)
+        \item return (P.projekce(O).normalized * (-H)) //pro globální pozici přičíst střed meče
+      \end{itemize}
+    \item rotaci získáme jako Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(offsetCollideruOdStředuMeče, bladeDirection)
+    \item takhle tu pozici collideru updatujeme každej FixedUpdate
+    \item \textbf{problém} - když meče během 1 snímku protunelujou, collider okamžitě přeskočí na druhou stranu a ničemu nepomůže
+    \item řešení: pamatujeme si jeho poslední offset proti středu meče - pokud se mezi 2 snímkama ostře změní (offset.Dot(lastOffset) < 0), tak nově spočítanej offset znegujeme
+    \item existujou okrajové případy, co to rozbijou (např. úplně první volání FixedUpdate) - řešení: tuhle negaci provádíme jenom pokud je nejkratší spojnice obou mečů dostatečně krátká (limit konfigurovaný uživatelem, 0.4 metru funguje rozumně)
+    \item \textbf{Další problém} - občas se stane, že meč protuneluje na druhou stranu meče a jakoby se skřípne mezi mečem a jeho fixerem - řešení: přidat collideru přesah - velikost navíc se kterou ale jeho pozicovač nekalkuluje (-> místo jenom do středu meče sahá fixer trochu dál)
+    \item \textbf{Jak zařídíme, aby collisionFixer kolidoval jenom se správným mečem a s ničím jiným?}
+      \begin{itemize}
+        \item první řešení, co člověka napadne - dát je na Layer, co nemá nastavené kolize vůbec s ničím, a selektivně zavolat Physics.IgnoreCollision(fixer, targetSword, false) - to ale vůbec nic nedělá, kolize pořád nevznikají
+        \item \textbf{řešení:} separátní Layery: CollisionFix, Sword - Sword koliduje s hodně věcma, CollisionFix jenom se Sword -> musíme přidat velký trigger collider - ten včas disabluje kolize se všema mečema co nejsou ten cílový, které se nachomýtnou poblíž
+      \end{itemize}
+    \item \textbf{fixovací collider umístíme přímo do meče jako jeho podobjekt}
+      \begin{itemize}
+        \item -> všechny kolize s fixerem povedou k působení síly přímo na rigidbody meče (a síla bude přesně ta co je realistická)
+        \item \textbf{problém:} dodatečnej collider, co se ještě pořád chaoticky otáčí, totálně rozhodí balance meče - řešení: \textbf{potřeba mít nastavený custom centerOfMass a inertiaTensor aby se nepřepočítávaly podle fixeru!} 
+      \end{itemize}
+    \item \textbf{Jak se tedy výsedek používá z pohledu uživatele?}
+      \begin{itemize}
+        \item Na meč stačí přidat komponentu CollisionFix - ta automaticky zařídí, aby se vytvořil fixer pro každej další meč, co se nachomítne poblíž (fixer je umístěnej do jednoho z těch dvou mečů - náhodně vybráno který)
+        \item v případě že je meč zničený, všechny fixery co na něj cílily, se automaticky zničej taky
+        \item CollisionFix by měl v defaultu být nakonfigurovanej funkčně, ale uživatel na něm může ladit parametry pro fixer (hloubku, přesah apod.), radius ve kterém se fixery vytvářejí ; taky může přidat list objektů co se z fixu mají vynechat
+      \end{itemize}
   \end{itemize}
 \end{itemize}
 
