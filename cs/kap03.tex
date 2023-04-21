@@ -79,10 +79,11 @@ Následně provedeme celkový návrh řešení - čtenáři představíme objekt
         \end{itemize} 
     \item \textbf{Kořen hierarchie} 
         \begin{itemize}
+            \item Komponenta \textbf{SwordsmanAssembly}...
             \item Nese odpovědnost za to, že meč a šermíř budou správně pospojované (jeden s druhým a s objekty co jdou z vnější scény)
             \item Definují se tu odkazy na všechny objekty okolní scény, které meč nebo šermíř potřebují znát (kamera, healthbar, die-screen)
-            \item Definuje se tu zdroj vstupu (klávesnice nebo ovládací skript)
-            \item Definuje se tu tabulka dalších obecných parametrů, na které se komponenty uvnitř hráče a meče mohou symbolicky odkazovat
+            \item Je v něm komponenta typu \textbf{ISwordInput} (abstrakce pro zdroj vstupu - klávesnice nebo ovládací skript)
+            \item Definuje se tu tabulka dalších obecných parametrů, na které se komponenty uvnitř hráče a meče mohou symbolicky odkazovat (komponenta \textbf{SymbolMap})
             \item Všechny rozdíly, které odlišují \acs{PC} od \acs{NPC}, by se měly dít v tomto jednom objektu
         \end{itemize} 
     \item \textbf{Důsledky tohoto přístupu} 

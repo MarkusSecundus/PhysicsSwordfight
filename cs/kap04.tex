@@ -1,19 +1,15 @@
 \chapter{Implementace}
 
+V předchozí kapitole jsme navrhli strukturu, které se náš projekt bude držet. Nyní můžeme přistoupit k jeho implementaci.
+
 \section{Implementace základních komponent}
 \begin{itemize}
   \item \textbf{Šermíř}
     \begin{itemize}
       \item zákl. prvky: Rigidbody (nekinematické), SwordsmanMovement
-      \item z parenta si natáhne instanci ISwordInput - na něm se ptá na hodnoty vstupních Axis a podle nich působí silama aby vyvolával pohyb hráče
-      \item z editoru nastavitelné mapování vstupu a násobiče pro síly, kterýma se působí (konfigurace rychlosti pohybu)
-      \item chceme aby hráč stál vzpříma, nenakláněl se na stranu
-        \begin{itemize}
-          \item na rigidbody nastavit FreezeRotation v X a Z
-          \item to ale samo o sobě nestačí (viz \href{https://docs.unity3d.com/ScriptReference/Rigidbody-constraints.html}{docs} - FreezeRotation dělá jenom to, že v těch směrech nastaví inertiaTensor na 0) - pořád probublává drobná změna kvůli nepřesnosti simulace - hromadí se celkem rychle
-          \item řešení: nechat FreezeRotation X+Z, ale navíc ještě každý FixedUpdate ručně vynulovat X a Z v rigidbody.rotation
-          \item \textbf{Zamyšlení: je lepší nechat tuhle věc tady, nebo jí přestěhovat někam do \ref{simulationStabilitySection}?}
-        \end{itemize}
+      \item z parenta si natáhne instanci ISwordInput - na něm se ptá na hodnoty vstupních Axis + stisknutost kláves (podle nich pak působí silama aby vyvolával pohyb hráče)
+      \item z editoru nastavitelné: mapování vstupu a násobiče pro síly, kterýma se působí (konfigurace rychlosti pohybu)
+      \item chceme aby hráč stál vzpříma, nenakláněl se na stranu - není triviální - rozebereme v \ref{playerFallingToSideSection}
       \item jak probíhá pohyb a rotace hráče
         \begin{itemize}
           \item podle parametrů a hodnot Axis, co jsme pro danej směr pohybu dostali ze vstupu, stanovíme cílovou rychlost, kterou by se hráč měl pohybovat
@@ -26,12 +22,17 @@
           \item skok - stisknutí klávesy - hráči se jednorázově přidá síla, pokud stanovený Feet trigger collider s něčím koliduje (na to jsme museli implementovat TriggerActivityInfo - komponenta, co vede záznamy o aktuálně probíhajících kolizích)
         \end{itemize}
        \item Jednoduchý collider pro interakci s prostředím - kapsule 2m*0.5m -> hladký pohyb po terénu apod.
-       \item podrobné animované tělo pro kolize s mečem - viz \ref{swordsmanAnimationSubsection}
+       \item animované tělo s podrobným systémem colliderů pro kolize s mečem - viz \ref{swordsmanAnimationSubsection}
     \end{itemize}
   \item \textbf{Meč}
     \begin{itemize}
-      \item rigidbody (nekinematické)
-      \item 
+      \item zákl. prvky: Rigidbody (nekinematické), ConfigurableJoint, SwordMovement
+      \item z parenta si natáhne instanci ISwordInput - skrz něj čte vstup z myši (paprsky castovaný z kamery) a checkuje u kláves zda jsou stisknuté
+      \item \textbf{SwordMovement}..
+      \item z editoru nastavitelné: výčet jednotlivých submodulů (ty rozebereme v \ref{modesOfSwordMovementSubsection}), parametry pro interpolaci pohybu handlu meče
+      \item kdokoliv se může šťourat v rigidbody a jointu a tweakovat tam parametry
+      \item vevnigř... model meče - samostatný prefab - obsahuje mesh, collidery, spoustu drobných transformů co popisujou význačné body
+      \item pro použití ostatními entitami meč poskytuje komponentu SwordDescriptor - v té je zaznamenaný výčet transformů co odpovídají význačným bodům
     \end{itemize}
 \end{itemize}
 
@@ -149,19 +150,67 @@
 
 
 \section{Stabilita simulace} \label{simulationStabilitySection}
-\begin{itemize}
-  \item 
-\end{itemize}
+
+Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování našeho systému. V této sekci se do detailu zaměříme na nečekané překážky, které nám v průběhu implementace postavil do cesty fyzikální subsystém, a vysvětlíme, jakým způsobem byly vyřešeny.
 
 
 \subsection{Jak nastavit cílovou rotaci jointu} \label{howToSetJointsTargetRotationSection}
 \begin{itemize}
-  \item cílová rotace configurable jointu se udává v souřadnicovém systému, co je relativní vůči jointu
+  \item cílová rotace configurable jointu se udává v souřadnicovém systému, co se dost kryptickým způsobem vypočítává podle vícera parametrů, co se na jointu nastavují
+  \item když víme kýženou rotaci v globálních souřadnicích, není triviální vypočítat na jejím základě rotaci, co se musí nastavit jako joint.targetRotation
+  \item give credits to \href{https://gist.github.com/mstevenson/4958837}{mstevenson}
+  \item (insert algorithm here)
+  \item (popsat jak přesně algoritmus funguje)
+  \item v našem případě jsme potřebovali joint.configuredInWorldSpace=false (= joint konfigurovaný v lokálním prostoru) - jinak se všechno rozbilo když se šermíř otočil 
 \end{itemize}
 
 \subsection{Ladění parametrů} \label{swordParameterTweaksSection}
 \begin{itemize}
-  \item 
+  \item snaha dosáhnout dobrý game feel
+    \begin{itemize}
+      \item aby meč svižně sekal ze strany na stranu (ne se klátil jako když mácháme s 80kg ledničkou)
+      \item aby meč netáhl šermíře pryč z místa kde stojí
+      \item aby se všechno nezbláznilo když např. hráč přijde blízko ke stěne a začne dávat vstupy, podle kterých by handle měl být uvnitř té stěny
+      \item aby šermíř při blokování držel meč dostatečnou silou, že meč nebude sražen na stranu a opravdu ten úder vyblokuje 
+    \end{itemize}
+  \item meči i šermíři jsme nastavili realistickou hmotnost (šermíř 60kg, meč 1.5kg)
+  \item \textbf{Svižnost sekání...}
+    \begin{itemize}
+      \item joint.rotationDriveMode = Slerp - plynulý pohyb, vždy nejkratší cesta mezi dvěma rotacemi
+      \item potřeba nenulový joint.angularSlerpDrive.damper (jinak by se meč třásl a nikdy nestabilizoval) ale musí být o dost menší než joint.angularSlerpDrive.spring (když jsou blízko, tak se meč pohybuje strašně líně)
+      \item experimentálně binárním vyhledávání jsme našli hodnoty drive=120, damper=10 - ty se chovají pěkně pro normální sekání
+      \item další extrémně důležitá věc - vyhrát si s ručním nastavením rigidbody.centerOfMass a rigidbody.inertiaTensor 
+        \begin{itemize}
+          \item je nezbytně nutné aby se nepřepočítávaly podle toho jak se meči přidávají a odebírají collidery (nezbytně nutné kvůli \ref{swordCollisionsSection} a taky se prostě věci dají jednodušeji ladit když mi v tom automatika nedělá bordel)
+          \item pěkně vychází rigidbody.centerOfMass = (0,0,0) a rigidbody.inertiaTensor = nějaké hodně malé číslo - např. (0.05, 0.05, 0.02) (ale všude nenulové protože nula = nekonečno)
+        \end{itemize}
+    \end{itemize}
+  \item \textbf{Aby meč šermíře netahal dopředu apod. ...}
+    \begin{itemize}
+      \item nastavíme nízkou joint.connectedMassScale - tím pádem se síly, co působí na meč, budou přenášet na šermířovo rigidbody dostatečně redukovaně aby tyhle efekty nebyly pozorovatelné
+    \end{itemize}
+  \item \textbf{Aby se celkově neděly divné nepřidvídatelnosti...}
+      \begin{itemize}
+        \item nastavit joint.projectionMode (když by meč měl být na nesplnitelném místě, takhle se místo toho přesune blízko ke hráčovi; fyzikálně nerealistické, ale chová se dost pěkně)
+        \item nastavit joint.enablePreprocessing = false (extrémně pomáhá - viz dokumentace (v té prostě říkají, že s ním zapnutým se můžou dít divný věci))
+      \end{itemize}
+  \item \textbf{Síla blokování...}
+    \begin{itemize}
+      \item pozorování... při blokování se konzistentně dělo to, že útočící meč blok prolomil (měl stejnej angularDrivem, ale jak byl zrovna uprostřed švihu, tak měl celkově větší energii nebo tak něco)
+      \item řešení... při blokování upravit parametry jointu aby blok nešlo prolomit
+      \item ukázalo se, že fajn je drive 100krát zvýšit a damper snižit na polovinu (tedy drive=12000, damper=5) (čím větší drive, tím větší síla držení; čím větší damper, tím snadnější blok prolomit; při zvýšení obojího 100krát se to chovalo dost podobně jako v defaultu; jenom snížit damper na setinu původní hodnoty a drive nechat by ale nefungovalo páč pak by se meč strašně třásl atd.)
+    \end{itemize}
+\end{itemize}
+
+\subsection{Klácení hráčské postavy na stranu} \label{playerFallingToSideSection}
+\begin{itemize}
+  \item chceme aby hráč stál vzpříma, nenakláněl se na stranu
+        \begin{itemize}
+          \item na rigidbody nastavit FreezeRotation v X a Z
+          \item to ale samo o sobě nestačí (viz \href{https://docs.unity3d.com/ScriptReference/Rigidbody-constraints.html}{docs} - FreezeRotation dělá jenom to, že v těch směrech nastaví inertiaTensor na 0) - pořád probublává drobná změna kvůli nepřesnosti simulace - hromadí se celkem rychle
+          \item řešení: nechat FreezeRotation X+Z, ale navíc ještě každý FixedUpdate ručně vynulovat X a Z v rigidbody.rotation
+          \item \textbf{Zamyšlení: je lepší nechat tuhle věc tady, nebo jí přestěhovat někam do \ref{simulationStabilitySection}?}
+        \end{itemize}
 \end{itemize}
 
 \subsection{Kolize mečů} \label{swordCollisionsSection}
