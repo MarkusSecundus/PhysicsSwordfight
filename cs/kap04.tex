@@ -1,65 +1,68 @@
 \chapter{Návrh}
 
-Zde provedeme celkový návrh řešení - čtenáři představíme objektový návrh, který bude použit při jeho implementaci, a poté zevrubně prodiskutujeme metody zpracování uživatelského vstupu pro účely ovládání meče.
+Zde provedeme celkový návrh řešení - čtenáři představíme objektový návrh, který bude použit při jeho implementaci, a poté zevrubně prodiskutujeme metody zpracování uživatelského vstupu pro účely ovládání meče a hráčské postavy.
 
 
-\section{Základní komponenty}
+\section{Objektový návrh}
 
+\subsection{Hráč}
 \begin{itemize}
-    \item \textbf{Hráč}
+    \item skript co ovládá pohyb hráče a natočení kamery (SwordsmanMovement) - nezajímavá klasika
+    \item orientační body podle kterých zpracovávají vstup jednotlivé stavy SwordMovementu (je potřeba aby se pohybovaly relativně vůči tělu hráče)
+    \item jednoduchý capsule collider - pro kolize s environmentem apod.
+    \item hráčský model (samostatný prefab) - bone rig, nese animátor, na každé kosti collidery co odpovídají části těla - pro kolize s nepřátelským mečem 
+\end{itemize} 
+
+\subsection{Meč} 
+\begin{itemize}
+    \item skript co ovládá pohyb meče (SwordMovement)
         \begin{itemize}
-            \item skript co ovládá pohyb hráče a natočení kamery (SwordsmanMovement) - nezajímavá klasika
-            \item orientační body podle kterých zpracovávají vstup jednotlivé stavy SwordMovementu (je potřeba aby se pohybovaly relativně vůči tělu hráče)
-            \item jednoduchý capsule collider - pro kolize s environmentem apod.
-            \item hráčský model (samostatný prefab) - bone rig, nese animátor, na každé kosti collidery co odpovídají části těla - pro kolize s nepřátelským mečem 
-        \end{itemize} 
-    \item \textbf{Meč} 
+            \item stavový automat
+            \item z editoru se konfiguruje seznam párů klávesa-stav + jeden defaultní stav
+            \item stav... SwordMovement.Submodule
+            \item každý stav nese nějaká data konfigurovaná z editoru, další data může získat od instance ISwordMovement, která do něj je injectnuta
+            \item ISwordMovement - poskytuje deskriptor meče, zdroj vstupu, transform držitele meče a metodu MoveSword()
+            \item aktuální stav je ten, jehož klávesa je právě stisknutá - na tom jediném je volán OnUpdate()
+            \item v OnUpdate() stav vypočte žádanou pozici meče a s tou následně na SwordMovementu zavolá metodu MoveSword()
+            \item MoveSword(struct poziceKamSeMečMáPohnout) - pohyb provádí SwordMovement v průběhu času jak sám uzná za vhodné (možné konfigurovat skrz jeho parametry v editoru)
+        \end{itemize}
+    \item vlastní model meče
         \begin{itemize}
-            \item skript co ovládá pohyb meče (SwordMovement)
-                \begin{itemize}
-                    \item stavový automat
-                    \item z editoru se konfiguruje seznam párů klávesa-stav + jeden defaultní stav
-                    \item stav... SwordMovement.Submodule
-                    \item každý stav nese nějaká data konfigurovaná z editoru, další data může získat od instance ISwordMovement, která do něj je injectnuta
-                    \item ISwordMovement - poskytuje deskriptor meče, zdroj vstupu, transform držitele meče a metodu MoveSword()
-                    \item aktuální stav je ten, jehož klávesa je právě stisknutá - na tom jediném je volán OnUpdate()
-                    \item v OnUpdate() stav vypočte žádanou pozici meče a s tou následně na SwordMovementu zavolá metodu MoveSword()
-                    \item MoveSword(struct poziceKamSeMečMáPohnout) - pohyb provádí SwordMovement v průběhu času jak sám uzná za vhodné (možné konfigurovat skrz jeho parametry v editoru)
-                \end{itemize}
-            \item vlastní model meče
-                \begin{itemize}
-                    \item vyměnitelná podkomponenta, samostatnej prefab
-                    \item obsahuje mesh meče, collidery
-                    \item poskytuje \textbf{deskriptor-komponentu} ve které jsou uložené transformy odpovídající význačným bodům (ústí čepele, špička, blokovací bod apod.)
-                \end{itemize}
-        \end{itemize} 
-    \item \textbf{Kořen hierarchie} 
+            \item vyměnitelná podkomponenta, samostatnej prefab
+            \item obsahuje mesh meče, collidery
+            \item poskytuje \textbf{deskriptor-komponentu} ve které jsou uložené transformy odpovídající význačným bodům (ústí čepele, špička, blokovací bod apod.)
+        \end{itemize}
+\end{itemize} 
+
+\subsection{Kořen hierarchie} 
+\begin{itemize}
+    \item Komponenta \textbf{SwordsmanAssembly}...
+    \item Nese odpovědnost za to, že meč a šermíř budou správně pospojované (jeden s druhým a s objekty co jdou z vnější scény)
+    \item Definují se tu odkazy na všechny objekty okolní scény, které meč nebo šermíř potřebují znát (kamera, healthbar, die-screen)
+    \item Je v něm komponenta typu \textbf{ISwordInput} (abstrakce pro zdroj vstupu - klávesnice nebo ovládací skript)
+    \item Definuje se tu tabulka dalších obecných parametrů, na které se komponenty uvnitř hráče a meče mohou symbolicky odkazovat (komponenta \textbf{SymbolMap})
+    \item Všechny rozdíly, které odlišují \acs{PC} od \acs{NPC}, by se měly dít v tomto jednom objektu
+\end{itemize} 
+
+\subsection{Zhodnocení návrhu} 
+\begin{itemize}
+    \item Logika ovládání meče a ovládání hráčské postavy jsou dobře oddělené
+    \item Logika meče dobře rozšiřitelná - jednoduché přidat nový ovládací submodul
+    \item Není problém mít ten samý ovládací submodul několikrát na různých klávesách ale s jinými parametry
+    \item Mezi SwordMovement a jeho mody není problém vecpat dekorátory (např. pro nahrávání rozkazů k pohybu meče)
+    \item Abstrakce uživatelského vstupu... není problém ho mockovat, simulovat apod.
+    \item Nevýhoda - Data hráče a meče nejsou dobře oddělená
         \begin{itemize}
-            \item Komponenta \textbf{SwordsmanAssembly}...
-            \item Nese odpovědnost za to, že meč a šermíř budou správně pospojované (jeden s druhým a s objekty co jdou z vnější scény)
-            \item Definují se tu odkazy na všechny objekty okolní scény, které meč nebo šermíř potřebují znát (kamera, healthbar, die-screen)
-            \item Je v něm komponenta typu \textbf{ISwordInput} (abstrakce pro zdroj vstupu - klávesnice nebo ovládací skript)
-            \item Definuje se tu tabulka dalších obecných parametrů, na které se komponenty uvnitř hráče a meče mohou symbolicky odkazovat (komponenta \textbf{SymbolMap})
-            \item Všechny rozdíly, které odlišují \acs{PC} od \acs{NPC}, by se měly dít v tomto jednom objektu
-        \end{itemize} 
-    \item \textbf{Důsledky tohoto přístupu} 
-        \begin{itemize}
-            \item Logika ovládání meče a ovládání hráčské postavy jsou dobře oddělené
-            \item Logika meče dobře rozšiřitelná - jednoduché přidat nový ovládací submodul
-            \item Není problém mít ten samý ovládací submodul několikrát na různých klávesách ale s jinými parametry
-            \item Mezi SwordMovement a jeho mody není problém vecpat dekorátory (např. pro nahrávání rozkazů k pohybu meče)
-            \item Abstrakce uživatelského vstupu... není problém ho mockovat, simulovat apod.
-            \item Nevýhoda - Data hráče a meče nejsou dobře oddělená
-                \begin{itemize}
-                    \item Detailní model hráče potřebuje mít k dispozici deskriptor meče, aby věděl, jak má napolohovat procedurální animaci rukou
-                    \item Orientační body, které používají některé mody meče, potřebují mít konstantní polohu relativně vůči tělu hráče -> musí být potomky jeho transformu, ne meče
-                \end{itemize}
-        \end{itemize} 
-\end{itemize}
+            \item Detailní model hráče potřebuje mít k dispozici deskriptor meče, aby věděl, jak má napolohovat procedurální animaci rukou
+            \item Orientační body, které používají některé mody meče, potřebují mít konstantní polohu relativně vůči tělu hráče -> musí být potomky jeho transformu, ne meče
+        \end{itemize}
+\end{itemize} 
+
 
 \section{Zpracování uživatelského vstupu}
+
+\subsection{Ovládání meče - úvodní zamyšlení}
 \begin{itemize}
-    \item \textbf{Přednost má ovládání meče - na to se teď zaměříme}
     \item k dispozici máme myš a klávesnici
     \item musí být pro hráče jednoduše uchopitelné (- ideálně tedy nějaký pěkně spojitý matematický formalizmus, který jsme pro hráče schopní pěkně vizualizovat)
     \item diskuze variant co používalo Die by the Sword:
@@ -78,7 +81,7 @@ Zde provedeme celkový návrh řešení - čtenáři představíme objektový n�
             \item interně implementujeme i přehrávání nahrávek - bude se hodit pro AI nepřítele (dává nám přímou, dobře uchopitelnou kontrolu nad jeho chováním a tedy obtížností hry) (jednoduchý systém, vhodný pro to v budoucnu sloužit jako základ, proti kterému budeme testovat sofistikovanější AI)
             \item nějaké kreativnější nápady než s čím už přišlo DbtS necháme na později. teď chceme mít něco, co už víme, že je základně použitelné, abysme vůči tomu později nové výstřelky mohli porovnávat
         \end{itemize}
-    \item jakým formalizmem mapovat polohu myši na polohu meče:
+    \item jakým formalizmem mapovat polohu myši na polohu meče?:
         \begin{itemize}
             \item nevíme jak přesně to na pozadí dělá DbtS
             \item jednoduchý, dobře vizualizovatelný formalismus.. střílet paprsek z kamery z místa kurzoru a protnout ho s nějakým útvarem 
@@ -97,6 +100,10 @@ Zde provedeme celkový návrh řešení - čtenáři představíme objektový n�
                     \item přesnou matematiku na které stojí oba mody rozebereme později v implementační kapitole \textbf{\footnote{Je rozumný to takhle rozseknout?}} (viz \ref{modesOfSwordMovementSubsection})
                 \end{itemize}
         \end{itemize}
+\end{itemize}
+
+\subsection{Ovládání meče - výsledek}
+\begin{itemize}
     \item ovládání střílením paprsku, který se protne s kulovou plochou jsme naimplementovali
         \begin{itemize}
             \item fungovalo rámcově pěkně, ale byly zde nežádoucí okrajové případy (-> např. hráč mohl meč natočit tak, aby probodával jeho tělo)
@@ -129,16 +136,19 @@ Zde provedeme celkový návrh řešení - čtenáři představíme objektový n�
             \item (insert vizualizaci jak vypadá IRayIntersectable kterej používá blocking mode)
             \item poznámka: k tomuto řešení jsme došli živelně experimentováním v průběhu času - teď když už je hotové, dost pravděpodobně by šlo najít alternativu, co by byla jednodušší a srovnatelně mocná (kdyby to někomu stálo za práci)
         \end{itemize}
-    \item nyní máme ovládání meče - \textbf{co ovládání postavy?}
-        \begin{itemize}
-            \item ideálně klasické WASD co všichni znají - funguje pro pohyb dopředu/dozadu a úskoky doleva/doprava
-            \item problém - vertikální i horizontální osa kurzoru jsou potřeba pro účely meče - jak se má hráč rozhlížet do stran?
-            \item rozhlížení nahoru/dolu - kosmetická záležitost kamery - když použijeme myš, zdá se být v pohodě
-            \item rozhlížení doleva/doprava - udává směr chůze - nemůžeme jen tak dělat kurzorem, to by hráče mátlo když chce jenom sekat mečem 
-            \item řešení - prostě na rozhlížení do stran použít klávesy QE - blbuvzdorné, dobře pochopitelné pro hráče, dobrý výchozí bod se kterým porovnávat při experimentech
-            \item lepší řešení - možné téma budoucí práce
-        \end{itemize}
 \end{itemize}
+
+\subsection{Ovládání postavy}
+\begin{itemize}
+    \item ovládání meče už máme - ale co zbytek?
+    \item ideálně klasické WASD co všichni znají - funguje pro pohyb dopředu/dozadu a úskoky doleva/doprava
+    \item problém - vertikální i horizontální osa kurzoru jsou potřeba pro účely meče - jak se má hráč rozhlížet do stran?
+    \item rozhlížení nahoru/dolu - kosmetická záležitost kamery - když použijeme myš, zdá se být v pohodě
+    \item rozhlížení doleva/doprava - udává směr chůze - nemůžeme jen tak dělat kurzorem, to by hráče mátlo když chce jenom sekat mečem 
+    \item řešení - prostě na rozhlížení do stran použít klávesy QE - blbuvzdorné, dobře pochopitelné pro hráče, dobrý výchozí bod se kterým porovnávat při experimentech
+    \item lepší řešení - možné téma budoucí práce
+\end{itemize}
+
 
 \section{Shrnutí}
 
