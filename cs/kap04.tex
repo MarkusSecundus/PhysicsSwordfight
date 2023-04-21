@@ -4,7 +4,29 @@
 \begin{itemize}
   \item \textbf{Šermíř}
     \begin{itemize}
-      \item rigidbody (nekinematické)
+      \item zákl. prvky: Rigidbody (nekinematické), SwordsmanMovement
+      \item z parenta si natáhne instanci ISwordInput - na něm se ptá na hodnoty vstupních Axis a podle nich působí silama aby vyvolával pohyb hráče
+      \item z editoru nastavitelné mapování vstupu a násobiče pro síly, kterýma se působí (konfigurace rychlosti pohybu)
+      \item chceme aby hráč stál vzpříma, nenakláněl se na stranu
+        \begin{itemize}
+          \item na rigidbody nastavit FreezeRotation v X a Z
+          \item to ale samo o sobě nestačí (viz \href{https://docs.unity3d.com/ScriptReference/Rigidbody-constraints.html}{docs} - FreezeRotation dělá jenom to, že v těch směrech nastaví inertiaTensor na 0) - pořád probublává drobná změna kvůli nepřesnosti simulace - hromadí se celkem rychle
+          \item řešení: nechat FreezeRotation X+Z, ale navíc ještě každý FixedUpdate ručně vynulovat X a Z v rigidbody.rotation
+          \item \textbf{Zamyšlení: je lepší nechat tuhle věc tady, nebo jí přestěhovat někam do \ref{simulationStabilitySection}?}
+        \end{itemize}
+      \item jak probíhá pohyb a rotace hráče
+        \begin{itemize}
+          \item podle parametrů a hodnot Axis, co jsme pro danej směr pohybu dostali ze vstupu, stanovíme cílovou rychlost, kterou by se hráč měl pohybovat
+          \item jednoduše mu dodáme tuhle rychlost - rigidbody.AddForce(targetVelocity - rigidbody.velocity, ForceMode.VelocityChange); 
+          \item obdobně nastavíme rigidbody.angularVelocity přes rigidbody.AddTorque
+          \item doleva/doprava - rotace těla hráče (mění se co znamená 'dopředu') VS nahoru/dole - rotace kamery
+          \item uvnitř hráče je prázdný gameobject jenom s transformem - stub kamery - jeho rotaci nastavujeme, nějaká kamera ji může ale nemusí kopírovat (to se konfiguruje ve SwordsmanAssembly)
+          \item rotaci kamery nastavujeme obdobně jako rotaci rigidbody, akorát natvrdo změnou hodnoty na transformu; Axis, na které to je defaultně namapované, je MouseY (jediná věc co se určuje pohybem myši)
+          \item experimentovalo se i s umožněním drobné rotace kamery doleva/doprava pomocí MouseX (navíc k rotaci rigidbody), ale tu se nepodařilo vychytat tak, aby to autorovi dělalo dobře na žaludek - stále existuje, akorát nastavená s rychlostí 0
+          \item skok - stisknutí klávesy - hráči se jednorázově přidá síla, pokud stanovený Feet trigger collider s něčím koliduje (na to jsme museli implementovat TriggerActivityInfo - komponenta, co vede záznamy o aktuálně probíhajících kolizích)
+        \end{itemize}
+       \item Jednoduchý collider pro interakci s prostředím - kapsule 2m*0.5m -> hladký pohyb po terénu apod.
+       \item podrobné animované tělo pro kolize s mečem - viz \ref{swordsmanAnimationSubsection}
     \end{itemize}
   \item \textbf{Meč}
     \begin{itemize}
@@ -15,7 +37,7 @@
 
 \subsection{Moduly ovládání meče} \label{modesOfSwordMovementSubsection}
 \begin{itemize}
-  \item Co je modul z hlediska objektováho návrhu už čtenář ví, tady jenom popíšeme implementaci modulu pro sekání a modulu pro blokování
+  \item Jak vypadají z hlediska objektováho návrhu už čtenář ví, tady jenom popíšeme implementaci modulu pro sekání a modulu pro blokování
   \item \textbf{Abstrakce} 
     \begin{itemize}
       \item SwordMovement.Submodule
@@ -73,7 +95,7 @@
 \end{itemize}
 
 
-\subsection{Animace šermíře}
+\subsection{Animace šermíře} \label{swordsmanAnimationSubsection}
 \begin{itemize}
   \item detailní model šermíře.. klasický bone rig (SkinnedMeshRenderer vykresluje, vedle něj je hierarchie transformů - kosti), zahrnuje basic animaci dýchání vytvořenou v Blenderu
   \item není problém přidat víc animací, SwordsmanMovement pak bude muset komunikovat s animatorem a říkat mu co za animaci má hrát
@@ -126,7 +148,7 @@
 \end{itemize}
 
 
-\section{Stabilita simulace}
+\section{Stabilita simulace} \label{simulationStabilitySection}
 \begin{itemize}
   \item 
 \end{itemize}
