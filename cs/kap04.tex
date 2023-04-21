@@ -88,10 +88,24 @@ V předchozí kapitole jsme navrhli strukturu, které se náš projekt bude drž
       \item když průnik není, nic neudělá
       \item když průnik je, nastaví hlášený střed koule jako handlePoint, lookDirection je (intersection.Value - intersection.Center)
       \item upVector je lookDirection.Cross(lastLookDirection) 
+      \item (insert náčrt here)
     \end{itemize}
   \item \textbf{Modul pro blokování:} 
     \begin{itemize}
-      \item TODO: dopsat!
+      \item jak blokování funguje...
+        \begin{itemize}
+          \item předpokládejme že útočník proti mně seká
+          \item chci jeho meči nastavit do cesty vlastní meč - tak, aby můj meč protivník nesrazil na stranu
+          \item chci trefit jeho meč svojí vlastní čepelí - nějakým bodem, co je blízko u rukojeti (tam jde proti mně nejmenší páka) 
+        \end{itemize}
+      \item jako ho naimplementujeme...
+        \begin{itemize}
+          \item ze vstupu paprsek -> intersectneme s IRayIntersectable -> s výsledkem dále pracujeme
+          \item na meči vyznačený... Bod blokování - chceme přesunout meč tak, aby tenhle bod odpovídal intersection.Value
+          \item let inputPlane = plocha ve které je intersection.Value a co je kolmá na spojnici intersection.Value<->intersection.SphereCenter
+          \item TODO: dopsat!
+        \end{itemize}
+      \item (insert náčrt here)
     \end{itemize}
 \end{itemize}
 
