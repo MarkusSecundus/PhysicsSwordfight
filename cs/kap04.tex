@@ -31,7 +31,7 @@ V předchozí kapitole jsme navrhli strukturu, které se náš projekt bude drž
       \item \textbf{SwordMovement}..
       \item z editoru nastavitelné: výčet jednotlivých submodulů (ty rozebereme v \ref{modesOfSwordMovementSubsection}), parametry pro interpolaci pohybu handlu meče
       \item kdokoliv se může šťourat v rigidbody a jointu a tweakovat tam parametry
-      \item vevnigř... model meče - samostatný prefab - obsahuje mesh, collidery, spoustu drobných transformů co popisujou význačné body
+      \item vevnitř... model meče - samostatný prefab - obsahuje mesh, collidery, spoustu drobných transformů co popisujou význačné body
       \item pro použití ostatními entitami meč poskytuje komponentu SwordDescriptor - v té je zaznamenaný výčet transformů co odpovídají význačným bodům
     \end{itemize}
 \end{itemize}
@@ -92,18 +92,20 @@ V předchozí kapitole jsme navrhli strukturu, které se náš projekt bude drž
     \end{itemize}
   \item \textbf{Modul pro blokování:} 
     \begin{itemize}
-      \item jak blokování funguje...
+      \item \textbf{jak blokování funguje...}
         \begin{itemize}
           \item předpokládejme že útočník proti mně seká
           \item chci jeho meči nastavit do cesty vlastní meč - tak, aby můj meč protivník nesrazil na stranu
           \item chci trefit jeho meč svojí vlastní čepelí - nějakým bodem, co je blízko u rukojeti (tam jde proti mně nejmenší páka) 
         \end{itemize}
-      \item jako ho naimplementujeme...
+      \item \textbf{jako ho naimplementujeme...}
         \begin{itemize}
           \item ze vstupu paprsek -> intersectneme s IRayIntersectable -> s výsledkem dále pracujeme
           \item na meči vyznačený... Bod blokování - chceme přesunout meč tak, aby tenhle bod odpovídal intersection.Value
-          \item let inputPlane = plocha ve které je intersection.Value a co je kolmá na spojnici intersection.Value<->intersection.SphereCenter
-          \item TODO: dopsat!
+          \item dále máme zvenčí definovaný bod blockingHint - ten determinuje směr jak bude meč natočený
+          \item let blockPlane = new Plocha(bod: intersection.Value, normála: (intersection.Value - intersection.SphereCenter))
+          \item let bladeDirection = (blockPlane.Project(blockingHint) - intersection.Value).normalized
+          \item TODO: dokončit!
         \end{itemize}
       \item (insert náčrt here)
     \end{itemize}
@@ -298,7 +300,7 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
     \item pozici kam umístit střed collideru (offset relativní vůči středu meče) získáme takto: 
       \begin{itemize}
         \item let O = nejbližší bod protějšího meče
-        \item let P = plocha(bod: střed meče, normála:směr meče)
+        \item let P = new Plocha(bod: střed meče, normála:směr meče)
         \item let H = hloubka collideru (parametr od uživatele - vzdálenost od hrany do středu)
         \item return (P.projekce(O).normalized * (-H)) //pro globální pozici přičíst střed meče
       \end{itemize}
@@ -340,7 +342,7 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
 \subsection{Herní svět}
 \begin{itemize}
   \item les jsou jenom pěkné kulisy
-  \item V aréně jsou sloupy s čudlíkama, po jejichž stisknutí mečem se uvnitř arény spawne nepřítel
+  \item V aréně jsou sloupy s čudlíkama - po jejich stisknutí mečem se uvnitř arény spawne nepřítel
   \item několik druhů nepřátel: trénovací panák, mečotoč, rytíř (podrobně rozebereme v jejich vlastních sekcích)
 \end{itemize}
 
@@ -379,7 +381,35 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
 
 \subsection{Rytíř} \label{knightEnemySubsection}
 \begin{itemize}
-  \item 
+  \item vychází z prefabu pro hráče - jenom nahrazuje ovládání klávesnicí a myší za počítačový algoritmus
+  \item taky nemá žádnou vazbu na hráčovo GUIčko (healthbar, bloodstains, death screen apod.) a není k němu spárovaná žádná kamera
+  \item v rootu komponenta SwordsmanAI - ovladač
+  \item \textbf{pohyb po terénu}
+    \begin{itemize}
+      \item používá standardní Uniťácký NavMesh - aby mohlo najednou být spawnutých víc rytířů najednou - co se vyhýbají jeden druhému a okolním překážkám
+      \item uvnitř arény jsme umístili NavMeshSurface, hráčovi a statickým nepřátelům jsme přidělili NavMeshObstacle -> rytíři jsou schopní se navigovat po aréně a vyhýbat se veškerým překážkám
+      \item NavMeshAgent... agent.updatePosition = agent.updateRotation = agent.updateUpAxis = false
+      \item Agent nijak nemodifikuje transform rytíře - místo toho řidicí skript kouká na jeho vyžádanou pozici a podle ní určuje hodnotu co nastaví do InputSimulatoru, ze kterého rytířův SwordsmanMovement bere vstup ; obdobně jako v \href{https://docs.unity3d.com/Manual/nav-CouplingAnimationAndNavigation.html}{tomhle manuálu} 
+      \item má nastavený nějaký transform jako cíl - Agentovi nastavuje aby se k němu snažil přiblížit
+      \item když je k cíli dostatečně blízko, tak agenta ignoruje a místo toho jenom stojí a dává pozor aby byl otočenej směrem na cíl
+    \end{itemize}
+  \item \textbf{ovládání meče}
+      \begin{itemize}
+        \item \textbf{pořídili jsme několik nahrávek pohybů meče}
+          \begin{itemize}
+            \item komponenta co se vecpe mezi SwordMovement a jeho submoduly - odchytává veškerá volání MoveSword() a reportuje jejich parametry do UnityEventu
+            \item parametry čte druhá komponenta - každý jednotlivý struct s argumentama převede do souřadnic relativních vůči transformu šermíře, přidá timestamp, a celou nahrávku ukládá jako pole do JSON texťáku (přes Newtonsoft.Json)
+          \end{itemize}
+        \item \textbf{přehrávání nahrávek}
+          \begin{itemize}
+            \item ve SwordsmanAI se v editoru nastaví pole nahrávek, co se mají přehrávat jako TextAssety
+            \item SwordsmanAI nejdřív deserializuje všechny nahrávky
+            \item potom násilně ve SwordMovementu vyhází původní Submoduly a vymění je za jediný defaultní SwordMovementMode\_PlayRecord
+            \item tomuhle submodulu předá seznam nahrávek co má přehrávat - submodul si pokaždé jednu náhodně vybere a tu přehrává
+            \item přehrávání nahrávek - submodul se řídí podle timestampů, hodnoty co jsou v záznamu převádí zpátky do globálních souřadnic podle transformu rytíře
+          \end{itemize}
+      \end{itemize}
+    \item máme tedy \acs{NPC} rytíře, co je schopný samostatně chodit po terénu a nebezpečně mávat mečem, drtivou většinu vnitřní logiky sdílí s \acs{PC}
 \end{itemize}
 
 
