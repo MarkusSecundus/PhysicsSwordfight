@@ -1,188 +1,124 @@
-\chapter{Návrh}
+\chapter{Technické základy}
 
-V této kapitole provedeme zamyšlení a stanovíme cíle, o něž tato práce bude usilovat. Dále vybereme nástroje, které nám k dosažení těchto cílů poslouží.  
+V této kapitole čtenáře seznámíme s herním enginem Unity do míry potřebné k pochopení zbytku práce. Stručně nastíníme architekturu, kterou pro tvorbu herních systémů tento engine podporuje, a zmíníme některé jeho vestavěné knihovny - především se podrobně zaměříme na integrovaný fyzikální subsystém.
 
-Následně provedeme celkový návrh řešení - čtenáři představíme objektový návrh, který bude použit při jeho implementaci, a poté zevrubně prodiskutujeme metody zpracování uživatelského vstupu pro účely ovládání meče.
 
-\section{Stanovení cíle}
+\section{Herní engine Unity}
 
-\subsection{Jaký chceme výsledek}
+\subsection{Představení}    \label{unityEngineIntroSection}
 \begin{itemize}
-    \item \textbf{Zamyšlení}:
-        \begin{itemize}
-            \item neodsžitelným ideálem, ke kterému se snažíme rámcově směřovat, je zachycení zážitku, co šerm poskytuje v reálném světě
-            \item kromě volného mávání mečem, ostatní aspekty co k boji v reálném světě patří, hry zvládají zachytit docela v pohodě -> ovládání meče poskytuje největší prostor k prozkoumání
-            \item chceme obecný systém, co nebude potřebovat specifické úpravy pokaždé, když vytvoříme nový typ nepřítele, a co půjde použít k interakci s herním prostředím
-            \item nechceme pro meč ručně vytvářet žádné animace (nemáme na to prostředky + to není programátorsky zajímavá činnost)
-            \item meč by se měl tvářit v rámci možností rozumně fyzikálně věrně -> moderní herní enginy bývají vybaveny pokročilým fyzikálním subsystémem -> mohlo by být fajn nějakej takovej využít
-        \end{itemize}
-    
-    \item \textbf{z pohledu backendu by meč měl zvládat plně volný pohyb na všech 6 stupních volnosti a měl by to být objekt plně ovládaný standardním fyzikálním subsystémem}
-        \begin{itemize}
-            \item zkusíme znovu to, co Die by the Sword, avšak tentokrát vytvoříme otevřenou platformu, na které bude moci jakýkoliv programátor z komunity experimentovat s metodami ovládání (nedoladěné ovládání (a nemožnost ho spravit komunitou) byl hlavní kámen úrazu DbtS)
-            \item pokud se nám osobně nepodaří najít opravdu dobré a zábavné ovládání, někomu jinému z komunity se to povést může. i kdyby ne, na hru vždycky půjde napasovat VR ovladač ;)
-        \end{itemize}
-    \item \textbf{frontend - ovládání pro klávesnici a myš}
-        \begin{itemize}
-            \item jediná možnost, která zaručí přístupnost pro všechny
-            \item mnoho prostoru k experimentálnímu průzkumu
-        \end{itemize}
+    \item na malé a neziskové projekty je zadarmo, ale není opensource a obecně neposkytuje přístup k většině svého zdrojáku
+    \item všestranný (2D i 3D, všechny možné cílové platformy)
+    \item nejpoužívanější mezi indie vývojáři (\href{https://twitter.com/gamemakerstk/status/1552183527847989248?cxt=HHwWgMC8ubusu4orAAAA}{odkaz na GMTK game jam survey}\footnote{je v pohodě dávat do referencí post na twitteru?})
+    \item existuje už celkem dost dlouho - je to mature ekosystém%, má spoustu pěkných subsystémů (Fyzika, Animace, NavMesh, ...)
+    \item je tam dost kostrbatostí kvůli zpětné kompatibilitě, věci se dají dělat hodně různýma způsobama (jak se přesvědčíme na konkrétních příkladech v dalších sekcích)
+    \item použitá verze C\# a .NET runtime
 \end{itemize}
 
-\subsection{Jaké nástroje použijeme}
-
+\subsection{Herní objekty a komponenty}
 \begin{itemize}
-    \item chceme, aby výsledek naší práce byl co nejvíc přístupný pro náhodné lidi, co by ho chtěli využít k navazujícím experimentům či vlastnímu obohacení
-    \item \textbf{použijeme herní engine Unity}
-        \begin{itemize}
-            \item je mature
-            \item nejrozšířenější (viz \ref{unityEngineIntroSection}) -> největší šance že se najde jiný vývojář, co pro naší práci najde využití
-            \item má spoustu standardních knihoven a subsystémů, co nám usnadní práci a zajistí rozumnou míru kompatibility s prací ostatních lidí
-        \end{itemize}
-    \item na všech místech práce chceme používat co nejvíc rozšířené a standardní systémy a knihovny (-> kompatibilita s prací ostatních lidí)
-    \item myslet na dobré OOP practices a štábní kulturu
+    \item scéna - hierarchie gameobjectů
+    \item gameobject - kontejner do kterého se naházejí komponenty
+    \item komponenta - modul poskytující objektu nějaký kousek funkcionality; builtin, nebo to je uživatelsky definovaná třída; může obsahovat nějaká data (nastavitelná v editoru) a nějakou herní logiku (která příp. zahrnuje komunikaci s ostatními komponentami a gameobjecty)
+    \item serializace - z editoru se dají editovat public/[SerializeField] fieldy ; nekompatibilní s properties, interfacama a jinýma datovýma strukturama než pole/list - omezující když chce člověk používat klasické dobré OOP practices  
+    \item z herního objektu se dá vytvořit prefab
 \end{itemize}
 
 
-
-\section{Návrh systému}
-
-\subsection{Základní komponenty}
-
+\subsection{Posílání zpráv}
 \begin{itemize}
-    \item \textbf{Hráč}
-        \begin{itemize}
-            \item skript co ovládá pohyb hráče a natočení kamery (SwordsmanMovement) - nezajímavá klasika
-            \item orientační body podle kterých zpracovávají vstup jednotlivé stavy SwordMovementu (je potřeba aby se pohybovaly relativně vůči tělu hráče)
-            \item jednoduchý capsule collider - pro kolize s environmentem apod.
-            \item hráčský model (samostatný prefab) - bone rig, nese animátor, na každé kosti collidery co odpovídají části těla - pro kolize s nepřátelským mečem 
-        \end{itemize} 
-    \item \textbf{Meč} 
-        \begin{itemize}
-            \item skript co ovládá pohyb meče (SwordMovement)
-                \begin{itemize}
-                    \item stavový automat
-                    \item z editoru se konfiguruje seznam párů klávesa-stav + jeden defaultní stav
-                    \item stav... SwordMovement.Submodule
-                    \item každý stav nese nějaká data konfigurovaná z editoru, další data může získat od instance ISwordMovement, která do něj je injectnuta
-                    \item ISwordMovement - poskytuje deskriptor meče, zdroj vstupu, transform držitele meče a metodu MoveSword()
-                    \item aktuální stav je ten, jehož klávesa je právě stisknutá - na tom jediném je volán OnUpdate()
-                    \item v OnUpdate() stav vypočte žádanou pozici meče a s tou následně na SwordMovementu zavolá metodu MoveSword()
-                    \item MoveSword(struct poziceKamSeMečMáPohnout) - pohyb provádí SwordMovement v průběhu času jak sám uzná za vhodné (možné konfigurovat skrz jeho parametry v editoru)
-                \end{itemize}
-            \item vlastní model meče
-                \begin{itemize}
-                    \item vyměnitelná podkomponenta, samostatnej prefab
-                    \item obsahuje mesh meče, collidery
-                    \item poskytuje \textbf{deskriptor-komponentu} ve které jsou uložené transformy odpovídající význačným bodům (ústí čepele, špička, blokovací bod apod.)
-                \end{itemize}
-        \end{itemize} 
-    \item \textbf{Kořen hierarchie} 
-        \begin{itemize}
-            \item Komponenta \textbf{SwordsmanAssembly}...
-            \item Nese odpovědnost za to, že meč a šermíř budou správně pospojované (jeden s druhým a s objekty co jdou z vnější scény)
-            \item Definují se tu odkazy na všechny objekty okolní scény, které meč nebo šermíř potřebují znát (kamera, healthbar, die-screen)
-            \item Je v něm komponenta typu \textbf{ISwordInput} (abstrakce pro zdroj vstupu - klávesnice nebo ovládací skript)
-            \item Definuje se tu tabulka dalších obecných parametrů, na které se komponenty uvnitř hráče a meče mohou symbolicky odkazovat (komponenta \textbf{SymbolMap})
-            \item Všechny rozdíly, které odlišují \acs{PC} od \acs{NPC}, by se měly dít v tomto jednom objektu
-        \end{itemize} 
-    \item \textbf{Důsledky tohoto přístupu} 
-        \begin{itemize}
-            \item Logika ovládání meče a ovládání hráčské postavy jsou dobře oddělené
-            \item Logika meče dobře rozšiřitelná - jednoduché přidat nový ovládací submodul
-            \item Není problém mít ten samý ovládací submodul několikrát na různých klávesách ale s jinými parametry
-            \item Mezi SwordMovement a jeho mody není problém vecpat dekorátory (např. pro nahrávání rozkazů k pohybu meče)
-            \item Abstrakce uživatelského vstupu... není problém ho mockovat, simulovat apod.
-            \item Nevýhoda - Data hráče a meče nejsou dobře oddělená
-                \begin{itemize}
-                    \item Detailní model hráče potřebuje mít k dispozici deskriptor meče, aby věděl, jak má napolohovat procedurální animaci rukou
-                    \item Orientační body, které používají některé mody meče, potřebují mít konstantní polohu relativně vůči tělu hráče -> musí být potomky jeho transformu, ne meče
-                \end{itemize}
-        \end{itemize} 
+    \item srovnání VS UnityEvent VS C\# delegáti 
 \end{itemize}
 
-\subsection{Zpracování uživatelského vstupu}
+\subsection{Herní smyčka}
 \begin{itemize}
-    \item \textbf{Přednost má ovládání meče - na to se teď zaměříme}
-    \item k dispozici máme myš a klávesnici
-    \item musí být pro hráče jednoduše uchopitelné (- ideálně tedy nějaký pěkně spojitý matematický formalizmus, který jsme pro hráče schopní pěkně vizualizovat)
-    \item diskuze variant co používalo Die by the Sword:
-        \begin{itemize}
-            \item \textbf{Klávesnice} - zastaralý koncept, moderní hráč počítá, že k něčemu využije myš; stejně to tehdy byl jenom slabý odvar z toho, co uměla myš
-            \item \textbf{Myš} - ze všech možností zvládá největší podmnožinu pohybů; vyžaduje cvik, ale umožňuje kreativitu a flexibilní reakce v nezvyklé situaci
-            \item \textbf{Nahrávky} - na první pohled pěkná myšlenka, v praxi však neumožňují flexibilně reagovat na specifickou situaci (hráč je schopen si vést okamžitý myšlenkový přehled o příliš malém množství nahrávek)
-        \end{itemize}
-    \item výsledek diskuze:
-        \begin{itemize}
-            \item pro hráče chceme ovládání myší
-            \begin{itemize}
-                \item jinou možnost než něco s myší, nebo něco s klávesnicí stejně nemáme
-                \item myš jediná má potenciál umožnit jemnou a flexibilní kontrolu (klávesnice má konečný počet kláves - konečný počet stavů)
-            \end{itemize}
-            \item interně implementujeme i přehrávání nahrávek - bude se hodit pro AI nepřítele (dává nám přímou, dobře uchopitelnou kontrolu nad jeho chováním a tedy obtížností hry) (jednoduchý systém, vhodný pro to v budoucnu sloužit jako základ, proti kterému budeme testovat sofistikovanější AI)
-            \item nějaké kreativnější nápady než s čím už přišlo DbtS necháme na později. teď chceme mít něco, co už víme, že je základně použitelné, abysme vůči tomu později nové výstřelky mohli porovnávat
-        \end{itemize}
-    \item jakým formalizmem mapovat polohu myši na polohu meče:
-        \begin{itemize}
-            \item nevíme jak přesně to na pozadí dělá DbtS
-            \item jednoduchý, dobře vizualizovatelný formalismus.. střílet paprsek z kamery z místa kurzoru a protnout ho s nějakým útvarem 
-            \item po dlouhé úvaze jsme se rozhodli, že pěkný útvar k protínání je kulová plocha
-                \begin{itemize}
-                    \item začneme s ní
-                    \item buď se ukáže jako ideální
-                    \item nebo se od ní odpíchneme abychom se dobrali k něčemu sofistikovanějšímu
-                \end{itemize}
-            \item DbtS umí pěkně mávat mečem ze strany na stranu. Co ale jiné typy pohybu, co člověk s mečem běžně dělá - např. blokování
-                \begin{itemize}
-                    \item mávání s mečem naimplementujeme plnohodnotně jako v DbtS 
-                    \item bude však možné přepínat na další mody ovládání
-                    \item vždy bude aktivní jenom jeden mod - přepínání stiskem příhodné klávesy (např. shift)
-                    \item všechny mody berou na vstupu jeden bod - průnik kurzoru s kulovou plochou - a liší se v algoritmu, pomocí kterého z tohoto bodu určí cílovou polohu meče
-                    \item přesnou matematiku na které stojí oba mody rozebereme později v implementační kapitole \textbf{\footnote{Je rozumný to takhle rozseknout?}} (viz \ref{modesOfSwordMovementSubsection})
-                \end{itemize}
-        \end{itemize}
-    \item ovládání střílením paprsku, který se protne s kulovou plochou jsme naimplementovali
-        \begin{itemize}
-            \item fungovalo rámcově pěkně, ale byly zde nežádoucí okrajové případy (-> např. hráč mohl meč natočit tak, aby probodával jeho tělo)
-            \item -> \textbf{kulová plocha je fajn, ale potřebuje zobecnit na něco trochu flexibilnějšího}
-            \item rozhraní \textbf{IRayIntersectable} (actually to je abstraktní třída - protože Unity serializer) - metoda GetIntersection(Ray) - vrací struct - ten obsahuje zda byl úspěch, příp. bod průniku, střed proniknuté kulové plochy a váhu výsledku (pro účely interpolace)
-            \item \textbf{RayIntersectableSphere}
-                \begin{itemize}
-                    \item definovaná středem a poloměrem
-                    \item volitelný parametr - \textbf{díra}
-                        \begin{itemize}
-                            \item jiná RayIntersectableSphere
-                            \item pokud se průnik paprsku nachází v díře (je vzdálený od jejího středu míň než její poloměr), nahlásí se jako netrefa, nebo se mu dle vzdálenosti od středu díry sníží váha
-                            \item váhu výsledku (float 0-1), příp. její závislost na vzdálenosti průniku od středu díry konfiguruje uživatel skrz AnimationCurve
-                            \item díry se ukázalo, že jsou potřeba, aby se při interpolaci (viz níže) mezi velkou a malou koulí dal udělat hladký přechod
-                        \end{itemize}
-                    \item další volitelný parametr - \textbf{center override}
-                    \begin{itemize}
-                        \item bod, který se bude ve výsledkovém structu hlásit jako centrum kulové plochy i když ve skutečnosti není
-                        \item potřeba když interpolujeme mezi hodně velkou a hodně malou koulí - aby obě hlásily stejný střed
-                    \end{itemize}
-                \end{itemize}
-            \item \textbf{RayIntersectableInterpolation}
-                \begin{itemize}
-                    \item list mnoha IRayIntersectables
-                    \item GetIntersection volá sebe na všech podprvcích - výsledek je pak vážený aritmetický průměr těch, které byly trefené (vážený podle váhy udané ve výsledkovém structu)
-                \end{itemize}
-            \item Vizualizace - musí se střílet spousta paprsků z kamery 
-            \item díky tomuhle jsme schopní hráči poskytnout průnikový tvar, co se pro něj tváří jako normální, intuitivní kulová plocha, ale proti ní zde máme spoustu dodatečné flexibility, která nám umožní vychytat okrajové případy
-            \item pomocí tohohle se dají poskládat dost komplexní útvary, co se pořád tváří pěkně plynule a spojitě - ale nejsou plynulé a spojité vždycky, člověk si musí trochu pohrát s AnimationCurve u děr aby nebyly ostré přechody tam kde končí/začíná nějaká koule
-            \item (insert vizualizaci jak vypadá IRayIntersectable kterej používá blocking mode)
-            \item poznámka: k tomuto řešení jsme došli živelně experimentováním v průběhu času - teď když už je hotové, dost pravděpodobně by šlo najít alternativu, co by byla jednodušší a srovnatelně mocná (kdyby to někomu stálo za práci)
-        \end{itemize}
-    \item nyní máme ovládání meče - \textbf{co ovládání postavy?}
-        \begin{itemize}
-            \item ideálně klasické WASD co všichni znají - funguje pro pohyb dopředu/dozadu a úskoky doleva/doprava
-            \item problém - vertikální i horizontální osa kurzoru jsou potřeba pro účely meče - jak se má hráč rozhlížet do stran?
-            \item rozhlížení nahoru/dolu - kosmetická záležitost kamery - když použijeme myš, zdá se být v pohodě
-            \item rozhlížení doleva/doprava - udává směr chůze - nemůžeme jen tak dělat kurzorem, to by hráče mátlo když chce jenom sekat mečem 
-            \item řešení - prostě na rozhlížení do stran použít klávesy QE - blbuvzdorné, dobře pochopitelné pro hráče, dobrý výchozí bod se kterým porovnávat při experimentech
-            \item lepší řešení - možné téma budoucí práce
-        \end{itemize}
+    \item zpráva Update, deltaTime
+    \item všechno probíhá sekvenčně na main threadu
 \end{itemize}
+
+\subsection{Základní knihovny}
+\begin{itemize}
+    \item (vše pouze zmínit že existuje)
+    \item matematická primitiva - Vector3, Ray, matice, apod.
+    \item instanciace gameobjectů a komponent za runtimu
+    \item Vykreslování grafiky
+    \item NavMesh
+    \item extrémně moc dalších věcí
+\end{itemize}
+
+
+\section{Fyzikální subsystém enginu Unity}
+
+\subsection{Představení}
+\begin{itemize}
+    \item zjednodušená dynamika a kinematika pevného tělesa
+    \item je to vlastní Uniťácké API postavené nad backendem nVidia PhysX, ale poskytuje jenom podmnožinu kompletní PhysX funkcionality
+    \item uvést reference na Unity a na PhysX dokumentaci\footnote{Chci mít odděleně referenci na Unity a na Unity-docs, nebo jenom Unity a nechat ho aby url neukazovalo na main page ale na docs?}
+    \item zmínit že Unity má taky 2D Physics, co jsou úplně odděleně a za backend maj Box2D 
+    \item vede si vlastní reprezentaci celé scény, při počítání vychází jenom z ní, před a po každém kroku se provede synchronizace s herním světem (updatnou transformy apod.)
+    \item FixedUpdate
+\end{itemize}
+
+
+\subsection{Rigidbody}
+\begin{itemize}
+    \item non-kinematic VS kinematic
+    \item properties (mass, center-of-mass+inertia-tensor, (angular) drag, axis-lock,...)
+    \item jak se chová vůči transform-hierarchii
+          \begin{itemize}
+            \item fyzika používá globální souřadnice objektů
+            \item collidery v potomcích patří otcovskému rigidbody
+            \item rigidbody uvnitř rigidbody -> undefined behavior
+          \end{itemize}
+\end{itemize}
+
+\subsection{Colliders}
+\begin{itemize}
+    \item zmínit že to je nejvíc základní a používaná funkcionalita physics systému, kvůli který ho spousta her includuje i když nepoužívají žádný non-kinematic rigidbodies a tak.  
+    \item primitivní tvary, jejich skládání, nefunkčnost obecné maticové deformace (vždy zachovává kvádrovost, kulovost, kapsulovost)
+    \item NEodpovídá(!) přesně tvaru meshe a v tom je pointa, ale když se umístěj šikovně, nijak to nekazí hráčský zážitek
+    \item (letmo zmínit) mesh collidery existují - ale je u nich dost omezení, mají smysl jenom na terén apod.
+    \item statické vs dynamické collidery (úplně samostatné / kinematic / non-kinematic) - co s čím koliduje a jak se chovaj když se pohybujou (pohyblivé collidery by měly být na nějakém (klidně kinematickém) rigidbody)
+    \item trigger collidery
+    \item Layers - co s čím koliduje; slouží i pro jinou funkcionalitu naprosto nesouvisející s fyzikou(!) ( další problémy rozebereme v \ref{swordCollisionsSection})
+    \item zpráva OnCollisionXx / OnTriggerXx
+    \item discrete VS continuous collision detection (jenom že existuje, podrobněji v \ref{swordCollisionsSection})
+\end{itemize}
+
+\subsection{Joints}
+\begin{itemize}
+    \item (velmi stručně) co je constraint solver a jaký používá Unity
+    \item strohý výčet jmen jointů a že všechny jsou to speciální případ Configurable Jointu (neboli D6 jointu jak ho zná PhysX)
+    \item představení Configurable Jointu
+    \item anchor, connectedAnchor
+    \item locked/limited/free pro každý degree of freedom
+    \item primary, secondary, tertiary axis, vůči čemu jsou rotace relativní (podrobněji rozebereme v \ref{howToSetJointsTargetRotationSection})
+    \item positional\&angular drive - síly (spring VS damper), cílová pozice (nestabilní, alternativa nastavení connectedAnchoru) a rotace, RotationDriveMode (Slerp VS X+YZ - jenom letmo zmínit, "Slerp se choval pěkně a tak jsme ho vybrali"), Target (angular) velocity
+    \item massScale VS connectedMassScale
+    \item stabilita, flag EnablePreprocessing, projekce (projection mode+distance+angle)
+\end{itemize}
+
+
+\subsection{Stabilita simulace}
+\begin{itemize}
+    \item všechno to je jenom hodně hrubá aproximace, priorita je aby to běželo rychle a dalo se rozběhnout na GPU
+    \item postup simulace po krocích, tunelování
+    \item přesnost IEEE floatu - hodně malé/velké objekty, zaokrouhlovací chyba
+    \item constraint solver, nesplnitelné constrainty, iterativní metody
+    \item to, že collidery neodpovídají meshům, taky nepřidává přesnosti
+    \item ladění - parametry fixedFrameDuration, iterationCount, který constraint solver se používá apod.
+    \item zmínit vestavěný Physics Debugger
+\end{itemize}
+
 
 \section{Shrnutí}
 
+Unity je velmi vyspělý engine, který za sebou má desetiletí vývoje a s jeho pomocí bylo vytvořeno mnoho komerčně úspěšných her. Pro svou velmi přívětivou cenovou politiku a možnost kompilovat hry pro širokou škálu platforem od konzolí po mobilní zařízení se stal \textbf{oblíbeným nástrojem začínajících vývojářů a malých týmů}. Uživateli poskytuje mnoho nástrojů a knihoven, od editoru scény po subsystém pro navigaci entit v herním světě. Libovolnou další funkcionalitu lze přidat pomocí skriptů v jazyce C\#. 
+
+Herní scéna je hierarchií objektů - každý z nich je definován svým předkem, jménem, transformační maticí a listem komponent. Komponenty jsou základním stavebním prvkem, kterým dodáváme objektům jejich vlastnosti - např. schopnost mít vizuální reprezentaci, schopnost kolidovat s okolními objekty. Unity poskytuje mnoho předpřipravených komponent, uživatel může definovat vlastní jako skripty dědící z třídy MonoBehavior.
+
+Jednou ze zajímavých skupin komponent jsou ty poskytnuté vestavěným \textbf{fyzikálním sybsystémem}. Jejich prostřednictvím je uživateli poskytnuto rozhraní odpovídající velké podmnožině systému Nvidia PhysX \cite{PhysX}. 
+
+Základem je komponenta Rigidbody - jejím přidáním se z objektu stává fyzikální entita, na kterou lze působit silami. Chceme-li fyzikálnímu objektu umožnit kolidovat s dalšími objekty, přidáme mu jednu nebo více komponent typu Collider. Pro vytváření složitějších vztahů a závislostí mezi jednotlivými fyzikálními tělesy slouží Jointy - s jejich pomocí můžeme vytvořit například dveře otevíratelné v pantech či realisticky se chovající kovový řetěz.
+
+Fyzikální simulace je velmi mocný nástroj, nevytváří však věrný obraz reality. Na mnoha místech narážíme na numerickou stabilitu a také zkrátka na fakt, že hlavní prioritou nikdy nebyla dokonalá přesnost, nýbrž schopnost vyhodnocení v reálném čase.

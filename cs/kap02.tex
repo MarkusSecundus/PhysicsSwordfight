@@ -1,124 +1,42 @@
-\chapter{Základy}
+\chapter{Stanovení cíle}
 
-V této kapitole čtenáře seznámíme s herním enginem Unity do míry potřebné k pochopení zbytku práce. Stručně nastíníme architekturu, kterou pro tvorbu herních systémů tento engine podporuje, a zmíníme některé jeho vestavěné knihovny - především se podrobně zaměříme na integrovaný fyzikální subsystém.
+V této kapitole se zamyslíme a stanovíme cíle, o něž tato práce bude usilovat. Následně vybereme nástroje, které nám k dosažení těchto cílů poslouží.  
 
 
-\section{Herní engine Unity}
-
-\subsection{Představení}    \label{unityEngineIntroSection}
+\section{Jaký chceme výsledek}
 \begin{itemize}
-    \item na malé a neziskové projekty je zadarmo, ale není opensource a obecně neposkytuje přístup k většině svého zdrojáku
-    \item všestranný (2D i 3D, všechny možné cílové platformy)
-    \item nejpoužívanější mezi indie vývojáři (\href{https://twitter.com/gamemakerstk/status/1552183527847989248?cxt=HHwWgMC8ubusu4orAAAA}{odkaz na GMTK game jam survey}\footnote{je v pohodě dávat do referencí post na twitteru?})
-    \item existuje už celkem dost dlouho - je to mature ekosystém%, má spoustu pěkných subsystémů (Fyzika, Animace, NavMesh, ...)
-    \item je tam dost kostrbatostí kvůli zpětné kompatibilitě, věci se dají dělat hodně různýma způsobama (jak se přesvědčíme na konkrétních příkladech v dalších sekcích)
-    \item použitá verze C\# a .NET runtime
+    \item \textbf{Zamyšlení}:
+        \begin{itemize}
+            \item neodsžitelným ideálem, ke kterému se snažíme rámcově směřovat, je zachycení zážitku, co šerm poskytuje v reálném světě
+            \item kromě volného mávání mečem, ostatní aspekty co k boji v reálném světě patří, hry zvládají zachytit docela v pohodě -> ovládání meče poskytuje největší prostor k prozkoumání
+            \item chceme obecný systém, co nebude potřebovat specifické úpravy pokaždé, když vytvoříme nový typ nepřítele, a co půjde použít k interakci s herním prostředím
+            \item nechceme pro meč ručně vytvářet žádné animace (nemáme na to prostředky + to není programátorsky zajímavá činnost)
+            \item meč by se měl tvářit v rámci možností rozumně fyzikálně věrně -> moderní herní enginy bývají vybaveny pokročilým fyzikálním subsystémem -> mohlo by být fajn nějakej takovej využít
+        \end{itemize}
+    
+    \item \textbf{z pohledu backendu by meč měl zvládat plně volný pohyb na všech 6 stupních volnosti a měl by to být objekt plně ovládaný standardním fyzikálním subsystémem}
+        \begin{itemize}
+            \item zkusíme znovu to, co Die by the Sword, avšak tentokrát vytvoříme otevřenou platformu, na které bude moci jakýkoliv programátor z komunity experimentovat s metodami ovládání (nedoladěné ovládání (a nemožnost ho spravit komunitou) byl hlavní kámen úrazu DbtS)
+            \item pokud se nám osobně nepodaří najít opravdu dobré a zábavné ovládání, někomu jinému z komunity se to povést může. i kdyby ne, na hru vždycky půjde napasovat VR ovladač ;)
+        \end{itemize}
+    \item \textbf{frontend - ovládání pro klávesnici a myš}
+        \begin{itemize}
+            \item jediná možnost, která zaručí přístupnost pro všechny
+            \item mnoho prostoru k experimentálnímu průzkumu
+        \end{itemize}
 \end{itemize}
 
-\subsection{Herní objekty a komponenty}
+\section{Jaké nástroje použijeme}
+
 \begin{itemize}
-    \item scéna - hierarchie gameobjectů
-    \item gameobject - kontejner do kterého se naházejí komponenty
-    \item komponenta - modul poskytující objektu nějaký kousek funkcionality; builtin, nebo to je uživatelsky definovaná třída; může obsahovat nějaká data (nastavitelná v editoru) a nějakou herní logiku (která příp. zahrnuje komunikaci s ostatními komponentami a gameobjecty)
-    \item serializace - z editoru se dají editovat public/[SerializeField] fieldy ; nekompatibilní s properties, interfacama a jinýma datovýma strukturama než pole/list - omezující když chce člověk používat klasické dobré OOP practices  
-    \item z herního objektu se dá vytvořit prefab
+    \item chceme, aby výsledek naší práce byl co nejvíc přístupný pro náhodné lidi, co by ho chtěli využít k navazujícím experimentům či vlastnímu obohacení
+    \item \textbf{použijeme herní engine Unity}
+        \begin{itemize}
+            \item je mature
+            \item nejrozšířenější (viz \ref{unityEngineIntroSection}) -> největší šance že se najde jiný vývojář, co pro naší práci najde využití
+            \item má spoustu standardních knihoven a subsystémů, co nám usnadní práci a zajistí rozumnou míru kompatibility s prací ostatních lidí
+        \end{itemize}
+    \item na všech místech práce chceme používat co nejvíc rozšířené a standardní systémy a knihovny (-> kompatibilita s prací ostatních lidí)
+    \item myslet na dobré OOP practices a štábní kulturu
 \end{itemize}
 
-
-\subsection{Posílání zpráv}
-\begin{itemize}
-    \item srovnání VS UnityEvent VS C\# delegáti 
-\end{itemize}
-
-\subsection{Herní smyčka}
-\begin{itemize}
-    \item zpráva Update, deltaTime
-    \item všechno probíhá sekvenčně na main threadu
-\end{itemize}
-
-\subsection{Základní knihovny}
-\begin{itemize}
-    \item (vše pouze zmínit že existuje)
-    \item matematická primitiva - Vector3, Ray, matice, apod.
-    \item instanciace gameobjectů a komponent za runtimu
-    \item Vykreslování grafiky
-    \item NavMesh
-    \item extrémně moc dalších věcí
-\end{itemize}
-
-
-\section{Fyzikální subsystém enginu Unity}
-
-\subsection{Představení}
-\begin{itemize}
-    \item zjednodušená dynamika a kinematika pevného tělesa
-    \item je to vlastní Uniťácké API postavené nad backendem nVidia PhysX, ale poskytuje jenom podmnožinu kompletní PhysX funkcionality
-    \item uvést reference na Unity a na PhysX dokumentaci\footnote{Chci mít odděleně referenci na Unity a na Unity-docs, nebo jenom Unity a nechat ho aby url neukazovalo na main page ale na docs?}
-    \item zmínit že Unity má taky 2D Physics, co jsou úplně odděleně a za backend maj Box2D 
-    \item vede si vlastní reprezentaci celé scény, při počítání vychází jenom z ní, před a po každém kroku se provede synchronizace s herním světem (updatnou transformy apod.)
-    \item FixedUpdate
-\end{itemize}
-
-
-\subsection{Rigidbody}
-\begin{itemize}
-    \item non-kinematic VS kinematic
-    \item properties (mass, center-of-mass+inertia-tensor, (angular) drag, axis-lock,...)
-    \item jak se chová vůči transform-hierarchii
-          \begin{itemize}
-            \item fyzika používá globální souřadnice objektů
-            \item collidery v potomcích patří otcovskému rigidbody
-            \item rigidbody uvnitř rigidbody -> undefined behavior
-          \end{itemize}
-\end{itemize}
-
-\subsection{Colliders}
-\begin{itemize}
-    \item zmínit že to je nejvíc základní a používaná funkcionalita physics systému, kvůli který ho spousta her includuje i když nepoužívají žádný non-kinematic rigidbodies a tak.  
-    \item primitivní tvary, jejich skládání, nefunkčnost obecné maticové deformace (vždy zachovává kvádrovost, kulovost, kapsulovost)
-    \item NEodpovídá(!) přesně tvaru meshe a v tom je pointa, ale když se umístěj šikovně, nijak to nekazí hráčský zážitek
-    \item (letmo zmínit) mesh collidery existují - ale je u nich dost omezení, mají smysl jenom na terén apod.
-    \item statické vs dynamické collidery (úplně samostatné / kinematic / non-kinematic) - co s čím koliduje a jak se chovaj když se pohybujou (pohyblivé collidery by měly být na nějakém (klidně kinematickém) rigidbody)
-    \item trigger collidery
-    \item Layers - co s čím koliduje; slouží i pro jinou funkcionalitu naprosto nesouvisející s fyzikou(!) ( další problémy rozebereme v \ref{swordCollisionsSection})
-    \item zpráva OnCollisionXx / OnTriggerXx
-    \item discrete VS continuous collision detection (jenom že existuje, podrobněji v \ref{swordCollisionsSection})
-\end{itemize}
-
-\subsection{Joints}
-\begin{itemize}
-    \item (velmi stručně) co je constraint solver a jaký používá Unity
-    \item strohý výčet jmen jointů a že všechny jsou to speciální případ Configurable Jointu (neboli D6 jointu jak ho zná PhysX)
-    \item představení Configurable Jointu
-    \item anchor, connectedAnchor
-    \item locked/limited/free pro každý degree of freedom
-    \item primary, secondary, tertiary axis, vůči čemu jsou rotace relativní (podrobněji rozebereme v \ref{howToSetJointsTargetRotationSection})
-    \item positional\&angular drive - síly (spring VS damper), cílová pozice (nestabilní, alternativa nastavení connectedAnchoru) a rotace, RotationDriveMode (Slerp VS X+YZ - jenom letmo zmínit, "Slerp se choval pěkně a tak jsme ho vybrali"), Target (angular) velocity
-    \item massScale VS connectedMassScale
-    \item stabilita, flag EnablePreprocessing, projekce (projection mode+distance+angle)
-\end{itemize}
-
-
-\subsection{Stabilita simulace}
-\begin{itemize}
-    \item všechno to je jenom hodně hrubá aproximace, priorita je aby to běželo rychle a dalo se rozběhnout na GPU
-    \item postup simulace po krocích, tunelování
-    \item přesnost IEEE floatu - hodně malé/velké objekty, zaokrouhlovací chyba
-    \item constraint solver, nesplnitelné constrainty, iterativní metody
-    \item to, že collidery neodpovídají meshům, taky nepřidává přesnosti
-    \item ladění - parametry fixedFrameDuration, iterationCount, který constraint solver se používá apod.
-    \item zmínit vestavěný Physics Debugger
-\end{itemize}
-
-
-\section{Shrnutí}
-
-Unity je velmi vyspělý engine, který za sebou má desetiletí vývoje a s jeho pomocí bylo vytvořeno mnoho komerčně úspěšných her. Pro svou velmi přívětivou cenovou politiku a možnost kompilovat hry pro širokou škálu platforem od konzolí po mobilní zařízení se stal \textbf{oblíbeným nástrojem začínajících vývojářů a malých týmů}. Uživateli poskytuje mnoho nástrojů a knihoven, od editoru scény po subsystém pro navigaci entit v herním světě. Libovolnou další funkcionalitu lze přidat pomocí skriptů v jazyce C\#. 
-
-Herní scéna je hierarchií objektů - každý z nich je definován svým předkem, jménem, transformační maticí a listem komponent. Komponenty jsou základním stavebním prvkem, kterým dodáváme objektům jejich vlastnosti - např. schopnost mít vizuální reprezentaci, schopnost kolidovat s okolními objekty. Unity poskytuje mnoho předpřipravených komponent, uživatel může definovat vlastní jako skripty dědící z třídy MonoBehavior.
-
-Jednou ze zajímavých skupin komponent jsou ty poskytnuté vestavěným \textbf{fyzikálním sybsystémem}. Jejich prostřednictvím je uživateli poskytnuto rozhraní odpovídající velké podmnožině systému Nvidia PhysX \cite{PhysX}. 
-
-Základem je komponenta Rigidbody - jejím přidáním se z objektu stává fyzikální entita, na kterou lze působit silami. Chceme-li fyzikálnímu objektu umožnit kolidovat s dalšími objekty, přidáme mu jednu nebo více komponent typu Collider. Pro vytváření složitějších vztahů a závislostí mezi jednotlivými fyzikálními tělesy slouží Jointy - s jejich pomocí můžeme vytvořit například dveře otevíratelné v pantech či realisticky se chovající kovový řetěz.
-
-Fyzikální simulace je velmi mocný nástroj, nevytváří však věrný obraz reality. Na mnoha místech narážíme na numerickou stabilitu a také zkrátka na fakt, že hlavní prioritou nikdy nebyla dokonalá přesnost, nýbrž schopnost vyhodnocení v reálném čase.

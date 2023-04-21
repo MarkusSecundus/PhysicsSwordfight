@@ -1,416 +1,144 @@
-\chapter{Implementace}
+\chapter{Návrh}
 
-V předchozí kapitole jsme navrhli strukturu, které se náš projekt bude držet. Nyní můžeme přistoupit k jeho implementaci.
+Zde provedeme celkový návrh řešení - čtenáři představíme objektový návrh, který bude použit při jeho implementaci, a poté zevrubně prodiskutujeme metody zpracování uživatelského vstupu pro účely ovládání meče.
 
-\section{Implementace základních komponent}
+
+\section{Základní komponenty}
+
 \begin{itemize}
-  \item \textbf{Šermíř}
-    \begin{itemize}
-      \item zákl. prvky: Rigidbody (nekinematické), SwordsmanMovement
-      \item z parenta si natáhne instanci ISwordInput - na něm se ptá na hodnoty vstupních Axis + stisknutost kláves (podle nich pak působí silama aby vyvolával pohyb hráče)
-      \item z editoru nastavitelné: mapování vstupu a násobiče pro síly, kterýma se působí (konfigurace rychlosti pohybu)
-      \item chceme aby hráč stál vzpříma, nenakláněl se na stranu - není triviální - rozebereme v \ref{playerFallingToSideSection}
-      \item jak probíhá pohyb a rotace hráče
+    \item \textbf{Hráč}
         \begin{itemize}
-          \item podle parametrů a hodnot Axis, co jsme pro danej směr pohybu dostali ze vstupu, stanovíme cílovou rychlost, kterou by se hráč měl pohybovat
-          \item jednoduše mu dodáme tuhle rychlost - rigidbody.AddForce(targetVelocity - rigidbody.velocity, ForceMode.VelocityChange); 
-          \item obdobně nastavíme rigidbody.angularVelocity přes rigidbody.AddTorque
-          \item doleva/doprava - rotace těla hráče (mění se co znamená 'dopředu') VS nahoru/dole - rotace kamery
-          \item uvnitř hráče je prázdný gameobject jenom s transformem - stub kamery - jeho rotaci nastavujeme, nějaká kamera ji může ale nemusí kopírovat (to se konfiguruje ve SwordsmanAssembly)
-          \item rotaci kamery nastavujeme obdobně jako rotaci rigidbody, akorát natvrdo změnou hodnoty na transformu; Axis, na které to je defaultně namapované, je MouseY (jediná věc co se určuje pohybem myši)
-          \item experimentovalo se i s umožněním drobné rotace kamery doleva/doprava pomocí MouseX (navíc k rotaci rigidbody), ale tu se nepodařilo vychytat tak, aby to autorovi dělalo dobře na žaludek - stále existuje, akorát nastavená s rychlostí 0
-          \item skok - stisknutí klávesy - hráči se jednorázově přidá síla, pokud stanovený Feet trigger collider s něčím koliduje (na to jsme museli implementovat TriggerActivityInfo - komponenta, co vede záznamy o aktuálně probíhajících kolizích)
-        \end{itemize}
-       \item Jednoduchý collider pro interakci s prostředím - kapsule 2m*0.5m -> hladký pohyb po terénu apod.
-       \item animované tělo s podrobným systémem colliderů pro kolize s mečem - viz \ref{swordsmanAnimationSubsection}
-    \end{itemize}
-  \item \textbf{Meč}
-    \begin{itemize}
-      \item zákl. prvky: Rigidbody (nekinematické), ConfigurableJoint, SwordMovement
-      \item z parenta si natáhne instanci ISwordInput - skrz něj čte vstup z myši (paprsky castovaný z kamery) a checkuje u kláves zda jsou stisknuté
-      \item \textbf{SwordMovement}..
-      \item z editoru nastavitelné: výčet jednotlivých submodulů (ty rozebereme v \ref{modesOfSwordMovementSubsection}), parametry pro interpolaci pohybu handlu meče
-      \item kdokoliv se může šťourat v rigidbody a jointu a tweakovat tam parametry
-      \item vevnitř... model meče - samostatný prefab - obsahuje mesh, collidery, spoustu drobných transformů co popisujou význačné body
-      \item pro použití ostatními entitami meč poskytuje komponentu SwordDescriptor - v té je zaznamenaný výčet transformů co odpovídají význačným bodům
-    \end{itemize}
+            \item skript co ovládá pohyb hráče a natočení kamery (SwordsmanMovement) - nezajímavá klasika
+            \item orientační body podle kterých zpracovávají vstup jednotlivé stavy SwordMovementu (je potřeba aby se pohybovaly relativně vůči tělu hráče)
+            \item jednoduchý capsule collider - pro kolize s environmentem apod.
+            \item hráčský model (samostatný prefab) - bone rig, nese animátor, na každé kosti collidery co odpovídají části těla - pro kolize s nepřátelským mečem 
+        \end{itemize} 
+    \item \textbf{Meč} 
+        \begin{itemize}
+            \item skript co ovládá pohyb meče (SwordMovement)
+                \begin{itemize}
+                    \item stavový automat
+                    \item z editoru se konfiguruje seznam párů klávesa-stav + jeden defaultní stav
+                    \item stav... SwordMovement.Submodule
+                    \item každý stav nese nějaká data konfigurovaná z editoru, další data může získat od instance ISwordMovement, která do něj je injectnuta
+                    \item ISwordMovement - poskytuje deskriptor meče, zdroj vstupu, transform držitele meče a metodu MoveSword()
+                    \item aktuální stav je ten, jehož klávesa je právě stisknutá - na tom jediném je volán OnUpdate()
+                    \item v OnUpdate() stav vypočte žádanou pozici meče a s tou následně na SwordMovementu zavolá metodu MoveSword()
+                    \item MoveSword(struct poziceKamSeMečMáPohnout) - pohyb provádí SwordMovement v průběhu času jak sám uzná za vhodné (možné konfigurovat skrz jeho parametry v editoru)
+                \end{itemize}
+            \item vlastní model meče
+                \begin{itemize}
+                    \item vyměnitelná podkomponenta, samostatnej prefab
+                    \item obsahuje mesh meče, collidery
+                    \item poskytuje \textbf{deskriptor-komponentu} ve které jsou uložené transformy odpovídající význačným bodům (ústí čepele, špička, blokovací bod apod.)
+                \end{itemize}
+        \end{itemize} 
+    \item \textbf{Kořen hierarchie} 
+        \begin{itemize}
+            \item Komponenta \textbf{SwordsmanAssembly}...
+            \item Nese odpovědnost za to, že meč a šermíř budou správně pospojované (jeden s druhým a s objekty co jdou z vnější scény)
+            \item Definují se tu odkazy na všechny objekty okolní scény, které meč nebo šermíř potřebují znát (kamera, healthbar, die-screen)
+            \item Je v něm komponenta typu \textbf{ISwordInput} (abstrakce pro zdroj vstupu - klávesnice nebo ovládací skript)
+            \item Definuje se tu tabulka dalších obecných parametrů, na které se komponenty uvnitř hráče a meče mohou symbolicky odkazovat (komponenta \textbf{SymbolMap})
+            \item Všechny rozdíly, které odlišují \acs{PC} od \acs{NPC}, by se měly dít v tomto jednom objektu
+        \end{itemize} 
+    \item \textbf{Důsledky tohoto přístupu} 
+        \begin{itemize}
+            \item Logika ovládání meče a ovládání hráčské postavy jsou dobře oddělené
+            \item Logika meče dobře rozšiřitelná - jednoduché přidat nový ovládací submodul
+            \item Není problém mít ten samý ovládací submodul několikrát na různých klávesách ale s jinými parametry
+            \item Mezi SwordMovement a jeho mody není problém vecpat dekorátory (např. pro nahrávání rozkazů k pohybu meče)
+            \item Abstrakce uživatelského vstupu... není problém ho mockovat, simulovat apod.
+            \item Nevýhoda - Data hráče a meče nejsou dobře oddělená
+                \begin{itemize}
+                    \item Detailní model hráče potřebuje mít k dispozici deskriptor meče, aby věděl, jak má napolohovat procedurální animaci rukou
+                    \item Orientační body, které používají některé mody meče, potřebují mít konstantní polohu relativně vůči tělu hráče -> musí být potomky jeho transformu, ne meče
+                \end{itemize}
+        \end{itemize} 
 \end{itemize}
 
-\subsection{Moduly ovládání meče} \label{modesOfSwordMovementSubsection}
+\section{Zpracování uživatelského vstupu}
 \begin{itemize}
-  \item Jak vypadají z hlediska objektováho návrhu už čtenář ví, tady jenom popíšeme implementaci modulu pro sekání a modulu pro blokování
-  \item \textbf{Abstrakce} 
-    \begin{itemize}
-      \item SwordMovement.Submodule
+    \item \textbf{Přednost má ovládání meče - na to se teď zaměříme}
+    \item k dispozici máme myš a klávesnici
+    \item musí být pro hráče jednoduše uchopitelné (- ideálně tedy nějaký pěkně spojitý matematický formalizmus, který jsme pro hráče schopní pěkně vizualizovat)
+    \item diskuze variant co používalo Die by the Sword:
         \begin{itemize}
-          \item samostatná abstraktní třída, nedědí z Unity.Object
-          \item má metody jako OnUpdate, OnActivated, OnDeactivated apod. - za jejich volání nese zodpovědnost SwordMovement
-          \item může volat metody na SwordMovementu (je do ní injectnuta instance rozrhraní ISwordMovement)
+            \item \textbf{Klávesnice} - zastaralý koncept, moderní hráč počítá, že k něčemu využije myš; stejně to tehdy byl jenom slabý odvar z toho, co uměla myš
+            \item \textbf{Myš} - ze všech možností zvládá největší podmnožinu pohybů; vyžaduje cvik, ale umožňuje kreativitu a flexibilní reakce v nezvyklé situaci
+            \item \textbf{Nahrávky} - na první pohled pěkná myšlenka, v praxi však neumožňují flexibilně reagovat na specifickou situaci (hráč je schopen si vést okamžitý myšlenkový přehled o příliš malém množství nahrávek)
         \end{itemize}
-      \item ISwordMovement
+    \item výsledek diskuze:
         \begin{itemize}
-          \item Jednoduché rozhraní, exposuje jenom to, co submodul může potřebovat
-          \item šikovné ho mít pro účely mockování v unit testech a taky protože takhle jsme schopní mezi SwordMovement a jeho komponenty nacpat dekorátor (kterej se tváří jako jediná aktivní komponenta, původní komponenty si ukradne pro sebe, sám se stará o správu toho, která je aktivní, a místo oficiálního SwordMovementu do nich injectne sebe) - takhle se dá např. elegantně nahrávat rozkazy pro pohyb meče (využijeme v \ref{knightEnemySubsection})
-          \item věci, které exposuje: SwordDescriptor popisující meč, ISwordInput, Transform sword wieldera, metodu MoveSword()
+            \item pro hráče chceme ovládání myší
+            \begin{itemize}
+                \item jinou možnost než něco s myší, nebo něco s klávesnicí stejně nemáme
+                \item myš jediná má potenciál umožnit jemnou a flexibilní kontrolu (klávesnice má konečný počet kláves - konečný počet stavů)
+            \end{itemize}
+            \item interně implementujeme i přehrávání nahrávek - bude se hodit pro AI nepřítele (dává nám přímou, dobře uchopitelnou kontrolu nad jeho chováním a tedy obtížností hry) (jednoduchý systém, vhodný pro to v budoucnu sloužit jako základ, proti kterému budeme testovat sofistikovanější AI)
+            \item nějaké kreativnější nápady než s čím už přišlo DbtS necháme na později. teď chceme mít něco, co už víme, že je základně použitelné, abysme vůči tomu později nové výstřelky mohli porovnávat
         \end{itemize}
-      \item Správu toho která komponenta je aktivní jsme enkapsulovali do třídy ScriptSubmodulesContainer -> dekorátor mezi SwordMovementem a jeho Submodulama se dá napsat celkem bez námahy
-      \item Konfigurace submodulů z editoru - list párů klávesa-submodul ; submodule picker má dropdown, kde můžeme vybírat ze všech typů dědících ze SwordMovement.Submodule a pro vybraný typ se pak zobrazí defaultní picker - neskonalé díky: \href{https://github.com/lordconstant/SubclassPropertyDrawer}{lordconstant}
-    \end{itemize}
-  \item \textbf{Metoda SwordMovement.MoveSword()}
-    \begin{itemize}
-      \item vstupy: anchorPoint (poloha meče) + swordDirection (směr kam je namířený) + upDirection (směr nahoru - podle něj se počítá natočení kolem vlastní osy) + holdingForce (faktor síly držení)
-      \item podle směru namíření a směru nahoru se nastaví cílová rotace mečového jointu
+    \item jakým formalizmem mapovat polohu myši na polohu meče:
         \begin{itemize}
-          \item stačí podle nich spočítat cílovou rotaci a tu nastavit jako targetRotation ConfigurableJointu (spočítat jí je ale netriviální problém - viz \ref{howToSetJointsTargetRotationSection})
+            \item nevíme jak přesně to na pozadí dělá DbtS
+            \item jednoduchý, dobře vizualizovatelný formalismus.. střílet paprsek z kamery z místa kurzoru a protnout ho s nějakým útvarem 
+            \item po dlouhé úvaze jsme se rozhodli, že pěkný útvar k protínání je kulová plocha
+                \begin{itemize}
+                    \item začneme s ní
+                    \item buď se ukáže jako ideální
+                    \item nebo se od ní odpíchneme abychom se dobrali k něčemu sofistikovanějšímu
+                \end{itemize}
+            \item DbtS umí pěkně mávat mečem ze strany na stranu. Co ale jiné typy pohybu, co člověk s mečem běžně dělá - např. blokování
+                \begin{itemize}
+                    \item mávání s mečem naimplementujeme plnohodnotně jako v DbtS 
+                    \item bude však možné přepínat na další mody ovládání
+                    \item vždy bude aktivní jenom jeden mod - přepínání stiskem příhodné klávesy (např. shift)
+                    \item všechny mody berou na vstupu jeden bod - průnik kurzoru s kulovou plochou - a liší se v algoritmu, pomocí kterého z tohoto bodu určí cílovou polohu meče
+                    \item přesnou matematiku na které stojí oba mody rozebereme později v implementační kapitole \textbf{\footnote{Je rozumný to takhle rozseknout?}} (viz \ref{modesOfSwordMovementSubsection})
+                \end{itemize}
         \end{itemize}
-      \item nastavení polohy meče podle vyžádané cílové polohy...
+    \item ovládání střílením paprsku, který se protne s kulovou plochou jsme naimplementovali
         \begin{itemize}
-          \item ConfigurableJoint podporuje stejně jako targetRotation i targetPosition - ta se ale při testování zdála nestabilní (čas od času meč odskočil 10 metrů vedle)
-          \item ConfigurableJoint má property connectedAnchor - pozice místa kam je předmět jointem ukotvený, relativní vůči rigidbody ke kterému je joint ukotvený - jeho změnou můžeme efektivně mečem pohybovat
-          \item potřeba nastavit Joint.autoConfigureConnectedAnchor = false
-          \item chceme plynulý pohyb konzistentní rychlostí VS Joint.connectedAnchor se dá jenom natvrdo nastavit, neexistuje žádný targetConnectedAnchor 
-          \item DOTween nejde použít (cílová pozice connectedAnchoru se potenciálně mění každý snímek - DOTween je stavěný na to, že cíl je známý od začátku a nemění se)
-          \item řešení - vést si prostě target hodnotu a každý snímek connectedAnchor posunout o (target - currentConnectedAnchor)*deltaTime*speedFactor/*nastavitelný z editoru*/
-          \item celou tuhle logiku jsme enkapsulovali do třídy RetargetableInterpolator - ta běží na pozadí jako korutina a jenom nastavujeme její target hodnotu
+            \item fungovalo rámcově pěkně, ale byly zde nežádoucí okrajové případy (-> např. hráč mohl meč natočit tak, aby probodával jeho tělo)
+            \item -> \textbf{kulová plocha je fajn, ale potřebuje zobecnit na něco trochu flexibilnějšího}
+            \item rozhraní \textbf{IRayIntersectable} (actually to je abstraktní třída - protože Unity serializer) - metoda GetIntersection(Ray) - vrací struct - ten obsahuje zda byl úspěch, příp. bod průniku, střed proniknuté kulové plochy a váhu výsledku (pro účely interpolace)
+            \item \textbf{RayIntersectableSphere}
+                \begin{itemize}
+                    \item definovaná středem a poloměrem
+                    \item volitelný parametr - \textbf{díra}
+                        \begin{itemize}
+                            \item jiná RayIntersectableSphere
+                            \item pokud se průnik paprsku nachází v díře (je vzdálený od jejího středu míň než její poloměr), nahlásí se jako netrefa, nebo se mu dle vzdálenosti od středu díry sníží váha
+                            \item váhu výsledku (float 0-1), příp. její závislost na vzdálenosti průniku od středu díry konfiguruje uživatel skrz AnimationCurve
+                            \item díry se ukázalo, že jsou potřeba, aby se při interpolaci (viz níže) mezi velkou a malou koulí dal udělat hladký přechod
+                        \end{itemize}
+                    \item další volitelný parametr - \textbf{center override}
+                    \begin{itemize}
+                        \item bod, který se bude ve výsledkovém structu hlásit jako centrum kulové plochy i když ve skutečnosti není
+                        \item potřeba když interpolujeme mezi hodně velkou a hodně malou koulí - aby obě hlásily stejný střed
+                    \end{itemize}
+                \end{itemize}
+            \item \textbf{RayIntersectableInterpolation}
+                \begin{itemize}
+                    \item list mnoha IRayIntersectables
+                    \item GetIntersection volá sebe na všech podprvcích - výsledek je pak vážený aritmetický průměr těch, které byly trefené (vážený podle váhy udané ve výsledkovém structu)
+                \end{itemize}
+            \item Vizualizace - musí se střílet spousta paprsků z kamery 
+            \item díky tomuhle jsme schopní hráči poskytnout průnikový tvar, co se pro něj tváří jako normální, intuitivní kulová plocha, ale proti ní zde máme spoustu dodatečné flexibility, která nám umožní vychytat okrajové případy
+            \item pomocí tohohle se dají poskládat dost komplexní útvary, co se pořád tváří pěkně plynule a spojitě - ale nejsou plynulé a spojité vždycky, člověk si musí trochu pohrát s AnimationCurve u děr aby nebyly ostré přechody tam kde končí/začíná nějaká koule
+            \item (insert vizualizaci jak vypadá IRayIntersectable kterej používá blocking mode)
+            \item poznámka: k tomuto řešení jsme došli živelně experimentováním v průběhu času - teď když už je hotové, dost pravděpodobně by šlo najít alternativu, co by byla jednodušší a srovnatelně mocná (kdyby to někomu stálo za práci)
         \end{itemize}
-      \item faktor síly držení
+    \item nyní máme ovládání meče - \textbf{co ovládání postavy?}
         \begin{itemize}
-          \item důvod: někdy je správně defaultní síla, jakou hráč meč drží, někdy (modul blokování) ale např. potřebujeme, aby byl meč drženej tak silně, že rána druhého meče ho nedokáže srazit dolů
-          \item na začátku si uložíme původní Joint.slerpDrive.positionSpring - nastavení faktoru síly držení znamená kolikanásobek téhle původní hodnoty se má začít používat
-          \item plynulá změna - interpolujeme stejně jako Joint.connectedAnchor
-          \item volitelný parametr - když není, bere se to jako by byla dodána hodnota 1 (-> 1-násobek původní síly)
-        \end{itemize}
-    \end{itemize}
-  \item \textbf{Modul pro sekání:} 
-    \begin{itemize}
-      \item velmi jednoduchý
-      \item má z editoru nastavitelný IRayIntersectable - prostě jenom vezme paprsek ze vstupu a intersectne ho
-      \item když průnik není, nic neudělá
-      \item když průnik je, nastaví hlášený střed koule jako handlePoint, lookDirection je (intersection.Value - intersection.Center)
-      \item upVector je lookDirection.Cross(lastLookDirection) 
-      \item (insert náčrt here)
-    \end{itemize}
-  \item \textbf{Modul pro blokování:} 
-    \begin{itemize}
-      \item \textbf{jak blokování funguje...}
-        \begin{itemize}
-          \item předpokládejme že útočník proti mně seká
-          \item chci jeho meči nastavit do cesty vlastní meč - tak, aby můj meč protivník nesrazil na stranu
-          \item chci trefit jeho meč svojí vlastní čepelí - nějakým bodem, co je blízko u rukojeti (tam jde proti mně nejmenší páka) 
-        \end{itemize}
-      \item \textbf{jako ho naimplementujeme...}
-        \begin{itemize}
-          \item ze vstupu paprsek -> intersectneme s IRayIntersectable -> s výsledkem dále pracujeme
-          \item na meči vyznačený... Bod blokování - chceme přesunout meč tak, aby tenhle bod odpovídal intersection.Value
-          \item dále máme zvenčí definovaný bod blockingHint - ten determinuje směr jak bude meč natočený
-          \item let blockPlane = new Plocha(bod: intersection.Value, normála: (intersection.Value - intersection.SphereCenter))
-          \item let bladeDirection = (blockPlane.Project(blockingHint) - intersection.Value).normalized
-          \item TODO: dokončit!
-        \end{itemize}
-      \item (insert náčrt here)
-    \end{itemize}
-\end{itemize}
-
-
-\subsection{Animace šermíře} \label{swordsmanAnimationSubsection}
-\begin{itemize}
-  \item detailní model šermíře.. klasický bone rig (SkinnedMeshRenderer vykresluje, vedle něj je hierarchie transformů - kosti), zahrnuje basic animaci dýchání vytvořenou v Blenderu
-  \item není problém přidat víc animací, SwordsmanMovement pak bude muset komunikovat s animatorem a říkat mu co za animaci má hrát
-  \item meč.. ovládaný fyzikálním systémem, může se hýbat dost libovolně VS ruce hráče fyzikálně simulované nejsou
-  \item potřebujeme v postprocessu zařídit, aby to vypadalo, že ruce meč drží
-  \item stanovili jsme 2 kontrolní body na meči - pozice držení pro pravou a levou ruku - uvedené ve SwordDescriptoru
-  \item posledních pár verzí Unity podporuje package \href{https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.3/manual/index.html}{Animation Rigging} - s ním je cca triviální tohle zařídit
-  \item k detailnímu modelu šermíře jsme přidali procedurální Rig z tohoto package
-  \item na každé z rukou je nastavená TwoBoneIK constraint (začíná UpperArm, končí Hand) + Multi-Aim Constraint (na kosti Hand)
-  \item skript SwordsmanBodyProceduralAnimation - každý snímek nastaví target pozici IK constrainty na místo na handlu, co má držet; target Multi-Aimu dá někam do dáli aby ruka zaručeně ukazovala stejným směrem co paže 
-  \item problém... nestabilní undefined behavior když je ruka kratší než vzdálenost k handlePointu
-  \item řešení - vlastní constraint: RigToExtendSwordsmanArmsToReachTheSword - spočítá celkovou délku ruky a prodlouží ji (vynásobí lokální pozice jednotlivých kostí) tak, aby vždycky dosáhla na target pozici (s mírným přesahem, který se nastaví z editoru) - vypadá mírně creepy, ale je stabilní a dobře předává informaci pozorovateli
-\end{itemize}
-
-
-\subsection{Počítání zranění}
-\begin{itemize}
-  \item Cíl... být tak jednoduché jak jenom jde, ale myslet na rozšiřitelnost do budoucnosti
-  \item \textbf{Damageable}
-    \begin{itemize}
-      \item float HP /*currentHP*/, MaxHP;
-      \item poskytuje UnityEventy OnSpawn, OnUpdated, OnDamaged, OnHealed, OnDeath.
-      \item metoda ChangeHP(float deltaHP) - řeší damageování i healování
-      \item volitelně může celý gameobject automaticky zničit když zemře
-    \end{itemize} 
-  \item \textbf{AttackDeclaration}
-      \begin{itemize}
-        \item univerzální deskriptor co popisuje vykonaný útok
-        \item zatím velmi jednoduchá, v případě potřeby možné do ní přidat další informace
-        \item float Damage, informace (místo+normála) o bodu kde došlo ke zranění
-      \end{itemize} 
-  \item \textbf{IArmorPiece}
-      \begin{itemize}
-        \item rozhraní pro jakýkoliv hmotný objekt (obsahující collider), na který může být zaútočeno
-        \item z collideru se kanonicky získává jako collider.GetComponentInParent<IArmorPiece>() - může být jeden obecný pro všechny collidery a ten overridovat potomci čistě jenom pro svoje vlastní collidery
-        \item nese odkaz na damageable ke kterému patří
-        \item metoda ProcessAttack(AttackDeclaration) - vyhodnoť provedený útok!, uber HP na svém Damageable
-        \item poskytuje UnityEvent OnAttack
-        \item \textbf{BasicArmorPiece} - konkrétní implementace - má DamageMultiplier a MinDamage (dmg pod hranicí je ignorováno), celkově se chová jak by člověk čekal
-      \end{itemize} 
-  \item \textbf{BasicImpactWeapon}
-      \begin{itemize}
-        \item jednoduchá zbraň, co útočí na jiný předmět tak, že s ním zkoliduje 
-        \item parametry: DamageMultiplier, SecondsBetweenAttacks
-        \item při kolizi (OnCollisionEnter) se podívá jestli druhý collider u sebe nemá IArmorPiece - když jo, tak na něm zavolá ProcessAttack()
-        \item dmg počítá jako collision.impulse.magnitude*DamageMultiplier, bod zranění je podle collision.GetContact(0)
-        \item metoda pro výpočet AttackDeclaration.. virtuální - možné nahradit sofistikovanější implementací
-      \end{itemize} 
-  
-\end{itemize}
-
-
-\section{Stabilita simulace} \label{simulationStabilitySection}
-
-Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování našeho systému. V této sekci se do detailu zaměříme na nečekané překážky, které nám v průběhu implementace postavil do cesty fyzikální subsystém, a vysvětlíme, jakým způsobem byly vyřešeny.
-
-
-\subsection{Jak nastavit cílovou rotaci jointu} \label{howToSetJointsTargetRotationSection}
-\begin{itemize}
-  \item cílová rotace configurable jointu se udává v souřadnicovém systému, co se dost kryptickým způsobem vypočítává podle vícera parametrů, co se na jointu nastavují
-  \item když víme kýženou rotaci v globálních souřadnicích, není triviální vypočítat na jejím základě rotaci, co se musí nastavit jako joint.targetRotation
-  \item give credits to \href{https://gist.github.com/mstevenson/4958837}{mstevenson}
-  \item (insert algorithm here)
-  \item (popsat jak přesně algoritmus funguje)
-  \item v našem případě jsme potřebovali joint.configuredInWorldSpace=false (= joint konfigurovaný v lokálním prostoru) - jinak se všechno rozbilo když se šermíř otočil 
-\end{itemize}
-
-\subsection{Ladění parametrů} \label{swordParameterTweaksSection}
-\begin{itemize}
-  \item snaha dosáhnout dobrý game feel
-    \begin{itemize}
-      \item aby meč svižně sekal ze strany na stranu (ne se klátil jako když mácháme s 80kg ledničkou)
-      \item aby meč netáhl šermíře pryč z místa kde stojí
-      \item aby se všechno nezbláznilo když např. hráč přijde blízko ke stěne a začne dávat vstupy, podle kterých by handle měl být uvnitř té stěny
-      \item aby šermíř při blokování držel meč dostatečnou silou, že meč nebude sražen na stranu a opravdu ten úder vyblokuje 
-    \end{itemize}
-  \item meči i šermíři jsme nastavili realistickou hmotnost (šermíř 60kg, meč 1.5kg)
-  \item \textbf{Svižnost sekání...}
-    \begin{itemize}
-      \item joint.rotationDriveMode = Slerp - plynulý pohyb, vždy nejkratší cesta mezi dvěma rotacemi
-      \item potřeba nenulový joint.angularSlerpDrive.damper (jinak by se meč třásl a nikdy nestabilizoval) ale musí být o dost menší než joint.angularSlerpDrive.spring (když jsou blízko, tak se meč pohybuje strašně líně)
-      \item experimentálně binárním vyhledávání jsme našli hodnoty drive=120, damper=10 - ty se chovají pěkně pro normální sekání
-      \item další extrémně důležitá věc - vyhrát si s ručním nastavením rigidbody.centerOfMass a rigidbody.inertiaTensor 
-        \begin{itemize}
-          \item je nezbytně nutné aby se nepřepočítávaly podle toho jak se meči přidávají a odebírají collidery (nezbytně nutné kvůli \ref{swordCollisionsSection} a taky se prostě věci dají jednodušeji ladit když mi v tom automatika nedělá bordel)
-          \item pěkně vychází rigidbody.centerOfMass = (0,0,0) a rigidbody.inertiaTensor = nějaké hodně malé číslo - např. (0.05, 0.05, 0.02) (ale všude nenulové protože nula = nekonečno)
-        \end{itemize}
-    \end{itemize}
-  \item \textbf{Aby meč šermíře netahal dopředu apod. ...}
-    \begin{itemize}
-      \item nastavíme nízkou joint.connectedMassScale - tím pádem se síly, co působí na meč, budou přenášet na šermířovo rigidbody dostatečně redukovaně aby tyhle efekty nebyly pozorovatelné
-    \end{itemize}
-  \item \textbf{Aby se celkově neděly divné nepřidvídatelnosti...}
-      \begin{itemize}
-        \item nastavit joint.projectionMode (když by meč měl být na nesplnitelném místě, takhle se místo toho přesune blízko ke hráčovi; fyzikálně nerealistické, ale chová se dost pěkně)
-        \item nastavit joint.enablePreprocessing = false (extrémně pomáhá - viz dokumentace (v té prostě říkají, že s ním zapnutým se můžou dít divný věci))
-      \end{itemize}
-  \item \textbf{Síla blokování...}
-    \begin{itemize}
-      \item pozorování... při blokování se konzistentně dělo to, že útočící meč blok prolomil (měl stejnej angularDrivem, ale jak byl zrovna uprostřed švihu, tak měl celkově větší energii nebo tak něco)
-      \item řešení... při blokování upravit parametry jointu aby blok nešlo prolomit
-      \item ukázalo se, že fajn je drive 100krát zvýšit a damper snižit na polovinu (tedy drive=12000, damper=5) (čím větší drive, tím větší síla držení; čím větší damper, tím snadnější blok prolomit; při zvýšení obojího 100krát se to chovalo dost podobně jako v defaultu; jenom snížit damper na setinu původní hodnoty a drive nechat by ale nefungovalo páč pak by se meč strašně třásl atd.)
-    \end{itemize}
-\end{itemize}
-
-\subsection{Klácení hráčské postavy na stranu} \label{playerFallingToSideSection}
-\begin{itemize}
-  \item chceme aby hráč stál vzpříma, nenakláněl se na stranu
-        \begin{itemize}
-          \item na rigidbody nastavit FreezeRotation v X a Z
-          \item to ale samo o sobě nestačí (viz \href{https://docs.unity3d.com/ScriptReference/Rigidbody-constraints.html}{docs} - FreezeRotation dělá jenom to, že v těch směrech nastaví inertiaTensor na 0) - pořád probublává drobná změna kvůli nepřesnosti simulace - hromadí se celkem rychle
-          \item řešení: nechat FreezeRotation X+Z, ale navíc ještě každý FixedUpdate ručně vynulovat X a Z v rigidbody.rotation
-          \item \textbf{Zamyšlení: je lepší nechat tuhle věc tady, nebo jí přestěhovat někam do \ref{simulationStabilitySection}?}
+            \item ideálně klasické WASD co všichni znají - funguje pro pohyb dopředu/dozadu a úskoky doleva/doprava
+            \item problém - vertikální i horizontální osa kurzoru jsou potřeba pro účely meče - jak se má hráč rozhlížet do stran?
+            \item rozhlížení nahoru/dolu - kosmetická záležitost kamery - když použijeme myš, zdá se být v pohodě
+            \item rozhlížení doleva/doprava - udává směr chůze - nemůžeme jen tak dělat kurzorem, to by hráče mátlo když chce jenom sekat mečem 
+            \item řešení - prostě na rozhlížení do stran použít klávesy QE - blbuvzdorné, dobře pochopitelné pro hráče, dobrý výchozí bod se kterým porovnávat při experimentech
+            \item lepší řešení - možné téma budoucí práce
         \end{itemize}
 \end{itemize}
-
-\subsection{Kolize mečů} \label{swordCollisionsSection}
-\begin{itemize}
-  \item \textbf{nejprve uvést do problematiky}
-  \begin{itemize}
-    \item fyzikální update běží ve fixně dlouhých krocích
-    \item diskrétní detekce kolizí - každý update se jenom koukne jestli collidery vzájemně prochází skrz sebe - když jo, nahlásí kolizi a aplikuje síly aby kolizi vyřešila (podle rychlostí co maj kolidující objekty v daném kroku)
-    \item problém - tunelování - tzn. když objekt A letí směrem k objektu B - buď A se pohybuje hodně rychle NEBO B je hodně malý -> stane se, že v 1 snímku ja A na jedné straně objektu B a v druhém už je na druhé straně objektu B - projde skrz, žádná kolize není zdetekována
-    \item herní obor kterému tohle nejvíc vadí - \acs{FPS} - potřebují aby letící kulky netunelovaly skrz zdi nebo skrz člověka kterého mají trefit
-    \item řešení - spojitá detekce kolizí (continuous collision detection) - podle složitejch fyzikálních vzorečků počítá dráhu objektu v průběhu času mezi snímkama (-> pomalejší než diskrétní, ale kulky s ní netunelujou)
-    \item Unity physics spojitou detekci kolizí podporují
-  \end{itemize}
-  \item \textbf{vysvětlit problém}
-  \begin{itemize}
-    \item meče... relativně dost malé objekty, pohybují se celkem rychle
-    \item -> při diskrétní detekci kolizí často tunelují
-    \item řešení: použít spojitou detekci kolizí - \textbf{NEFUNGUJE!}
-    \item problém: podle Unity docs... continuous dynamic collision detection bere v úvahu jenom lineární rychlost, \textbf{úhlovou ignoruje} X náš meč se pohybuje především rotačně (je vidět že vážně je koncipovaná především pro letící střely v \acs{FPS} hrách a k ničemu moc dalšímu)
-    \item chování spojité detekce v praxi... zdetekuje kolizi celkem dost často v porovnání s tou diskrétní, ale i tak se tunelování děje. taky i když kolizi zdetekuje korektně, většinou nezdetekuje korektně síly - meče často při kolizi tak jako podivně zamrznou 
-    \item poslední možná záchrana... \textbf{continuous speculative collision detection} - poslední možnost, kterou Unity nabízí; podle dokumentace by měla brát v úvahu i úhlovou rychlost, jenom tam údajně můžou vznikat ghost kolize
-    \item v praxi se ale continuous speculative zdá trpět na tunelování ne o moc líp než diskrétní 
-  \end{itemize}
-  
-  \item \textbf{úvaha - možnosti jak řešit:}
-  \begin{itemize}
-    \item v každém framu pro všechny meče checkovat jestli třeba náhodou neprošly skrz a když jo, tak zařídit aby se vrátily
-      \begin{itemize}
-        \item když uděláme chytře, dalo by se naimplementovat efektivněji než jak to zní (checkovat jenom s mečema v okolí - co jsou uvnitř trigger collideru apod.)
-        \item jak chceme tu kolizi ručně rozřešit, aby se meče chovaly pěkně realisticky a nerozbila se celková stabilita simulace? - jenom vrátit rigidbody.position na poslední pozici před kolizí se nebude chovat pěkně
-      \end{itemize}
-    \item drobný skript co poslouchá na kolize a vrací meče na správnou stranu
-      \begin{itemize}
-        \item pozorování - ve skutečnosti se zpravidla neděje to, že by meče vzájemně protunelovaly úplně bez kolize - kolize je zaznamenána, ale je rozřešena špatně - tak, že meče pošle skrz (to nejspíš i bude důvod proč tuneluje continuous speculative)
-        \item myšlenka: když na meči zaznamenáme kolizi, podívat se jakou silou byla rozřešena, a když poslala meče skrz, zvrátit to
-        \item problém - callback parametr co dostaneme reportuje o trochu jinou sílu než kterou ve skutečnosti fyzikální systém aplikoval
-        \item porovnáním směru kolizní normály a resolvovací síly se dá většinou vydedukovat že procházíme skrz
-        \item máme víc informací pro korektní rozřešení kolize než v předchozí možnosti
-        \item ALE I TAK - jakou sílu máme zapůsobit aby se pohyb meče zvrátil? - prostě odečíst 2*collision.impact nefunguje - o dost jiná síla než co byla meči dodána kolizí - i kdyby mečům zabránilo projít skrz, budou se pak při kolizích divně klepat apod.
-        \item když bychom např. při takové kolizi vraceli transform.position meče na poslední pozici, co měl před kolizí, bude to fyzikálně nerealistické chování, ohrozíme stabilitu simulace apod.
-        \item nemusí podchytit všechno tunelování, celkově to není robustní řešení
-      \end{itemize}
-    \item přidat velký neviditelný collider co meči zabrání projít skrz
-      \begin{itemize}
-        \item detekci kolize i vypočítání síly pro její rozřešení za nás zvládne udělat fyzikální subsystém
-        \item jediné, co musíme udělat, je zařídit, aby ten collider vždycky směřoval správně proti druhému meči
-        \item taky potřeba zařídit, aby ten collider nekolidoval s ničím s čím nemá
-      \end{itemize}
-  \end{itemize}
-  \textbf{po troše experimentování a delší úvaze jsme se rozhodli pro možnost s dodatečným neviditelným colliderem}
-  \item \textbf{průběh implementace:}
-  \begin{itemize}
-    \item jak chceme aby to vypadalo: pro každý pár mečů - na jednom z nich velkej collider, co se v reálném čase natáčí tak, aby tomu druhému bráníl v protunelování 
-    \item který tvar z primitive colliderů? - vybíráme box collider - jedna jeho hrana bude procházet vlastní osou meče; zbytek collideru je vždycky přesně na opačné straně od osy meče než meč protivníka
-    \item pro potřeby zbytku sekce budeme meč považovat za úsečku odpovídající jeho středové ose - spojnici pataČepele<->špička (získaná ze SwordDescriptoru)
-    \item dále nechť collider s kterým pracujeme, se nazývá "fixovací collider" či krátce "fixer"
-    \item jak definujeme 'na opačné straně'?  
-      \begin{itemize}
-        \item meče - libovolně mimoběžné úsečky v prostoru
-        \item vzít nějakej jeden pevnej bod (např. střed čepele) a ten brát jako reprezentanta, kterému chceme být naproti - nefunguje (spusta případů, kdy to neodpovídá - např. kolize špiček dvou mečů)
-        \item co funguje: najít nejkratší spojnici obou mečů - na ní ležej ty 2 body, ve kterých by oba meče potenciálně mohly kolidovat
-        \item výpočet:
-          \begin{itemize}
-            \item meče M, N
-            \item X..nejkratší spojnice M,N musí být na oba kolmá - tedy X.direction = M.direction.CrossProduct(N.direction)
-            \item nyní stačí řešit soustavu 3 rovnic o 3 neznámých: M.origin + M.t * M.direction + X.direction*X.t = N.origin + N.t * N.direction // kde M.t, X.t, N.t jsou neznámé
-            \item tu strčíme do matice a předhodíme gaussovce - knihovna MathNet.Numerics
-            \item chceme úsečky -> M.t, N.t sesekáma do intervalu <0,1> - podle nich vypočítáme oba konce výsledné spojnice
-          \end{itemize}
-      \end{itemize}
-    \item pozici kam umístit střed collideru (offset relativní vůči středu meče) získáme takto: 
-      \begin{itemize}
-        \item let O = nejbližší bod protějšího meče
-        \item let P = new Plocha(bod: střed meče, normála:směr meče)
-        \item let H = hloubka collideru (parametr od uživatele - vzdálenost od hrany do středu)
-        \item return (P.projekce(O).normalized * (-H)) //pro globální pozici přičíst střed meče
-      \end{itemize}
-    \item rotaci získáme jako Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(offsetCollideruOdStředuMeče, bladeDirection)
-    \item takhle tu pozici collideru updatujeme každej FixedUpdate
-    \item \textbf{problém} - když meče během 1 snímku protunelujou, collider okamžitě přeskočí na druhou stranu a ničemu nepomůže
-    \item řešení: pamatujeme si jeho poslední offset proti středu meče - pokud se mezi 2 snímkama ostře změní (offset.Dot(lastOffset) < 0), tak nově spočítanej offset znegujeme
-    \item existujou okrajové případy, co to rozbijou (např. úplně první volání FixedUpdate) - řešení: tuhle negaci provádíme jenom pokud je nejkratší spojnice obou mečů dostatečně krátká (limit konfigurovaný uživatelem, 0.4 metru funguje rozumně)
-    \item \textbf{Další problém} - občas se stane, že meč protuneluje na druhou stranu meče a jakoby se skřípne mezi mečem a jeho fixerem - řešení: přidat collideru přesah - velikost navíc se kterou ale jeho pozicovač nekalkuluje (-> místo jenom do středu meče sahá fixer trochu dál)
-    \item \textbf{Jak zařídíme, aby collisionFixer kolidoval jenom se správným mečem a s ničím jiným?}
-      \begin{itemize}
-        \item první řešení, co člověka napadne - dát je na Layer, co nemá nastavené kolize vůbec s ničím, a selektivně zavolat Physics.IgnoreCollision(fixer, targetSword, false) - to ale vůbec nic nedělá, kolize pořád nevznikají
-        \item \textbf{řešení:} separátní Layery: CollisionFix, Sword - Sword koliduje s hodně věcma, CollisionFix jenom se Sword -> musíme přidat velký trigger collider - ten včas disabluje kolize se všema mečema co nejsou ten cílový, které se nachomýtnou poblíž
-      \end{itemize}
-    \item \textbf{fixovací collider umístíme přímo do meče jako jeho podobjekt}
-      \begin{itemize}
-        \item -> všechny kolize s fixerem povedou k působení síly přímo na rigidbody meče (a síla bude přesně ta co je realistická)
-        \item \textbf{problém:} dodatečnej collider, co se ještě pořád chaoticky otáčí, totálně rozhodí balance meče - řešení: \textbf{potřeba mít nastavený custom centerOfMass a inertiaTensor aby se nepřepočítávaly podle fixeru!} 
-      \end{itemize}
-    \item \textbf{Jak se tedy výsedek používá z pohledu uživatele?}
-      \begin{itemize}
-        \item Na meč stačí přidat komponentu CollisionFix - ta automaticky zařídí, aby se vytvořil fixer pro každej další meč, co se nachomítne poblíž (fixer je umístěnej do jednoho z těch dvou mečů - náhodně vybráno který)
-        \item v případě že je meč zničený, všechny fixery co na něj cílily, se automaticky zničej taky
-        \item CollisionFix by měl v defaultu být nakonfigurovanej funkčně, ale uživatel na něm může ladit parametry pro fixer (hloubku, přesah apod.), radius ve kterém se fixery vytvářejí ; taky může přidat list objektů co se z fixu mají vynechat
-      \end{itemize}
-  \end{itemize}
-\end{itemize}
-
-
-\section{Demo hra}
-\begin{itemize}
-  \item Pro testování a demonstraci funkčnosti našeho konceptu jsme vytvořili ukázkovou hru
-  \item herní svět - aréna + okolní les
-  \item PC - šermíř, může chodit po světě a používat libovolně meč
-  \item v aréně lze bojovat s jednoduchými NPC nepřáteli
-  \item všechny modely a textury byly vytvořené autorem této práce a vztahuje se na ně MIT licence jako na všechno ostatní
-\end{itemize}
-
-\subsection{Herní svět}
-\begin{itemize}
-  \item les jsou jenom pěkné kulisy
-  \item V aréně jsou sloupy s čudlíkama - po jejich stisknutí mečem se uvnitř arény spawne nepřítel
-  \item několik druhů nepřátel: trénovací panák, mečotoč, rytíř (podrobně rozebereme v jejich vlastních sekcích)
-\end{itemize}
-
-\subsection{GUI}
-\begin{itemize}
-  \item všechno pomocí klasického gameobjectového UI
-  \item PauseMenu.. naprostá klasika - root čeká na zmáčknutí Esc - pak nastaví Time.timeScale = 0 a enabluje svoje potomky
-  \item DieScreen.. taky nic zajímavého - při spuštění tweenem přes obrazovku zobrazí hardcoded bloodstains sprite a "Press F to Restart" (reloadne scénu)
-  \item HUD.. healthbar + bloodstains.. dvě drobné komponenty, nad nima kontroler - poskytuje callback, co se musí přidat do OnUpdate na nějakém Damageable
-\end{itemize}
-
-
-\subsection{Statičtí nepřátelé}
-\begin{itemize}
-  \item Nemohou se hýbat, stojí tam, kde byli spawnutí
-  \item \textbf{Trénovací panák}
-    \begin{itemize}
-      \item Jenom stojí a bere damage dokud není zničený
-    \end{itemize}
-  \item \textbf{Mečotoč}
-    \begin{itemize}
-      \item Koule, co rotuje dokola na tyči (uchycené configurable jointem, který má nastavenou targetVelocity a angularDrive)
-      \item Ke kouli je jointama připojených 1 nebo víc mečů - ty způsobují dmg úplně stejně jako šermířův meč
-      \item Na jointu meče - vysoká connectedMassScale -> hráč může zachytit meč mečotoče o ten svůj a celý pohyb mečotoče tím zastavit, příp. tlačit proti směru rotace
-      \item Při spawnu randomizován počet mečů, odkud kam se koule posunuje po tyči, a jakou má volnost rotace (- SwordmillRandomizer)
-    \end{itemize}
-  \item \textbf{IRandomizable}
-  \begin{itemize}
-    \item Libovolný skript, myšlenka je, že by měl při spawnu randomizovat parametry svého gameobjectu
-    \item Spawnovací skript na entitě ihned po spawnu (tedy před zavoláním Start()) iteruje přes všechny IRandomizable ve všech potomcích a volá na nich metodu Randomize()
-    \item Implementován např. pro randomizaci transformu (rotace, velikost trénovacího panáka, apod.), randomizaci HP, randomizaci mečotoče
-    \item Ten samý systém je použitý i pro náhodou generaci palisády, co ohraničuje arénu
-  \end{itemize}
-\end{itemize}
-
-
-\subsection{Rytíř} \label{knightEnemySubsection}
-\begin{itemize}
-  \item vychází z prefabu pro hráče - jenom nahrazuje ovládání klávesnicí a myší za počítačový algoritmus
-  \item taky nemá žádnou vazbu na hráčovo GUIčko (healthbar, bloodstains, death screen apod.) a není k němu spárovaná žádná kamera
-  \item v rootu komponenta SwordsmanAI - ovladač
-  \item \textbf{pohyb po terénu}
-    \begin{itemize}
-      \item používá standardní Uniťácký NavMesh - aby mohlo najednou být spawnutých víc rytířů najednou - co se vyhýbají jeden druhému a okolním překážkám
-      \item uvnitř arény jsme umístili NavMeshSurface, hráčovi a statickým nepřátelům jsme přidělili NavMeshObstacle -> rytíři jsou schopní se navigovat po aréně a vyhýbat se veškerým překážkám
-      \item NavMeshAgent... agent.updatePosition = agent.updateRotation = agent.updateUpAxis = false
-      \item Agent nijak nemodifikuje transform rytíře - místo toho řidicí skript kouká na jeho vyžádanou pozici a podle ní určuje hodnotu co nastaví do InputSimulatoru, ze kterého rytířův SwordsmanMovement bere vstup ; obdobně jako v \href{https://docs.unity3d.com/Manual/nav-CouplingAnimationAndNavigation.html}{tomhle manuálu} 
-      \item má nastavený nějaký transform jako cíl - Agentovi nastavuje aby se k němu snažil přiblížit
-      \item když je k cíli dostatečně blízko, tak agenta ignoruje a místo toho jenom stojí a dává pozor aby byl otočenej směrem na cíl
-    \end{itemize}
-  \item \textbf{ovládání meče}
-      \begin{itemize}
-        \item \textbf{pořídili jsme několik nahrávek pohybů meče}
-          \begin{itemize}
-            \item komponenta co se vecpe mezi SwordMovement a jeho submoduly - odchytává veškerá volání MoveSword() a reportuje jejich parametry do UnityEventu
-            \item parametry čte druhá komponenta - každý jednotlivý struct s argumentama převede do souřadnic relativních vůči transformu šermíře, přidá timestamp, a celou nahrávku ukládá jako pole do JSON texťáku (přes Newtonsoft.Json)
-          \end{itemize}
-        \item \textbf{přehrávání nahrávek}
-          \begin{itemize}
-            \item ve SwordsmanAI se v editoru nastaví pole nahrávek, co se mají přehrávat jako TextAssety
-            \item SwordsmanAI nejdřív deserializuje všechny nahrávky
-            \item potom násilně ve SwordMovementu vyhází původní Submoduly a vymění je za jediný defaultní SwordMovementMode\_PlayRecord
-            \item tomuhle submodulu předá seznam nahrávek co má přehrávat - submodul si pokaždé jednu náhodně vybere a tu přehrává
-            \item přehrávání nahrávek - submodul se řídí podle timestampů, hodnoty co jsou v záznamu převádí zpátky do globálních souřadnic podle transformu rytíře
-          \end{itemize}
-      \end{itemize}
-    \item máme tedy \acs{NPC} rytíře, co je schopný samostatně chodit po terénu a nebezpečně mávat mečem, drtivou většinu vnitřní logiky sdílí s \acs{PC}
-\end{itemize}
-
 
 \section{Shrnutí}
+
