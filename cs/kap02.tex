@@ -4,10 +4,18 @@ V této kapitole se zamyslíme a stanovíme cíle, o něž tato práce bude usil
 
 
 \section{Jaký chceme výsledek}
+
+Čtenář by nyní měl mít za sebou \ref{swordfightingIntroChapter}. kapitolu a měl by tedy mít jisté povědomí, co obnáší boj s chladnou zbraní v reálném světě, a jaké nástrahy nás čekají, kdybychom se ho pokusili zachytit ve videohře. 
+
+Jak jsme si ukázali na konkrétních příkladech, není nemožné poskytnout hráči vcelku značnou kontrolu nad zbraní a vzbudit v něm dojem realistického zážitku. Společným rysem obou našich komerčně úspěšných příkladů však byla vysoká specializace celého systému čistě pro usecase, ke kterému meč ve hře měl sloužit - boj s jinými lidmi. To do takové míry, že umožnit jakoukoliv jinou činnost nebo jiný typ protivníka by nutně vyžadovalo velkou část systému naimplementovat znovu. Pohyb meče probíhal typicky pomocí velkého množství ručně vytvořených animací, které byly vytvořené přesně na míru boji s člověkem. Ovládání nabízelo pouze konečný stav možností - přesně ty, které dává smysl provádět při boji s člověkem, nic víc. Celkově se zdá, že implementovat takový typ bojového systému zahrnuje spoustu úmorné a programátorsky nezajímavé práce. Navíc konkurence, které je třeba se vyrovnat, je velká.
+
+Protipólem pak jsou hry, které se snaží na věc jít "chytře" - implementují obecný systém, kde je zbrani umožněn naprosto volný pohyb, a boj proti jiným lidem je pouze jedna z nepřeberného množství možných činností (ač taková, u které pravděpodobně hráč stráví 99\% herního času).   
+
+
 \begin{itemize}
     \item \textbf{Zamyšlení}:
         \begin{itemize}
-            \item neodsžitelným ideálem, ke kterému se snažíme rámcově směřovat, je zachycení zážitku, co šerm poskytuje v reálném světě
+            %\item neodsžitelným ideálem, ke kterému se snažíme rámcově směřovat, je zachycení zážitku, co šerm poskytuje v reálném světě
             \item kromě volného mávání mečem, ostatní aspekty co k boji v reálném světě patří, hry zvládají zachytit docela v pohodě -> ovládání meče poskytuje největší prostor k prozkoumání
             \item chceme obecný systém, co nebude potřebovat specifické úpravy pokaždé, když vytvoříme nový typ nepřítele, a co půjde použít k interakci s herním prostředím
             \item nechceme pro meč ručně vytvářet žádné animace (nemáme na to prostředky + to není programátorsky zajímavá činnost)
