@@ -65,7 +65,7 @@ Znakem každého dobrého šermíře je schopnost vcítit se do pozice svého pr
     
 \end{figure}
 
-\subsection{Hromadný boj a boj proti přesile}
+\subsection{Hromadný boj a boj proti přesile} \label{organizedFightingIrlSubsection}
 Souboj jeden na jednoho však může vypadat jako téměř laboratorní podmínky vedle chaotických situací, v rámci kterých v historii běžně k boji docházelo.   
 
 Často se střetávaly větší, více či méně \textbf{organizované skupiny}, případně celé armády čítající mnoho takových pevně ustanovených jednotek. V takové situaci je na místě, aby bojovníkova individualita ustoupila do pozadí - rozhodujícím faktorem je až na výjimky taktické jednání a sladěnost celku. 
@@ -182,7 +182,7 @@ V mnoha hrách (např. žánry \acs{FPS}, stealth) slouží chladná zbraň pouz
 
 Nyní víme, jakým způsobem je typicky chladná zbraň v akčních hrách ztvárňována, známe pozitiva, která tato cesta přináší, a rovněž některé triky, jak jejím prostřednictvím dosáhnout poutavého bojového systému. Co nás ale čeká, kdybychom chtěli sejít z vyšlapané stezky a nabídnout hráči nad jeho zbraní větší míru kontroly?
 
-\subsection{Benefity a výzvy}
+\subsection{Benefity a výzvy} \label{moreControlBenefitsSection}
 
 Neprve se zamysleme, \textbf{proč by hráč o větší kontrolu mohl mít zájem}:
 \begin{itemize}
@@ -251,13 +251,13 @@ Druhým typem akce, který lze vykonávat, je \textbf{blokování}. Je-li hráč
 
 Prvkem, který umocňuje hráčův dojem realističnosti, je způsob \textbf{výpočtu zranění}. Hra se obecně nepokouší o realistickou fyzikální simulaci, avšak způsobené zranění je přesto determinováno kombinací mnoha faktorů, které realistické chování účinně aproximují - zmíníme rychlost zbraně, délku její dráhy apod. . Dále je využíváno jemné detekce kolizí. Zaprvé k tomu, aby se určila zasažená část těla - různým částem těla postavy odpovídá různý kus zbroje, která určuje, jakou mírou má zranění být redukováno. Zadruhé, zranění je velmi silně redukováno, pokud při své cestě zbraň prošla skrze zeď či jiný prvek okolního prostředí. 
 
-Nyní rámcově víme, jak bojový systém funguje. Pojďme se tedy podívat na benefity, které z této implementace plynou. Vidíme, že hře se \textbf{podařilo najít kompromis} slučující některé prvky, které by se z naší předchozí anylýzy mohly zdát vzájemně protichůdné.
+Nyní rámcově víme, jak bojový systém funguje. Pojďme se tedy podívat na \textbf{benefity}, které z této implementace plynou. Vidíme, že hře se \textbf{podařilo najít kompromis} slučující některé prvky, které by se z naší předchozí anylýzy mohly zdát vzájemně protichůdné.
 \begin{itemize}
     \item \textbf{Jednoduchost X Pocit kontroly} - Hráčova kontrola nad mečem je sice omezená na výběr z malé množiny úderových zón, těch je však stále dostatečné množství, aby pokryly většinu způsobů útoku, které by běžnému hráči rozumně mohly přijít na mysl. Protože správný výběr útoku má velmi reálný efekt na jeho úspěch, hráč je motivován svou možnost volby vzít plně na vědomí a ne ji přejít jako pouhý kosmetický detail. 
     \item \textbf{Uniformní ovládání X Osobitost jednotlivých zbraní} - Ovládání odpovídá napříč zbraněmi totožné šabloně, konkrétní provedení vyžádaného útoku se však mezi typy zbraní liší dostatečně, aby to mělo citelný efekt na pocit ze hry. Rovněž fakt, že pro každý pár \textit{zbraň - typ útoku} existuje pouze jediná pevně daná animace, umocňuje předvídatelnost, která hráči umožňuje zbraň rychle pochopit a být si intuitivně vědom jejích specifik.
 \end{itemize}
 
-Systém však přinesl i některá nepohodlí a promarněné příležitosti:
+Systém však přinesl i některá \textbf{nepohodlí a promarněné příležitosti}:
 \begin{itemize}
     \item \textbf{Ovládání kamery} - Pohyb myši plní současně dvě nesouvisející role - ovládání natočení kamery a výběr zóny útoku - což se ne vždy dobře slučuje. Nastávají situace, kdy hráč, aby vybral směr útoku, musí pohled přetočit pryč z místa zasluhujícího pozornost, což může vést k mírnému zmatení.  
     \item \textbf{Emergentní gameplay} - Bojový systém je uzavřená bublina, která s okolními mechanikami ani sama se sebou neinteraguje natolik, aby vznikl prostor pro vznik zajímavých interakcí, jaké tvůrci hry úmyslně neplánovali.
@@ -268,14 +268,41 @@ Celkově tedy vidíme, že hře se podařilo najít \textbf{zajímavý kompromis
 
 
 \subsection{Kingdom Come: Deliverance}
-Poslední hrou, kterou zmíníme, je Kingdom Come: Deliverance \cite{KCD}, vydáné roku 2018 českými Warhorse Studios. Jde o akční \acs{RPG} odehrávající se v českém Posázaví roku 1403. Jedním z hlavních důrazů hry byla historická věrnost a celková realističnost zážitku - z tohoto rozhodnutí plynou přirozeně dalekosáhlé důsledky pro bojový systém.
+Poslední hrou, kterou zmíníme, je Kingdom Come: Deliverance \cite{KCD}, vydáné roku 2018 českými Warhorse Studios. Jde o akční \acs{RPG} odehrávající se v českém Posázaví roku 1403. Jedním z hlavních důrazů hry byla \textbf{historická věrnost a celková realističnost zážitku} - z tohoto rozhodnutí plynou přirozeně dalekosáhlé důsledky pro bojový systém.
 
-Ústřední myšlenka je zde podobná jako u Mount\&Blade, s tím rozdílem, že na její implementaci bylo věnováno \textbf{řádově více zdrojů a lidského úsilí}. Najdeme zde velmi podobný systém zón útoku, mezi kterými hráč vybírá pohybem kurzoru, tvůrci zde však vytvořili tisíce dílčích animací, které jsou skládány do naprosto realisticky působícího pohybu zbraně i šermíře. Systém byl vyvíjen na základě konzultace s odborníky na středověký způsob boje, animace tedy i odpovídají skutečným historickým technikám. Dále systém zahrnuje neznámý avšak pravděpodobně značný počet rozličných heuristik, které se pro hráče neviditelným způsobem starají o vyšší responzivitu, další realističnost atd. .
+Některé prvky hra sdílí s předchozí představenou Mount\&Blade. Hráč je zde rovněž pouze \textbf{jedním z mnoha}, lidští \acs{NPC}s mají totožné možnosti pohybu, ovládání meče a vztahuje se na ně i stejný systém RPG progrese.
 
-Celkově jde o systém nabízející značnou hloubku. Najdeme zde například propracovaný systém komb, velký důraz na správu výdrže a časovací události pro blokování nepřátelských úderů. Hráčské ohlasy dávají za pravdu, že hra nabízí \textbf{nejrealističtější zážitek boje s chladnou zbraní, jaký najdeme na trhu}.
+Tím podobnosti nekončí. Přistoupíme-li k boji samotnému, rovněž zde najdeme velmi podobnou množinu \textbf{útokových zón}, mezi kterými hráč vybírá pohybem myši. Co se však již liší, je způsob, jakým je útok vykonán. Nenajdeme zde samostatnou akci pro zahájení nápřahu. Místo toho je boj rozlišován jako specifický stav, ve kterém se hra může nacházet - dokud boj trvá, postava je napřažena neustále, ve směru dle aktuálně vybrané útokové zóny. Stisknutím tlačítka myši je útok rovnou vykonán. 
 
-Pokoušet se zde o hloubkový rozbor však nemá valný smysl - byl by to úkol obtížný a jeho splnění by nám nepřineslo mnoho užitku, protože napodobení jakéhokoliv jednoho dílčího aspektu takového bojového systému se naprosto \textbf{vymyká časovým i finančním možnostem autora této práce}.
+Výrazným rozdílem proti Mount\&Blade je pohled z 1. osoby, doprovázený mechanikou \textbf{uzamčení na protivníka}. Ta zajišťuje, že je na protivníka neustále zaměřena kamera, výpady jsou prováděny směrem proti jeho pozici apod. . Tím je hráč zbaven námahy provádění mechanických úkonů, které by v reálném světě pro jeho postavu byly samozřejmé, což přispívá k celkově plynulejšímu a intuitivnějšímu dojmu z ovládání. 
 
+Mechanikou, která na uzamykání na protivníka závisí, je \textbf{blokování}. To je zde zpracováno jako časovací prvek. V okamžiku, kdy protivník útočí, se hráči na chvíli uprostřed útokové růžice zobrazí zelený symbol štítu - stisknutím tlačítka blokování tehdy a právě tehdy je úder vyblokován. Držením zbraně v zóně, do které probíhá útok, je blokovací okno zvětšeno. Pokud je postava vybavena štítem, rovněž to má na velikost blokovacího okna pozitivní vliv. Příležitostně může být jedodušší místo riskantního pokusu o blokování zkrátka popojít dozadu či na stranu a úderu se vyhnout. 
+
+Prvkem, o který Mount\&Blade letmo zavadilo, je \textbf{zbroj bojovníků}. Kingdom Come zde jde mnohem dál a představuje pokročilý systém umožňující oblékání po vrstvách. Přesně jako v realitě na sobě bohatý šermíř může mít obyčejnou civilní tuniku, přes ní prošívanici tlumící svými mnoha vrstvami tuhé látky tupé údery, přes ty kroužkovou zbroj, a dovršit plechovými pláty. Chudý branec si mezitím vystačí s prošívanicí. Výpočet zranění pak odpovídá vlastnostem oblečení kryjícího zasaženou část postavy. Toto vše je doplněno i vizuální stránkou - veškeré vrstvy oblečení jsou přes sebe na modelu postavy korektně skládány. Co dokáže okořenit herní zážitek, je omezení zorného pole na průduchy, které hráčově postavě poskytuje uzavřená přilba. 
+
+Naprosto zásadní mechanikou je \textbf{správa výdrže}. Každá akce (útok, blokování apod.) spotřebovává její díl, stejně tak i utržené zranění. To až do takové míry, že bojovníkovi oděnému do těžké zbroje nepřátelské zásahy mnohdy ubírají téměř pouze výdrž. Jakmile bojovník žádnou výdrž nemá, je zranitelný - ne jen, že nemůže provádět akce na svou obranu - vše, co již zásah nemůže ubrat z výdrže, ubere z jeho \acs{HP}. Ubranými životy se hráči snižuje i maximální množství výdrže, které může zregenerovat a dostává se tím do dlouhodobé nevýhody. Boj se tak stává složitou hrou taktizování a zvažování priorit.\footnote{Neohrabané nakládání s výdrží může vypadat například tak, že bojovník zažene protivníka sérií úderů do úzkých, jen aby zjistil, že se tím příliš vyčerpal a není schopen ho dorazit. O okamžik později protivník využije jeho zranitelnosti a situace se obrací.}  
+
+Celý bojový systém je rovněž úzce svázán s \textbf{\acs{RPG} progresí}. Základem je zběhlost v použití jednotlivých typů zbraní a v blokování. Ta se projevuje mnoha způsoby - od celkové šermířské finesy pozorovatelné na animaci útoku, po velikost časového okna pro blokování \footnote{Zvyšuje se s bojovníkovou schopností blokovat, snižuje s nepřítelovou schopností útočit.}. Dále je například možné odemykat specielní techniky - ty mohou následně být použity provedením specifické sekvence úderů (do specifických útočných zón) a oproti běžným úderům poskytují nějaký stanovený bonus.
+
+Za možnou slabinu bojového systému lze považovat \textbf{boj proti více protivníkům}. Zatímco v boji 1v1 je uzamykání na protivníka vítaným pomocníkem, je-li protivníků více, nutnost soustředit se na jednoho z nich značně přispívá k celkovému zmatku a nepohodlí. Dalo by se namítat, že zmatek a nepohodlí neodlučitelně patří k situaci, jakou je boj proti přesile. Rovněž, jak jsme si nastínili v \ref{organizedFightingIrlSubsection}, v reálném světě často jedinou rozumnou možností, jak přesilu přemoci, skutečně je rozdělit ji a svést boj s jednotlivci - k čemuž přesně tento systém vybízí. Z celkových hráčských ohlasů je však zřejmé, že toto nepatří mezi ty aspekty realizmu, o které má herní publikum zájem.
+
+Nyní by čtenář měl být rámcově seznámen s bojovým systémem. Pojďme si tedy shrnout, které věci se \textbf{povedly}:
+
+\begin{itemize}
+    \item \textbf{Značná hloubka systému} - Systém výdrže, spolu s pohybem postav a výběrem útokových zón vytvářejí značný prostor k taktickému jednání. Jednání protivníka je dostatečně sofistikované, aby pro hráče nebylo nikdy dokonale průhledné, avšak fakt, že je vázán stejnými systémy jako hráč, dává značný prostor k pokusům o jeho předvídání. Systém progrese nabízí další zajímavé možnosti, jak průběh boje ovlivnit. 
+    \item \textbf{Plynulý dojem z boje} - Systém hráči velmi dobře komunikuje herní stav - hráč přesně ví, co se děje a jak si v boji vede. Zároveň systém na uživatelské vstupy reaguje dostatečně responzivně. Díky tomu je hráč schopen utvářet a realizovat rozhodnutí srovnatelně rychle jako kdyby bojoval v reálném světě.
+    \item \textbf{Ovládání kamery} - Kamera je uzamčena na protivníka. Pro vybrání útokové zóny není třeba žádný nežádaný pohyb kamery. I kdyby však k uzamčení kamery nedocházelo, problém by zde nevyvstával ani zdaleka tak výrazně jako v Mount\&Blade. Důvodem je fakt, že útoková zóna pro bodání (uprostřed) je zde specielním případem, který se vybírá stisknutím pravého tlačítka myši. Každá ze zbylých zón odpovídá jednomu ze směrů růžice, pohyb kurzoru nutný k jejich rozlišený je tedy velmi drobný. 
+    \item \textbf{Reflexe narativní progrese} - Minimálně stejnou mírou jako na hráčské dovednosti závisí bojová schopnost postavy i na její \acs{RPG} progresi. Jelikož progrese hráče skrze \acs{RPG} systémy je spjatá s jeho progresí v narativu hry, je zde o poznání menší prostor pro vznik disonance jakou jsme popsali v \ref{moreControlBenefitsSection}.
+\end{itemize}
+
+Najdeme zde i některé \textbf{nevýhody}:
+\begin{itemize}
+    \item \textbf{Interakce s prostředím} - Bojový systém je koncipovaný čistě pro souboj s protivníkem. Mimo souboj lze provádět pouze jediný stále stejný útok. Navíc objekty prostředí na rány meče ani nejsou schopny jakkoliv reagovat.  
+    \item \textbf{Boj s více protivníky} - Nutnost uzamčení kamery na jednoho protivníka vede ke zmatku.
+    \item \textbf{Flexibilita} - Přidat do hry např. specifický typ nehumanoidních postav je nanejvýš obtížné. Pro optimální zážitek by bylo nutné pro boj s novým protivníkem vytvořit i zcela nový systém útokových zón s novými animacemi, specielními technikami apod.\footnote{Počet takových systémů by rostl kvadraticky s počtem typů postav, počítáme-li, že tyto postavy mohou bojovat i vzájemně mezi sebou.}. O obtížnosti takového snažení ostatně mnoho vypovídají hráčské ohlasy k datadisku, kterým do hry jako nepřátelé byli přidáni psi.  
+\end{itemize}
+
+Celkově vidíme, že se hře podařilo vytvořit systém vyznačující se značnou hloubkou, který hráči umožňuje vynášet rozhodnutí podobně komplexní\footnote{Myšleno, že z pohledu typického hráče se tváří dojmem podobné komplexity. Ne že skutečně jsou.} jako při reálném boji a podobně rychle jako je nutné při reálném boji, to vše při grafickém výstupu, který se ve všech ohledech velmi blíží zachycení reálného středověkého boje. Není tedy divu, že je hra obecně považována za velmi dobré zachycení realistického středověkého boje. Cenou za to však je celkově nízká flexibilita a nemožnost meč použít k jakémukoliv jinému účelu, než je boj proti lidským protivníkům.
 
 \subsection{Shrnutí}
 
