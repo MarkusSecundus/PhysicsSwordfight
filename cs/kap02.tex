@@ -5,46 +5,40 @@ V této kapitole se zamyslíme a stanovíme cíle, o něž tato práce bude usil
 
 \section{Jaký chceme výsledek}
 
+\subsection{Zamyšlení}
 Čtenář by nyní měl mít za sebou \ref{swordfightingIntroChapter}. kapitolu a měl by tedy mít jisté povědomí, co obnáší boj s chladnou zbraní v reálném světě, a jaké nástrahy nás čekají, kdybychom se ho pokusili zachytit ve videohře. 
 
-Jak jsme si ukázali na konkrétních příkladech, není nemožné poskytnout hráči vcelku značnou kontrolu nad zbraní a vzbudit v něm dojem realistického zážitku. Společným rysem obou našich komerčně úspěšných příkladů však byla vysoká specializace celého systému čistě pro usecase, ke kterému meč ve hře měl sloužit - boj s jinými lidmi. To do takové míry, že umožnit jakoukoliv jinou činnost nebo jiný typ protivníka by nutně vyžadovalo velkou část systému naimplementovat znovu. Pohyb meče probíhal typicky pomocí velkého množství ručně vytvořených animací, které byly vytvořené přesně na míru boji s člověkem. Ovládání nabízelo pouze konečný stav možností - přesně ty, které dává smysl provádět při boji s člověkem, nic víc. Celkově se zdá, že implementovat takový typ bojového systému zahrnuje spoustu úmorné a programátorsky nezajímavé práce. Navíc konkurence, které je třeba se vyrovnat, je velká.
+V předchozí kapitole jsme si ukázali, že videohry jsou schopny vcelku pěkně zachytit mnoho aspektů, které k boji s chladnou zbraní neodmyslitelně patří - např. důraz na pohyb po bojišti je v akčních videohrách často používaným klišé. Prvkem, který zcela jistě nabízí největší prostor k dalšímu akademickému průzkumu, je samotná \textbf{manipulace se zbraní}.
 
-Protipólem pak jsou hry, které se snaží na věc jít "chytře" - implementují obecný systém, kde je zbrani umožněn naprosto volný pohyb, a boj proti jiným lidem je pouze jedna z nepřeberného množství možných činností (ač taková, u které pravděpodobně hráč stráví 99\% herního času).   
+Analyzovali jsme dva zástupce komerčně úspěšných her, které hráči nad zbraní poskytly vcelku značnou kontrolu. Bojové systémy, které obě tyto hry implementovaly, se vyznačovaly tím, že byly výrazně šité na míru zamýšlenému použití - boji proti lidskému protivníkovi. Všechny útoky byly ručně vybrané a animované tak, aby v této situaci fungovaly co nejlépe. Nevýhodou takovéhoto přístupu je samozřejmě velmi nízká flexibilita. Hráči není umožněno meč použít jakýmkoliv jiným způsobem než tím, který tvůrci hry zamýšleli. Rovněž pro tvůrce tento systém činí velmi obtížným přidávání nových, atypických nepřátel. \textbf{Implementace takovéhoto bojového systému se zdá obnášet množství úmorné, programátorsky nezajímavé práce.}
 
+Protipólem je pak přístup, kdy je umožněn \textbf{plný, ničím neomezený pohyb meče}, dosažený použitím \textbf{realistické fyzikální simulace} namísto ručně vytvářených animací. Příkladem hry, která se o toto pokoušela, bylo \acl{DbtS} (viz \ref{dieByTheSwordDescriptionSubsection}), to je rovněž názorným důkazem, že tato oblast vyžaduje mnoho dalšího výzkumu. V době svého vydání byla hra technologickým zázrakem, v současnosti jsou však její základní stavební kameny (tj. fyzikální simulace a procedurální animace) běžně dostupnými součástmi herních enginů. \textbf{Zkusit naimplementovat něco podobného za použití moderních nástrojů by mohlo být zajímavým úkolem.}
 
-\begin{itemize}
-    \item \textbf{Zamyšlení}:
-        \begin{itemize}
-            %\item neodsžitelným ideálem, ke kterému se snažíme rámcově směřovat, je zachycení zážitku, co šerm poskytuje v reálném světě
-            \item kromě volného mávání mečem, ostatní aspekty co k boji v reálném světě patří, hry zvládají zachytit docela v pohodě -> ovládání meče poskytuje největší prostor k prozkoumání
-            \item chceme obecný systém, co nebude potřebovat specifické úpravy pokaždé, když vytvoříme nový typ nepřítele, a co půjde použít k interakci s herním prostředím
-            \item nechceme pro meč ručně vytvářet žádné animace (nemáme na to prostředky + to není programátorsky zajímavá činnost)
-            \item meč by se měl tvářit v rámci možností rozumně fyzikálně věrně -> moderní herní enginy bývají vybaveny pokročilým fyzikálním subsystémem -> mohlo by být fajn nějakej takovej využít
-        \end{itemize}
-    
-    \item \textbf{z pohledu backendu by meč měl zvládat plně volný pohyb na všech 6 stupních volnosti a měl by to být objekt plně ovládaný standardním fyzikálním subsystémem}
-        \begin{itemize}
-            \item zkusíme znovu to, co Die by the Sword, avšak tentokrát vytvoříme otevřenou platformu, na které bude moci jakýkoliv programátor z komunity experimentovat s metodami ovládání (nedoladěné ovládání (a nemožnost ho spravit komunitou) byl hlavní kámen úrazu DbtS)
-            \item pokud se nám osobně nepodaří najít opravdu dobré a zábavné ovládání, někomu jinému z komunity se to povést může. i kdyby ne, na hru vždycky půjde napasovat VR ovladač ;)
-        \end{itemize}
-    \item \textbf{frontend - ovládání pro klávesnici a myš}
-        \begin{itemize}
-            \item jediná možnost, která zaručí přístupnost pro všechny
-            \item mnoho prostoru k experimentálnímu průzkumu
-        \end{itemize}
-\end{itemize}
+Kamenem úrazu se \acl{DbtS} stalo \textbf{ovládání}, o kvalitě jeho celkové myšlenky nás ale mohou přesvědčit moderní hry s mečem pro VR. V oblasti desktopových her na \acl{DbtS} nikdo nenavázal, protože nebyl vyřešen problém ovládání. Problém ovládání nebyl nikdy vyřešen také proto, že proprietární charakter hry zkrátka neumožnil komunitě živelně experimentovat s odvážnými novými metodami. Bylo by tedy příhodné, kdyby naše hra \textbf{mohla posloužit jako otevřená platforma, která sofistikované experimenty v této oblasti umožní.} 
+
+\subsection{Rozhodnutí}
+
+Docházíme tedy k závěru, že náš výsledek by měl vnitřně umožnit \textbf{univerzální, volný pohyb meče}. Toho by mělo být dosaženo využitím \textbf{fyzikální simulace}. Bylo by velmi příhodné, aby součástí oné fyzikální simulace mohly být i další objekty herního prostředí, protože tím se nám otevřou netušené možnosti pro zajímavé interakce a emergentní gameplay.
+
+Uživateli nabídneme \textbf{ovládání pro myš a klávesnici}. Pokusíme se navrhnout co nejlepší, mělo by být ideálně alespoň na srovnatelné úrovni použitelnosti jako ovládání myší v \acs{DbtS}. Prioritou je však spíše jeho všestrannost a myšlenková uchopitelnost - aby mohlo sloužit jako \textbf{univerzální laťka}, proti které lze dobře srovnávat experimentální alternativy. 
+
+Nejvyšší prioritou je rovněž kvalita implementačního kódu - taková, aby bylo umožněno co nejjednodušší přidávání nových experimentálních modulů pro ovládání.
 
 \section{Jaké nástroje použijeme}
 
-\begin{itemize}
-    \item chceme, aby výsledek naší práce byl co nejvíc přístupný pro náhodné lidi, co by ho chtěli využít k navazujícím experimentům či vlastnímu obohacení
-    \item \textbf{použijeme herní engine Unity}
-        \begin{itemize}
-            \item je mature
-            \item nejrozšířenější (viz \ref{unityEngineIntroSection}) -> největší šance že se najde jiný vývojář, co pro naší práci najde využití
-            \item má spoustu standardních knihoven a subsystémů, co nám usnadní práci a zajistí rozumnou míru kompatibility s prací ostatních lidí
-        \end{itemize}
-    \item na všech místech práce chceme používat co nejvíc rozšířené a standardní systémy a knihovny (-> kompatibilita s prací ostatních lidí)
-    \item myslet na dobré OOP practices a štábní kulturu
-\end{itemize}
+Aby mohl být dosažen náš cíl vytvoření otevřené platformy, na které bude docházet k živelnému komunitnímu experimentování, je nutné zařídit pro experimentátory \textbf{co nejnižší vsupní bariéru}. K tomu nám může výrazně napomoci, pokud naše dílo bude vycházet ze standardizovaných nástrojů a knihoven, které členové komunity již umí používat.
+
+Po krátkém zamyšlení jsme se rozhodli k \textbf{vytvoření práce použít herní engine Unity.} 
+
+%\begin{itemize}
+%    \item chceme, aby výsledek naší práce byl co nejvíc přístupný pro náhodné lidi, co by ho chtěli využít k navazujícím experimentům či vlastnímu obohacení
+%    \item \textbf{použijeme herní engine Unity}
+%        \begin{itemize}
+%            \item je mature
+%            \item nejrozšířenější (viz \ref{unityEngineIntroSection}) -> největší šance že se najde jiný vývojář, co pro naší práci najde využití
+%            \item má spoustu standardních knihoven a subsystémů, co nám usnadní práci a zajistí rozumnou míru kompatibility s prací ostatních lidí
+%        \end{itemize}
+%    \item na všech místech práce chceme používat co nejvíc rozšířené a standardní systémy a knihovny (-> kompatibilita s prací ostatních lidí)
+%    \item myslet na dobré OOP practices a štábní kulturu
+%\end{itemize}
 
