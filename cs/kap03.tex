@@ -16,19 +16,52 @@ Jde o \textbf{komerční produkt s uzavřenou licencí}, avšak cenová politika
 V této kapitole si představíme základní principy použití enginu v rozsahu nutném pro vysvětlení zbytku práce. Jejich kompletnější popis čtenář najde v oficielní dokumentaci \cite{Unity}. 
 
 \subsection{Herní objekty a komponenty}
+
+\subsubsection*{Scéna}
+Základním prvkem je \textbf{scéna} - ta odpovídá jedné oblasti ve hře. Scéna může být aktivní vždy jen jedna, hráč mezi nimi přechází.
+
+\subsubsection*{Herní objekt}
+Scéna je popsána hierarchií \textbf{herních objektů} (třída UnityEngine.GameObject). Každý herní objekt je definován svou pozicí v hierarchii (svým otcem), transformační maticí (udává pozici v herním světě) a jménem\footnote{Jméno slouží pro dokumentační a debugovací účely.} a najdeme v něm (volitelně prázdný) list dodatečných komponent.
+
+\subsubsection*{Komponenty}
+Komponenty jsou základními modulárními stavebními prvky, ze kterých skládáme herní logiku. Herní engine nám poskytuje velké množství již hotových - např. jednu, skrze kterou lze definovat grafickou reprezentaci objektu, další, jež nese zodpovědnost za vykreslení této reprezentace - takto by bylo možné pokračovat velmi dlouho. Uživatel může vytvořit vlastní typ komponenty tak, že ve skriptu definuje třídu dědící z UnityEngine.MonoBehavior. Následně mu již nic nebrání vybrat si v editoru herní objekt a novou instanci komponenty (její jméno odpovídá jménu třídy) do něj přidat.
+
+Každá komponenta může nést data a herní logiku, ty jsou definovány jednoduše skrze instanční proměnné a metody.  
+
+\subsubsection*{Serializace}
+
+Při práci na hře často narazíme na situaci, kdy by bylo užitečné moci nastavit část dat, které komponenta nese, ručně z editoru. Engine nám toto umožní.
+
+Jakoukoliv proměnnou, která je deklarovaná jako public či anotovaná atributem [UnityEngine.SerializeField], se editor pokusí poskytnout k editaci.
 \begin{itemize}
-    \item scéna - hierarchie gameobjectů
-    \item gameobject - kontejner do kterého se naházejí komponenty
-    \item komponenta - modul poskytující objektu nějaký kousek funkcionality; builtin, nebo to je uživatelsky definovaná třída; může obsahovat nějaká data (nastavitelná v editoru) a nějakou herní logiku (která příp. zahrnuje komunikaci s ostatními komponentami a gameobjecty)
-    \item serializace - z editoru se dají editovat public/[SerializeField] fieldy ; nekompatibilní s properties, interfacama a jinýma datovýma strukturama než pole/list - omezující když chce člověk používat klasické dobré OOP practices  
-    \item z herního objektu se dá vytvořit prefab
+    \item Primitivní a vestavěné typy zpravidla nečiní problém.
+    \item Pro typy dědící z UnityEngine.Object je poskytnuto pole, do kterého je možné přetáhnout jakýkoliv objekt ze scény či prefab.
+    \item Uživatelsky definované třídy musí být anotovány jako [System.Serializable] - jejich editor pak sestává rekurzivně z políček odpovídajících jejich proměnným, instance je vytvořena automaticky skrze výchozí konstruktor.
+    \item Proměnná nesmí být typu rozhranní, až do nedávna nebyly podporovány ani typy s generickým parametrem.
+    \item Z datových struktur jsou podporovány pouze obyčejné pole a System.Collections.Generic.List<>.
 \end{itemize}
+Dalším omezením je, že musí jít vždy o proměnné - properties podporovány nejsou.
 
+Tato omezení - především nemožnost používat interfacy a properties\footnote{Nepodporu složitějších datových struktur lze napravit použitím pokročilých technik pro vytváření vlastních editorových oken. Nepodpora generik pak činí problém spíše jen u sealed typů a structů, ze kterých není možné odvodit negenerického potomka.} - mohou programátorovi značně ztížit snahy o dodržování dobrých praktik objektového programování.
 
-\subsection{Posílání zpráv}
+Důvodem je, že tato úprava polí v editoru je specielním případem použití \textbf{standardního serializačního subsystému} enginu Unity. Na ten narazíme kdekoliv, kde je třeba interně ukládat herní stav do podoby, ze které bude možné jej později rekonstruovat. Mimo jiné je rovněž zodpovědný za to, aby ve finální sestavené verzi hry bylo načítání scény pro hráče co nejrychlejší. Je tedy jen přirozené, že je koncipován především pro co možná nejvyšší výkon - z čehož plynou výše zmíněná omezení.
+
+\subsubsection*{Prefaby}
+Z faktu, že je použita takováto standardní serializace, však plynou i výhody. Její nápomocí nám je umožněno jednoduše přetáhnout herní objekt z objektové hierarchie do souborového systému a vytvořit z něj tzv. \textbf{prefab}.
+
+\subsubsection*{Posílání zpráv}
 \begin{itemize}
     \item srovnání VS UnityEvent VS C\# delegáti 
 \end{itemize}
+
+\begin{itemize}
+    %\item scéna - hierarchie gameobjectů
+    %\item gameobject - kontejner do kterého se naházejí komponenty
+    %\item komponenta - modul poskytující objektu nějaký kousek funkcionality; builtin, nebo to je uživatelsky definovaná třída; může obsahovat nějaká data (nastavitelná v editoru) a nějakou herní logiku (která příp. zahrnuje komunikaci s ostatními komponentami a gameobjecty)
+    %\item serializace - z editoru se dají editovat public/[SerializeField] fieldy ; nekompatibilní s properties, interfacama a jinýma datovýma strukturama než pole/list - omezující když chce člověk používat klasické dobré OOP practices  
+    \item z herního objektu se dá vytvořit prefab
+\end{itemize}
+
 
 \subsection{Herní smyčka}
 \begin{itemize}
