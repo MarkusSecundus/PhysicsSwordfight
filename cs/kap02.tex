@@ -29,12 +29,10 @@ Nejvyšší prioritou je rovněž kvalita a modularita implementačního kódu. 
 \section{Jaké nástroje použijeme}
 
 Aby mohl být dosažen náš cíl vytvoření otevřené platformy, na které bude docházet k živelnému komunitnímu experimentování, je nutné zařídit pro experimentátory \textbf{co nejnižší vstupní bariéru}. K tomu nám může výrazně napomoci, pokud naše práce bude vycházet ze standardizovaných nástrojů a knihoven, které členové komunity již umí používat.
-\bigbreak
 
+
+\bigbreak
 Po krátkém zamyšlení jsme se rozhodli k \textbf{vytvoření práce použít herní engine Unity \cite{Unity}.} 
-\bigbreak
-V době psaní těchto řádek jde dle itch.io \cite{ItchIo} o zdaleka \textbf{nejpoužívanější herní engine}. Tato stránka je oblíbeným místem, kde své hry publikují příležitostní a nezávislí vývojáři - tedy přesně potenciální publikum naší práce. 
-
 \begin{figure}[h]\centering
     \center
     \includegraphics[width=140mm]{../img/Itch-mostUsedEngines.png}
@@ -43,7 +41,11 @@ V době psaní těchto řádek jde dle itch.io \cite{ItchIo} o zdaleka \textbf{n
     
 \end{figure}
 
+V době psaní těchto řádek jde dle itch.io \cite{ItchIo} o zdaleka \textbf{nejpoužívanější herní engine}. Tato stránka je oblíbeným místem, kde své hry publikují příležitostní a nezávislí vývojáři - tedy přesně potenciální publikum naší práce. 
+
 Jde o engine, který již za sebou má dlouhé roky nasazení v praxi, během kterých prokázal, že s jeho pomocí lze vytvářet masivní vysokorozpočtové hry i drobné gamejamové jednohubky. Rovněž nabízí velmi bohatý \textbf{výběr integrovaných nástrojů} - mimo jiné zde najdeme i pokročilý fyzikální subsystém. Jeho použitím tedy získáme solidní základ, který nám umožní soustředit se na zajímavé aspekty naší práce. Použitím standardních nástrojů jako základů získáme základní míru kompatibility s prací mnoha dalších lidí a maximalizujeme tím množinu těch, kteří by z plodů naší práce mohli těžit.
+
+Jako konkrétní verzi enginu volíme Unity 2022.2. Ač nejde o \acs{LTS} verzi a není tedy zaručena naprostá stabilita, bylo zde přidáno několik velmi drobných rozšíření, která na různých místech usnadní implementaci této práce.  
 
 \section{Shrnutí}
 Rozhodli jsme se vytvořit simulátor boje s jedenapůlručním mečem, který vnitřně umožní volný pohyb zbraně v prostoru, uživateli poskytne ovládání pro klávesnici a myš. Jako prostředek k dosažení tohoto cíle použijeme herní engine Unity \cite{Unity} s jeho integrovaným fyzikálním subsystémem. 
