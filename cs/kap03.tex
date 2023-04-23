@@ -47,42 +47,69 @@ Tato omezení - především nemožnost používat interfacy a properties\footno
 Důvodem je, že tato úprava polí v editoru je specielním případem použití \textbf{standardního serializačního subsystému} enginu Unity. Na ten narazíme kdekoliv, kde je třeba interně ukládat herní stav do podoby, ze které bude možné jej později rekonstruovat. Mimo jiné je rovněž zodpovědný za to, aby ve finální sestavené verzi hry bylo načítání scény pro hráče co nejrychlejší. Je tedy jen přirozené, že je koncipován především pro co možná nejvyšší výkon - z čehož plynou výše zmíněná omezení.
 
 \subsubsection*{Prefaby}
-Z faktu, že je použita takováto standardní serializace, však plynou i výhody. Její nápomocí nám je umožněno jednoduše přetáhnout herní objekt z objektové hierarchie do souborového systému a vytvořit z něj tzv. \textbf{prefab}.
+Standardní serializační systém však programátorovi přináší i mnoho výhod. Jeho nápomocí nám je umožněno jednoduše přetáhnout herní objekt z objektové hierarchie do souborového systému a vytvořit z něj tzv. \textbf{prefab}. Takto osamostatněný objekt můžeme následně referovat libovolněkrát v libovolné scéně a systém se postará, aby veškeré změny, které byly provedeny přímo na prefabu, byly přeneseny do jednotlivých instancí, zatímco změny oproti prefabu, kterých jsme se dopustili na konkrétní instanci, zůstanou zachovány. Rovněž je možné vytvořit \textbf{variantu prefabu} - samostatný prefab, který se odkazuje na jiný prefab jakožto svou předlohu a vůči ní přibaluje nějaké změny. 
 
-\subsubsection*{Posílání zpráv}
+Jak vidíme, jde o mocný nástroj umožňující organizaci herních objektů podobně flexibilním způsobem, jaký nabízí dědičnost v oblasti objektového programování. 
+
+\subsubsection*{Komunikace mezi komponentami} \label{communicationBetweenComponentsSubsubsection}
+
+Jakákoliv trochu komplexnější herní logika se neobejde bez vzájemné komunikace mezi komponentami. Unity nám k tomuto účelu nabízí hned několik základních cest.
+
+První z nich je zkrátka na instanci druhé komponenty \textbf{zavolat metodu, kterou chceme}. Výhodou je, že metoda může mít libovolné množství argumentů, být generická, ... celkově je možné využívat plně možností, které jazyk C\# poskytuje. Nevýhodou je, že musíme mít přímý odkaz na instanci, na které volání uskutečňujeme.
+
+Druhou možností je \textbf{UnityEvent}. Jde o obdobu klasických C\# delegátů, která však podporuje serializaci a je ji tedy možné konfigurovat z editoru. S její pomocí komponenta může definovat callbacky, do kterých je následně v editoru zaregistrováno libovolné množství posluchačských metod patřících ostatním komponentám. Zavoláním metody Invoke() na instanci UnityEvent jsou následně zavolány všechny posluchačské metody, jedna po druhé.
+
+Poslední možností je \textbf{posílání zpráv}. Tento mechanismus je hojně používán pro komunikaci mezi komponentami a systémem. Princip je jednodchý: na libovolném herním objektu je možné zavolat metodu SendMessage() - jejím parametrem je jméno metody, volitelně ještě libovolný objekt jako argument. Systém projde všechny komponenty náležící danému objektu a pokud nějaký z nich definuje (jedno zda veřejnou či privátní) metodu, jejíž hlavička odpovídá jménu a typu argumentu, jež jsme metodě SendMessage předali, všechny takovéto metody budou jedna po druhé zavolány.
+
+\subsubsection*{Jak hledat komponenty}
+
+V mnoha případech potřebujeme s instancí jiné komponenty komunikovat přímo. Jakým způsobem lze tedy odkaz na ni získat?
+
+Nejjednodušší možností je na naší komponentě zavést serializovatelnou proměnnou, do které odkaz na druhou komponentu doplníme v editoru. 
+
+Pokud tato možnost nepřipadá v úvahu, či je komponent mnoho a přetahovat všechny by bylo přespříliš úmorné, Unity nabízí mnoho cest, jak scénu prohledávat. Mezi základní patří:
+
 \begin{itemize}
-    \item srovnání VS UnityEvent VS C\# delegáti 
+    \item \textbf{gameObject.GetComponent<TComponent>()} - Voláme na konkrétní instanci herního objektu. Vrátí první komponentu typu TComponent, jež se v objektu nachází, popř. null. TComponent může být konkrétní typ komponenty, rovněž to však může být rozhraní. Existuje také varianta GetComponent\underline{s}<TComponent>(), která iteruje všechny takové komponenty, pokud jich je více. Také GetComponent(s)InParent() a GetComponent(s)InChildren(), které prohledávají celou objektovou hierarchii směrem od objektu nahoru/dolu.
+    \item \textbf{UnityEngine.Object.FindFirstObjectByType<TObject>()} - Statická metoda. Podobné chování jako GetComponent, avšak prohledává celou aktivní scénu. 
+    \item \textbf{UnityEngine.GameObject.FindByTag()} - Rovněž prohledává celou scénu. Pro každý herní objekt je možné v editoru nastavit specielní poznávací symbol - tag - podle něj zde vyhledáváme. Vrací odkaz na herní objekt, na něm typicky ještě bude nutné zavolat GetComponent. Toto je obecně doporučovaný způsob, jak získávat odkaz na singletony.
 \end{itemize}
 
-\begin{itemize}
-    %\item scéna - hierarchie gameobjectů
-    %\item gameobject - kontejner do kterého se naházejí komponenty
-    %\item komponenta - modul poskytující objektu nějaký kousek funkcionality; builtin, nebo to je uživatelsky definovaná třída; může obsahovat nějaká data (nastavitelná v editoru) a nějakou herní logiku (která příp. zahrnuje komunikaci s ostatními komponentami a gameobjecty)
-    %\item serializace - z editoru se dají editovat public/[SerializeField] fieldy ; nekompatibilní s properties, interfacama a jinýma datovýma strukturama než pole/list - omezující když chce člověk používat klasické dobré OOP practices  
-    \item z herního objektu se dá vytvořit prefab
-\end{itemize}
-
+Je však třeba podotknout, že všechny tyto možnosti zpravidla vykonávají nějakou formu lineárního hledání a nejsou tedy zcela efektivní. Velmi doporučované je provádět hledání pokud možno jen jednou při aktivaci naší komponenty, a jeho výsledek si "nakešovat" do proměnné.
 
 \subsection{Herní smyčka}
-\begin{itemize}
-    \item zpráva Update, deltaTime
-    \item všechno probíhá sekvenčně na main threadu
-\end{itemize}
 
-\subsection{Základní knihovny}
-\begin{itemize}
-    \item (vše pouze zmínit že existuje)
-    \item matematická primitiva - Vector3, Ray, matice, apod.
-    \item instanciace gameobjectů a komponent za runtimu
-    \item Vykreslování grafiky
-    \item NavMesh
-    \item extrémně moc dalších věcí
-\end{itemize}
+Typická videohra běží v \textbf{nekonečné smyčce}. Jsou načteny vstupy, provedena aktualizace herního stavu, následně vykreslena grafika - jakmile je hotovo, opakujeme. 
 
+V Unity je herní smyčka plně v režii systému, programátor může ve svých skriptech pouze \textbf{poslouchat na události}, které v jejím průběhu nastanou. Ty jsou mu typicky komunikovány pomocí výše popsaného systému posílání zpráv (viz \ref{communicationBetweenComponentsSubsubsection}).
+Typickými takovými zprávami jsou:
+
+\begin{itemize}
+    \item \textbf{Update()} - Volána jednou za každý snímek. Zde by měla být updatována herní logika. Čas uplynulý od minulého snímku není předáván jako argument, nýbrž ho lze vyčíst ze statické proměnné UnityEngine.Time.deltaTime.
+    \item \textbf{Start()} - Volána jednou za život objektu, těsně před tím, než je zavolán jeho první Update(). Zde by typicky mělo probíhat hledání dalších komponent a podobné inicializační operace.
+    \item \textbf{Awake()} - Volána okamžitě po vytvoření objektu, tedy dříve než Start. Některé další zprávy mají okrajové případy, ve kterých rovněž mohou být zavolány dříve než Start - pokud to hrozí, je třeba provést inicializaci zde.
+    \item \textbf{OnDestroy()} - Volána při zničení komponenty. Zde může uvolnit držené zdroje.
+\end{itemize}
+Zajímavou vlastností je, že komponenta může být nastavena jako \textbf{neaktivní} - v takovém případě nedostává zprávy Update a volání Start je odloženo. Awake a OnDestroy však stále volány jsou.
+
+Rovněž je užitečné vědět, že veškeré zprávy herní smyčky jsou volány \textbf{sekvenčně na hlavním vlákně}. Multithreading v Unity nalezneme pouze na specifických místech, a na těch si tvůrci dali záležet, aby byl uživatel velmi důrazně varován.
+
+
+\subsection{Knihovny}
+
+Kromě standardní knihovny jazyka C\# Unity poskytuje \textbf{mnoho dalších knihoven} nabízejících funkcionalitu užitečnou specificky při tvorbě videoher.
+
+Samozřejmě zde najdeme mnoho nástrojů pro pokročilou \textbf{interakci s hierarchií herních objektů} - ničit objekty či vytvářet nové za běhu není problém. 
+
+Dále zde najdeme například široký výběr \textbf{matematických primitiv} - vektory a matice umožňující provádět základní operace známé z lineární algebry, typy reprezentující další geometrické objektů jako přímky či roviny, nebo třídu UnityEngine.Mathf (ekvivalent System.Math operující nad floaty místo doublů).
+
+Velkým tématem pro videohry je jak známo například \textbf{vykreslování grafiky} s pomocí GPU, \textbf{animace}, či \textbf{navigace herních postav terénem}. Pro každou z těchto oblastí a mnoho dalších disponuje Unity dedikovaným subsystémem. O šířce jeho záběru se lze přesvědčit v oficielní dokumentaci \cite{Unity}.
 
 \section{Fyzikální subsystém enginu Unity}
 
 \subsection{Představení}
+
+
 \begin{itemize}
     \item zjednodušená dynamika a kinematika pevného tělesa
     \item je to vlastní Uniťácké API postavené nad backendem nVidia PhysX, ale poskytuje jenom podmnožinu kompletní PhysX funkcionality
