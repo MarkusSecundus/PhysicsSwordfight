@@ -1,19 +1,19 @@
 \chapter{Technické základy}
 
-V této kapitole čtenáře seznámíme s herním enginem Unity do míry potřebné k pochopení zbytku práce. Stručně nastíníme architekturu, kterou pro tvorbu herních systémů tento engine podporuje, a zmíníme některé jeho vestavěné knihovny - především se podrobně zaměříme na integrovaný fyzikální subsystém.
+V této kapitole čtenáře seznámíme s herním enginem Unity \cite{Unity} do míry potřebné k pochopení zbytku práce. Stručně nastíníme architekturu, kterou pro tvorbu herních systémů tento engine podporuje, a zmíníme některé jeho vestavěné knihovny - především se podrobně zaměříme na integrovaný fyzikální subsystém.
 
 
-\section{Herní engine Unity}
+\section{Herní engine Unity} \label{unityEngineIntroSection}
 
-\subsection{Představení}    \label{unityEngineIntroSection}
-\begin{itemize}
-    \item na malé a neziskové projekty je zadarmo, ale není opensource a obecně neposkytuje přístup k většině svého zdrojáku
-    \item všestranný (2D i 3D, všechny možné cílové platformy)
-    \item nejpoužívanější mezi indie vývojáři (\href{https://twitter.com/gamemakerstk/status/1552183527847989248?cxt=HHwWgMC8ubusu4orAAAA}{odkaz na GMTK game jam survey}\footnote{je v pohodě dávat do referencí post na twitteru?})
-    \item existuje už celkem dost dlouho - je to mature ekosystém%, má spoustu pěkných subsystémů (Fyzika, Animace, NavMesh, ...)
-    \item je tam dost kostrbatostí kvůli zpětné kompatibilitě, věci se dají dělat hodně různýma způsobama (jak se přesvědčíme na konkrétních příkladech v dalších sekcích)
-    \item použitá verze C\# a .NET runtime
-\end{itemize}
+První verze enginu Unity byla vydána v roce 2005. Od té doby bylo vydáno mnoho verzí, přidáno mnoho funkcionalit a mnoho dalších prohlášeno za zastaralé. Tvůrcům se dařilo držet krok s dobou, v dnešní době jde o velmi vyspělý a moderní engine, který uživatelům nabízí \textbf{široký ekosystém nástrojů}, ať už jde o integrované komponenty, nebo balíčky třetích stran. 
+
+Jednou z jeho velkých sil je \textbf{všestrannost} - zvládá stejně dobře 2D i 3D hry, výsledný spustitelný produkt lze vyexportovat pro širokou škálu platforem - desktopové, mobilní, konzole i web.
+
+Pro programování herní logiky je zde podporován jazyk C\#. Jako runtime je dosud používáno postarší \textbf{Mono}, které umožňuje nanejvýše \textbf{C\# verze 9} s pár drobnostmi nepodporovanými, avšak stále jde o vcelku moderní jazyk, který programátorovi umožňuje pohodlnou práci. Interakce s knihovnami třetích stran, které závisejí na některých součástech moderního frameworku .NET, může činit problémy, avšak typicky nejde o nepřekonatelnou překážku.
+
+Jde o \textbf{komerční produkt s uzavřenou licencí}, avšak cenová politika je více než přívětivá. Pro nekomerční projekty a projekty nepřesahující určitou hranici celkového ročního zisku je \textbf{použití enginu zcela zdarma}. Právní úprava nijak nebrání vydávání samostatných projektů v enginu tvořených pod opensource licencí. Dokumentace není celkově na špatné úrovni a těch pár míst, kde pokulhává, vynahrazují velmi živá komunitní fóra.
+\bigbreak
+V této kapitole si představíme základní principy použití enginu v rozsahu nutném pro vysvětlení zbytku práce. Jejich kompletnější popis čtenář najde v oficielní dokumentaci \cite{Unity}. 
 
 \subsection{Herní objekty a komponenty}
 \begin{itemize}
