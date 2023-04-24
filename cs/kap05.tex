@@ -1,6 +1,10 @@
 \chapter{Implementace}
 
-V předchozí kapitole jsme navrhli strukturu, které se náš projekt bude držet. Nyní můžeme přistoupit k jeho implementaci.
+V předchozí kapitole jsme navrhli strukturu, které se náš projekt bude držet. Stejně tak již víme, jakým způsobem bude se systémem interagovat uživatel. Nyní můžeme přistoupit k jeho implementaci.
+
+V této kapitole zběžně představíme, jak jsme celkově při implementaci postupovali, zevrubněji pak vylíčíme, jak jsme přistupovali k řešení překážek, které nám postavil do cesty zejména fyzikální subsystém. 
+
+Podrobnou programátorskou dokumentaci k jednotlivým komponentám psanou v anglickém jazyce lze nalézt v příloze. Zvolili jsme pro ni standardní formát dokumentačních komentářů exportovaných do souboru XML, protože ten podporuje pohodlnou integraci s IDE (např. použití v našeptávači).
 
 \section{Implementace základních komponent}
 \begin{itemize}
@@ -414,3 +418,9 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
 
 
 \section{Shrnutí}
+
+Dokončili jsme implementaci naší práce. Meč i šermíř jsou plnohodnotnými prvky fyzikální simulace se všemi výhodami, které toto přináší např. pro možnosti interakce s okolním prostředím. Pro meč jsme implementovali dva základní submoduly ovládání - sekání a blokování. Pro tělo šermíře jsme vytvořili za použití standardního balíčku Animation Rigging procedurální animaci, která zajišťuje, aby kosmeticky "držel" meč. Rovněž jsme načrtli systém životů a výpočtu zranění.
+
+Velkou výzvou bylo zajistit realistické \textbf{chování mečů při kolizích}. Žádná z metod detekce kolizí, které Unity nabízí, nebyla schopna zcela zabránit tunelování. Řešením bylo pro každý pár mečů vytvořit dodatečný "velký" collider, který se nacházel na jednom z mečů a natáčel se dle polohy toho druhého. Dalším netriviálním úkolem bylo vyladit fyzikální parametry, aby bylo dosaženo plynulého pocitu při švihu mečem. 
+
+Pro praktickou demonstraci možností našeho systému jsme následně vytvořili ukázkovou hru. Hráč zde může v prostředí fantasy arény zápasit s jednoduchými počítačem řízenými protivníky, kteří používají standardní NavMesh pro orientaci v terénu a útočí přehráváním přednahraných pohybů meče. 
