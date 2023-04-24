@@ -28,6 +28,10 @@ Komponenty jsou základními modulárními stavebními prvky, ze kterých sklád
 
 Každá komponenta může nést data a herní logiku, ty jsou definovány jednoduše skrze instanční proměnné a metody.  
 
+\subsubsection*{Transform}
+
+Speciální komponentou je UnityEngine.Transform. Tu nalezneme na každém herním objektu, reprezentuje jeho \textbf{transformační matici} a \textbf{pozici v objektové hierarchii}. Každý objekt má vlastní matici, která definuje jeho polohu, rotaci a škálování - lokálně vůči otci. Celková transformace objektu je určena vynásobením této matice se součinem matic všech předků.
+
 \subsubsection*{Serializace}
 
 Při práci na hře často narazíme na situaci, kdy by bylo užitečné moci nastavit část dat, které komponenta nese, ručně z editoru. Engine nám toto umožní.
@@ -97,27 +101,25 @@ Rovněž je užitečné vědět, že veškeré zprávy herní smyčky jsou volá
 
 \subsection{Knihovny}
 
-Kromě standardní knihovny jazyka C\# Unity poskytuje \textbf{mnoho dalších knihoven} nabízejících funkcionalitu užitečnou specificky při tvorbě videoher.
+Kromě standardní knihovny jazyka C\# poskytuje Unity \textbf{mnoho dalších knihoven} nabízejících funkcionalitu užitečnou specificky při tvorbě videoher.
 
 Samozřejmě zde najdeme mnoho nástrojů pro pokročilou \textbf{interakci s hierarchií herních objektů} - ničit objekty či vytvářet nové za běhu není problém. 
 
 Dále zde najdeme například široký výběr \textbf{matematických primitiv} - vektory (2D a 3D) a matice umožňující provádět základní operace známé z lineární algebry a mnoho typů reprezentujících další geometrické objekty jako přímky či roviny.
 
-Velkým tématem pro videohry je jak známo například \textbf{vykreslování grafiky} s pomocí GPU, \textbf{animace}, či \textbf{navigace herních postav terénem}. Pro každou z těchto oblastí a mnoho dalších disponuje Unity dedikovaným subsystémem. O šířce jeho záběru se lze přesvědčit v oficielní dokumentaci \cite{Unity}.
+Velkými tématy pro videohry jsou jak známo například \textbf{vykreslování grafiky} s pomocí GPU, \textbf{animace}, či \textbf{navigace herních postav terénem}. Pro každou z těchto oblastí a mnoho dalších disponuje Unity dedikovaným subsystémem. O šířce jeho záběru se lze přesvědčit v oficielní dokumentaci \cite{Unity}.
 
 \section{Fyzikální subsystém enginu Unity}
 
-Jedním z těchto subsystémů, který budeme napříč naší prací extenzivně využívat, je ten pro fyzikální simulaci. 
+Jedním z těchto subsystémů, který budeme napříč naší prací extenzivně využívat, je ten pro fyzikální simulaci. Jeho náplní práce je vypočítávat pohyby a síly působící mezi objekty herní scény, způsobem velmi podobným tomu, jaký známe z klasické středoškolské kinematiky a dynamiky pevného tělesa. Unity poskytuje takové systémy dokonce dva\footnote{Více když neopomeneme Unity DOTS.} - jeden operující v 3D prostoru, druhý pro 2D. Oba jsou samostatnými celky a nesdílejí žádné společné součásti. Ve zbytku práce budeme fyzikálním subsystémem automaticky myslet ten pro 3D.   
 
-\begin{itemize}
-    \item zjednodušená dynamika a kinematika pevného tělesa
-    \item je to vlastní Uniťácké API postavené nad backendem nVidia PhysX, ale poskytuje jenom podmnožinu kompletní PhysX funkcionality
-    \item uvést reference na Unity a na PhysX dokumentaci\footnote{Chci mít odděleně referenci na Unity a na Unity-docs, nebo jenom Unity a nechat ho aby url neukazovalo na main page ale na docs?}
-    \item zmínit že Unity má taky 2D Physics, co jsou úplně odděleně a za backend maj Box2D 
-    \item vede si vlastní reprezentaci celé scény, při počítání vychází jenom z ní, před a po každém kroku se provede synchronizace s herním světem (updatnou transformy apod.)
-    \item FixedUpdate
-\end{itemize}
+Užitečnou informací je, že tento subsystém je pouze tenkým rozhraním pro podmnožinu funkcionality backendu, kterým je Nvidia PhysX \cite{PhysX}. Dokumentaci Nvidie \cite{PhysX} lze tedy doporučit k pročtení komukoliv, kdo chce získat hlubší pochopení celkového fungování systému, než jaké nabízí oficielní dokumentace Unity.
 
+\subsection{Základy}
+
+Pro zaručení větší stability je pravidlem, že by fyzikální simulace měla být aktualizována ve fixních časových intervalech. Unity tedy pro tyto účely nabízí \textbf{fixní herní smyčku}, která běží (rovněž v hlavním vlákně) paralelně s tou klasickou. Ve skriptu můžeme poslouchat na zprávu FixedUpdate() - ta je zavolána každý fixní snímek, těsně před vykonáním kroku fyzikální simulace. 
+
+Subsystém si vede vlastní interní reprezentaci celé scény. Nad tou vykonává veškeré výpočty, až po dokončení každého kroku podle ní updatuje transformy objektů ve scéně.
 
 \subsection{Rigidbody}
 \begin{itemize}
