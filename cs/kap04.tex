@@ -154,3 +154,25 @@ V této kapitole nejprve čtenáři představíme objektový návrh, který bude
 
 \section{Shrnutí}
 
+V první části kapitoly jsme stanovili objektový návrh hlavních prvků našeho systému - šermíře a jeho meče. 
+
+\textbf{Šermíř} je typickou herní postavou, která čte vstupy od uživatele a v závislosti na nich se pohybuje po herním světě (komponenta SwordsmanMovement). Je vybaven jednoduchým colliderem pro kolize s herním světem a detailním modelem, který koliduje s nepřátelskými meči a je procedurálně animován, aby se vizuálně tvářil držet vlastní meč (komponenta SwordsmanBodyProceduralAnimation). 
+
+\textbf{Meč} je samostatným objektem v hierarchii. Drží si referenci na šermíře, jímž je držen, a při určování svého pohybu bere v úvahu jeho pozici. Celkově však probíhá pohyb meče plně v jeho vlastní režii - zodpovědnou komponentou je SwordMovement. Ta operuje jako stavový automat. Tvůrce hry v editoru nakonfiguruje seznam stavů (potomci třídy SwordMovement.Submodule) a jejich mapování na stisknuté klávesy, SwordMovement pak dle vstupu od uživatele vybírá, který stav je aktivní - na tom jediném volá metodu OnFixedUpdate. V této metodě submodul provádí libovolnou vnitřní logiku (konkrétní příklady ukážeme v \ref{modesOfSwordMovementSubsection}) a nakonec na instanci SwordMovement zavolá metodu MoveSword(), které jako argument předá žádanou pozici meče. SwordMovement se následně postará o jeho plynulý přesun. 
+
+Meč i šermíř jsou dětmi společného \textbf{kořenového objektu} - jeho starostí je, aby byly meč a šermíř řádně pospojované jeden s druhým a s objekty vnějšího světa. Konfigurujeme zde např. zdroj uživatelského vstupu (komponenta dědící z ISwordInput) či reference na kameru a prvky GUI (healthbar apod.).
+
+Celkově by tento návrh měl poskytovat dobrou rozšiřitelnost logiky pro ovládání meče (stačí přidat nový SwordMovement.Submodule), implementace počítačem řízených šermířů by tomuto návrhu rovněž neměla činit problém (stačí vyměnit zdroj vstupu a odebrat reference na GUI).
+
+\bigbreak
+
+Druhou část kapitoly jsme věnovali zamyšlení nad rozhraním, skrze které bude probíhat komunikace mezi hrou a hráčem - předně jsme se zaměřili na ovládání meče (které, jak jsme nastínili v \ref{gamesWithMoreDirectControll}, představuje těžký problém).
+
+Rozhodli jsme se pro \textbf{ovládání pomocí myši}. Nejprve jsme zkusili provádět mapování tak, že jsme dle polohy kurzoru z kamery stříleli paprsek a ten protínali s kulovou plochou - průnik odpovídal bodu, kterým má procházet čepel meče\footnote{Toto platí při použití základního submodulu pro sekání. Obecně bod průniku slouží jako vstup, ze kterého instance SwordMovement.Submodule může vydedukovat cokoliv uzná za vhodné.}. Toto v praxi fungovalo vcelku pěkně a tvářilo se jako pro hráče intuitivně uchopitelný formalizmus. Vyskytovaly se zde však okrajové případy, které např. pro hráče činily jednoduchým, aby sám sebe mečem probodnul.
+
+Proto jsme systém zobecnili - místo jediné kulové plochy je možné jich definovat několik a mezi jednotlivými průniky se počítá vážený průměr. Touto metodou jsme schopni zachovat vše, co na předchozí variantě fungovalo dobře, ale zároveň je nám poskytnuta dodatečná flexibilita, která umožňuje ošetřit okrajové případy.
+
+Dále jsme stanovili ovládání pro \textbf{pohyb hráčské postavy ve světě} - v této oblasti nám nic nebránilo použít klasické WASD, pouze jsme museli přidat klávesy QE pro rozhlížení, protože kurzor je již plně zaměstnán ovládáním meče.
+
+\bigbreak
+Nyní tedy máme vypracovaný návrh jak pro rozhraní, která popisují moduly naší práce, tak i pro rozhraní, skrze které budou tyto moduly komunikovat s uživatelem. Můžeme tedy přistoupit k implementaci.
