@@ -212,7 +212,7 @@ V neposlední řadě, plná kontrola nad mečem nemusí vhodně ladit s \textbf{
 \bigbreak
 Finálně, pokud jsme všechny tyto problémy vyřešili, čeká nás implementace systému. Hráči jsme nabídli v podstatě neomezené možnosti, nabízí se tedy otázka, jakým způsobem se hodláme ujistit, že možnosti skutečně neomezené jsou a nevyskytly se nějaké \textbf{neočekávané okrajové případy}, které nebyly ošetřeny a povedou k nedefinovanému chování? Jednou z cest je přeci jen kontrolu nad mečem omezit a smrsknout ji na stále velkou, avšak \textbf{konečnou množinu stavů}, které jsou tvůrci schopni projít jednu po druhé a ujistit se, že každý funguje, jak zamýšleli. Jedinou další alternativou se zdá být \textbf{plně realistická fyzikální simulace meče} - problémům, které tato cesta přináší, je věnována převážná část této práce.  
 \bigbreak
-Vidíme, že poskytnout hráči přímou kontrolu nad mečem, je nevděčný úkol vyžadující mnoho kompromisů. V historii najdeme pouze několik her, které se s ním pokusily popasovat, každá svým unikátním způsobem. Na ty se nyní podíváme blíže.
+Vidíme, že poskytnout hráči přímou kontrolu nad mečem je nevděčný úkol, jehož řešení vyžaduje mnoho kompromisů. V historii najdeme pouze několik her, které se s ním pokusily popasovat, každá svým unikátním způsobem. Na ty se nyní podíváme blíže.
 
 \subsection{Die by the Sword} \label{dieByTheSwordDescriptionSubsection}
 
@@ -286,11 +286,11 @@ Celý bojový systém je rovněž úzce svázán s \textbf{\acs{RPG} progresí}.
 
 Za možnou slabinu bojového systému lze považovat \textbf{boj proti více protivníkům}. Zatímco v boji 1v1 je uzamykání na protivníka vítaným pomocníkem, je-li protivníků více, nutnost soustředit se na jednoho z nich značně přispívá k celkovému zmatku a nepohodlí. Dalo by se namítat, že zmatek a nepohodlí neodlučitelně patří k situaci, jakou je boj proti přesile. Rovněž, jak jsme si nastínili v \ref{organizedFightingIrlSubsection}, v reálném světě často jedinou rozumnou možností, jak přesilu přemoci, skutečně je rozdělit ji a svést boj s jednotlivci - k čemuž přesně tento systém vybízí. Z celkových hráčských ohlasů je však zřejmé, že toto nepatří mezi ty aspekty realizmu, o které má herní publikum zájem.
 
-Nyní by čtenář měl být rámcově seznámen s bojovým systémem. Pojďme si tedy shrnout, které věci se \textbf{povedly}:
+Nyní by čtenář měl být rámcově seznámen s bojovým systémem. Pojďme si tedy shrnout, které věci se \textbf{obzvláště zdařily}:
 
 \begin{itemize}
     \item \textbf{Značná hloubka systému} - Systém výdrže, spolu s pohybem postav a výběrem útokových zón vytvářejí značný prostor k taktickému jednání. Jednání protivníka je dostatečně sofistikované, aby pro hráče nebylo nikdy dokonale průhledné, avšak fakt, že je vázán stejnými systémy jako hráč, dává značný prostor k pokusům o jeho předvídání. Systém progrese nabízí další zajímavé možnosti, jak průběh boje ovlivnit. 
-    \item \textbf{Plynulý dojem z boje} - Systém hráči velmi dobře komunikuje herní stav - hráč přesně ví, co se děje a jak si v boji vede. Zároveň systém na uživatelské vstupy reaguje dostatečně responzivně. Díky tomu je hráč schopen utvářet a realizovat rozhodnutí srovnatelně rychle jako kdyby bojoval v reálném světě.
+    \item \textbf{Plynulý dojem z boje} - Systém hráči velmi dobře komunikuje herní stav - hráč přesně ví, co se děje a jak si v boji vede. Zároveň systém na uživatelské vstupy reaguje dostatečně responzivně. Díky tomu je hráč schopen utvářet a realizovat rozhodnutí srovnatelně rychle, jako kdyby bojoval v reálném světě.
     \item \textbf{Ovládání kamery} - Kamera je uzamčena na protivníka. Pro vybrání útokové zóny není třeba žádný nežádaný pohyb kamery. I kdyby však k uzamčení kamery nedocházelo, problém by zde nevyvstával ani zdaleka tak výrazně jako v Mount\&Blade. Důvodem je fakt, že útoková zóna pro bodání (uprostřed) je zde specielním případem, který se vybírá stisknutím pravého tlačítka myši. Každá ze zbylých zón odpovídá jednomu ze směrů růžice, pohyb kurzoru nutný k jejich rozlišený je tedy velmi drobný. 
     \item \textbf{Reflexe narativní progrese} - Minimálně stejnou mírou jako na hráčské dovednosti závisí bojová schopnost postavy i na její \acs{RPG} progresi. Jelikož progrese hráče skrze \acs{RPG} systémy je spjatá s jeho progresí v narativu hry, je zde o poznání menší prostor pro vznik disonance jakou jsme popsali v \ref{moreControlBenefitsSection}.
 \end{itemize}
@@ -302,7 +302,7 @@ Najdeme zde i některé \textbf{nevýhody}:
     \item \textbf{Flexibilita} - Přidat do hry např. specifický typ nehumanoidních postav je nanejvýš obtížné. Pro optimální zážitek by bylo nutné pro boj s novým protivníkem vytvořit i zcela nový systém útokových zón s novými animacemi, specielními technikami apod.\footnote{Počet takových systémů by rostl kvadraticky s počtem typů postav, počítáme-li, že tyto postavy mohou bojovat i vzájemně mezi sebou.}. O obtížnosti takového snažení ostatně mnoho vypovídají hráčské ohlasy k datadisku, kterým do hry jako nepřátelé byli přidáni psi.  
 \end{itemize}
 
-Celkově vidíme, že se hře podařilo vytvořit systém vyznačující se značnou hloubkou, který hráči umožňuje vynášet rozhodnutí podobně komplexní\footnote{Myšleno, že z pohledu typického hráče se tváří dojmem podobné komplexity. Ne že skutečně jsou.} jako při reálném boji a podobně rychle jako je nutné při reálném boji, to vše při grafickém výstupu, který se ve všech ohledech velmi blíží zachycení reálného středověkého boje. Není tedy divu, že je hra obecně považována za velmi dobré zachycení realistického středověkého boje. Cenou za to však je celkově nízká flexibilita a nemožnost meč použít k jakémukoliv jinému účelu, než je boj proti lidským protivníkům.
+Celkově vidíme, že se hře podařilo vytvořit systém vyznačující se značnou hloubkou, který hráči umožňuje vynášet rozhodnutí podobně komplexní\footnote{Myšleno, že z pohledu typického hráče se tváří dojmem podobné komplexity. Ne že skutečně jsou.} jako při reálném boji a podobně rychle, jako je nutné při reálném boji - to vše při grafickém výstupu, který se ve všech ohledech velmi blíží zachycení reálného středověkého boje. Není tedy divu, že je hra obecně považována za velmi dobré zachycení realistického středověkého boje. Cenou za to však je celkově nízká flexibilita a nemožnost meč použít k jakémukoliv jinému účelu, než je boj proti lidským protivníkům.
 
 \subsection{Shrnutí}
 
@@ -319,14 +319,14 @@ O plně flexibilní systém umožňující \textbf{volný pohyb zbraně} a boj j
 
 \section{Alternativní ovladače} \label{alternativeControllers}
 
-Jak jsme si nastínili v předchozí sekci, \textbf{ovládání} je těžkým problémem, který musí vyřešit každá hra, která se hráči pokouší poskytnout nad zbraní větší kontrolu. V dosavadní části práce jsme však brali v úvahu výhradně běžné ovladací periferie - počítačovou myš a klávesnici, popř. ovladač u herní konzole. Jejich společným znakem je dvourozměrný charakter informace, kterou poskytují. Hlavní problém pak plyne z potřeby namapovat tuto 2D hodnotu na 3D polohu meče. 
+Jak jsme si nastínili v předchozí sekci, \textbf{ovládání} je těžkým problémem, který musí vyřešit každá hra, která se hráči pokouší poskytnout nad zbraní větší kontrolu. V dosavadní části práce jsme však brali v úvahu výhradně běžné ovladací periferie - počítačovou myš a klávesnici, popř. ovladač u herní konzole. Jejich společným znakem je dvourozměrný charakter informace, jíž poskytují. Hlavní problém pak plyne z potřeby namapovat tuto 2D hodnotu na 3D polohu meče. 
 
 Existuje však mnoho dalších způsobů ovládání - některé se pomalu rozšiřují směrem k mainstreamu, některé jsou předmětem experimentálního výzkumu. 
 V této sekci se podíváme na dva takové méně obvyklé způsoby ovládání, které mají potenciál posloužit jako zdroj 3D vstupu.
 
 \subsection{Virtuální realita} \label{VRControllers}
 
-Očividnou oblastí, kde můžeme najít ovladač poskytující 3D vstup, je virtuální realita (dále jen \acs{VR}). 
+Očividnou oblastí, kde můžeme najít ovladač poskytující 3D vstup, je virtuální realita (dále jen \acs{VR}). Tento fenomén v posledním desetiletí zažívá rozkvět. Bylo vydáno mnoho headsetů a na dalších probíhá práce. Konkurenční boj pohání inovaci a ceny vybavení tlačí dolů 
 
 
 %(jaké má výhody)
