@@ -326,20 +326,21 @@ V této sekci se podíváme na dva takové méně obvyklé způsoby ovládání,
 
 \subsection{Virtuální realita} \label{VRControllers}
 
-Očividnou oblastí, kde můžeme najít ovladač poskytující 3D vstup, je virtuální realita (dále jen \acs{VR}). Tento fenomén v posledním desetiletí zažívá rozkvět. Bylo vydáno mnoho headsetů a na dalších probíhá práce. Konkurenční boj pohání inovaci a ceny vybavení tlačí dolů 
+Očividným místem, kde můžeme najít ovladač poskytující 3D vstup, je virtuální realita (dále jen \acs{VR}). Tato oblast během posledního desetiletí prochází bouřlivým vývojem. Najdeme zde mnoho konkurujících si herních systémů, každý se svými silnými a slabými stránkami. Jádro libovolného z nich však tvoří headset a dvojice ovladačů, vždy plně trackující svůj pohyb v prostoru.  
 
+Jde tedy o místo, které k použití jemně ovladatelné, fyzikálně simulované chladné zbraně přímo vybízí. A her, jež ji hráči poskytnou, tu skutečně najdeme nemálo - zmíníme např. Blade and Sorcery \cite{BladeAndSorcery} či GORN \cite{Gorn}.
 
-%(jaké má výhody)
+Ať už se však \acs{VR} zdá jakkoliv ideálním místem pro chladnou zbraň, přináší své vlastní limitace a nevýhody. Známým problémem, který trápí většinu \acs{VR} her, je hráčova limitovaná \textbf{schopnost pohybu po herním světě}. Jemná kontrola nad zbraní je tedy vykoupena obětí jiného z aspektů realistického boje. 
 
-%(příklad hry kde se s ním ovládá meč) (swords\&sorcery, gorn, beatsaber)
+Dalším problémem je \textbf{disonance mezi polohou ovladače v reálném a polohou meče v herním světě}. Obecně se hry snaží držet tyto dvě synchronizované, problém však nastane, jakmile meč zaznamená \textbf{kolizi}. V takové situaci zpravidla ovladač spustí nepříjemné vibrace, nic více však není v jeho silách. Dle hráčských výpovědí takovými situacemi velmi trpí imerze a celkový herní zážitek. 
 
-%(nevýhody)
-%- disonance "meč narazil do něčeho a není tam kde ovladač"
+Pro kolize se statickými objekty herní scény zřejmě neexistuje dobré řešení. V praxi hojně užívaným řešením pro kolize s nepřátelskými zbraněmi je zkrátka prioritizovat pohyb hráčovy zbraně a nepřátele učinit druhořadými entitami, jejichž zbraň musí té hráčově vždy ustopit. Takový přístup má přirozeně dalekosáhlé následky na gameplay a není použitelný v multiplayeru. 
 
-%(proč se jí nebudeme při výzkumu zabývat)
-%- pořád není mainstream
-%- (zjistit) uzavřenost platforem?
+Vidíme tedy, že boj s chladnými zbraněmi ve \acs{VR} je osobitým polem, které nabízí velmi jiné silné stránky, výzvy a oblasti hodné prozkoumání, než jeho podoba pro klasické PC.
 
+V této práci se jí však nebudeme hlouběji zabývat, protože stále jde o způsob hraní poměrně \textbf{málo rozšířený} mezi hráčskou populací. Konkurenční boj tlačí ceny dolů, stále je zde však velmi mnoho hráčů, pro které je \acs{VR} cenově nedostupná. Limitující mohou být i technické faktory - např. rozlišení displejů používaných v současných headsetech či jejich nízká obnovovací frekvence mohou pro některé hráče z \acs{VR} učinit velmi nepříjemný zážitek. 
+
+\subsection{Wii Remote}
 
 \subsection{Pohybové senzory ve smartphonu}
 
