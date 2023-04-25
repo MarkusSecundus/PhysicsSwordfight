@@ -155,32 +155,38 @@ Velmi důležitým aspektem tohoto chování, který oficielní dokumentace zcel
 
 Poslední důležitou problematikou, kterou letmo zmíníme, jsou metody \textbf{detekce kolizí}. Výchozí je detekce diskrétní - ta zkrátka každý krok simulace projde celou scénu a provede testy, zda aktuálně nějaké objekty mají neprázdný průnik. To je rychlé a v mnoha případech funguje dostatečně dobře. Problém však činí rychle letící či malé objekty - klasickým případem je projektil vystřelený z palné zbraně. U toho se může stát, že v jednom snímku je na jedné straně stěny, ve snímku následujícím již zcela na straně druhé, aniž by jakákoliv kolize byla detekována - projektil tzv. \textbf{protuneloval}. Řešení tohoto problému nabízí \textbf{spojitá detekce kolizí} - ta propočítává celkovou dráhu objektu v průběhu času mezi snímky a ústí tedy v horší výkon. Konkrétní implementace, které Unity nabízí, budou velmi relevantní pro \ref{swordCollisionsSection} a podrobně je tedy představíme tam.
 
-\subsection{Joints}
+\subsection{Joint}
 
+Jointy jsou nástrojem, který umožňuje definovat \textbf{složitější vztahy mezi několika rigidbodies}. Najdeme zde například FixedJoint, který pevně spojí dvě oddělená tělesa dohromady, HingeJoint, který umožní otáčet jedním kolem druhého jako dveřmi v pantech, či SpringJoint, který vytvoří flexibilní spojení napodobující pružinu. Zapojením většího množství rigidbodies pospojovaných skrze CharacterJointy pak není obtížné vytvořit například kovový řetěz jehož jednotlivé články se realisticky pohybují.
 
-\begin{itemize}
-    \item (velmi stručně) co je constraint solver a jaký používá Unity
-    \item strohý výčet jmen jointů a že všechny jsou to speciální případ Configurable Jointu (neboli D6 jointu jak ho zná PhysX)
-    \item představení Configurable Jointu
-    \item anchor, connectedAnchor
-    \item locked/limited/free pro každý degree of freedom
-    \item primary, secondary, tertiary axis, vůči čemu jsou rotace relativní (podrobněji rozebereme v \ref{howToSetJointsTargetRotationSection})
-    \item positional\&angular drive - síly (spring VS damper), cílová pozice (nestabilní, alternativa nastavení connectedAnchoru) a rotace, RotationDriveMode (Slerp VS X+YZ - jenom letmo zmínit, "Slerp se choval pěkně a tak jsme ho vybrali"), Target (angular) velocity
-    \item massScale VS connectedMassScale
-    \item stabilita, flag EnablePreprocessing, projekce (projection mode+distance+angle)
-\end{itemize}
+Typů Jointů najdeme v Unity nemalé množství, všechny jsou však pouze fasádou nad univerzálním \textbf{ConfigurabeJointem}, který si nyní blíže představíme.
 
+Vytvoříme ho jednoduše přidáním komponenty ConfigurableJoint na objekt obsahující nekinematické Rigidbody. Nyní můžeme hru zapnout a joint bude fungovat, neuvidíme však žádný pozorovatelný efekt. Musíme tedy několik věcí nakonfigurovat.
+
+První věcí je přirozeně těleso, ke kterému chceme to naše připojit. Jednoduše ho přetáhneme do políčka \textbf{connectedBody}. Pomocí políčka \textbf{anchor} nyní můžeme nakonfigurovat bod, který bude sloužit jako centrum jointu (tzn. kolem kterého probíhá rotace a směřuje do něj pohyb). Anchor je udáván v souřadnicích relativních vůči našemu tělesu. Jak ho zadáváme, vidíme, že se automaticky přepočítává druhá položka - \textbf{connectedAnchor} - ta udává polohu anchoru relativně vůči connectedBody - v průběhu hry, jakkoliv se bude měnit poloha odpovídající connectedAnchoru v reálném světě (např. při pohybu connectedBody), tak se bude posunovat náš objekt, aby jeho anchor stále odpovídal connectedAnchoru - vzniká tedy jakýsi parent->child vztah od connectedBody k našemu rigidbody. 
+
+Nyní hru znovu zapneme a uvidíme, že chování se nezměnilo. ConnectedBody nebyl náš problém - nemít ho definované je ve skutečnosti perfektně v pořádku - joint pak spojuje naše rigidbody se samotným herním světem a connectedAnchor je chápán jako hodnota v globálních souřadnicích. Stejně tak nečiní problém, aby connectedBody bylo kinematické.
+
+Další položkou, které si všimneme, jsou políčka pro \textbf{uzamčení} pohybu a rotace v jednotlivých osách. Pro každý ze stupňů volnosti můžeme nastavit jednu z možností: Free, Limited, nebo Locked. \textbf{Locked} znamená, že pohyb je zakázaný a těleso se musí držet v poloze odpovídající anchoru. \textbf{Limited} znamená, že pohyb je umožněn, ale pouze v rozmezí, které nastavíme prostřednictvím dalších parametrů. \textbf{Free} značí volný pohyb.
+
+Pokud je stupeň volnosti nastaven na Limited či Free, nemusí to nutně znamenat, že bude objekt splihle viset v poloze nejmenšího odporu, kterou mu nastavené limity nabízejí. Na jointu je možné nakonfigurovat sílu, kterou smí vyvíjet, aby objekt udržoval v určité cílové pozici. Pro konfiguraci cíle jsou nabídnuty pole \textbf{targetPosition} a \textbf{targetRotation}\footnote{Pro pokročilejší scénáře dokonce existují targetVelocity a targetAngularVelocity - jejich využitím lze velmi jednoduše vytvořit např. větrný mlýn, jehož lopatky se neustále točí dokola.}, síly pak nastavujeme zvlášť pro každou jednotlivou osu (položky xx\textbf{Drive}). Každá taková síla je udána dvěma důležitými složkami - spring a damper. \textbf{Spring} udává sílu "pružiny", která naše těleso tlačí do cílové pozice. Je-li však síla dostatečně velká, může se stát, že cílovou pozici při pohybu "přestřelíme". V dalším snímku je pak k dorovnání třeba vyslat objekt opačným směrem atd. čímž vzniká nepěkný efekt třesení. Řešením je \textbf{damper} - ten udává, jak má být pohyb tlumen, aby k tomuto třasu nedocházelo, může ho však celkově zpomalovat. Pro dosažení dobrého hráčského dojmu ze hry je třeba umět správně vyladit poměr těchto dvou sil.
+
+Veškeré hodnoty cílových pozic, rotací apod. nejsou udávány v lokálních souřadnicích našeho rigidbody, ale v souřadnicovém systému unikátním pro náš joint. Jeho bázi lze nastavit skrze pole \textbf{axis} a \textbf{secondaryAxis}, třetí osa je následně dopočítána jako jejich vektorový součin. Hodnoty těchto bází jsou defaultně udávány v souřadnicích lokálních vůči našemu rigidbody, nastavením flagu configuredInWorldSpace lze však přepnout na jejich chápání jako globální hodnoty. Pro rotace se situace ještě komplikuje tím, že báze je posunuta tak, aby aktuální rotace zaznamenaná při vytvoření objektu (spuštění hry) odpovídala nulové rotaci. Na tuto problematiku narazíme v \ref{howToSetJointsTargetRotationSection}.
+
+Velkým tématem, které je u jointů třeba řešit, je \textbf{stabilita}. Ne vždy je možné zajistit, aby všechny vztahy skrze množinu jointů definované mohly být splněny najednou\footnote{Nechť například čtenář zkusí připojit objekt ke dvěma různým kinematickým tělesům a ty vzdalovat opačným směrem.}, rovněž mnoho optimalizací umožňujících dobrý výkon stabilitě nepřidává. Nestandardní situace zcela jistě nastane, proto je joint vybaven řadou parametrů, skrze které lze její průběh konfigurovat. Najdeme zde např. pole \textbf{massScale} a \textbf{connectedMassScale} - to jsou zjednodušeně násobiče pro síly, které jsou předávány z našeRigidbody na connectedBody a obráceně. Další je flag \textbf{enablePreprocessing} - ten zkrátka dokumentace doporučuje vypnout, pokud dochází k výrazné nestabilitě. Nakonec máme \textbf{ProjectionMode} - nastavíme-li na cokoliv jiného než defaultní None, naše rigidbody bude v případě nemožnosti splnit nároky jointu na svou správnou pozici přesunuto násilnou nefyzikální cestou. 
 
 \subsection{Stabilita simulace}
-\begin{itemize}
-    \item všechno to je jenom hodně hrubá aproximace, priorita je aby to běželo rychle a dalo se rozběhnout na GPU
-    \item postup simulace po krocích, tunelování
-    \item přesnost IEEE floatu - hodně malé/velké objekty, zaokrouhlovací chyba
-    \item constraint solver, nesplnitelné constrainty, iterativní metody
-    \item to, že collidery neodpovídají meshům, taky nepřidává přesnosti
-    \item ladění - parametry fixedFrameDuration, iterationCount, který constraint solver se používá apod.
-    \item zmínit vestavěný Physics Debugger
-\end{itemize}
+
+Problémy se stabilitou simulace se velmi výrazně projevují u jointů, jde však o velký problém, na který není těžké narazit na mnoha dalších místech. Jeho jádro tkví přirozeně ve faktu, že primárním cílem fyzikálního systému, kterému se všechny ostatní musí podřídit, je \textbf{schopnost běhu v reálném čase}. Veškeré prováděné výpočty tedy z principu věci nutně vytvářejí jen velmi hrubou, i když pro mnoho účelů dostatečnou aproximaci reality.
+
+Jednou z příčin, kterou jsme již nastínili, je \textbf{krokovaný charakter simulace}, jež podporuje výskyt úkazů jako je tunelování. Avšak i kdyby výkon umožňoval řádově zvýšit počet kroků vykonaných na jednotku času, problém by nezmizel, pouze by se amplifikoval efekt jiného ze zdrojů nestability, kterým je \textbf{nepřesnost čísel s plovoucí desetinnou čárkou}, jež jsou k výpočtům používány. I v současných podmínkách, pokud necháme dlouho běžet jedinou scénu, není problém po několika hodinách začít pozorovat různá nedefinovaná chování způsobená hromaděním zaokrouhlovací chyby.   
+
+Dalším faktorem jsou \textbf{řešičky}, pomocí kterých jsou počítány síly potřebné k řešení kolizí a uspokojení požadavků jointů. Algoritmy v nich používané jsou v zájmu výkonu aproximativní a vykonávané s nízkým počtem iterací.
+
+Pro fyzikální systém je tedy nutností alespoň poskytnout tvůrci hry možnost \textbf{konfigurace parametrů}, které na stabilitu mají vliv - mezi základními najdeme např. interval mezi fixními updaty, počet iterací pro řešičku či variantu algoritmu, již má řešička používat.
+
+Velmi užitečným nástrojem je rovněž vestavěný \textbf{fyzikální debugger}, který umožňuje mnoho jevů a fyzikálních objektů v reálném čase vizualizovat.
+
 
 
 \section{Shrnutí}
