@@ -5,7 +5,7 @@ V této kapitole čtenáře seznámíme s herním enginem Unity \cite{Unity} do 
 
 \section{Herní engine Unity} \label{unityEngineIntroSection}
 
-První verze enginu Unity byla vydána v roce 2005. Od té doby bylo vydáno mnoho verzí, přidáno mnoho funkcionalit a mnoho dalších prohlášeno za zastaralé. Tvůrcům se dařilo držet krok s dobou, v dnešní době jde o velmi vyspělý a moderní engine, který uživatelům nabízí \textbf{široký ekosystém nástrojů}, ať už jde o integrované komponenty, nebo balíčky třetích stran. 
+První verze enginu Unity byla představena v roce 2005. Od té doby bylo vydáno mnoho verzí, přidáno mnoho funkcionalit a mnoho dalších prohlášeno za zastaralé. Tvůrcům se dařilo držet krok s dobou, v dnešní době jde o velmi vyspělý a moderní engine, který uživatelům nabízí \textbf{široký ekosystém nástrojů}, ať už jde o integrované komponenty, nebo balíčky třetích stran. 
 
 Jednou z jeho velkých sil je \textbf{všestrannost} - zvládá stejně dobře 2D i 3D hry, výsledný spustitelný produkt lze vyexportovat pro širokou škálu platforem - desktopové, mobilní, konzole i web.
 
@@ -119,34 +119,45 @@ Užitečnou informací je, že tento subsystém je pouze tenkým rozhraním pro 
 
 Pro zaručení větší stability je pravidlem, že by fyzikální simulace měla být aktualizována ve fixních časových intervalech. Unity tedy pro tyto účely nabízí \textbf{fixní herní smyčku}, která běží (rovněž v hlavním vlákně) paralelně s tou klasickou. Ve skriptu můžeme poslouchat na zprávu FixedUpdate() - ta je zavolána každý fixní snímek, těsně před vykonáním kroku fyzikální simulace. 
 
-Subsystém si vede vlastní interní reprezentaci celé scény. Nad tou vykonává veškeré výpočty, až po dokončení každého kroku podle ní updatuje transformy objektů ve scéně.
+Subsystém si vede vlastní interní reprezentaci celé scény. Nad tou vykonává veškeré výpočty, až po dokončení celého kroku simulace podle ní updatuje transformy objektů ve scéně. 
 
 \subsection{Rigidbody}
-\begin{itemize}
-    \item non-kinematic VS kinematic
-    \item properties (mass, center-of-mass+inertia-tensor, (angular) drag, axis-lock,...)
-    \item jak se chová vůči transform-hierarchii
-          \begin{itemize}
-            \item fyzika používá globální souřadnice objektů
-            \item collidery v potomcích patří otcovskému rigidbody
-            \item rigidbody uvnitř rigidbody -> undefined behavior
-          \end{itemize}
-\end{itemize}
 
-\subsection{Colliders}
-\begin{itemize}
-    \item zmínit že to je nejvíc základní a používaná funkcionalita physics systému, kvůli který ho spousta her includuje i když nepoužívají žádný non-kinematic rigidbodies a tak.  
-    \item primitivní tvary, jejich skládání, nefunkčnost obecné maticové deformace (vždy zachovává kvádrovost, kulovost, kapsulovost)
-    \item NEodpovídá(!) přesně tvaru meshe a v tom je pointa, ale když se umístěj šikovně, nijak to nekazí hráčský zážitek
-    \item (letmo zmínit) mesh collidery existují - ale je u nich dost omezení, mají smysl jenom na terén apod.
-    \item statické vs dynamické collidery (úplně samostatné / kinematic / non-kinematic) - co s čím koliduje a jak se chovaj když se pohybujou (pohyblivé collidery by měly být na nějakém (klidně kinematickém) rigidbody)
-    \item trigger collidery
-    \item Layers - co s čím koliduje; slouží i pro jinou funkcionalitu naprosto nesouvisející s fyzikou(!) ( další problémy rozebereme v \ref{swordCollisionsSection})
-    \item zpráva OnCollisionXx / OnTriggerXx
-    \item discrete VS continuous collision detection (jenom že existuje, podrobněji v \ref{swordCollisionsSection})
-\end{itemize}
+Základní komponentou je Rigidbody. Jeho přidáním získá herní objekt schopnost být ovlivňován silami a působit silami na ostatní objekty.
+
+Přímo na této komponentě můžeme nastavit jeho základní parametry jako je váha, poloha těžiště, zda na něj má působit gravitace či zda je \textbf{kinematické}.
+
+\textbf{Nekinematické} rigidbody má pohyb plně ovládaný fyzikální simulací. Každý fyzikální snímek je systémem pohnuto dle své aktuální rychlosti (rigidbody.velocity), tu mohou ovlivňovat síly, které na něj působí - vyvolané buď gravitací, kolizemi, nebo aplikací ze skriptu (rigidbody.AddForce(), rigidbody.AddTorque()).
+
+\textbf{Kinematické} oproti tomu může působit (kolizními) silami na ostatní objekty, avšak samo fyzikálním systémem ovládané není - jeho pohyb je plně v režii programátora, který ho může vykonávat klasicky updatováním komponenty Transform.
+
+Mezi těmito dvěma stavy \textbf{lze přepínat} jednoduše úpravou flagu (rigidbody.isKinematic). Nečiní tedy problém mít např. meč, který je plně fyzikálně simulovaný, ale při sesílání kouzla se přepne a přehraje předpřipravenou animaci, či naopak postavu, která je ovládána animacemi, ale v okamžiku smrti se změní ve fyzikálně simulovanou ragdoll.
+
+\subsection{Collider}
+
+Collidery jsou komponenty, které určují pro účely fyzikálního systému tvar objektu a umožňují mu kolidovat s ostatními objekty. 
+
+V komplikovanější scéně jich často v jednom okamžiku najdeme vyšší stovky až tisíce. Proto je jedním z nejdůležitějších úkolů každého fyzikálního systému zaručit, aby detekce kolizí probíhala \textbf{co nejefektivněji} a byl tím pádem umožněn běh hry v reálném čase.
+
+Jedním z prostředků, které pomáhají toho dosáhnout, je použití \textbf{primitivních tvarů} namísto colliderů přesně odpovídajících grafickému meshi objektu\footnote{Collidery definované meshem do jisté míry podporovány jsou, ale nesou mnohá omezení. Jejich použití má smysl převážně pro statický terén herního světa a zde se jimi nebudeme zaobírat.}. Unity nám nabízí tři - \textbf{krychli, kouli a kapsli}\footnote{válec s polokoulemi na obou koncích} - na objekt je umístíme přidáním odpovídající komponenty (BoxCollider, SphereCollider, CapsuleCollider). Komplexnějších tvarů dosahujeme skládáním více colliderů dohromady\footnote{Skutečně jde o jedinou možnost. Bystrý čtenář by mohl očekávat, že šikovným použitím transformační matice na herním objektu, kde se collider nalézá, by neměl být problém např. z BoxCollideru vytvořit rovnoběžnostěn. V dokumentaci se však lze dočíst, že podobné transformace ústí v nedefinované chování.}. Tím lze samozřejmě vytvořit pouze hrubou aproximaci skutečného tvaru objektu, v praxi se to však ukazuje jako naprosto dostatečné - při umném rozmístění hráčský zážitek obvykle nijak netrpí.
+
+\textbf{Tvar rigidbody} stanovíme tak, že umístíme libovolné množství colliderů do objektu, kde je komponenta rigidbody definována, či libovolně do jeho potomků. Všechny tyto collidery jsou následně považovány dohromady za jeden kompozit, který popisuje celkový tvar rigidbody. 
+
+\textbf{Statickým} colliderem nazveme takový, který není součástí hierarchie žádného rigidbody. Takový collider je schopen kolidovat s rigidbodies a sloužit pro ně jako překážka. Je považován za pevnou součást scény a jeho transform by měl po celé trvání hry zůstat stejný (pohyb může ústit v nedefinované chování). Chceme-li collider s chováním statického, kterým však můžeme bez obav pohybovat, umístíme jej do kinematického rigidbody. Statické a kinematické collidery přirozeně vzájemně nekolidují.
+
+Jemnější kontrolu nad tím, \textbf{co s čím může kolidovat}, nám poskytují tzv. \textbf{Layers}. Jde o pojmenované skupiny, kterých může být definováno nanejvýš 32 a nastavují se jako vlastnost herního objektu (gameObject.layer). V globálním nastavení herního projektu lze následně pro konkrétní páry vrstev kolize zakázat - takové dva objekty následně projdou bez reakce skrze sebe, kolize nebude ani detekována. Pro jemnější kontrolu je každý collider vybaven whitelistem a blacklistem vrstev, pomocí kterého lze globální nastavení přepsat. Ještě jemnější kontroly pak je možné dosáhnout ze skriptu - pomocí statické metody UnityEngine.Physics.IgnoreCollision() lze zakázat kolize pro konkrétní pár colliderů\footnote{Takto je však možné pouze kolize selektivně zakázat, nikoliv povolit. IgnoreCollision(a, b, false) pro a, b na vrstvách, které se ignorují, stále zanechá tento pár neschopný kolize.}.
+
+Často potřebujeme pouze detekovat, že ke kolizi dvou objektů došlo, aniž bychom z toho vyvozovali nějaké fyzikální implikace - např. pokud fotbalový míč vstoupí do vnitřní části branky, chceme započítat gól, avšak rozhodně nechceme, aby vnitřek branky sám míči jakkoliv bránil ve vstupu. Pro tyto účely slouží flag \textbf{collider.isTrigger}. Po jeho zaškrtnutí collider přestane na kolidující objekty působit silami bránícími v průniku, stále však budou kolize detekovány.
+
+Každá probíhající kolize je kolidujícímu hernímu objektu komunikována \textbf{posíláním zpráv} OnCollisionEnter, OnCollisionStay a OnCollisionExit. V případě trigger collideru jsou posílány obdobné zprávy začínající na OnTrigger - rozdíl mezi nimi je ten, že argument OnCollision obsahuje podrobné informace o bodech dotyku a silách použitých k rozřešení, OnTrigger poskytne pouze druhý collider. 
+
+Velmi důležitým aspektem tohoto chování, který oficielní dokumentace zcela zamlčuje, je, že v případě Rigidbody jsou OnCollision zprávy poslány pouze do kořenového herního objektu - i v případě, že konkrétní kolidující collider se nachází v jednom z jeho potomků. OnTrigger zprávy jsou pak poslány vždy jak do kořenu, tak do konkrétního triggerovaného objektu. Do žádného z dalších objektů v hierarchii však stále ne. Toto má velký význam v kontextu toho, že ani OnCollision, ani OnTrigger svým argumentem neposkytují odkaz na konkrétní collider, jehož prostřednictví naše rigidbody zkolidovalo (pouze na ten, který zkolidoval s námi) - dozvědět se spolehlivě\footnote{Nespolehlivou cestou je např. collision.GetContact(0).thisCollider. Dle dokumentace máme mít zaručeno, že collision vždy bude obsahovat alespoň jeden kontakt. To však platí s výjimkou OnCollisionExit a ve skutečnosti se tak často neděje ani v ostatních zprávách.}, který to byl, je tedy, především pro zprávu OnCollision, velmi netriviální problém, který může mít dalekosáhlé následky pro některé aspekty architektury našeho systému.
+
+Poslední důležitou problematikou, kterou letmo zmíníme, jsou metody \textbf{detekce kolizí}. Výchozí je detekce diskrétní - ta zkrátka každý krok simulace projde celou scénu a provede testy, zda aktuálně nějaké objekty mají neprázdný průnik. To je rychlé a v mnoha případech funguje dostatečně dobře. Problém však činí rychle letící či malé objekty - klasickým případem je projektil vystřelený z palné zbraně. U toho se může stát, že v jednom snímku je na jedné straně stěny, ve snímku následujícím již zcela na straně druhé, aniž by jakákoliv kolize byla detekována - projektil tzv. \textbf{protuneloval}. Řešení tohoto problému nabízí \textbf{spojitá detekce kolizí} - ta propočítává celkovou dráhu objektu v průběhu času mezi snímky a ústí tedy v horší výkon. Konkrétní implementace, které Unity nabízí, budou velmi relevantní pro \ref{swordCollisionsSection} a podrobně je tedy představíme tam.
 
 \subsection{Joints}
+
+
 \begin{itemize}
     \item (velmi stručně) co je constraint solver a jaký používá Unity
     \item strohý výčet jmen jointů a že všechny jsou to speciální případ Configurable Jointu (neboli D6 jointu jak ho zná PhysX)
