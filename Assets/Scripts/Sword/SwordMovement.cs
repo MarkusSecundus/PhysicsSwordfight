@@ -20,7 +20,7 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
     [field: SerializeField] public ConfigurableJoint Joint { get; private set; }
     [field: SerializeField] public ISwordInput Input { get; private set; }
 
-    public Rigidbody SwordWielder => Joint.connectedBody;
+    public Transform SwordWielder => Joint.connectedBody.transform;
 
     void Start()
     {
@@ -68,7 +68,7 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
             StartCoroutine(connectedAnchorPositioner = new ConnectedAnchorInterpolator
             {
                 ToYield = new WaitForFixedUpdate(),
-                DeltaGetter = () => Time.fixedDeltaTime,
+                DeltaTimeGetter = () => Time.fixedDeltaTime,
                 Getter = () => this.Joint.connectedAnchor,
                 Setter = value => this.Joint.connectedAnchor = value,
                 Config = this.HandleTweaks.HandleMovementInterpolationConfig,
@@ -83,7 +83,7 @@ public class SwordMovement : MonoBehaviour, ISwordMovement
             holdingForceSetter = new HoldingForceInterpolator
             {
                 ToYield = new WaitForFixedUpdate(),
-                DeltaGetter = () => Time.fixedDeltaTime,
+                DeltaTimeGetter = () => Time.fixedDeltaTime,
                 Getter = () => holdingForceRatio,
                 Setter = value =>
                 {
@@ -145,7 +145,7 @@ public interface ISwordMovement
 {
     public SwordDescriptor Sword { get;  }
     public ISwordInput Input { get; }
-    public Rigidbody SwordWielder { get; }
+    public Transform SwordWielder { get; }
 
     [System.Serializable]
     public struct MovementCommand

@@ -48486,6 +48486,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2515318023517387343, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3021719034865037462, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -48602,9 +48606,25 @@ PrefabInstance:
       propertyPath: inputCamera
       value: 
       objectReference: {fileID: 2116216860}
+    - target: {fileID: 6362023559609871262, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: Tweaks.LookLeftRight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362023559609871262, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: Tweaks.LookConstraints.Max.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362023559609871262, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: Tweaks.LookConstraints.Min.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7475771558839725715, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

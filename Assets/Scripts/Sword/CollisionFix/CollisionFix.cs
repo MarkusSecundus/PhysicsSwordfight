@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(SwordDescriptor)), RequireComponent(typeof(Rigidbody))]
 public partial class CollisionFix : MonoBehaviour
 {
     public static int TargetLayer => ColliderLayers.CollisionFix;

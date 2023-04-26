@@ -50,7 +50,7 @@ public class SwordsmanAI : MonoBehaviour
     {
         agent = GetComponentInChildren<NavMeshAgent>();
         agent.DisableAllUpdates();
-        agent.Warp(agent.transform.position);
+        agent.Warp(agent.transform.position); 
     }
 
     void SetNavmeshTarget()

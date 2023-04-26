@@ -26,7 +26,7 @@ public class RetargetableInterpolator<TValue, TInterpolationPolicy> : IEnumerato
     public System.Action<TValue> Setter { get; init; }
 
     public object ToYield { get; init; }
-    public System.Func<float> DeltaGetter { get; init; }
+    public System.Func<float> DeltaTimeGetter { get; init; }
 
     public TValue Target { get; set; }
     public RetargetableInterpolator.Config Config { get; init; }
@@ -35,7 +35,7 @@ public class RetargetableInterpolator<TValue, TInterpolationPolicy> : IEnumerato
 
     public bool MoveNext()
     {
-        Setter(default(TInterpolationPolicy).Invoke(Getter(), Target, Config.InterpolationFactor*DeltaGetter()));
+        Setter(default(TInterpolationPolicy).Invoke(Getter(), Target, Config.InterpolationFactor*DeltaTimeGetter()));
         return true;
     }
 

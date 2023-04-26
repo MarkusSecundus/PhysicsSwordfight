@@ -8,7 +8,7 @@ public class SwordMovementMode_Recording : SwordMovement.Submodule, ISwordMoveme
 {
     public SwordDescriptor Sword => Script.Sword;
     public ISwordInput Input => Script.Input;
-    public Rigidbody SwordWielder => Script.SwordWielder;
+    public Transform SwordWielder => Script.SwordWielder;
     
     public UnityEvent<ISwordMovement.MovementCommand> MovementReporter = new UnityEvent<ISwordMovement.MovementCommand>();
     public ScriptSubmodulesContainer<KeyCode, Submodule, ISwordMovement> Modes;
