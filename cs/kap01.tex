@@ -345,18 +345,15 @@ Mnoho problémů, kterými \acs{VR} trpí, plynou z jeho základní premisy pln�
 
 V takovém případě by náš výsledek mohl vypadat zhruba podobně jako konzole Nintendo Wii. Pro tu byla vydána řada her založených na použití jejího ovladače Wii Remote - pro nás je důležitá zejména \textbf{The Legend of Zelda: Skyward Sword} \cite{ZeldaSkywardSword}. Jednou z ústředních mechanik této hry je jemně ovladatelný meč - používaný jak k boji, tak k řešení logických hádanek. Z dobových recenzí (\cite{SkywardReviewNintendolife} \cite{SkywardReviewIgn}) je zřejmé, že vše funguje velmi dobře. 
 
-Wii je v dnešní době zastaralou platformou, pro kterou nemá smysl vyvíjet nové hry, avšak samostatný ovladač Wii Remote lze ve výprodeji pořídit vcelku levně\footnote{Narozdíl od ovladačů pro moderní VR headsety, které typicky samostatně prodejné nejsou.} a díky komunitnímu úsilí \cite{WiiRemoteUnityAPI} by neměl být problém s jeho použitím jako ovladač pro PC hru v enginu Unity. Stále však nelze očekávat, že většinový hráč bude ochotný kvůli naší hře ovladač pořizovat, a i mimo to, vydání komerční hry pro PC platformu hlásící se k jeho podpoře by mohlo být velmi obtížné po právní stránce.
+Wii je v dnešní době zastaralou platformou, pro kterou nemá smysl vyvíjet nové hry, avšak samostatný ovladač Wii Remote lze ve výprodeji pořídit vcelku levně\footnote{Narozdíl od ovladačů pro moderní \acs{VR} headsety, které typicky samostatně prodejné nejsou.} a díky komunitnímu úsilí \cite{WiiRemoteUnityAPI} by neměl být problém s jeho použitím jako ovladač pro PC hru v enginu Unity. Stále však nelze očekávat, že většinový hráč bude ochotný kvůli naší hře ovladač pořizovat, a i mimo to, vydání komerční hry pro PC platformu hlásící se k jeho podpoře by mohlo být velmi obtížné po právní stránce.
 
 Jistě má však tento ovladač potenciál posloužit v průběhu tvorby hry jako \textbf{interní nástroj} pro testování konceptů, či jako kontrolní bod, vůči kterému lze srovnávat experimentální alternativy.
 
 \subsection{Pohybové senzory ve smartphonu}
 
+Alternativou, která má potenciál vyřešit problém dostupnosti, je použití chytrého telefonu jako ovladače. Smartphony jsou typicky vybaveny širokou škálou senzorů, s jejichž pomocí by monitorování pohybu ve 3D prostoru nemělo hypoteticky činit problém. Stačilo by tedy vytvořit aplikaci, která se po síti spáruje s herním PC a následně mu bude posílat výstupy těchto senzorů?
 
-
-%(nevýhody)
-%- fragmentace mobilního trhu, nekonzistence výstupu senzorů mezi různými mobily
-%- způsob připojení (ne každej desktop má bluetooth nebo wifi, kabel je nepraktickej; celkově mobily asi maj problém s nízkolatenčním přenosem po místní síti)
-%- najít nějakej článek
+V praxi však kvalita výstupů těchto senzorů není na přijatelné úrovni \cite{SmartphoneSensorsEvaluation} - typicky trpí na silné zašumění, rovněž je problémem extrémní fragmentace mobilního trhu, kdy každý jednotlivý model telefonu produkuje šum jiným způsobem a vyžaduje jinou ruční kalibraci. Tyto limitace by mohly být překonatelné - ve spřízněných oblastech se např. ukazují jako velmi nápomocné metody strojového učení \cite{AccelerometerStepDetectionUsingML} - avšak k tomu je třeba mnoho dalšího výzkumu, a ten postupuje pomalu.
 
 \subsection{Shrnutí}
 Provedli jsme zamyšlení nad alternativními způsoby ovládání, které by usnadnily náš úkol poskytnout hráči intuitivní a jemnou kontrolu nad mečem. Ovladače pro \acs{VR} jsou očividným řešením, dokonce již existuje několik her, které jejich velmi dobrou použitelnost demonstrují v praxi. Stále však jde o malý trh, který se jen velmi pomalu rozšiřuje do mainstreamu - omezíme-li se na něj, citelně se zůží potenciální hráčské publikum.
