@@ -321,8 +321,7 @@ O plně flexibilní systém umožňující \textbf{volný pohyb zbraně} a boj j
 
 Jak jsme si nastínili v předchozí sekci, \textbf{ovládání} je těžkým problémem, který musí vyřešit každá hra, která se hráči pokouší poskytnout nad zbraní větší kontrolu. V dosavadní části práce jsme však brali v úvahu výhradně běžné ovladací periferie - počítačovou myš a klávesnici, popř. ovladač u herní konzole. Jejich společným znakem je dvourozměrný charakter informace, jíž poskytují. Hlavní problém pak plyne z potřeby namapovat tuto 2D hodnotu na 3D polohu meče. 
 
-Existuje však mnoho dalších způsobů ovládání - některé se pomalu rozšiřují směrem k mainstreamu, některé jsou předmětem experimentálního výzkumu. 
-V této sekci se podíváme na dva takové méně obvyklé způsoby ovládání, které mají potenciál posloužit jako zdroj 3D vstupu.
+Existuje však mnoho dalších, méně obvyklých způsobů ovládání. V této sekci se podíváme na několik z nich, které mají potenciál posloužit jako zdroj 3D vstupu.
 
 \subsection{Virtuální realita} \label{VRControllers}
 
@@ -334,19 +333,25 @@ Ať už se však \acs{VR} zdá jakkoliv ideálním místem pro chladnou zbraň, 
 
 Dalším problémem je \textbf{disonance mezi polohou ovladače v reálném a polohou meče v herním světě}. Obecně se hry snaží držet tyto dvě synchronizované, problém však nastane, jakmile meč zaznamená \textbf{kolizi}. V takové situaci zpravidla ovladač spustí nepříjemné vibrace, nic více však není v jeho silách. Dle hráčských výpovědí takovými situacemi velmi trpí imerze a celkový herní zážitek. 
 
-Pro kolize se statickými objekty herní scény zřejmě neexistuje dobré řešení. V praxi hojně užívaným řešením pro kolize s nepřátelskými zbraněmi je zkrátka prioritizovat pohyb hráčovy zbraně a nepřátele učinit druhořadými entitami, jejichž zbraň musí té hráčově vždy ustopit. Takový přístup má přirozeně dalekosáhlé následky na gameplay a není použitelný v multiplayeru. 
+Pro situaci kolize se statickými objekty herní scény zřejmě neexistuje dobré řešení. V praxi hojně užívaným řešením pro kolize s nepřátelskými zbraněmi je zkrátka prioritizovat pohyb hráčovy zbraně a nepřátele učinit druhořadými entitami, jejichž zbraň musí té hráčově vždy ustopit. Takový přístup má přirozeně dalekosáhlé následky na gameplay a není použitelný v multiplayeru. 
 
-Vidíme tedy, že boj s chladnými zbraněmi ve \acs{VR} je osobitým polem, které nabízí velmi jiné silné stránky, výzvy a oblasti hodné prozkoumání, než jeho podoba pro klasické PC.
+Vidíme tedy, že boj s chladnými zbraněmi ve \acs{VR} je osobitým polem, které nabízí velmi odlišné silné stránky, výzvy a oblasti hodné prozkoumání, než jeho podoba pro klasické PC.
 
 V této práci se však touto problematikou nebudeme hlouběji zabývat, protože stále jde o způsob hraní poměrně \textbf{málo rozšířený} mezi hráčskou populací. Konkurenční boj tlačí ceny dolů, stále je zde však velmi mnoho hráčů, pro které je \acs{VR} cenově nedostupná. Limitující mohou být i technické faktory - např. rozlišení displejů používaných v současných headsetech či jejich nízká obnovovací frekvence mohou pro některé hráče z \acs{VR} učinit velmi nepříjemný zážitek. 
 
 \subsection{Wii Remote}
 
+Mnoho problémů, kterými \acs{VR} trpí, plynou z jeho základní premisy plně přenést hráče do virtuálního světa. Co kdybychom se tedy zbavili headsetu a nechali si pouze ovladač jako doplněk k periferiím klasického PC?
+
+V takovém případě by náš výsledek mohl vypadat zhruba podobně jako konzole Nintendo Wii. Pro tu byla vydána řada her založených na použití jejího ovladače Wii Remote - pro nás je důležitá zejména \textbf{The Legend of Zelda: Skyward Sword} \cite{ZeldaSkywardSword}. Jednou z ústředních mechanik této hry je jemně ovladatelný meč - používaný jak k boji, tak k řešení logických hádanek. Z dobových recenzí (\cite{SkywardReviewNintendolife} \cite{SkywardReviewIgn}) je zřejmé, že vše funguje velmi dobře. 
+
+Wii je v dnešní době zastaralou platformou, pro kterou nemá smysl vyvíjet nové hry, avšak samostatný ovladač Wii Remote lze ve výprodeji pořídit vcelku levně\footnote{Narozdíl od ovladačů pro moderní VR headsety, které typicky samostatně prodejné nejsou.} a díky komunitnímu úsilí \cite{WiiRemoteUnityAPI} by neměl být problém s jeho použitím jako ovladač pro PC hru v enginu Unity. Stále však nelze očekávat, že většinový hráč bude ochotný kvůli naší hře ovladač pořizovat, a i mimo to, vydání komerční hry pro PC platformu hlásící se k jeho podpoře by mohlo být velmi obtížné po právní stránce.
+
+Jistě má však tento ovladač potenciál posloužit v průběhu tvorby hry jako \textbf{interní nástroj} pro testování konceptů, či jako kontrolní bod, vůči kterému lze srovnávat experimentální alternativy.
+
 \subsection{Pohybové senzory ve smartphonu}
 
-%(výhody)
-%- dostupnost
-%- otevřenost platformy, programátorská flexibilita (hackovatelnost)
+
 
 %(nevýhody)
 %- fragmentace mobilního trhu, nekonzistence výstupu senzorů mezi různými mobily
