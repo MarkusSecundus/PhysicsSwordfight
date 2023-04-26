@@ -1,4 +1,5 @@
 using DG.Tweening;
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,6 @@ public class SwordmillBehavior : MonoBehaviour
     SwordmillAssembly assembly;
 
     ConfigurableJoint rotor => assembly.Rotor;
-    JointRotationHelper rotationHelper;
     [System.Serializable] public struct MovementStep
     {
         public Vector3 Offset;
@@ -28,7 +28,6 @@ public class SwordmillBehavior : MonoBehaviour
     void Start()
     {
         assembly = GetComponent<SwordmillAssembly>();
-        rotationHelper = rotor.MakeRotationHelper();
         originalConnectedAnchor = rotor.connectedAnchor;
         rotor.autoConfigureConnectedAnchor = false;
         rotor.connectedAnchor = originalConnectedAnchor;

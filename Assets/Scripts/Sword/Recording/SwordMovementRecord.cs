@@ -1,3 +1,4 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Serialization;
 using Newtonsoft.Json;
 using System;
 using System.Collections;

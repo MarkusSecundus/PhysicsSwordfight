@@ -3,24 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManagementActionsHelper : MonoBehaviour
+namespace MarkusSecundus.PhysicsSwordfight.GUI
 {
-    float initialTimeScale;
-    private void Awake()
+    public class GameManagementActionsHelper : MonoBehaviour
     {
-        if(initialTimeScale <= 0f)
-            initialTimeScale = Time.timeScale;
-    }
+        float initialTimeScale;
+        private void Awake()
+        {
+            if (initialTimeScale <= 0f)
+                initialTimeScale = Time.timeScale;
+        }
 
-    public void ExitGame()
-    {
-        Application.Quit();
-    }
+        public void ExitGame()
+        {
+            Application.Quit();
+        }
 
-    public void RestartScene()
-    {
-        var scene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(scene.name);
-        Time.timeScale = 1f;
+        public void RestartScene()
+        {
+            var scene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(scene.name);
+            Time.timeScale = 1f;
+        }
     }
 }

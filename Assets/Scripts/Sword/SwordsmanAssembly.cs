@@ -1,3 +1,5 @@
+using MarkusSecundus.PhysicsSwordfight.GUI;
+using MarkusSecundus.PhysicsSwordfight.Sword.Damage;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

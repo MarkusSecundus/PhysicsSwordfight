@@ -1,4 +1,4 @@
-using MarkusSecundus.Util;
+using MarkusSecundus.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

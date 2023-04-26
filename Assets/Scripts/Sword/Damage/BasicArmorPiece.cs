@@ -2,16 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicArmorPiece : IArmorPiece
+namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
 {
-    public float MinDamage = 2f;
-    public float DamageMultiplier = 1f;
-    public override Damageable BaseDamageable => base.BaseDamageable ??= GetComponentInParent<Damageable>();
-
-    protected override AttackDeclaration? ProcessAttackDeclaration(AttackDeclaration attack)
+    public class BasicArmorPiece : IArmorPiece
     {
-        attack = attack.With(damage: attack.Damage*DamageMultiplier);
-        if (attack.Damage < MinDamage) return null;
-        return attack;
+        public float MinDamage = 2f;
+        public float DamageMultiplier = 1f;
+        public override Damageable BaseDamageable => base.BaseDamageable ??= GetComponentInParent<Damageable>();
+
+        protected override AttackDeclaration? ProcessAttackDeclaration(AttackDeclaration attack)
+        {
+            attack = attack.With(damage: attack.Damage * DamageMultiplier);
+            if (attack.Damage < MinDamage) return null;
+            return attack;
+        }
     }
 }

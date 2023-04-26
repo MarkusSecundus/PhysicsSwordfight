@@ -1,3 +1,4 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -6,38 +7,40 @@ using UnityEngine;
 
 using SymbolKey = System.String;
 
-public class SymbolMap : MonoBehaviour
+namespace MarkusSecundus.PhysicsSwordfight.Symbols
 {
-    public static SymbolMap Get(GameObject o) => o.GetComponentInParent<SymbolMap>();
-
-    [SerializeField] SerializableDictionary<SymbolKey, Component> Components;
-    [SerializeField] SerializableDictionary<SymbolKey, float> Floats;
-
-    public bool TryGet<TComponent>(SymbolKey key, out TComponent ret) where TComponent : Component
+    public class SymbolMap : MonoBehaviour
     {
-        ret = default;
-        return (Components.Values.TryGetValue(key, out var retComponent) && (ret = retComponent as TComponent) != null) ;
-    }
-    public bool TryGetFloat(SymbolKey key, out float ret) => Floats.Values.TryGetValue(key, out ret);
+        public static SymbolMap Get(GameObject o) => o.GetComponentInParent<SymbolMap>();
 
+        [SerializeField] SerializableDictionary<SymbolKey, Component> Components;
+        [SerializeField] SerializableDictionary<SymbolKey, float> Floats;
 
-
-    System.Action<string> logError => s => Debug.LogError(s, this);
-    public void IndirectMessage(string calleeAndMessage, bool calleeMustExist)
-    {
-        if (IndirectionUtils.IndirectMessage.Make(calleeAndMessage, logError) is IndirectionUtils.IndirectMessage message)
+        public bool TryGet<TComponent>(SymbolKey key, out TComponent ret) where TComponent : Component
         {
-            if (TryGet<Component>(message.CalleeName, out var callee))
-            {
-                message.Invoke(callee, logError);
-            }
-            else if (calleeMustExist)
-                Debug.LogError($"Failed sending message '{calleeAndMessage}' - no callee '{message.CalleeName}' was found", this);
+            ret = default;
+            return (Components.Values.TryGetValue(key, out var retComponent) && (ret = retComponent as TComponent) != null);
         }
-    }
+        public bool TryGetFloat(SymbolKey key, out float ret) => Floats.Values.TryGetValue(key, out ret);
 
-    public void IndirectMessage(string calleeAndMessage) => IndirectMessage(calleeAndMessage, true);
-    public void TryIndirectMessage(string calleeAndMessage) => IndirectMessage(calleeAndMessage, false);
+
+
+        System.Action<string> logError => s => Debug.LogError(s, this);
+        public void IndirectMessage(string calleeAndMessage, bool calleeMustExist)
+        {
+            if (IndirectionUtils.IndirectMessage.Make(calleeAndMessage, logError) is IndirectionUtils.IndirectMessage message)
+            {
+                if (TryGet<Component>(message.CalleeName, out var callee))
+                {
+                    message.Invoke(callee, logError);
+                }
+                else if (calleeMustExist)
+                    Debug.LogError($"Failed sending message '{calleeAndMessage}' - no callee '{message.CalleeName}' was found", this);
+            }
+        }
+
+        public void IndirectMessage(string calleeAndMessage) => IndirectMessage(calleeAndMessage, true);
+        public void TryIndirectMessage(string calleeAndMessage) => IndirectMessage(calleeAndMessage, false);
 
 #if false
     [SerializeField] SerializableDictionary<SymbolKey, string> Strings;
@@ -48,5 +51,6 @@ public class SymbolMap : MonoBehaviour
     public bool GetInteger(SymbolKey key, out int ret) => Integers.Values.TryGetValue(key, out ret);
     public bool GetVector(SymbolKey key, out Vector3 ret) => Vectors.Values.TryGetValue(key, out ret);
 #endif
-}
+    }
 
+}

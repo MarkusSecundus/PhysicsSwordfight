@@ -5,8 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.Networking.UnityWebRequest;
-
 
 [System.Serializable]
 public struct Vector3Interval
@@ -237,77 +235,6 @@ public static class VectorUtils
 	public static readonly Vector3 NaNVector3 = new Vector3(float.NaN, float.NaN, float.NaN);
 }
 
-
-public static class MeshUtils
-{
-
-	public static void CreateFlatMeshData(Vector2 begin, Vector2 steps, Vector2Int stepsCount, out Vector3[] vertices, out int[] triangles)
-	{
-		vertices = new Vector3[stepsCount.x * stepsCount.y];
-		{
-			int i = 0, y = 0;
-			for (float yf = begin.y; y < stepsCount.y; ++y, yf += steps.y)
-			{
-				int x = 0;
-				for (float xf = begin.x; x < stepsCount.x; ++x, xf += steps.x)
-					vertices[i++] = new Vector3(xf, yf, 0);
-			}
-		}
-
-		triangles = new int[(stepsCount.x - 1) * (stepsCount.y - 1) * 12];
-
-		{int i = 0;
-			for (int z = 0; z < stepsCount.y - 1; ++z)
-				for (int x = 0; x < stepsCount.x - 1; ++x)
-				{
-					triangles[i++] = ((z * stepsCount.x) + x);
-					triangles[i++] = ((z * stepsCount.x) + x + stepsCount.x);
-					triangles[i++] = ((z * stepsCount.x) + x + 1);
-					triangles[i++] = ((z * stepsCount.x) + x + 1);
-					triangles[i++] = ((z * stepsCount.x) + x + stepsCount.x);
-					triangles[i++] = ((z * stepsCount.x) + x + 1 + stepsCount.x);
-
-
-					triangles[i++] = ((z * stepsCount.x) + x + 1);
-					triangles[i++] = ((z * stepsCount.x) + x + stepsCount.x);
-					triangles[i++] = ((z * stepsCount.x) + x);
-
-					triangles[i++] = ((z * stepsCount.x) + x + 1 + stepsCount.x);
-					triangles[i++] = ((z * stepsCount.x) + x + stepsCount.x);
-					triangles[i++] = ((z * stepsCount.x) + x + 1);
-				}
-		}
-	}
-
-	public static Mesh MeshFromData(Vector3[] vertices, int[] triangles)
-    {
-		var m = new Mesh();
-		m.vertices = vertices;
-		m.triangles = triangles;
-		m.RecalculateNormals();
-		return m;
-    }
-
-
-	public static Vector3[] AdjustHeights(this Vector3[] self, Func<float, float, float> f)
-	{
-		if (self == null) return self;
-
-		for (int t = 0; t < self.Length; ++t)
-		{
-			var v = self[t];
-			self[t] = new Vector3(v.x, v.y, f(v.x, v.y));
-		}
-
-		return self;
-	}
-
-
-
-
-
-
-}
 
 public static class AnimationUtils
 {

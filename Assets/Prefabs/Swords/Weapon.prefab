@@ -183,12 +183,9 @@ MonoBehaviour:
   <Joint>k__BackingField: {fileID: 5692771888074364033}
   <Input>k__BackingField: {fileID: 0}
   Modes:
-    values:
-    - Key: 304
-      Value:
-        rid: 1235461945467076621
+    values: []
     _default:
-      rid: 1235462021595267073
+      rid: 1235462450841911314
   HandleTweaks:
     HandleMovementInterpolationConfig:
       InterpolationFactor: 9
@@ -198,14 +195,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 1235461945467076621
-      type: {class: SwordMovementMode_Block, ns: , asm: Assembly-CSharp}
-      data:
-        SwordDirectionHint: {fileID: 0}
-        InputIntersector: {fileID: 0}
-        HoldingForceMultiplier: 3
-    - rid: 1235462021595267073
-      type: {class: SwordMovementMode_Basic, ns: , asm: Assembly-CSharp}
+    - rid: 1235462450841911314
+      type: {class: SwordMovementMode_Basic, ns: MarkusSecundus.PhysicsSwordfight.Sword.Modules, asm: Assembly-CSharp}
       data:
         InputIntersectable: {fileID: 0}
         minLastVectorDiff: 0.3
@@ -228,6 +219,7 @@ MonoBehaviour:
     Overreach: 0.1
     ForceMultiplierForStandaloneMode: -1
   ActivationRadius: 3
+  HierarchiesToIgnore: []
 --- !u!114 &7510546756384617997
 MonoBehaviour:
   m_ObjectHideFlags: 0

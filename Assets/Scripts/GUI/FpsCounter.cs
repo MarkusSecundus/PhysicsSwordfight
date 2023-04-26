@@ -3,18 +3,21 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class FpsCounter : MonoBehaviour
+namespace MarkusSecundus.PhysicsSwordfight.GUI
 {
-    TMP_Text text;
-    [SerializeField] string format = "FPS: {0}";
-    void Start()
+    public class FpsCounter : MonoBehaviour
     {
-        text = GetComponent<TMP_Text>();
-    }
+        TMP_Text text;
+        [SerializeField] string format = "FPS: {0}";
+        void Start()
+        {
+            text = GetComponent<TMP_Text>();
+        }
 
-    void Update()
-    {
-        float fps = 1f / Time.unscaledDeltaTime;
-        text.text = string.Format(format, Mathf.RoundToInt(fps));
+        void Update()
+        {
+            float fps = 1f / Time.unscaledDeltaTime;
+            text.text = string.Format(format, Mathf.RoundToInt(fps));
+        }
     }
 }

@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ResourceBar : MonoBehaviour
+namespace MarkusSecundus.PhysicsSwordfight.GUI
 {
-    Slider slider;
-    void Awake()
+    public class ResourceBar : MonoBehaviour
     {
-        slider = GetComponentInChildren<Slider>();
-    }
+        Slider slider;
+        void Awake()
+        {
+            slider = GetComponentInChildren<Slider>();
+        }
 
 #if false
     private void Update()
@@ -18,9 +20,10 @@ public class ResourceBar : MonoBehaviour
     }
 #endif
 
-    public float Value
-    {
-        get => slider.normalizedValue;
-        set => slider.normalizedValue = Mathf.Clamp01(value);
+        public float Value
+        {
+            get => slider.normalizedValue;
+            set => slider.normalizedValue = Mathf.Clamp01(value);
+        }
     }
 }

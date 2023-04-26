@@ -3,16 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DieScreen : MonoBehaviour
+namespace MarkusSecundus.PhysicsSwordfight.GUI
 {
-    public static DieScreen Get() => GameObject.FindAnyObjectByType<DieScreen>();
-
-    public float FadeInDuration = 1f;
-    public void StartAndFadeIn()
+    public class DieScreen : MonoBehaviour
     {
-        gameObject.SetActive(true);
-        var group = GetComponent<CanvasGroup>();
-        group.alpha = 0f;
-        group.DOFade(1f, FadeInDuration);
+        public static DieScreen Get() => GameObject.FindAnyObjectByType<DieScreen>();
+
+        public float FadeInDuration = 1f;
+        public void StartAndFadeIn()
+        {
+            gameObject.SetActive(true);
+            var group = GetComponent<CanvasGroup>();
+            group.alpha = 0f;
+            group.DOFade(1f, FadeInDuration);
+        }
     }
 }

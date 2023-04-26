@@ -7,10 +7,13 @@ using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using System.Linq;
 
-using HoldingForceInterpolator = RetargetableInterpolator<float, RetargetableInterpolator.FloatInterpolationPolicy>;
-using ConnectedAnchorInterpolator = RetargetableInterpolator<UnityEngine.Vector3, RetargetableInterpolator.VectorInterpolationPolicy>;
+using HoldingForceInterpolator = MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator<float, MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator.FloatInterpolationPolicy>;
+using ConnectedAnchorInterpolator = MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator<UnityEngine.Vector3, MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator.VectorInterpolationPolicy>;
 using UnityEngine.Events;
 using Newtonsoft.Json;
+using MarkusSecundus.PhysicsSwordfight.Utils.Interpolation;
+using MarkusSecundus.PhysicsSwordfight.Input;
+using MarkusSecundus.PhysicsSwordfight.Submodules;
 
 public class SwordMovement : MonoBehaviour, ISwordMovement
 {

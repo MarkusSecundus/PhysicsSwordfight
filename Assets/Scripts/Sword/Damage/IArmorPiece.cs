@@ -4,32 +4,35 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class IArmorPiece : MonoBehaviour
+namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
 {
-    [System.Serializable] public class OnAttackedEvent : UnityEvent<AttackDeclaration> { }
-
-    [field: SerializeField]
-    public virtual Damageable BaseDamageable { get; protected set; }
-    protected abstract AttackDeclaration? ProcessAttackDeclaration(AttackDeclaration attack);
-
-    [SerializeField] OnAttackedEvent OnAttacked;
-
-    public static bool TryGet(Collider c, out IArmorPiece ret)
+    public abstract class IArmorPiece : MonoBehaviour
     {
-        ret = null;
-        if(c && (ret = c.GetComponentInParent<IArmorPiece>())!= null)
-            return true;
-        return false;
-    }
+        [System.Serializable] public class OnAttackedEvent : UnityEvent<AttackDeclaration> { }
 
-    public void ProcessAttack(AttackDeclaration attack)
-    {
-        var processed = ProcessAttackDeclaration(attack);
-        if(processed != null)
+        [field: SerializeField]
+        public virtual Damageable BaseDamageable { get; protected set; }
+        protected abstract AttackDeclaration? ProcessAttackDeclaration(AttackDeclaration attack);
+
+        [SerializeField] OnAttackedEvent OnAttacked;
+
+        public static bool TryGet(Collider c, out IArmorPiece ret)
         {
-            attack = processed.Value;
-            OnAttacked.Invoke(attack);
-            BaseDamageable.ChangeHP(-attack.Damage);
+            ret = null;
+            if (c && (ret = c.GetComponentInParent<IArmorPiece>()) != null)
+                return true;
+            return false;
+        }
+
+        public void ProcessAttack(AttackDeclaration attack)
+        {
+            var processed = ProcessAttackDeclaration(attack);
+            if (processed != null)
+            {
+                attack = processed.Value;
+                OnAttacked.Invoke(attack);
+                BaseDamageable.ChangeHP(-attack.Damage);
+            }
         }
     }
 }

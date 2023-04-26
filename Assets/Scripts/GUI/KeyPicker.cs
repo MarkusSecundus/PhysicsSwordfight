@@ -4,42 +4,45 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class KeyPicker : MonoBehaviour
+namespace MarkusSecundus.PhysicsSwordfight.GUI
 {
-    [System.Serializable] public class KeySetEvent : UnityEvent<KeyCode> { }
-
-    [SerializeField] string Format = "K: {0}", Prompt = "<Press a key>";
-
-    TMP_Text text;
-
-    public KeySetEvent OnKeySet;
-    private void Start()
+    public class KeyPicker : MonoBehaviour
     {
-        text = GetComponentInChildren<TMP_Text>();
-        UpdateText("");
-    }
-    public void PickButton()
-    {
-        UpdateText(Prompt);
-        StartCoroutine(waitForKeyPress());
-        IEnumerator waitForKeyPress()
+        [System.Serializable] public class KeySetEvent : UnityEvent<KeyCode> { }
+
+        [SerializeField] string Format = "K: {0}", Prompt = "<Press a key>";
+
+        TMP_Text text;
+
+        public KeySetEvent OnKeySet;
+        private void Start()
         {
-            for(; ; )
+            text = GetComponentInChildren<TMP_Text>();
+            UpdateText("");
+        }
+        public void PickButton()
+        {
+            UpdateText(Prompt);
+            StartCoroutine(waitForKeyPress());
+            IEnumerator waitForKeyPress()
             {
-                if (Input.anyKeyDown)
+                for (; ; )
                 {
-                    foreach (var v in EnumUtil.GetValues<KeyCode>())
-                        if (Input.GetKeyDown(v))
-                        {
-                            UpdateText(v.ToString());
-                            OnKeySet.Invoke(v);
-                            yield break;
-                        }
+                    if (UnityEngine.Input.anyKeyDown)
+                    {
+                        foreach (var v in EnumUtil.GetValues<KeyCode>())
+                            if (UnityEngine.Input.GetKeyDown(v))
+                            {
+                                UpdateText(v.ToString());
+                                OnKeySet.Invoke(v);
+                                yield break;
+                            }
+                    }
+                    yield return null;
                 }
-                yield return null;
             }
         }
-    }
 
-    void UpdateText(string keyName) => text.text = string.Format(Format, keyName);
+        void UpdateText(string keyName) => text.text = string.Format(Format, keyName);
+    }
 }

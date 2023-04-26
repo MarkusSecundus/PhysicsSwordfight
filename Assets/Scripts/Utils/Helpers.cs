@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
-using MarkusSecundus.Util;
+using MarkusSecundus.Utils;
+using MarkusSecundus.Utils.Datastructs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections;
@@ -76,14 +77,6 @@ public static class EnumUtil
     public static TEnum Parse<TEnum>(string name) => (TEnum)System.Enum.Parse(typeof(TEnum), name);
 
     public static TEnum[] GetValues<TEnum>() where TEnum : System.Enum => (TEnum[])System.Enum.GetValues(typeof(TEnum));
-}
-
-
-[System.Serializable]
-public struct InspectableKeyValuePair<TKey, TValue>
-{
-    public TKey Key;
-    public TValue Value;
 }
 
 
@@ -353,11 +346,6 @@ public static class HelperExtensions
         return ret;
     }
 
-    public static bool HasNullElement<T>(this (T? a, T? b) self) where T : unmanaged
-        => self.a == null || self.b == null;
-    public static bool HasNullElement<T>(this (T a, T b) self) where T : class
-        => self.a == null || self.b == null;
-
     public static bool IsEmpty<T>(this IReadOnlyCollection<T> self) => self==null || self.Count <= 0;
     public static Vector3 Average<T>(this IEnumerable<T> self, System.Func<T, Vector3> selector)
     {
@@ -383,21 +371,11 @@ public static class HelperExtensions
         ret.AddAll(self);
         return ret;
     }
-    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<InspectableKeyValuePair<TKey, TValue>> self)
-        => self.Select(p => new KeyValuePair<TKey, TValue>(p.Key, p.Value)).ToDictionary();
-
     public static ICollection<T> AddAll<T>(this ICollection<T> self, IEnumerable<T> toAdd)
     {
         foreach (var it in toAdd) self.Add(it);
         return self;
     }
-
-    public static T WithModified<T>(this T self, System.Action<T> modify) where T: struct
-    {
-        modify(self);
-        return self;
-    }
-
     public static string MakeString<T>(this IEnumerable<T> self, string separator=", ")
     {
         using var it = self.GetEnumerator();
@@ -452,10 +430,6 @@ public static class HelperExtensions
 
     public static Quaternion WithEuler(this Quaternion self, VectorField x = default, VectorField y = default, VectorField z = default) 
         => Quaternion.Euler(self.eulerAngles.With(x, y, z));
-    public static void Log(this string self, bool shouldLog = true)
-    {
-        if (shouldLog) Debug.Log(self);
-    }
     public static bool Any(this Vector3 a, Vector3 b, System.Func<float, float, bool> f)
         => f(a.x, b.x) || f(a.y, b.y) || f(a.z, b.z);
 
@@ -465,16 +439,6 @@ public static class HelperExtensions
     public static bool IsNegativeInfinity(this float f) => float.IsNegativeInfinity(f);
 
     public static bool IsNormalNumber(this float f) => !f.IsNaN() && !f.IsNegativeInfinity() && !f.IsPositiveInfinity();
-
-    public static IEnumerable<GameObject> TransformChildren(this GameObject self) => self.transform.Cast<Transform>().Select(t=>t.gameObject);
-
-    public static void StartPlaying(this AudioSource self, AudioClip clip, bool forceAnew=true)
-    {
-        if (!forceAnew && self.isPlaying && self.clip == clip) return;
-        self.Stop();
-        self.clip = clip;
-        self.Play();
-    }
 
     public static T RandomElement<T>(this IReadOnlyList<T> self)
         => self[Random.Range(0, self.Count)];
@@ -507,14 +471,6 @@ public static class HelperExtensions
             ret = self.Peek();
             return true;
         }
-    }
-
-    public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> self)
-    {
-        foreach (var collection
-            in self)
-            foreach (var item in collection) 
-                yield return item;
     }
 
     public static Color AsHSV(this Vector3 v) => Color.HSVToRGB(v.x, v.y, v.z);
@@ -658,7 +614,6 @@ public static class DrawHelpers
         void draw(Vector2 a, Vector2 b)
         {
             drawLine(bs.GetBasedVector(a) + center, bs.GetBasedVector(b) + center);
-            //Debug.Log($"{a}:{b}");
         }
     }
 
@@ -688,7 +643,6 @@ public static class DrawHelpers
         void draw(Vector2 a, Vector2 b)
         {
             drawLine(bs.GetBasedVector(a) + center, bs.GetBasedVector(b) + center);
-            //Debug.Log($"{a}:{b}");
         }
     }
 }

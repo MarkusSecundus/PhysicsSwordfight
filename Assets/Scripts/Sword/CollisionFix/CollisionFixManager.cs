@@ -3,82 +3,86 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-using AttachedFixersTable = System.Collections.Generic.Dictionary<CollisionFix, CollisionFix.Fixer>;
-using ColliderToParentTable = System.Collections.Generic.Dictionary<UnityEngine.Collider, CollisionFix>;
+using AttachedFixersTable = System.Collections.Generic.Dictionary<MarkusSecundus.PhysicsSwordfight.Sword.Collisions.CollisionFix, MarkusSecundus.PhysicsSwordfight.Sword.Collisions.CollisionFix.Fixer>;
+using ColliderToParentTable = System.Collections.Generic.Dictionary<UnityEngine.Collider, MarkusSecundus.PhysicsSwordfight.Sword.Collisions.CollisionFix>;
 
-public partial class CollisionFix
+namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
 {
-    private readonly AttachedFixersTable attachedFixers = new AttachedFixersTable();
 
-    public class CollisionFixManager : MonoBehaviour
+    public partial class CollisionFix
     {
-        private readonly ColliderToParentTable fixByCollider = new ColliderToParentTable();
+        private readonly AttachedFixersTable attachedFixers = new AttachedFixersTable();
 
-        private readonly HashSet<CollisionFix> active = new HashSet<CollisionFix>();
-
-
-        public bool TryFindFixer(Collider c, out CollisionFix parent) => fixByCollider.TryGetValue(c, out parent);
-
-        private bool TryFindFixer(CollisionFix a, CollisionFix b, out CollisionFix.Fixer ret) => TryFindFixer(a, b, out ret, out _, out _); 
-        private bool TryFindFixer(CollisionFix a, CollisionFix b, out CollisionFix.Fixer ret, out AttachedFixersTable containingTable, out CollisionFix key) 
-            => (containingTable = a.attachedFixers).TryGetValue(key=b, out ret) 
-            || (containingTable = b.attachedFixers).TryGetValue(key=a, out ret);
-
-        public void Register(CollisionFix fix)
+        public class CollisionFixManager : MonoBehaviour
         {
-            if (!active.Add(fix)) throw new System.InvalidOperationException($"{fix.name} is already registered!");
+            private readonly ColliderToParentTable fixByCollider = new ColliderToParentTable();
+
+            private readonly HashSet<CollisionFix> active = new HashSet<CollisionFix>();
 
 
-            foreach (var c in fix.AllColliders)
+            public bool TryFindFixer(Collider c, out CollisionFix parent) => fixByCollider.TryGetValue(c, out parent);
+
+            private bool TryFindFixer(CollisionFix a, CollisionFix b, out CollisionFix.Fixer ret) => TryFindFixer(a, b, out ret, out _, out _);
+            private bool TryFindFixer(CollisionFix a, CollisionFix b, out CollisionFix.Fixer ret, out AttachedFixersTable containingTable, out CollisionFix key)
+                => (containingTable = a.attachedFixers).TryGetValue(key = b, out ret)
+                || (containingTable = b.attachedFixers).TryGetValue(key = a, out ret);
+
+            public void Register(CollisionFix fix)
             {
-                fixByCollider.Add(c, fix);
-            }
-        }
+                if (!active.Add(fix)) throw new System.InvalidOperationException($"{fix.name} is already registered!");
 
-        public void Unregister(CollisionFix fix)
-        {
-            if (!active.Contains(fix)) throw new System.InvalidOperationException($"{fix.name} is not registered!");
 
-            foreach (var f in active)
-            {
-                if (f == fix) continue;
-
-                DestroyFixer(fix, f);
+                foreach (var c in fix.AllColliders)
+                {
+                    fixByCollider.Add(c, fix);
+                }
             }
 
-            foreach (var c in fix.AllColliders)  //not an ideal solution that might lead to memory leaks if some colliders were removed from the fixer after it was created
+            public void Unregister(CollisionFix fix)
             {
-                fixByCollider.Remove(c);
+                if (!active.Contains(fix)) throw new System.InvalidOperationException($"{fix.name} is not registered!");
+
+                foreach (var f in active)
+                {
+                    if (f == fix) continue;
+
+                    DestroyFixer(fix, f);
+                }
+
+                foreach (var c in fix.AllColliders)  //not an ideal solution that might lead to memory leaks if some colliders were removed from the fixer after it was created
+                {
+                    fixByCollider.Remove(c);
+                }
             }
-        }
 
-        public void EnableFixer(CollisionFix a, CollisionFix b)
-        {
-            if (TryFindFixer(a, b, out _))
-                return;
-
-            if (Random.Range(0, 2) == 0) (a, b) = (b, a);
-
-            var fixer = GameObjectUtils.InstantiateUtilObject($"fixer_{a.name}-{b.name}").AddComponent<CollisionFix.Fixer>().Init(a, b);
-            a.attachedFixers.Add(b, fixer);
-        }
-
-        public void DisableFixer(CollisionFix a, CollisionFix b)
-        {
-            if(TryFindFixer(a,b, out var fixer))
+            public void EnableFixer(CollisionFix a, CollisionFix b)
             {
-                fixer.gameObject.SetActive(false);
+                if (TryFindFixer(a, b, out _))
+                    return;
+
+                if (Random.Range(0, 2) == 0) (a, b) = (b, a);
+
+                var fixer = GameObjectUtils.InstantiateUtilObject($"fixer_{a.name}-{b.name}").AddComponent<CollisionFix.Fixer>().Init(a, b);
+                a.attachedFixers.Add(b, fixer);
             }
-        }
 
-        private void DestroyFixer(CollisionFix a, CollisionFix b)
-        {
-            if(TryFindFixer(a,b, out var fixer, out var containingDict, out var key))
+            public void DisableFixer(CollisionFix a, CollisionFix b)
             {
-                containingDict.Remove(key);
-                Object.Destroy(fixer.gameObject);
+                if (TryFindFixer(a, b, out var fixer))
+                {
+                    fixer.gameObject.SetActive(false);
+                }
+            }
+
+            private void DestroyFixer(CollisionFix a, CollisionFix b)
+            {
+                if (TryFindFixer(a, b, out var fixer, out var containingDict, out var key))
+                {
+                    containingDict.Remove(key);
+                    Object.Destroy(fixer.gameObject);
+                }
             }
         }
     }
-}
 
+}

@@ -2,35 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GamePauseHelper : MonoBehaviour
+namespace MarkusSecundus.PhysicsSwordfight.GUI
 {
-    public GameObject GameRoot, PauseRoot;
-
-    private float originalTimeScale;
-
-    private bool isPaused = false;
-
-    public void DoPause()
+    public class GamePauseHelper : MonoBehaviour
     {
-        originalTimeScale = Time.timeScale;
-        Debug.Log($"Saving original time scale: {originalTimeScale}");
-        Time.timeScale = 0f;
-        isPaused = true;
-        GameRoot?.SetActive(false);
-        PauseRoot?.SetActive(true);
-    }
+        public GameObject GameRoot, PauseRoot;
 
-    public void DoUnpause()
-    {
-        Time.timeScale = originalTimeScale;
-        GameRoot?.SetActive(true);
-        PauseRoot?.SetActive(false);
-        isPaused = false;
-    }
+        private float originalTimeScale;
 
-    public void SwitchPausedState()
-    {
-        if (isPaused) DoUnpause();
-        else DoPause();
+        private bool isPaused = false;
+
+        public void DoPause()
+        {
+            originalTimeScale = Time.timeScale;
+            Debug.Log($"Saving original time scale: {originalTimeScale}");
+            Time.timeScale = 0f;
+            isPaused = true;
+            GameRoot?.SetActive(false);
+            PauseRoot?.SetActive(true);
+        }
+
+        public void DoUnpause()
+        {
+            Time.timeScale = originalTimeScale;
+            GameRoot?.SetActive(true);
+            PauseRoot?.SetActive(false);
+            isPaused = false;
+        }
+
+        public void SwitchPausedState()
+        {
+            if (isPaused) DoUnpause();
+            else DoPause();
+        }
     }
 }

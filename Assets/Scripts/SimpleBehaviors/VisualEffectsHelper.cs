@@ -1,7 +1,8 @@
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
-using MarkusSecundus.Util;
+using MarkusSecundus.Utils;
+using MarkusSecundus.Utils.Datastructs;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
