@@ -1,3 +1,4 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Geometry;
 using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Graphics
         public static void DrawWireCircle(float radius, int segments, LineDrawer<Vector2> drawLine)
         {
             Vector2 v = new Vector2(radius, 0);
-            foreach (Vector2 w in GeometryHelpers.PointsOnCircle(segments, v))
+            foreach (Vector2 w in SphereGeometryHelpers.PointsOnCircle(segments, v))
             {
                 drawLine(v, w);
                 v = w;

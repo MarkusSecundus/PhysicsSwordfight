@@ -8,6 +8,7 @@ using System.Linq;
 using MarkusSecundus.PhysicsSwordfight.Input.Rays;
 using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using MarkusSecundus.Utils.Datastructs;
+using MarkusSecundus.PhysicsSwordfight.Utils.Geometry;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
 {

@@ -1,6 +1,7 @@
 using DG.Tweening;
 using MarkusSecundus.PhysicsSwordfight.PhysicsUtils;
 using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.PhysicsSwordfight.Utils.Geometry;
 using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using System.Collections;
 using System.Collections.Generic;
@@ -146,7 +147,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
 
         private Vector3 lastVelocity = Vector3.zero, lastAngularVelocity = Vector3.zero;
 
-        private Vector3 lastDirection = VectorHelpers.NaNVector3;
+        private Vector3 lastDirection = NumericConstants.NaNVector3;
         protected void UpdateColliderPosition()
         {
             ScaledRay thisSword = GetHost(), otherSword = GetTarget();

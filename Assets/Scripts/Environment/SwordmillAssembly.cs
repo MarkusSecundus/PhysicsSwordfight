@@ -1,5 +1,6 @@
 using MarkusSecundus.PhysicsSwordfight.PhysicsUtils;
 using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.PhysicsSwordfight.Utils.Geometry;
 using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using MarkusSecundus.Utils;
 using System.Collections;
@@ -31,7 +32,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Environment
             var angleToAdd = NumericConstants.MaxDegree / count;
             var angleAccumulator = 0f;
             proto.autoConfigureConnectedAnchor = false;
-            foreach (var v in GeometryHelpers.PointsOnCircle(count, proto.connectedAnchor, Vector3.up, includeBegin: true))
+            foreach (var v in SphereGeometryHelpers.PointsOnCircle(count, proto.connectedAnchor, Vector3.up, includeBegin: true))
             {
                 var s = proto.gameObject.InstantiateWithTransform().GetComponent<ConfigurableJoint>();
                 var rotationHelper = s.MakeRotationHelper();

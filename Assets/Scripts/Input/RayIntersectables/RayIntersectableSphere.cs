@@ -1,3 +1,4 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Geometry;
 using MarkusSecundus.PhysicsSwordfight.Utils.Graphics;
 using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using System.Collections;
@@ -30,8 +31,6 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
                 OnMissedPolicy.Project => new Sphere(Center.position, Radius).ProjectPoint(r.GetRayPointWithLeastDistance(Center.position)),
                 _ => null
             };
-            //Debug.DrawRay(r.origin, r.direction, Color.yellow); 
-            //if (ret != null) DrawHelpers.DrawWireSphere(ret.Value, 0.05f, (a, b) => Debug.DrawLine(a, b, Color.red));
             return ret;
         }
 

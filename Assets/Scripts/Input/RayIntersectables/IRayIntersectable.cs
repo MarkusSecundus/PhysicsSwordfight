@@ -35,7 +35,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
         public Transform CenterOverride = null;
         public RayIntersectableSphere Hole;
 
-        public AnimationCurve HoleWeight = AnimationHelpers.AnimationCurve01;
+        public AnimationCurve HoleWeight = NumericConstants.AnimationCurve01;
 
         public RayIntersection GetIntersection(Ray r)
         {
