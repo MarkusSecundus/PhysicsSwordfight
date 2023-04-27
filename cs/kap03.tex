@@ -32,7 +32,7 @@ Každá komponenta může nést data a herní logiku, ty jsou definovány jednod
 
 Speciální komponentou je UnityEngine.Transform. Tu nalezneme na každém herním objektu, reprezentuje jeho \textbf{transformační matici} a \textbf{pozici v objektové hierarchii}. Každý objekt má vlastní matici, která definuje jeho polohu, rotaci a škálování - lokálně vůči otci. Celková transformace objektu je určena vynásobením této matice se součinem matic všech předků.
 
-\subsubsection*{Serializace}
+\subsubsection*{Serializace} \label{gameObjectSerializationSubSubSection}
 
 Při práci na hře často narazíme na situaci, kdy by bylo užitečné moci nastavit část dat, které komponenta nese, ručně z editoru. Engine nám toto umožní.
 
@@ -65,7 +65,7 @@ Druhou možností je \textbf{UnityEvent}. Jde o obdobu klasických C\# delegát�
 
 Poslední možností je \textbf{posílání zpráv}. Tento mechanismus je hojně používán pro komunikaci mezi komponentami a systémem. Princip je jednodchý: na libovolném herním objektu je možné zavolat metodu SendMessage() - jejím parametrem je jméno metody, volitelně ještě libovolný objekt jako argument. Systém projde všechny komponenty náležící danému objektu a pokud nějaký z nich definuje (jedno zda veřejnou či privátní) metodu, jejíž hlavička odpovídá jménu a typu argumentu, jež jsme metodě SendMessage předali, všechny takovéto metody budou jedna po druhé zavolány.
 
-\subsubsection*{Jak hledat komponenty}
+\subsubsection*{Jak hledat komponenty} \label{howToSearchForComponentsSubsubsection}
 
 V mnoha případech potřebujeme s instancí jiné komponenty komunikovat přímo. Jakým způsobem lze tedy odkaz na ni získat?
 
@@ -98,6 +98,21 @@ Zajímavou vlastností je, že komponenta může být nastavena jako \textbf{nea
 
 Rovněž je užitečné vědět, že veškeré zprávy herní smyčky jsou volány \textbf{sekvenčně na hlavním vlákně}. Multithreading v Unity nalezneme pouze na specifických místech, a na těch si tvůrci dali záležet, aby byl uživatel velmi důrazně varován.
 
+
+\subsection{Vstup} \label{unityInputExplanationSubsection}
+
+Pro čtení uživatelského vstupu Unity nabízí několik možností - zde si představíme tu nejjednodušší, kterou je statická třída \textbf{UnityEngine.Input}.
+
+Jde o velmi starou část enginu, která je vázána potřebou zpětné kompatibility do některých ne-zcela-ideálních rozhodnutí, avšak pro svou jednoduchost na základní použití v porovnání s alternativami je stále velmi oblíbená. 
+
+Základními službami, které poskytuje, jsou:
+\begin{itemize}
+    \item \textbf{UnityEngine.Input.GetKey()} - Této funkci předáme jako argument klávesu (jeden z prvků enumu - zahrnuje specielní klávesy jako Esc nebo Shift) a z návratové hodnoty zjistíme, zda klávesa je či není aktuálně stisknutá. Rovněž nalezneme varianty GetKeyDown/GetKeyUp, které vrací true pouze ve snímku, kdy stisk začal/skončil.
+    \item \textbf{UnityEngine.Input.GetAxis()} - V nastavení projektu je možné konfigurovat pojmenované "osy vstupu", které mohou odpovídat pohybu myši, joysticku nebo dvojici kláves. Tato funkce nám pro osu daného jména vrátí příslušnou hodnotu v intervalu [-1; 1] (jak silně doleva/doprava).
+    \item \textbf{UnityEngine.Input.mousePosition} - Souřadnice pixelu obrazovky, kde se nalézá kurzor myši. Máme-li k dispozici kameru, která odpovídá obrazovce (typicky UnityEngine.Camera.main), takto získáme paprsek v herním světě: camera.ScreenPointToRay(UnityEngine.Input.mousePosition).  
+\end{itemize}
+
+Aktualizace vstupu probíhá každý snímek těsně před voláním funkcí Update() - ta je tedy pro herní logiku, jež ze vstupu čte, ideálním místem. Při čtení vstupu např. uvnitř FixedUpdate() se může stát, že některé krátce trvající události (především KeyDown, KeyUp) nebudou zaznamenány.
 
 \subsection{Knihovny}
 

@@ -7,7 +7,24 @@ V této kapitole nejprve čtenáři představíme objektový návrh, který bude
 
 \section{Objektový návrh}
 
-\subsection{Hráč}
+Chceme vytvořit akční hru zaměřenou na boj s mečem. Základními požadavky tedy je, aby hráč mohl chodit po herním světě, máchat svou zbraní a tím zraňovat další entity. Takovými entitami může být víceméně cokoliv - např. trénovací panák nebo nosný trám nepřátelské věže - avšak bylo by pěkné, kdybychom umožnili, aby jedním z typů nepřátel byla i počítačem řízená verze hráčské postavy.
+
+
+\subsection{Abstrakce uživatelského vstupu}
+
+Nástrojem, který nám pomůže k čistému a flexibilnímu návrhu, bude nejprve vytvořit abstrakci nad zdrojem uživatelského vstupu. Jak jsme čtenáři představili v \ref{unityInputExplanationSubsection}, vstup je tradičně získáván pomocí statických metod třídy UnityEngine.Input. To je metoda velmi rigidní - implikuje jediný globální zdroj vstupu pro všechny objekty, nad jehož obsahem navíc nemáme žádnou kontrolu. 
+
+Co bychom chtěli je možnost konfigurovat různé zdroje vstupu pro různé objekty - např. hráčská postava může být ovládána pomocí hodnot získaných z UnityEngine.Input, počítačem řízení protivníci by o nich však neměli mít ponětí. Při vhodném návrhu by mělo stačit naprogramovat a otestovat hráčského šermíře a nepřátelského z něj následně vytvořit pouhou výměnou zdroje vstupu za vstup simulovaný algoritmem umělé inteligence.
+
+Ustanovíme tedy rozhraní \textbf{ISwordInput}. Jeho metody budou pro jednoduchost rámcově odpovídat vybraným základním metodám z UnityEngine.Input. Jeho základní implementace - komponenta \textbf{BasicSwordInput} bude jednoduše volat odpovídající metody UnityEngine.Input, avšak nic nám nebrání vytvořit libovolně mnoho variant s jinou vnitřní logikou. 
+
+Stanovíme konvenci, že každý objekt, jenž zpracovává uživatelský vstup, si jeho zdroj při své inicializaci najde v objektové hierarchii voláním GetComponentInParent<ISwordInput>() (viz \ref{howToSearchForComponentsSubsubsection}).
+
+
+\subsection{Šermíř}
+
+
+
 \begin{itemize}
     \item skript co ovládá pohyb hráče a natočení kamery (SwordsmanMovement) - nezajímavá klasika
     \item orientační body podle kterých zpracovávají vstup jednotlivé stavy SwordMovementu (je potřeba aby se pohybovaly relativně vůči tělu hráče)
@@ -34,7 +51,7 @@ V této kapitole nejprve čtenáři představíme objektový návrh, který bude
             \item obsahuje mesh meče, collidery
             \item poskytuje \textbf{deskriptor-komponentu} ve které jsou uložené transformy odpovídající význačným bodům (ústí čepele, špička, blokovací bod apod.)
         \end{itemize}
-\end{itemize} 
+\end{itemize}   
 
 \subsection{Kořen hierarchie} 
 \begin{itemize}
