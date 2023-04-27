@@ -60,7 +60,7 @@ Podrobnou programátorskou dokumentaci k jednotlivým komponentám psanou v angl
       \item Správu toho která komponenta je aktivní jsme enkapsulovali do třídy ScriptSubmodulesContainer -> dekorátor mezi SwordMovementem a jeho Submodulama se dá napsat celkem bez námahy
       \item Konfigurace submodulů z editoru - list párů klávesa-submodul ; submodule picker má dropdown, kde můžeme vybírat ze všech typů dědících ze SwordMovement.Submodule a pro vybraný typ se pak zobrazí defaultní picker - neskonalé díky: \href{https://github.com/lordconstant/SubclassPropertyDrawer}{lordconstant}
     \end{itemize}
-  \item \textbf{Metoda SwordMovement.MoveSword()}
+  \item \textbf{Metoda SwordMovement.MoveSword()} \label{swordMovementMoveSwordImplementationSubsection}
     \begin{itemize}
       \item vstupy: anchorPoint (poloha meče) + swordDirection (směr kam je namířený) + upDirection (směr nahoru - podle něj se počítá natočení kolem vlastní osy) + holdingForce (faktor síly držení)
       \item podle směru namíření a směru nahoru se nastaví cílová rotace mečového jointu

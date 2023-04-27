@@ -12,7 +12,7 @@ Chceme vytvořit akční hru zaměřenou na boj s mečem. Základními požadavk
 
 \subsection{Abstrakce uživatelského vstupu}
 
-Nástrojem, který nám pomůže k čistému a flexibilnímu návrhu, bude nejprve vytvořit abstrakci nad zdrojem uživatelského vstupu. Jak jsme čtenáři představili v \ref{unityInputExplanationSubsection}, vstup je tradičně získáván pomocí statických metod třídy UnityEngine.Input. To je metoda velmi rigidní - implikuje jediný globální zdroj vstupu pro všechny objekty, nad jehož obsahem navíc nemáme žádnou kontrolu. 
+Než se pustíme do modelování herních entit, bude vhodné nejprve vytvořit abstrakci nad zdrojem uživatelského vstupu. Jak jsme čtenáři představili v \ref{unityInputExplanationSubsection}, vstup je tradičně získáván pomocí statických metod třídy UnityEngine.Input. To je metoda velmi rigidní - implikuje jediný globální zdroj vstupu pro všechny objekty, nad jehož obsahem navíc nemáme žádnou kontrolu. 
 
 Co bychom chtěli je možnost konfigurovat různé zdroje vstupu pro různé objekty - např. hráčská postava může být ovládána pomocí hodnot získaných z UnityEngine.Input, počítačem řízení protivníci by o nich však neměli mít ponětí. Při vhodném návrhu by mělo stačit naprogramovat a otestovat hráčského šermíře a nepřátelského z něj následně vytvořit pouhou výměnou zdroje vstupu za vstup simulovaný algoritmem umělé inteligence.
 
@@ -23,45 +23,61 @@ Stanovíme konvenci, že každý objekt, jenž zpracovává uživatelský vstup,
 
 \subsection{Šermíř}
 
+Nyní můžeme přistoupit k návrhu základních herních entit. 
 
+Začněme postavou šermíře. Ten je samostatným herním objektem, jehož náplní práce je \textbf{pohybovat se po herním světě, držet meč a být zasahován nepřátelským mečem}. Pohybovat by se měl dle instrukcí získaných z hráčského vstupu, zároveň v jeho očích sídlí kamera, skrze kterou hráč herní svět vnímá.
 
-\begin{itemize}
-    \item skript co ovládá pohyb hráče a natočení kamery (SwordsmanMovement) - nezajímavá klasika
-    \item orientační body podle kterých zpracovávají vstup jednotlivé stavy SwordMovementu (je potřeba aby se pohybovaly relativně vůči tělu hráče)
-    \item jednoduchý capsule collider - pro kolize s environmentem apod.
-    \item hráčský model (samostatný prefab) - bone rig, nese animátor, na každé kosti collidery co odpovídají části těla - pro kolize s nepřátelským mečem 
-\end{itemize} 
+Zodpovědnou za pohyb hráče a kamery stanovíme komponentu \textbf{SwordsmanMovement}. Ta bude znát několik pevně daných způsobů pohybu - chůze dopředu/dozadu, otáčení doleva/doprava, skok apod. - pro každý z nich konfigurované mapování vstupu, rychlost pohybu apod., a dle hodnot přečtených ze své instance ISwordInput bude tyto pohyby vykonávat. 
+
+Jedním z dětí šermířského objektu bude \textbf{kamera}, která se otáčí za šermířovým pohledem. Avšak uzurpovat pro sebe skutečnou herní kameru není vhodné - v případě šermířovy smrti by pak kamera rovněž byla zničena a hra by se dostala do nekonzistentního stavu. Navíc nechceme, aby kameru ovládali nepřátelští šermíři. Místo skutečné kamery tedy budeme otáčet a polohovat její maketu - poslouží prázdný objekt s komponentou Transform - při inicializaci šermíře volitelně na skutečnou kameru umístíme jednoduchý skript, který bude jejich pozice synchronizovat.
+
+Dalším dítětem šermířského objektu bude šermířův detailní animovaný model. Na něm bude umístěna soustava colliderů určených ke kolizi s nepřátelskými zbraněmi. Rovněž ponese komponentu \textbf{SwordsmanBodyProceduralAnimation} zodpovědnou za procedurální animaci šermířových rukou - aby se kosmeticky tvářily držet meč\footnote{Meč reálně držený v šermířových rukou by zkomplikoval náš návrh, umocnil nestabilitu fyzikální simulace a nepřinesl by nám mnoho benefitů - viz \ref{swordMovementMoveSwordImplementationSubsection}.}.
+
 
 \subsection{Meč} 
-\begin{itemize}
-    \item skript co ovládá pohyb meče (SwordMovement)
-        \begin{itemize}
-            \item stavový automat
-            \item z editoru se konfiguruje seznam párů klávesa-stav + jeden defaultní stav
-            \item stav... SwordMovement.Submodule
-            \item každý stav nese nějaká data konfigurovaná z editoru, další data může získat od instance ISwordMovement, která do něj je injectnuta
-            \item ISwordMovement - poskytuje deskriptor meče, zdroj vstupu, transform držitele meče a metodu MoveSword()
-            \item aktuální stav je ten, jehož klávesa je právě stisknutá - na tom jediném je volán OnUpdate()
-            \item v OnUpdate() stav vypočte žádanou pozici meče a s tou následně na SwordMovementu zavolá metodu MoveSword()
-            \item MoveSword(struct poziceKamSeMečMáPohnout) - pohyb provádí SwordMovement v průběhu času jak sám uzná za vhodné (možné konfigurovat skrz jeho parametry v editoru)
-        \end{itemize}
-    \item vlastní model meče
-        \begin{itemize}
-            \item vyměnitelná podkomponenta, samostatnej prefab
-            \item obsahuje mesh meče, collidery
-            \item poskytuje \textbf{deskriptor-komponentu} ve které jsou uložené transformy odpovídající význačným bodům (ústí čepele, špička, blokovací bod apod.)
-        \end{itemize}
-\end{itemize}   
+
+Nejdůležitějším herním objektem našeho systému je meč. Jak jsme si stanovili v kapitole \ref{goalSettingChapter}, chceme, aby byl modulárně schopen přijímat různé metody ovládání a aby rozhraní, skrze které s ním ovládací moduly komunikují, umožnilo volný pohyb ve všech 6 stupních volnosti.
+
+\subsubsection*{Moduly}
+
+Protože každá z metod vstupu bude vynikat v jiné situaci, bylo by velmi příhodné, kdyby mezi nimi bylo možné přepínat velmi jednoduše v žáru boje - například stisknutím klávesy. Taková schopnost má potenciál celkovou flexibilitu ovládání znásobit - např. hráč může defaultně používat ovládací mod pro sekání, ale jakmile je třeba, bleskově přepnout do specializovaného modu pro blokování, následně provést protiútok přepnutím do dalšího modu specializovaného pro bodání. 
+
+Nabízí se tedy ovladací komponentu \textbf{SwordMovement} implementovat jako \textbf{stavový automat}. Jednotlivé stavy - moduly - budou zodpovědné za výpočet polohy, kam se meč má přesunout. Samotná komponenta SwordMovement pak modulům poskytne rozhraní, skrze které přesun na konkrétní vypočtenou polohu vyžádají, a bude zodpovídat za průběh onoho přesunu. Rovněž bude třeba držet přehled, který modul je právě aktivní, a na tom si každý snímek vyžádat aktualizaci stavu.
+
+Jak tedy vypadá náš hotový návrh? Abstraktní třídou, ze které moduly dědí, nechť je SwordMovement.Module. Ta definuje množinu funkcí jako OnActivated(), OnDeactivated(), OnFixedUpdate(), které na modulu jsou v závislosti na jeho stavu volány - každý modul je může overridovat vlastní logikou. Na začátku hry je rovněž do každého modulu injectnuta reference na ISwordMovement (podmnožina celkové funkcionality SwordMovement), která poskytuje zdroj uživatelského vstupu, deskriptor meče, transform šermíře, který meč drží, a konečně funkci MoveSword(), jejímž voláním skript vyžádá změnu polohy meče.
+
+Seznam modulů lze konfigurovat z editoru. Každá instance SwordMovement definuje jeden výchozí modul (aktivní když žádná klávesa není stisknuta) a list key-value párů, kde klíčem je klávesa a hodnotou modul, který se stisknutím klávesy má aktivovat. Každý typ modulu rovněž může definovat dodatečná data, která z editoru lze konfigurovat (dle klasických pravidel serializace). Není problém mít definováno na různých klávesách dva moduly stejného typu, ale s různou konfigurací.
+
+Metoda MoveSword(), kterou řidicí komponenta modulům poskytuje, bere jako argument strukturu, která udává cílovou polohu, natočení meče a rovněž dodatečné volitelné parametry - např. jakou silou má meč být držen. Vlastní pohyb meče do tohoto stavu je plně v režii komponenty SwordMovement - ta pouze ručí za to, že pohyb bude plynule rozprostřený v průběhu času a bude se chovat standardním způsobem bez ohledu na to, s jakou četností je MoveSword() voláno (ať již každý FixedUpdate či třeba jen jednou za sekundu).
+
+\subsubsection*{Model meče}
+
+Rovněž je třeba stručně zmínit samotný model meče. Ten zahrnuje jak mesh, který se bude vykreslovat na obrazovce, tak fyzikální collidery. V herní logice budeme potřebovat s mečem pracovat zjednodušeně jako s množinou jeho význačných bodů (špička a pata čepele, začátek a konec rukojeti apod.).
+
+Model a collidery vytvoříme pomocí standardních komponent. Význačné body oproti tomu jsou velká množina prázdných herních objektů, se kterými pracovat jednotlivě by bylo velmi úmorné - vytvoříme tedy komponentu \textbf{SwordDescriptor}. Ta nechť definuje pro každý význačný bod pojmenovanou proměnnou, kam bod zkrátka přiřadíme v editoru. Do skriptů, které nad nimi operují, nyní stačí předat odkaz na tuto komponentu.
+
 
 \subsection{Kořen hierarchie} 
-\begin{itemize}
-    \item Komponenta \textbf{SwordsmanAssembly}...
-    \item Nese odpovědnost za to, že meč a šermíř budou správně pospojované (jeden s druhým a s objekty co jdou z vnější scény)
-    \item Definují se tu odkazy na všechny objekty okolní scény, které meč nebo šermíř potřebují znát (kamera, healthbar, die-screen)
-    \item Je v něm komponenta typu \textbf{ISwordInput} (abstrakce pro zdroj vstupu - klávesnice nebo ovládací skript)
-    \item Definuje se tu tabulka dalších obecných parametrů, na které se komponenty uvnitř hráče a meče mohou symbolicky odkazovat (komponenta \textbf{SymbolMap})
-    \item Všechny rozdíly, které odlišují \acs{PC} od \acs{NPC}, by se měly dít v tomto jednom objektu
-\end{itemize} 
+
+Šermíř a meč dohromady tvoří jednu celistvou, hráčem ovladatelnou entitu. Potřebujeme tedy jeden objekt, který je bude oba zaštiťovat jako kořen prefabu a zaručí, že jsou vzájemně korektně pospojované. Obě tyto komponenty rovněž potřebují komunikovat s objekty vnějšího světa - číst uživatelský vstup, polohovat kameru, updatovat healthbar,... - bylo by tedy vhodné, aby tento kořen hierarchie posloužil i jako spojník s vnějším světem. 
+
+Za úspěch budeme považovat, pokud veškeré změny, jenž musí proběhnout k přetvoření hráčského šermíře na počítačem řízeného protivníka, omezeníme výhradně na obsah tohoto objektu.
+
+\subsubsection*{Vstup}
+
+Kořen hierarchie přirozeně bude místem, kde definujeme instanci \textbf{ISwordInput}. Šermíř i meč ji zde - ve svém předkovi - automaticky najdou aniž bychom museli vynakládat větší úsilí.
+
+\subsubsection*{SwordsmanAssembly}
+
+Komponentu \textbf{SwordsmanAssembly} určíme zodpovědnou za pospojování šermíře a meče dohromady. Rovněž bude zodpovídat za propojení šermíře s kamerou, jejíž referenci zde volitelně nakonfigurujeme. 
+
+\subsubsection*{SymbolMap}
+
+Komponent uživatelského rozhraní a dalších součástí vnějšího světa je větší množství a interakce s každou z nich probíhá specifickým způsobem - tu tedy nechme plně v režii interagujícího podobjektu. Zde poskytneme pouze možnost definovat reference na ně, na ty se následně objekty uvnitř budou moci symbolicky odkazovat.
+
+Komponenta \textbf{SymbolMap} poskytne z editoru konfigurovatelný list, ve kterém můžeme skladovat reference na libovolné komponenty herního světa - ke každé přiřazený string s unikátním jménem. V komponentě uvnitř šermíře či meče pak můžeme definovat serializovatelnou proměnnou typu \textbf{Symbol} - uživatel v editoru zadá jméno, skript pak voláním symbol.Get() získá příslušnou komponentu.
+
+\subsection{Systém zranění}
 
 \subsection{Zhodnocení návrhu} 
 \begin{itemize}
@@ -78,7 +94,10 @@ Stanovíme konvenci, že každý objekt, jenž zpracovává uživatelský vstup,
 \end{itemize} 
 
 
-\section{Zpracování uživatelského vstupu}
+
+
+
+\section{Schéma ovládání}
 
 \subsection{Ovládání meče - úvodní zamyšlení}
 \begin{itemize}
