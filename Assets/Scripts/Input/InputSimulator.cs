@@ -6,7 +6,7 @@ using UnityEngine;
 namespace MarkusSecundus.PhysicsSwordfight.Input
 {
 
-    public class InputSimulator : ISwordInput
+    public class InputSimulator : MonoBehaviour, ISwordInput
     {
         private static float ClampAxis(float axis) => Mathf.Clamp(axis, -1f, 1f);
         private static int CurrentFrame => Time.frameCount;
@@ -50,15 +50,15 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
         private Ray? inputRayValue = null;
 
 
-        public override float GetAxis(InputAxis axis) => axes.TryGetValue(axis, out var ret) ? ret.Value : 0f;
+        public float GetAxis(InputAxis axis) => axes.TryGetValue(axis, out var ret) ? ret.Value : 0f;
 
-        public override float GetAxisRaw(InputAxis axis) => axes.TryGetValue(axis, out var ret) ? Mathf.Sign(ret.Value) : 0f;
+        public float GetAxisRaw(InputAxis axis) => axes.TryGetValue(axis, out var ret) ? Mathf.Sign(ret.Value) : 0f;
 
-        public override Ray? GetInputRay() => inputRayValue;
+        public Ray? GetInputRay() => inputRayValue;
 
-        public override bool GetKey(KeyCode code) => keys.TryGetValue(code, out var state) && state.EndedFrame == null || state.EndedFrame >= CurrentFrame;
+        public bool GetKey(KeyCode code) => keys.TryGetValue(code, out var state) && state.EndedFrame == null || state.EndedFrame >= CurrentFrame;
 
-        public override bool GetKeyDown(KeyCode code) => keys.TryGetValue(code, out var state) && state.BeginFrame == CurrentFrame;
-        public override bool GetKeyUp(KeyCode code) => keys.TryGetValue(code, out var state) && state.EndedFrame == CurrentFrame;
+        public bool GetKeyDown(KeyCode code) => keys.TryGetValue(code, out var state) && state.BeginFrame == CurrentFrame;
+        public bool GetKeyUp(KeyCode code) => keys.TryGetValue(code, out var state) && state.EndedFrame == CurrentFrame;
     }
 }

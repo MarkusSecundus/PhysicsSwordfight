@@ -15,9 +15,10 @@ using UnityEngine.EventSystems;
 namespace MarkusSecundus.PhysicsSwordfight.Input
 {
 
-    public class SwordInputRecorder : ISwordInput
+    public class SwordInputRecorder : MonoBehaviour, ISwordInput
     {
-        public ISwordInput inputToRecord;
+        public Component InputToRecord;
+        ISwordInput inputToRecord => (ISwordInput)InputToRecord;
 
         public KeyCode startRecordingKey = KeyCode.F7, finishRecordingKey = KeyCode.F8;
 
@@ -105,13 +106,13 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
             onRecordFinished?.Invoke(recording);
         }
 
-        public override bool GetKey(KeyCode code) => inputToRecord.GetKey(code);
+        public bool GetKey(KeyCode code) => inputToRecord.GetKey(code);
 
-        public override bool GetKeyUp(KeyCode code) => inputToRecord.GetKeyUp(code);
+        public bool GetKeyUp(KeyCode code) => inputToRecord.GetKeyUp(code);
 
-        public override bool GetKeyDown(KeyCode code) => inputToRecord.GetKeyDown(code);
+        public bool GetKeyDown(KeyCode code) => inputToRecord.GetKeyDown(code);
 
-        public override float GetAxis(InputAxis axis)
+        public float GetAxis(InputAxis axis)
         {
             float ret() => inputToRecord.GetAxis(axis);
             if (axesToRecord.Add(axis))
@@ -120,7 +121,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
             }
             return ret();
         }
-        public override float GetAxisRaw(InputAxis axis)
+        public float GetAxisRaw(InputAxis axis)
         {
             float ret() => inputToRecord.GetAxisRaw(axis);
             if (axesToRecord.Add(axis))
@@ -130,7 +131,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
             return ret();
         }
 
-        public override Ray? GetInputRay() => inputToRecord.GetInputRay();
+        public Ray? GetInputRay() => inputToRecord.GetInputRay();
     }
 
 }

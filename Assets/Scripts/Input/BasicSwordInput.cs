@@ -6,7 +6,7 @@ using UnityEngine;
 namespace MarkusSecundus.PhysicsSwordfight.Input
 {
 
-    public class BasicSwordInput : ISwordInput
+    public class BasicSwordInput : MonoBehaviour, ISwordInput
     {
 
         public bool IsDisabled = false;
@@ -21,21 +21,21 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
 
 
 
-        public override Ray? GetInputRay()
+        public Ray? GetInputRay()
             => isDisabled ? null : inputCamera.ScreenPointToRay(UnityEngine.Input.mousePosition);
 
-        public override bool GetKey(KeyCode code)
+        public bool GetKey(KeyCode code)
             => isDisabled ? false : UnityEngine.Input.GetKey(code);
 
-        public override bool GetKeyDown(KeyCode code)
+        public bool GetKeyDown(KeyCode code)
             => isDisabled ? false : UnityEngine.Input.GetKeyDown(code);
 
-        public override bool GetKeyUp(KeyCode code)
+        public bool GetKeyUp(KeyCode code)
             => isDisabled ? false : UnityEngine.Input.GetKeyUp(code);
 
-        public override float GetAxis(InputAxis axis)
+        public float GetAxis(InputAxis axis)
             => isDisabled ? 0f : UnityEngine.Input.GetAxis(axis.Name());
-        public override float GetAxisRaw(InputAxis axis)
+        public float GetAxisRaw(InputAxis axis)
             => isDisabled ? 0f : UnityEngine.Input.GetAxisRaw(axis.Name());
 
 

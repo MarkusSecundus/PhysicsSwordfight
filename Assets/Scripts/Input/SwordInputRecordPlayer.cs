@@ -7,7 +7,7 @@ using UnityEngine;
 namespace MarkusSecundus.PhysicsSwordfight.Input
 {
 
-    public class SwordInputRecordPlayer : ISwordInput
+    public class SwordInputRecordPlayer : MonoBehaviour, ISwordInput
     {
         public int currentRecordIndex = -1;
         public int recordsCount = 0;
@@ -53,12 +53,12 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
         private IReadOnlyList<SwordInputRecorder.Frame> currentRecord => currentRecordIndex < 0 ? null : records[currentRecordIndex];
         private SwordInputRecorder.Frame? currentFrame => currentFrameIndex < 0 ? null : currentRecord?[currentFrameIndex];
 
-        public override Ray? GetInputRay() => currentFrame?.CursorRay is SerializableRay r ? transform.LocalToGlobal(r) : (Ray?)null;
-        public override bool GetKey(KeyCode code) => currentFrame?.KeysPressed?.Contains(code) ?? false;
-        public override bool GetKeyDown(KeyCode code) => GetKey(code) && (currentFrameIndex <= 0 || !currentRecord[currentFrameIndex - 1].KeysPressed.Contains(code));
-        public override bool GetKeyUp(KeyCode code) => GetKey(code) && (currentFrameIndex >= (currentRecord.Count - 1) || !currentRecord[currentFrameIndex + 1].KeysPressed.Contains(code));
+        public Ray? GetInputRay() => currentFrame?.CursorRay is SerializableRay r ? transform.LocalToGlobal(r) : (Ray?)null;
+        public bool GetKey(KeyCode code) => currentFrame?.KeysPressed?.Contains(code) ?? false;
+        public bool GetKeyDown(KeyCode code) => GetKey(code) && (currentFrameIndex <= 0 || !currentRecord[currentFrameIndex - 1].KeysPressed.Contains(code));
+        public bool GetKeyUp(KeyCode code) => GetKey(code) && (currentFrameIndex >= (currentRecord.Count - 1) || !currentRecord[currentFrameIndex + 1].KeysPressed.Contains(code));
 
-        public override float GetAxis(InputAxis axis) => currentFrame?.Axes != null && currentFrame.Value.Axes.TryGetValue(axis, out var ret) == true ? ret : 0;
-        public override float GetAxisRaw(InputAxis axis) => throw new System.NotImplementedException();
+        public float GetAxis(InputAxis axis) => currentFrame?.Axes != null && currentFrame.Value.Axes.TryGetValue(axis, out var ret) == true ? ret : 0;
+        public float GetAxisRaw(InputAxis axis) => throw new System.NotImplementedException();
     }
 }

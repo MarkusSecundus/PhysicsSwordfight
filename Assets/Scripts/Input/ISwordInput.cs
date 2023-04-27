@@ -5,8 +5,7 @@ using UnityEngine;
 namespace MarkusSecundus.PhysicsSwordfight.Input
 {
 
-    [System.Serializable]
-    public abstract class ISwordInput : MonoBehaviour
+    public interface ISwordInput
     {
         public abstract bool GetKey(KeyCode code);
         public abstract bool GetKeyUp(KeyCode code);
