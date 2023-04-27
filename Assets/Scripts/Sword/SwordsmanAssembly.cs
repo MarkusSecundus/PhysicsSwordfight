@@ -1,38 +1,45 @@
+using MarkusSecundus.PhysicsSwordfight.Cosmetics;
 using MarkusSecundus.PhysicsSwordfight.GUI;
+using MarkusSecundus.PhysicsSwordfight.Sword;
 using MarkusSecundus.PhysicsSwordfight.Sword.Damage;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwordsmanAssembly : MonoBehaviour
+namespace MarkusSecundus.PhysicsSwordfight.Sword
 {
-    public SwordsmanMovement Player;
-    public SwordMovement Sword;
-    public CameraFollowPoint Camera;
-    public DamageHUD DamageReport;
 
-    [System.Serializable] public struct InstructionsOnDeath
+    public class SwordsmanAssembly : MonoBehaviour
     {
-        public float SwordDestroyDelay;
-    }
-    public InstructionsOnDeath DeathInstructions;
+        public SwordsmanMovement Player;
+        public SwordMovement Sword;
+        public CameraFollowPoint Camera;
+        public DamageHUD DamageReport;
 
-    void Start()
-    {
-        if (Camera.IsNotNil() && Player.CameraToUse.IsNotNil())
+        [System.Serializable]
+        public struct InstructionsOnDeath
         {
-            Camera.Target = Player.CameraToUse;
+            public float SwordDestroyDelay;
         }
-        if (DamageReport.IsNotNil())
-        {
-            DamageReport.Target = Player.GetComponent<Damageable>();
-        }
-    }
+        public InstructionsOnDeath DeathInstructions;
 
-    public void DestroyTheSwordsman()
-    {
-        if (DeathInstructions.SwordDestroyDelay.IsNormalNumber()) Destroy(Sword.gameObject, DeathInstructions.SwordDestroyDelay);
-        Sword.DropTheSword();
-        Destroy(gameObject);
+        void Start()
+        {
+            if (Camera.IsNotNil() && Player.CameraToUse.IsNotNil())
+            {
+                Camera.Target = Player.CameraToUse;
+            }
+            if (DamageReport.IsNotNil())
+            {
+                DamageReport.Target = Player.GetComponent<Damageable>();
+            }
+        }
+
+        public void DestroyTheSwordsman()
+        {
+            if (DeathInstructions.SwordDestroyDelay.IsNormalNumber()) Destroy(Sword.gameObject, DeathInstructions.SwordDestroyDelay);
+            Sword.DropTheSword();
+            Destroy(gameObject);
+        }
     }
 }

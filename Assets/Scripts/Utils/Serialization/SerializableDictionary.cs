@@ -30,7 +30,14 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Serialization
         public void OnAfterDeserialize()
         {
             _values.Clear();
-            FillDictionaryValues(_values);
+            try
+            {
+                FillDictionaryValues(_values);
+            }
+            catch
+            {
+                Debug.Log($"err[{values.MakeString()}]");
+            }
         }
 
         protected virtual void FillDictionaryValues(Dictionary<TKey, TValue> dictionary)

@@ -1,16 +1,21 @@
+using MarkusSecundus.PhysicsSwordfight.Automatization;
 using MarkusSecundus.PhysicsSwordfight.Sword.Damage;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Damageable))]
-public class DamageableRandomizer : MonoBehaviour, IRandomizer
+namespace MarkusSecundus.PhysicsSwordfight.Environment.Randomization
 {
-    public Interval<float> Hp;
-    public void Randomize(System.Random random)
+
+    [RequireComponent(typeof(Damageable))]
+    public class DamageableRandomizer : MonoBehaviour, IRandomizer
     {
-        var dmg = GetComponent<Damageable>();
-        dmg.MaxHP = random.Next(Hp);
+        public Interval<float> Hp;
+        public void Randomize(System.Random random)
+        {
+            var dmg = GetComponent<Damageable>();
+            dmg.MaxHP = random.Next(Hp);
+        }
     }
 }

@@ -1508,7 +1508,6 @@ GameObject:
   - component: {fileID: 1192283704496809715}
   - component: {fileID: 2814996758086610196}
   - component: {fileID: 1910395372904244124}
-  - component: {fileID: 2177045739508342463}
   - component: {fileID: 2312276081291463861}
   m_Layer: 0
   m_Name: Swordsman
@@ -1530,9 +1529,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1267854469581615009}
-  - {fileID: 4636955585047720440}
+  - {fileID: 5458137509319272357}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -111.991, z: 0}
 --- !u!114 &2814996758086610196
 MonoBehaviour:
@@ -1547,7 +1546,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 8896573284590192728}
-  Sword: {fileID: 5696158875501992993}
+  Sword: {fileID: 4965825508089629308}
   Camera: {fileID: 0}
   DamageReport: {fileID: 0}
   DeathInstructions:
@@ -1567,25 +1566,6 @@ MonoBehaviour:
   IsDisabled: 0
   DisableKey: 0
   inputCamera: {fileID: 0}
---- !u!114 &2177045739508342463
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2554242374162538078}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb84ed6c68dd0ab42b87908e7d496177, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Target: {fileID: 0}
-  BeginRecordKey: 287
-  EndRecordKey: 288
-  ResultDestination:
-    Path: Assets/SwordRecords/Idle/HoldSword
-    Extension: .json
-    NextIndex: 1
 --- !u!114 &2312276081291463861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2621,7 +2601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4921b95643fa94a4ea4dbee8a93704af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Sword: {fileID: 959123074595678781}
+  Sword: {fileID: 480065428808957024}
   Model:
     RightArm:
       Target: {fileID: 7831997124195135109}
@@ -4158,7 +4138,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
---- !u!114 &959123074595678781 stripped
+--- !u!114 &480065428808957024 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6265960615852795971, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
   m_PrefabInstance: {fileID: 5790680300336190499}
@@ -4169,12 +4149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 059989545d7a5604fa921092316edae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &4636955585047720440 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2009610563383063430, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
-  m_PrefabInstance: {fileID: 5790680300336190499}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &5696158875501992993 stripped
+--- !u!114 &4965825508089629308 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
   m_PrefabInstance: {fileID: 5790680300336190499}
@@ -4185,6 +4160,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &5458137509319272357 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2009610563383063430, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+  m_PrefabInstance: {fileID: 5790680300336190499}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6609688455756219006
 PrefabInstance:
   m_ObjectHideFlags: 0

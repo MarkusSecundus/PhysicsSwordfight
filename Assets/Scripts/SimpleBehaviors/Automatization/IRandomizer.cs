@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IRandomizer
+namespace MarkusSecundus.PhysicsSwordfight.Automatization
 {
-    public void Randomize(System.Random random);
+
+    public interface IRandomizer
+    {
+        public void Randomize(System.Random random);
+    }
 }

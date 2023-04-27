@@ -4,53 +4,60 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(SwordmillAssembly))]
-public class SwordmillBehavior : MonoBehaviour
+
+namespace MarkusSecundus.PhysicsSwordfight.Environment
 {
-    SwordmillAssembly assembly;
 
-    ConfigurableJoint rotor => assembly.Rotor;
-    [System.Serializable] public struct MovementStep
+    [RequireComponent(typeof(SwordmillAssembly))]
+    public class SwordmillBehavior : MonoBehaviour
     {
-        public Vector3 Offset;
-        public float Duration;
-    }
-    [System.Serializable] public struct RotationStep
-    {
-        public Vector3 Rotation;
-        public float Duration;
-    }
+        SwordmillAssembly assembly;
 
-    public MovementStep[] Movements;
-    public RotationStep[] Rotations;
+        ConfigurableJoint rotor => assembly.Rotor;
+        [System.Serializable]
+        public struct MovementStep
+        {
+            public Vector3 Offset;
+            public float Duration;
+        }
+        [System.Serializable]
+        public struct RotationStep
+        {
+            public Vector3 Rotation;
+            public float Duration;
+        }
 
-    Vector3 originalConnectedAnchor, originalTargetAngularVelocity;
-    void Start()
-    {
-        assembly = GetComponent<SwordmillAssembly>();
-        originalConnectedAnchor = rotor.connectedAnchor;
-        rotor.autoConfigureConnectedAnchor = false;
-        rotor.connectedAnchor = originalConnectedAnchor;
-        originalTargetAngularVelocity = rotor.targetAngularVelocity;
-        UpdateMovement(0);
-        AnimateRotation(0);
-    }
+        public MovementStep[] Movements;
+        public RotationStep[] Rotations;
 
-    void UpdateMovement(int index)
-    {
-        if (Movements.Length <= 0) return;
-        
-        var order = Movements[index %= Movements.Length];
-        rotor.DOConnectedAnchor(originalConnectedAnchor + order.Offset, order.Duration)
-            .OnComplete(()=>UpdateMovement(index+1));
-    }
+        Vector3 originalConnectedAnchor, originalTargetAngularVelocity;
+        void Start()
+        {
+            assembly = GetComponent<SwordmillAssembly>();
+            originalConnectedAnchor = rotor.connectedAnchor;
+            rotor.autoConfigureConnectedAnchor = false;
+            rotor.connectedAnchor = originalConnectedAnchor;
+            originalTargetAngularVelocity = rotor.targetAngularVelocity;
+            UpdateMovement(0);
+            AnimateRotation(0);
+        }
 
-    void AnimateRotation(int index)
-    {
-        if (Rotations.Length <= 0) return;
+        void UpdateMovement(int index)
+        {
+            if (Movements.Length <= 0) return;
 
-        var order = Rotations[index %= Rotations.Length];
-        rotor.DOTargetAngularVelocity(originalTargetAngularVelocity + order.Rotation, order.Duration)
-            .OnComplete(() => AnimateRotation(index + 1));
+            var order = Movements[index %= Movements.Length];
+            rotor.DOConnectedAnchor(originalConnectedAnchor + order.Offset, order.Duration)
+                .OnComplete(() => UpdateMovement(index + 1));
+        }
+
+        void AnimateRotation(int index)
+        {
+            if (Rotations.Length <= 0) return;
+
+            var order = Rotations[index %= Rotations.Length];
+            rotor.DOTargetAngularVelocity(originalTargetAngularVelocity + order.Rotation, order.Duration)
+                .OnComplete(() => AnimateRotation(index + 1));
+        }
     }
 }

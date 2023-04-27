@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[System.Serializable]
-public enum SwordRecordUsecase
+namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
 {
-    Generic, Idle, Block
+    [System.Serializable]
+    public enum SwordRecordUsecase
+    {
+        Generic, Idle, Block
+    }
 }
-
-
