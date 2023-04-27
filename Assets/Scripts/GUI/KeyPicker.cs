@@ -1,3 +1,4 @@
+using MarkusSecundus.Utils;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -30,7 +31,7 @@ namespace MarkusSecundus.PhysicsSwordfight.GUI
                 {
                     if (UnityEngine.Input.anyKeyDown)
                     {
-                        foreach (var v in EnumUtil.GetValues<KeyCode>())
+                        foreach (var v in EnumHelpers.GetValues<KeyCode>())
                             if (UnityEngine.Input.GetKeyDown(v))
                             {
                                 UpdateText(v.ToString());

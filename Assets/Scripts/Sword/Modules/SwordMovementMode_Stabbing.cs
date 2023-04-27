@@ -6,7 +6,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using MarkusSecundus.PhysicsSwordfight.Input.Rays;
-
+using MarkusSecundus.Utils.Datastructs;
+using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
 {

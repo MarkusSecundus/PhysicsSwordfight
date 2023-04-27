@@ -14,6 +14,8 @@ using Newtonsoft.Json;
 using MarkusSecundus.PhysicsSwordfight.Utils.Interpolation;
 using MarkusSecundus.PhysicsSwordfight.Input;
 using MarkusSecundus.PhysicsSwordfight.Submodules;
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.PhysicsSwordfight.PhysicsUtils;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword
 {

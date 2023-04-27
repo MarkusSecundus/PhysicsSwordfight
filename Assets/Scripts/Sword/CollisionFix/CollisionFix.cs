@@ -1,5 +1,6 @@
 using MarkusSecundus.PhysicsSwordfight.PhysicsUtils;
-using MarkusSecundus.PhysicsSwordfight.Utils.Constants;
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
                 .Add<SphereCollider>(c => c.radius = ActivationRadius)
                 .Init(CollisionFix.TargetLayer, onEnter: AreaEntered);
 
-            manager = GameObjectUtils.GetUtilComponent<CollisionFixManager>();
+            manager = GameObjectHelpers.GetUtilComponent<CollisionFixManager>();
             manager.Register(this);
         }
 

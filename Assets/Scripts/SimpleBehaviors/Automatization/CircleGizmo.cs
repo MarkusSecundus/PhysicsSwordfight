@@ -1,3 +1,5 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.PhysicsSwordfight.Utils.Randomness;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -52,7 +54,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Automatization
         public override IEnumerable<Vector3> IteratePoints()
         {
             int minIndex = SegmentIndex(MinAngle), maxIndex = SegmentIndex(MaxAngle);
-            var ret = GeometryUtils.PointsOnCircle(Segments).Select(transform.LocalToGlobal);
+            var ret = GeometryHelpers.PointsOnCircle(Segments).Select(transform.LocalToGlobal);
             if (IsCutOff) ret = ret.Skip(minIndex).Take(maxIndex - minIndex);
             return ret;
         }
@@ -61,14 +63,14 @@ namespace MarkusSecundus.PhysicsSwordfight.Automatization
         {
             float minAngle_radians = MinAngle * Mathf.Deg2Rad, maxAngle_radians = MaxAngle * Mathf.Deg2Rad;
             var randomAngle = rand.NextFloat(minAngle_radians, maxAngle_radians);
-            return transform.LocalToGlobal(GeometryUtils.GetPointOnCircle(randomAngle));
+            return transform.LocalToGlobal(GeometryHelpers.GetPointOnCircle(randomAngle));
         }
 
         public override Vector3 GetRandomPointInVolume(System.Random rand)
         {
             float minAngle_radians = MinAngle * Mathf.Deg2Rad, maxAngle_radians = MaxAngle * Mathf.Deg2Rad;
             var randomAngle = rand.NextFloat(minAngle_radians, maxAngle_radians);
-            return transform.LocalToGlobal(GeometryUtils.GetPointOnCircle(randomAngle) * rand.NextFloat(0f, 1f));
+            return transform.LocalToGlobal(GeometryHelpers.GetPointOnCircle(randomAngle) * rand.NextFloat(0f, 1f));
         }
     }
 }

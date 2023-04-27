@@ -1,4 +1,7 @@
 using JetBrains.Annotations;
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
+using MarkusSecundus.PhysicsSwordfight.Utils.Randomness;
 using MathNet.Numerics.Random;
 using System;
 using System.Collections;
@@ -6,237 +9,21 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[System.Serializable]
-public struct Vector3Interval
-{
-    public Vector3 Min, Max;
-}
-[System.Serializable] public struct Interval<T>
-{
-	public Interval(T min, T max) => (Min, Max) = (min, max);
-
-	public T Min, Max;
-}
-
-public static class RandomUtils
-{
-	public static bool NextBool(this System.Random self) => self.Next(0, 2) ==1;
-	public static float Next(this System.Random self, Interval<float> i) => self.NextFloat(i.Min, i.Max);
-	public static int Next(this System.Random self, Interval<int> i) => self.Next(i.Min, i.Max+1);
-	public static Vector2 Next(this System.Random self, Interval<Vector2> i) => self.NextVector2(i.Min, i.Max);
-	public static Vector3 Next(this System.Random self, Interval<Vector3> i) => self.NextVector3(i.Min, i.Max);
-	
-	public static bool Next(this System.Random self, Interval<bool> i) => i.Min == i.Max ? i.Min : (self.Next() & 1) == 0;
-
-    public static int NextBitmap(this System.Random self, Interval<int> i)
-	{
-		var changeable = i.Max & ~i.Min;
-		var randomBitmap = self.Next(int.MinValue, int.MaxValue);
-		var toChange = changeable & randomBitmap;
-		return i.Min | toChange;
-	}
-	public static T NextBitmap<T>(this System.Random self, Interval<T> i) where T : System.Enum => (T)(object)self.NextBitmap(new Interval<int>((int)(object)i.Min, (int)(object)i.Max));
-
-	public static T NextElement<T>(this System.Random self, IReadOnlyList<T> list) => list[self.Next(0, list.Count)];
-
-	public static void Shuffle<T>(this System.Random self, System.Span<T> toShuffle)
-	{
-		for(int t = 0; t < toShuffle.Length; ++t)
-		{
-			for (int u = t + 1; u < toShuffle.Length; ++u)
-				if (self.NextBool())
-					(toShuffle[t], toShuffle[u]) = (toShuffle[u], toShuffle[t]);
-		}
-	}
-
-	public struct Shuffler<T>
-	{
-		public IReadOnlyList<T> Items { get; }
-
-		public Shuffler(System.Random randomizer, IReadOnlyList<T> items, int windowSize)
-		{
-			(Items, rand) = (items, randomizer);
-			window = items.RepeatList(windowSize).ToArray();
-			nextIndex = window.Length;
-		}
-
-		private void Reshuffle()
-		{
-			nextIndex = 0;
-			rand.Shuffle(window.AsSpan());
-		}
-
-        private System.Random rand;
-        private T[] window;
-		private int nextIndex;
-		public T Next()
-		{
-			if (window.Length <= 0) return default;
-			if (nextIndex >= window.Length)
-				Reshuffle();
-			return window[nextIndex++];
-		}
-	}
-}
-
-public struct TransformSnapshot
-{
-    public Vector3 position;
-    public Quaternion rotation;
-    public Vector3 localScale;
-
-    public TransformSnapshot(Transform t)
-    {
-        (position, rotation, localScale) = (t.position, t.rotation, t.localScale);
-    }
-    public TransformSnapshot(Rigidbody r)
-    {
-        (position, rotation, localScale) = (r.position, r.rotation, default);
-    }
-
-    public void SetTo(Transform t)
-    {
-        (t.position, t.rotation) = (position, rotation);
-        if (localScale != default) t.localScale = localScale;
-    }
-    public void SetTo(Rigidbody r)
-    {
-        (r.position, r.rotation) = (position, rotation);
-    }
-}
 
 
-[System.Serializable]
-public struct Sphere
-{
-	public Sphere(Vector3 center, float radius) => (Center, Radius) = (center, radius);
-
-	public Vector3 Center;
-	public float Radius;
-}
-
-[System.Serializable]
-public struct ScaledRay
-{
-	public ScaledRay(Vector3 origin, Vector3 direction) => (this.origin, this.direction) = (origin, direction);
-
-	public Vector3 origin, direction;
-
-	public Vector3 end { get => origin + direction; set => direction = value - origin; }
-
-	public float length => direction.magnitude;
-
-	public static ScaledRay FromPoints(Vector3 origin, Vector3 end) => new ScaledRay(origin, end - origin);
-}
-
-public static class ScaledRayExtensions
-{
-	public static Ray AsRay(this ScaledRay self) => new Ray(self.origin, self.direction);
-	public static ScaledRay AsRay(this Ray self) => new ScaledRay(self.origin, self.direction);
-}
-
-[System.Serializable]
-public class JointRotationHelper
-{
-    public ConfigurableJoint Joint { get; }
-    public Space Space { get; }
-
-	[SerializeField]
-    internal Quaternion startRotation;
-    public JointRotationHelper(ConfigurableJoint joint)
-    {
-        this.Space = joint.configuredInWorldSpace? Space.World : Space.Self;
-        this.Joint = joint;
-        startRotation = Space switch
-        {
-            Space.Self => joint.transform.localRotation,
-            Space.World => joint.transform.rotation,
-            _ => throw new ArgumentException($"Invalid value `{Space}` provided for {nameof(Space)}")
-        };
-		CurrentRotation = Quaternion.identity;
-    }
-
-	public Quaternion CurrentRotation { get; private set; }
-
-    public void SetTargetRotation(Quaternion newTargetRotation) 
-		=> ConfigurableJointExtensions.SetTargetRotationInternal(Joint, CurrentRotation = newTargetRotation, startRotation, Space);
-}
 
 
-/// <summary>
-/// All credit goes to mstevenson <see href="https://gist.github.com/mstevenson/4958837"/>
-/// </summary>
-public static class ConfigurableJointExtensions
-{
-    public static JointRotationHelper MakeRotationHelper(this ConfigurableJoint self) => new JointRotationHelper(self);
-    /// <summary>
-    /// Sets a joint's targetRotation to match a given local rotation.
-    /// The joint transform's local rotation must be cached on Start and passed into this method.
-    /// </summary>
-    public static void SetTargetRotationLocal(this ConfigurableJoint joint, Quaternion targetLocalRotation, Quaternion startLocalRotation)
-	{
-		if (joint.configuredInWorldSpace)
-		{
-			Debug.LogError("SetTargetRotationLocal should not be used with joints that are configured in world space. For world space joints, use SetTargetRotation.", joint);
-		}
-		SetTargetRotationInternal(joint, targetLocalRotation, startLocalRotation, Space.Self);
-	}
 
-	/// <summary>
-	/// Sets a joint's targetRotation to match a given world rotation.
-	/// The joint transform's world rotation must be cached on Start and passed into this method.
-	/// </summary>
-	public static void SetTargetRotation(this ConfigurableJoint joint, Quaternion targetWorldRotation, Quaternion startWorldRotation)
-	{
-		if (!joint.configuredInWorldSpace)
-		{
-			Debug.LogError("SetTargetRotation must be used with joints that are configured in world space. For local space joints, use SetTargetRotationLocal.", joint);
-		}
-		SetTargetRotationInternal(joint, targetWorldRotation, startWorldRotation, Space.World);
-	}
 
-	public static Quaternion ComputeTargetRotationInternal(ConfigurableJoint joint, Quaternion targetRotation, Quaternion startRotation, Space space)
-	{
-		// Calculate the rotation expressed by the joint's axis and secondary axis
-		var right = joint.axis;
-		var forward = Vector3.Cross(joint.axis, joint.secondaryAxis).normalized;
-		var up = Vector3.Cross(forward, right).normalized;
-		Quaternion worldToJointSpace = Quaternion.LookRotation(forward, up);
 
-		// Transform into world space
-		Quaternion resultRotation = Quaternion.Inverse(worldToJointSpace);
 
-		// Counter-rotate and apply the new local rotation.
-		// Joint space is the inverse of world space, so we need to invert our value
-		if (space == Space.World)
-		{
-			resultRotation *= startRotation * Quaternion.Inverse(targetRotation);
-		}
-		else
-		{
-			resultRotation *= Quaternion.Inverse(targetRotation) * startRotation;
-		}
-
-		// Transform back into joint space
-		resultRotation *= worldToJointSpace;
-
-		// Return our newly calculated rotation
-		return resultRotation;
-	}
-    public static void SetTargetRotationInternal(ConfigurableJoint joint, Quaternion targetRotation, Quaternion startRotation, Space space)
-	{
-		// Set target rotation to our newly calculated rotation
-		joint.targetRotation = ComputeTargetRotationInternal(joint, targetRotation, startRotation, space);
-	}
-}
-
-public static class VectorUtils
+public static class VectorHelpers
 {
 	public static readonly Vector3 NaNVector3 = new Vector3(float.NaN, float.NaN, float.NaN);
 }
 
 
-public static class AnimationUtils
+public static class AnimationHelpers
 {
 	public static AnimationCurve AnimationCurve01 => new AnimationCurve(
 		new Keyframe { time=-0.1f, value=-0.1f, inTangent=0f, outTangent = 0f, inWeight=0, outWeight=1f/3f}, 
@@ -245,18 +32,7 @@ public static class AnimationUtils
 	);
 }
 
-
-
-public static class MathUtils
-{
-	public static double Pow2(this double d) => d * d;
-	public static float Pow2(this float d) => d * d;
-
-	public static float MinAbsolute(float a, float b) => (Mathf.Abs(a) <= Mathf.Abs(b)) ? a : b;
-	public static float MaxAbsolute(float a, float b) => (Mathf.Abs(a) >= Mathf.Abs(b)) ? a : b;
-}
-
-public static class GeometryUtils
+public static class GeometryHelpers
 {
     public static Rect RectFromPoints(Vector2 a, Vector2 b)
     {
@@ -294,7 +70,7 @@ public static class GeometryUtils
         if (includeBegin)
             yield return v;
 
-        var rot = Matrix4x4.Rotate(Quaternion.AngleAxis(RotationUtil.MaxAngle / count, axis == default ? Vector3.forward : axis));
+        var rot = Matrix4x4.Rotate(Quaternion.AngleAxis(NumericConstants.MaxDegree / count, axis == default ? Vector3.forward : axis));
         for (int t = 1; t < count; ++t)
             yield return v = rot * v;
     }
@@ -509,36 +285,10 @@ public static class GeometryUtils
 
 	public static bool IsNegligible(this float f, float? epsilon=null) => Mathf.Abs(f) < (epsilon?? Mathf.Epsilon);
 	public static bool IsCloseTo(this float f, float g, float? epsilon=null) => (f-g).IsNegligible(epsilon);
-	public static bool IsCloseTo(this Vector3 v, Vector3 w, float? epsilon=null) => v.x.IsCloseTo(w.x, epsilon) && v.y.IsCloseTo(w.y, epsilon) && v.z.IsCloseTo(w.z, epsilon);
-	public static bool IsNaN(this Vector3 v) => v.x.IsNaN() || v.y.IsNaN() || v.z.IsNaN();
-
-	public static Vector3 Abs(this Vector3 v) => new Vector3(Mathf.Abs(v.x), Mathf.Abs(v.y), Mathf.Abs(v.z));
-
-	public static float Dot(this Vector3 a, Vector3 b) => Vector3.Dot(a, b);
-	public static Vector3 Cross(this Vector3 a, Vector3 b) => Vector3.Cross(a, b);
-
-	public static Vector3 MultiplyElems(this Vector3 a, float x, float y, float z) => new Vector3(a.x *x, a.y * y, a.z * z);
-	public static Vector3 MultiplyElems(this Vector3 a, Vector3 b) => a.MultiplyElems(b.x, b.y, b.z);
-
-	public static Vector2 MultiplyElems(this Vector2 a, float x, float y) => new Vector3(a.x *x, a.y * y);
-	public static Vector2 MultiplyElems(this Vector2 a, Vector2 b) => a.MultiplyElems(b.x, b.y);
-
-
-    public static Vector2 x0(this Vector2 v) => new Vector2(v.x, 0);
-    public static Vector2 _0y(this Vector2 v) => new Vector2(0, v.y);
-
-    public static Vector2 xy(this Vector3 v) => new Vector2(v.x, v.y);
-    public static Vector2 xz(this Vector3 v) => new Vector2(v.x, v.z);
-    public static Vector2 yz(this Vector3 v) => new Vector2(v.y, v.z);
-
-    public static Vector3 xy0(this Vector2 v) => new Vector3(v.x, v.y, 0);
-    public static Vector3 xyx(this Vector2 v) => new Vector3(v.x, v.y, v.x);
-    public static Vector3 x0z(this Vector2 v) => new Vector3(v.x, 0, v.y);
-    public static Vector3 _0yz(this Vector2 v) => new Vector3(0, v.x, v.y);
 }
 
 
-public static class PlaneExtensions
+public static class PlaneHelpers
 {
 	private static readonly Matrix4x4 rotate90x = Matrix4x4.Rotate(Quaternion.Euler(90, 0, 0));
 	private static readonly Matrix4x4 rotate90y = Matrix4x4.Rotate(Quaternion.Euler(0, 90, 0));
@@ -584,103 +334,3 @@ public static class PlaneExtensions
 
 
 
-
-public static class PhysicsUtils
-{
-	public static Collider ThisCollider(this Collision self)
-	{
-		if (self.contactCount <= 0)
-		{
-			Debug.Log($"No contacts - total force was: {self.impulse.ToStringPrecise()} relVel{self.relativeVelocity.ToStringPrecise()}");
-			return null;// throw new System.InvalidOperationException($"This collision doesn't have any contacts! ({self.gameObject.name})");
-
-		}
-		var contact = self.GetContact(0);
-		var ret = contact.thisCollider;
-		if (ret == self.collider)
-		{
-			ret = contact.otherCollider;
-			Debug.Log("Had to try realy hard!", ret);
-		}
-		if (ret == self.collider) return null;// throw new System.InvalidOperationException($"All the colliders of this collision are the same one!");
-		return ret;
-	}
-
-    public static void MoveToVelocity(this Rigidbody self, Vector3 velocity)
-    {
-        var toApply = velocity - self.velocity;
-        self.AddForce(toApply, ForceMode.VelocityChange);
-    }
-    public static void MoveToAngularVelocity(this Rigidbody self, Vector3 velocity)
-	{
-		var toApply = velocity - self.angularVelocity;
-		self.AddTorque(toApply, ForceMode.VelocityChange);
-		//Debug.Log($"applied torque {toApply}, target: {velocity} -> velocity{self.angularVelocity}");
-	}
-
-	public static Rigidbody MimicVolatilesOf(this Rigidbody self, Rigidbody toMimic)
-    {
-        self.position = toMimic.position;
-        self.rotation = toMimic.rotation;
-        self.velocity = toMimic.velocity;
-        self.angularVelocity = toMimic.angularVelocity;
-
-		return self;
-	}
-
-	public static Rigidbody MimicStateOf(this Rigidbody self, Rigidbody toMimic)
-    {
-
-        self.automaticCenterOfMass = false;
-        self.centerOfMass = toMimic.centerOfMass;
-
-        self.automaticInertiaTensor = false;
-        self.inertiaTensor = toMimic.inertiaTensor;
-        self.inertiaTensorRotation = toMimic.inertiaTensorRotation;
-
-        self.drag = toMimic.drag;
-        self.angularDrag = toMimic.angularDrag;
-        self.maxAngularVelocity = toMimic.maxAngularVelocity;
-        self.maxDepenetrationVelocity = toMimic.maxDepenetrationVelocity;
-        self.maxLinearVelocity = toMimic.maxLinearVelocity;
-        self.useGravity = toMimic.useGravity;
-        self.mass = toMimic.mass;
-        self.maxDepenetrationVelocity = toMimic.maxDepenetrationVelocity;
-
-        self.sleepThreshold = toMimic.sleepThreshold;
-        self.solverIterations = toMimic.solverIterations;
-        self.solverVelocityIterations = toMimic.solverVelocityIterations;
-
-        return self.MimicVolatilesOf(toMimic);
-    }
-
-	public static Rigidbody MimicAllOf(this Rigidbody self, Rigidbody toMimic)
-	{
-		self.collisionDetectionMode = toMimic.collisionDetectionMode;
-		self.constraints = toMimic.constraints;
-		self.detectCollisions = toMimic.detectCollisions;
-		self.excludeLayers = toMimic.excludeLayers;
-		self.freezeRotation = toMimic.freezeRotation;
-		self.includeLayers = toMimic.includeLayers;
-		self.interpolation = toMimic.interpolation;
-		self.isKinematic = toMimic.isKinematic;
-
-		return self.MimicStateOf(toMimic);
-	}
-}
-
-public static class CollectionsUtils
-{
-	public static IEnumerable<(T First, T Second)> AllCombinations<T>(this IReadOnlyList<T> l)
-	{
-		for (int t = 0; t < l.Count; ++t)
-			for (int u = 0/*t+1*/; u < l.Count; ++u)
-				yield return (l[t], l[u]);
-	}
-
-	public static IEnumerable<T> Repeat<T>(this System.Func<T> supplier, int count)
-	{
-		while (--count >= 0)
-			yield return supplier();
-	}
-}

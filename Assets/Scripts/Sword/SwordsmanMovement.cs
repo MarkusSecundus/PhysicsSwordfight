@@ -1,9 +1,11 @@
 using MarkusSecundus.PhysicsSwordfight.Input;
 using MarkusSecundus.PhysicsSwordfight.PhysicsUtils;
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Op;
+using static MarkusSecundus.Utils.Op;
 
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword
@@ -40,7 +42,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
 
             public float LookUpDown = 1f;
             public float LookLeftRight = 0.1f;
-            public Vector3Interval LookConstraints;
+            public Interval<Vector3> LookConstraints;
 
             public Vector3 Jump = Vector3.up;
 

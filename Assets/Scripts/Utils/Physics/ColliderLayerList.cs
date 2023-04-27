@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace MarkusSecundus.PhysicsSwordfight.Utils.Constants
+namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
 {
     public static class ColliderLayers
     {

@@ -1,5 +1,7 @@
 using MarkusSecundus.PhysicsSwordfight.Sword;
 using MarkusSecundus.PhysicsSwordfight.Sword.Recording;
+using MarkusSecundus.PhysicsSwordfight.Utils.Randomness;
+using MarkusSecundus.Utils.Datastructs;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,13 +22,13 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
             {
                 if (_currentUsecase == value) return;
                 _currentUsecase = value;
-                recordsRandomizer = new RandomUtils.Shuffler<SwordMovementRecord>(rand, Records[_currentUsecase], 2);
+                recordsRandomizer = new Shuffler<SwordMovementRecord>(rand, Records[_currentUsecase], 2);
                 StartPlaying();
             }
         }
 
 
-        private RandomUtils.Shuffler<SwordMovementRecord> recordsRandomizer;
+        private Shuffler<SwordMovementRecord> recordsRandomizer;
 
         protected override void OnStart(bool wasForced = false)
         {

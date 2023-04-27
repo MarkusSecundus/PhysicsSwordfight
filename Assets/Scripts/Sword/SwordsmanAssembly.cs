@@ -2,6 +2,8 @@ using MarkusSecundus.PhysicsSwordfight.Cosmetics;
 using MarkusSecundus.PhysicsSwordfight.GUI;
 using MarkusSecundus.PhysicsSwordfight.Sword;
 using MarkusSecundus.PhysicsSwordfight.Sword.Damage;
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

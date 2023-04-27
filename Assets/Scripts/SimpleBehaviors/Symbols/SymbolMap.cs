@@ -1,3 +1,4 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
 using MarkusSecundus.PhysicsSwordfight.Utils.Serialization;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,7 +29,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Symbols
         System.Action<string> logError => s => Debug.LogError(s, this);
         public void IndirectMessage(string calleeAndMessage, bool calleeMustExist)
         {
-            if (IndirectionUtils.IndirectMessage.Make(calleeAndMessage, logError) is IndirectionUtils.IndirectMessage message)
+            if (GameObjectHelpers.IndirectMessage.Make(calleeAndMessage, logError) is GameObjectHelpers.IndirectMessage message)
             {
                 if (TryGet<Component>(message.CalleeName, out var callee))
                 {

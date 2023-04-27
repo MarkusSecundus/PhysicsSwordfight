@@ -1,4 +1,7 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
 using MarkusSecundus.PhysicsSwordfight.Utils.Serialization;
+using MarkusSecundus.Utils;
+using MarkusSecundus.Utils.Datastructs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections;
@@ -56,7 +59,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
             if (!isRecording) return;
 
             var frame = new Frame { KeysPressed = new HashSet<KeyCode>(), Axes = new Dictionary<InputAxis, float>(), AxesRaw = new Dictionary<InputAxis, float>() };
-            foreach (var key in EnumUtil.GetValues<KeyCode>())
+            foreach (var key in EnumHelpers.GetValues<KeyCode>())
             {
                 if (UnityEngine.Input.GetKey(key)) frame.KeysPressed.Add(key);
             }

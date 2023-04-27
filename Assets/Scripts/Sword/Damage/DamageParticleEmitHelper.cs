@@ -1,3 +1,4 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
         public void EmitDeath(bool makeSelfStandalone)
         {
             if (makeSelfStandalone)
-                this.transform.SetParent(GameObjectUtils.GetUtilObjectParent());
+                this.transform.SetParent(GameObjectHelpers.GetUtilObjectParent());
             system.Emit(ParticlesOnDeath);
             if (makeSelfStandalone)
                 this.PerformWithDelay(() => Destroy(gameObject), new WaitWhile(() => system.isPlaying));

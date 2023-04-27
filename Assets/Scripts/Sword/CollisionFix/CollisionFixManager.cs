@@ -1,3 +1,4 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -62,7 +63,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
 
                 if (Random.Range(0, 2) == 0) (a, b) = (b, a);
 
-                var fixer = GameObjectUtils.InstantiateUtilObject($"fixer_{a.name}-{b.name}").AddComponent<CollisionFix.Fixer>().Init(a, b);
+                var fixer = GameObjectHelpers.InstantiateUtilObject($"fixer_{a.name}-{b.name}").AddComponent<CollisionFix.Fixer>().Init(a, b);
                 a.attachedFixers.Add(b, fixer);
             }
 

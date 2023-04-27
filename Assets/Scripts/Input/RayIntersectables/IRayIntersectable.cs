@@ -1,3 +1,6 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.PhysicsSwordfight.Utils.Graphics;
+using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,9 +34,8 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
 
         public Transform CenterOverride = null;
         public RayIntersectableSphere Hole;
-        //public Polynomial HoleWeight = new Polynomial { x1 =1f, c = -1f};
 
-        public AnimationCurve HoleWeight = AnimationUtils.AnimationCurve01;
+        public AnimationCurve HoleWeight = AnimationHelpers.AnimationCurve01;
 
         public RayIntersection GetIntersection(Ray r)
         {

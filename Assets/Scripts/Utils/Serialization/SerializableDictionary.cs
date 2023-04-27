@@ -1,3 +1,4 @@
+using MarkusSecundus.Utils.Datastructs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,14 +31,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Serialization
         public void OnAfterDeserialize()
         {
             _values.Clear();
-            try
-            {
-                FillDictionaryValues(_values);
-            }
-            catch
-            {
-                Debug.Log($"err[{values.MakeString()}]");
-            }
+            FillDictionaryValues(_values);
         }
 
         protected virtual void FillDictionaryValues(Dictionary<TKey, TValue> dictionary)
