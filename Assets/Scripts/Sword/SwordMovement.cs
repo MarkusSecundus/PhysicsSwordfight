@@ -1,40 +1,33 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
-using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
-using System.Linq;
 
-using HoldingForceInterpolator = MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator<float, MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator.FloatInterpolationPolicy>;
-using ConnectedAnchorInterpolator = MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator<UnityEngine.Vector3, MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator.VectorInterpolationPolicy>;
-using UnityEngine.Events;
-using Newtonsoft.Json;
 using MarkusSecundus.PhysicsSwordfight.Utils.Interpolation;
 using MarkusSecundus.PhysicsSwordfight.Input;
 using MarkusSecundus.PhysicsSwordfight.Submodules;
 using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
 using MarkusSecundus.PhysicsSwordfight.PhysicsUtils;
 
+using HoldingForceInterpolator = MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator<float, MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator.FloatInterpolationPolicy>;
+using ConnectedAnchorInterpolator = MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator<UnityEngine.Vector3, MarkusSecundus.PhysicsSwordfight.Utils.Interpolation.RetargetableInterpolator.VectorInterpolationPolicy>;
+
+
 namespace MarkusSecundus.PhysicsSwordfight.Sword
 {
-
+    [RequireComponent(typeof(ConfigurableJoint)), RequireComponent(typeof(SwordDescriptor))]
     public class SwordMovement : MonoBehaviour, ISwordMovement
     {
         [System.Serializable] public abstract class Submodule : IScriptSubmodule<ISwordMovement> { }
 
-        [field: SerializeField] public SwordDescriptor Sword { get; private set; }
-        [field: SerializeField] public ConfigurableJoint Joint { get; private set; }
-        [field: SerializeField] public ISwordInput Input { get; private set; }
+        public SwordDescriptor Sword { get; private set; }
+        public ConfigurableJoint Joint { get; private set; }
+        public ISwordInput Input { get; private set; }
 
         public Transform SwordWielder => Joint.connectedBody.transform;
 
         void Start()
         {
-            Input = Input.IfNil(ISwordInput.Get(this.gameObject));
-            Sword = Sword.IfNil(GetComponent<SwordDescriptor>());
-            Joint = Joint.IfNil(GetComponent<ConfigurableJoint>());
+            Input = ISwordInput.Get(this.gameObject);
+            Sword = GetComponent<SwordDescriptor>();
+            Joint = GetComponent<ConfigurableJoint>();
 
             InitSwordMovers();
             InitModes();

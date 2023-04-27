@@ -47624,6 +47624,38 @@ PrefabInstance:
       propertyPath: DamageReport
       value: 
       objectReference: {fileID: 1833221620}
+    - target: {fileID: 4965825508089629308, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: Modes.values.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965825508089629308, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: Modes.values.Array.data[1].Key
+      value: 282
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965825508089629308, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: Modes.values.Array.data[1].Value
+      value: 1235462470088785920
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965825508089629308, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: managedReferences[1235462470088785920]
+      value: Assembly-CSharp MarkusSecundus.PhysicsSwordfight.Sword.Modules.SwordMovementMode_Stabbing
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965825508089629308, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: managedReferences[1235462470088785920].StabKey
+      value: 323
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965825508089629308, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: managedReferences[1235462470088785920].StabDistance
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965825508089629308, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: managedReferences[1235462470088785920].InputIntersector
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4965825508089629308, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: managedReferences[1235462470088785920].SwordDirectionHint
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
