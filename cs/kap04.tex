@@ -77,15 +77,41 @@ Komponent uživatelského rozhraní a dalších součástí vnějšího světa j
 
 Komponenta \textbf{SymbolMap} poskytne z editoru konfigurovatelný list, ve kterém můžeme skladovat reference na libovolné komponenty herního světa - ke každé přiřazený string s unikátním jménem. V komponentě uvnitř šermíře či meče pak můžeme definovat serializovatelnou proměnnou typu \textbf{Symbol} - uživatel v editoru zadá jméno, skript pak voláním symbol.Get() získá příslušnou komponentu.
 
+
 \subsection{Systém zranění}
 
+Posledním dílem skládačky naší hry je hráčova schopnost zraňovat další entity a být jimi zraňován. Pro jednoduchost volíme cestu tradičního systému bodů zdraví a zranění.
+
+Zde najdeme 3 podstatné druhy komponent - \textbf{zbraň}, která udílí zranění, \textbf{oběť útoku}, jež zranění přijímá a případně je schopna zemřít, a konkrétní \textbf{část těla}, jež byla zasažena.
+
+\subsubsection*{Damageable}
+
+Komponenta v kořenu postavy, která definuje její body HP. Nabízí eventy pro situace, kdy je zraněna či léčena (aby bylo updatováno GUI apod.), v případě že HP klesnou na 0 buď může svůj herní objekt okamžitě zničit, či zavolat event, který provede zničení sofistikovaněji (např. hráče respawne). 
+
+Změna HP se provádí voláním funkce ChangeHP(float) - předáváme-li kladný argument, je chápáno že jde o léčení, záporný argument znamená zranění.
+
+\subsubsection*{Zbroj}
+
+Zranění je typicky vyvoláno zasažením některé z částí těla postavy. Ty mohou být různě obrněné a nabízet různou míru tlumení útoku. Reprezentujeme je potomky třídy \textbf{IArmorPiece}.
+
+Chceme-li vykonat útok na konkrétní kus zbroje, voláme funkci ProcessAttack(AttackDeclaration), kde AttackDeclaration je struktura nesoucí základní informace o bodu, kam byl proveden zásah, míře způsobeného zranění apod. . Instance zbroje následně přepočítá, jaké zranění bylo reálně způsobeno a zavolá ChangeHP() na Damageable, které nalezlo ve svém předkovi.
+
+\subsubsection*{Zbraň}
+
+Zbraň je jakýkoliv objekt, který je na IArmorPiece schopen volat ProcessAttack(). Může to být např. paprsek smrti řízený raycastem, avšak v našem případě to typicky bude fyzikální objekt, jenž deklaruje útok při kolizi s jiným objektem. 
+
+Konkrétní implementací, kterou použijeme, je \textbf{BasicImpactWeapon}. Její náplň práce je zkrátka při každé zprávě OnCollisionEnter prozkoumat zasažený collider, zda někde v jeho předkovi není IArmorPiece - pokud je, vytvoří pro něj deklaraci útoku na základě bodu zásahu a síly kolize, jež mu byly nahlášeny fyzikálním systémem.
+
 \subsection{Zhodnocení návrhu} 
+
+
 \begin{itemize}
     \item Logika ovládání meče a ovládání hráčské postavy jsou dobře oddělené
     \item Logika meče dobře rozšiřitelná - jednoduché přidat nový ovládací submodul
     \item Není problém mít ten samý ovládací submodul několikrát na různých klávesách ale s jinými parametry
     \item Mezi SwordMovement a jeho mody není problém vecpat dekorátory (např. pro nahrávání rozkazů k pohybu meče)
     \item Abstrakce uživatelského vstupu... není problém ho mockovat, simulovat apod.
+    \item Damage systém - velmi jednoduchý, ale obecný - poskytuje možnosti sofistikovaného rozšíření
     \item Nevýhoda - Data hráče a meče nejsou dobře oddělená
         \begin{itemize}
             \item Detailní model hráče potřebuje mít k dispozici deskriptor meče, aby věděl, jak má napolohovat procedurální animaci rukou
