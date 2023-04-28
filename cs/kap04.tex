@@ -86,44 +86,41 @@ Zde najdeme 3 podstatné druhy komponent - \textbf{zbraň}, která udílí zran�
 
 \subsubsection*{Damageable}
 
-Komponenta v kořenu postavy, která definuje její body HP. Nabízí eventy pro situace, kdy je zraněna či léčena (aby bylo updatováno GUI apod.), v případě že HP klesnou na 0 buď může svůj herní objekt okamžitě zničit, či zavolat event, který provede zničení sofistikovaněji (např. hráče respawne). 
+Komponenta v kořenu postavy, která definuje její body HP - v našem případě tedy šermíř. Nabízí eventy pro situace, kdy je zraněna či léčena (aby bylo updatováno GUI apod.), v případě že HP klesnou na 0 buď může svůj herní objekt okamžitě zničit, či zavolat event, který provede zničení sofistikovaněji (např. hráče respawne). 
 
 Změna HP se provádí voláním funkce ChangeHP(float) - předáváme-li kladný argument, je chápáno že jde o léčení, záporný argument znamená zranění.
 
 \subsubsection*{Zbroj}
 
-Zranění je typicky vyvoláno zasažením některé z částí těla postavy. Ty mohou být různě obrněné a nabízet různou míru tlumení útoku. Reprezentujeme je potomky třídy \textbf{IArmorPiece}.
+Zranění je typicky vyvoláno zasažením některé z částí těla postavy. Ty mohou být různě obrněné a nabízet různou míru tlumení útoku. Reprezentujeme je komponentami dědícími z \textbf{IArmorPiece}. V našem případě budou rozmístěny v detailím těle šermíře jako doprovod jednotlivých colliderů.
 
-Chceme-li vykonat útok na konkrétní kus zbroje, voláme funkci ProcessAttack(AttackDeclaration), kde AttackDeclaration je struktura nesoucí základní informace o bodu, kam byl proveden zásah, míře způsobeného zranění apod. . Instance zbroje následně přepočítá, jaké zranění bylo reálně způsobeno a zavolá ChangeHP() na Damageable, které nalezlo ve svém předkovi.
+Chceme-li vykonat útok na konkrétní kus zbroje, voláme funkci ProcessAttack(AttackDeclaration), kde AttackDeclaration je struktura nesoucí základní informace o bodu, kam byl proveden zásah, míře způsobeného zranění apod. . Instance zbroje následně přepočítá, jaké zranění bylo reálně způsobeno a zavolá ChangeHP() na IDamageable, které nalezlo ve svém předkovi.
 
 \subsubsection*{Zbraň}
 
 Zbraň je jakýkoliv objekt, který je na IArmorPiece schopen volat ProcessAttack(). Může to být např. paprsek smrti řízený raycastem, avšak v našem případě to typicky bude fyzikální objekt, jenž deklaruje útok při kolizi s jiným objektem. 
 
-Konkrétní implementací, kterou použijeme, je \textbf{BasicImpactWeapon}. Její náplň práce je zkrátka při každé zprávě OnCollisionEnter prozkoumat zasažený collider, zda někde v jeho předkovi není IArmorPiece - pokud je, vytvoří pro něj deklaraci útoku na základě bodu zásahu a síly kolize, jež mu byly nahlášeny fyzikálním systémem.
+Konkrétní implementací, kterou použijeme, je \textbf{BasicImpactWeapon}. Její náplň práce je zkrátka při každé zprávě OnCollisionEnter prozkoumat zasažený collider, zda někde v jeho předkovi není IArmorPiece - pokud je, vytvoří pro něj deklaraci útoku na základě bodu zásahu a síly kolize, jež mu byly nahlášeny fyzikálním systémem. 
+
+Tuto komponentu v našem případě umístíme do kořenového objektu meče\footnote{Bylo by pěkné moci ji umístit přímo do čepele, jak jsme však zmínili v \ref{collidersPhysicsIntroSubsection}, komponenta poslouchající na OnCollision se musí nalézat ve stejném objektu jako Rigidbody. }.
 
 \subsection{Zhodnocení návrhu} 
 
+Skutečnou míru kvality našeho návrhu poznáme až po dlouhých letech jeho neodvratného živelného vývoje v praktickém nasazení, nyní můžeme nanejvýše prohlásit, že náš návrh se zdá být v souladu s principy SOLID. 
 
-\begin{itemize}
-    \item Logika ovládání meče a ovládání hráčské postavy jsou dobře oddělené
-    \item Logika meče dobře rozšiřitelná - jednoduché přidat nový ovládací submodul
-    \item Není problém mít ten samý ovládací submodul několikrát na různých klávesách ale s jinými parametry
-    \item Mezi SwordMovement a jeho mody není problém vecpat dekorátory (např. pro nahrávání rozkazů k pohybu meče)
-    \item Abstrakce uživatelského vstupu... není problém ho mockovat, simulovat apod.
-    \item Damage systém - velmi jednoduchý, ale obecný - poskytuje možnosti sofistikovaného rozšíření
-    \item Nevýhoda - Data hráče a meče nejsou dobře oddělená
-        \begin{itemize}
-            \item Detailní model hráče potřebuje mít k dispozici deskriptor meče, aby věděl, jak má napolohovat procedurální animaci rukou
-            \item Orientační body, které používají některé mody meče, potřebují mít konstantní polohu relativně vůči tělu hráče -> musí být potomky jeho transformu, ne meče
-        \end{itemize}
-\end{itemize} 
+Herní systém jsme dekomponovali do soustavy herních objektů s komponentami - základem jsou šermíř a meč, které uzavíráme do společného předka majícího úkol pospojovat je navzájem a s vnějším světěm. 
 
+Šermíř a meč jsou samostatné entity, jejich herní logika je dobře oddělená. Datové závislosti mezi nimi existují, ale jsou read-only - šermíř zkrátka potřebuje znát aktuální polohu meče, aby jej mohl držet ve svých rukou.
 
+Největší komplexita se bude soustředit do \textbf{ovládání meče}. Jeho logiku jsme se tedy pokusili učinit otevřenou pro rozšíření jak jen to bylo možné. Oddělili jsme low-level objekt zodpovědný za uskutečnění pohybu meče (SwordMovement) a high-level objekty (SwordMovement.Submodule), jež z uživatelského vstupu pro low-level objekt generují instrukce. Oba spolu komunikují přes dobře definované rozhraní a není problém přidávat nové jejich implementace či je obalovat do dekorátorů. High-level submodulů dovolujeme mít definované libovolné množství - aktivní je vždy pouze jeden, ale lze mezi nimi velmi rychle přepínat. 
 
+Veškeré spojení s objekty vnějšího herního světa (např. GUI) jsme soustředili do \textbf{kořenového objektu}. Zde je možné libovolné vnější komponenty odkázat a vnitřní objekty je dohledají dle stanoveného identifikátoru.
 
+Také jsme vytvořili abstrakci pro uživatelský vstup (rozhraní ISwordInput) - výměnou použité implementace by neměl být problém později hráčského šermíře např. změnit na počítačem řízeného nepřítele. Jeho instanci rovněž vnitřní objekty naleznou v kořenovém objektu. 
 
-\section{Schéma ovládání}
+Celý náš návrh jsme nakonec protkali systémem zranění. Ten je dle našeho návrhu velmi jednoduchý, ale poskytuje značnou úroveň rozšířitelnosti. Není problém, aby různé části těla postavy (oblečené do různé části zbroje) vyhodnocovaly zranění různým způsobem. Zbraní pak může být naprosto jakákoliv entita schopná na části zbroje volat metodu ProcessAttack(), nejsme tedy nutně omezeni pouze na zraňování působením fyzikálních sil.
+
+\section{Schéma ovládání} 
 
 \subsection{Ovládání meče - úvodní zamyšlení}
 \begin{itemize}
