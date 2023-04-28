@@ -194,33 +194,44 @@ Pro vyřešení tohoto problému jsme strávili dlouhé dny živelným experimen
 \subsubsection*{Řešení}
 
 Nejprve jsme stanovili rozhraní\footnote{Ve skutečnosti jde o abstraktní třídu dědící z UnityEngine.MonoBehavior abychom zajistili její kompatibilitu se serializačním systémem.} \textbf{IRayIntersectable}. To definuje jedinou metodu GetIntersection(), která jako argument bere paprsek a vrací strukturu popisující výsledek průniku. Tento výsledek zahrnuje flag zda byl průnik nalezen, bod průniku, střed protnutého útvaru a hodnotu určující jeho váhu.
-
+\bigbreak
 Než se dobereme k implementaci kulové plochy odpovídající tomuto rozhraní, uveďme onen nový prvek, který našemu systému razantně zvýší obecnost. Tím je \textbf{RayIntersectableInterpolation}. Jde o jednoduchou komponentu, která v sobě nese list odkazů na jiné IRayIntersectables. Jeho metoda GetIntersection() se chová tak, že zkrátka vyžádá průniky od všech těchto podprvků a vypočte jejich vážený průměr (dle vah získaných z návratových hodnot) - průměruje jak body průniku, tak i nahlášené středy protnutých útvarů apod. .
+\bigbreak
+Nyní můžeme přistoupit k \textbf{RayIntersectableSphere}. To je naše již známá kulová plocha, definovaná středem a poloměrem. Avšak aby ji bylo možné hladce interpolovat s vícero dalšími, přidali jsme několik dodatečných parametrů.
 
-Nyní můžeme přistoupit k \textbf{RayIntersectableSphere}.
+Nejdůležitějším z nich je \textbf{díra}. To je odkaz na jinou RayIntersectableSphere, ze které použijeme její střed a poloměr. Uvažujeme kouli jejich prostřednictvím definovanou. Myšlenka je pro každý bod průniku, který by naše koule poskytnula, se nejprve podívat na jeho vzdálenost od středu díry - pokud je průnik uvnitř díry (vzdálenost je menší než poloměr díry), průnik zahodíme, jako by k němu vůbec nedošlo. Pomocí tohoto hacku jsme schopni z konkrétní kulové plochy odebrat kus, který nám překáží - např. zadní polokouli - a zajistit tím předvídatelnější výsledek interpolace.
+
+Nakonec jsme díru zobecnili ještě více - místo striktního je/není v díře uvažujeme poměr mezi vzdáleností bodu průniku od středu díry a jejím poloměrem (tedy číslo v intervalu [0;1] pokud bod leží v díře, větší než 1 pokud v díře neleží) - tuto hodnotu použijeme jako argument pro vyhodnocení uživatelsky konfigurovatelné 1D interpolační křivky\footnote{Třída AnimationCurve vestavěná v Unity}, její výsledek následně stanovíme jako váhu průniku. Tato varianta umožňuje vše co ta předchozí (stačí dodat křivku s hodnotou 0 pro interval [0;1] a hodnotou 1 pro zbytek), avšak nově jsme schopni unvitř složité soustavy kulových ploch zajistit na hranicích mezi jednotlivými prvky plynulé přechody - váha jedné plochy pozvolna upadá zatímco váha té druhé pozvolna stoupá.
+
+Dalším volitelnám parametrem je \textbf{falešný střed} - pokud ten nastavíme, výpočet průniku se nijak neovlivní, v návratové hodnotě však místo skutečného středu kružnice bude udána poloha tohoto bodu. Střed kružnice slouží v některých modech ovládání jako dodatečný orientační bod. Díky tomuto parametru jsme schopni složit dohromady kružnice s velmi se lišícími velikostmi a zajistit, aby se všechny tvářily jako pouhá součást jednoho celkového útvaru. 
+
+\subsubsection*{Zhodnocení}
+
+Slabší stránkou řešení, které jsme si právě představili, jsou možnosti jeho vizualizace. Jediným řešením, které nám rozhraní IRayIntersectable umožňuje, je vyslat velké množství paprsků a vytvořit mesh pospojováním nalezených průsečíků. Zároveň možnost vizualizace je při editaci jakkoliv netriviálního takovéhoto systému naprosto nezbytná.
 
 \begin{itemize}
     \item %ovládání střílením paprsku, který se protne s kulovou plochou jsme naimplementovali
         \begin{itemize}
-            \item \textbf{RayIntersectableSphere}
-                \begin{itemize}
-                    \item definovaná středem a poloměrem
-                    \item volitelný parametr - \textbf{díra}
-                        \begin{itemize}
-                            \item jiná RayIntersectableSphere
-                            \item pokud se průnik paprsku nachází v díře (je vzdálený od jejího středu míň než její poloměr), nahlásí se jako netrefa, nebo se mu dle vzdálenosti od středu díry sníží váha
-                            \item váhu výsledku (float 0-1), příp. její závislost na vzdálenosti průniku od středu díry konfiguruje uživatel skrz AnimationCurve
-                            \item díry se ukázalo, že jsou potřeba, aby se při interpolaci (viz níže) mezi velkou a malou koulí dal udělat hladký přechod
-                        \end{itemize}
-                    \item další volitelný parametr - \textbf{center override}
-                    \begin{itemize}
-                        \item bod, který se bude ve výsledkovém structu hlásit jako centrum kulové plochy i když ve skutečnosti není
-                        \item potřeba když interpolujeme mezi hodně velkou a hodně malou koulí - aby obě hlásily stejný střed
-                    \end{itemize}
-                \end{itemize}
-            \item Vizualizace - musí se střílet spousta paprsků z kamery 
+            %\item \textbf{RayIntersectableSphere}
+            %    \begin{itemize}
+            %        %\item definovaná středem a poloměrem
+            %        %\item volitelný parametr - \textbf{díra}
+            %        %    \begin{itemize}
+            %        %        \item jiná RayIntersectableSphere
+            %        %        \item pokud se průnik paprsku nachází v díře (je vzdálený od jejího středu míň než její poloměr), nahlásí se jako netrefa, nebo se mu dle vzdálenosti od středu díry %sníží váha
+            %        %        \item váhu výsledku (float 0-1), příp. její závislost na vzdálenosti průniku od středu díry konfiguruje uživatel skrz AnimationCurve
+            %        %        \item díry se ukázalo, že jsou potřeba, aby se při interpolaci (viz níže) mezi velkou a malou koulí dal udělat hladký přechod
+            %        %    \end{itemize}
+            %        \item %další volitelný parametr - \textbf{center override}
+            %        %\begin{itemize}
+            %        %    \item bod, který se bude ve výsledkovém structu hlásit jako centrum kulové plochy i když ve skutečnosti není
+            %        %    \item potřeba když interpolujeme mezi hodně velkou a hodně malou koulí - aby obě hlásily stejný střed
+            %        %\end{itemize}
+            %    \end{itemize}
+            %\item Vizualizace - musí se střílet spousta paprsků z kamery 
             \item díky tomuhle jsme schopní hráči poskytnout průnikový tvar, co se pro něj tváří jako normální, intuitivní kulová plocha, ale proti ní zde máme spoustu dodatečné flexibility, která nám umožní vychytat okrajové případy
             \item pomocí tohohle se dají poskládat dost komplexní útvary, co se pořád tváří pěkně plynule a spojitě - ale nejsou plynulé a spojité vždycky, člověk si musí trochu pohrát s AnimationCurve u děr aby nebyly ostré přechody tam kde končí/začíná nějaká koule
+            \item Další flexibilita se dá přidat přidáním dalších custom IRayIntersectables
             \item (insert vizualizaci jak vypadá IRayIntersectable kterej používá blocking mode)
             \item poznámka: k tomuto řešení jsme došli živelně experimentováním v průběhu času - teď když už je hotové, dost pravděpodobně by šlo najít alternativu, co by byla jednodušší a srovnatelně mocná (kdyby to někomu stálo za práci)
         \end{itemize}
