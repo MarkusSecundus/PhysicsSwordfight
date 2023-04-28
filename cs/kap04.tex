@@ -104,6 +104,14 @@ Konkrétní implementací, kterou použijeme, je \textbf{BasicImpactWeapon}. Jej
 
 Tuto komponentu v našem případě umístíme do kořenového objektu meče\footnote{Bylo by pěkné moci ji umístit přímo do čepele, jak jsme však zmínili v \ref{collidersPhysicsIntroSubsection}, komponenta poslouchající na OnCollision se musí nalézat ve stejném objektu jako Rigidbody. }.
 
+
+\begin{figure}[ht]\centering
+    \center
+    \includegraphics[width=145mm]{../img/Structure-diagram.png}
+    \caption{Diagram znázorňující strukturu našeho systému}
+    \label{obr04:diagram}
+\end{figure} 
+
 \subsection{Zhodnocení návrhu} 
 
 Skutečnou míru kvality našeho návrhu poznáme až po dlouhých letech jeho neodvratného živelného vývoje v praktickém nasazení, nyní můžeme nanejvýše prohlásit, že náš návrh se zdá být v souladu s principy SOLID. 
@@ -112,13 +120,13 @@ Herní systém jsme dekomponovali do soustavy herních objektů s komponentami -
 
 Šermíř a meč jsou samostatné entity, jejich herní logika je dobře oddělená. Datové závislosti mezi nimi existují, ale jsou read-only - šermíř zkrátka potřebuje znát aktuální polohu meče, aby jej mohl držet ve svých rukou.
 
-Největší komplexita se bude soustředit do \textbf{ovládání meče}. Jeho logiku jsme se tedy pokusili učinit otevřenou pro rozšíření jak jen to bylo možné. Oddělili jsme low-level objekt zodpovědný za uskutečnění pohybu meče (SwordMovement) a high-level objekty (SwordMovement.Submodule), jež z uživatelského vstupu pro low-level objekt generují instrukce. Oba spolu komunikují přes dobře definované rozhraní a není problém přidávat nové jejich implementace či je obalovat do dekorátorů. High-level submodulů dovolujeme mít definované libovolné množství - aktivní je vždy pouze jeden, ale lze mezi nimi velmi rychle přepínat. 
+Největší komplexita se bude soustředit do \textbf{ovládání meče}. Jeho logiku jsme se tedy pokusili učinit otevřenou pro rozšíření jak jen to bylo možné. Oddělili jsme low-level objekt zodpovědný za uskutečnění pohybu meče (SwordMovement) a high-level objekty (SwordMovement.Module), jež z uživatelského vstupu pro low-level objekt generují instrukce. Oba spolu komunikují přes dobře definované rozhraní a není problém přidávat nové jejich implementace či je obalovat do dekorátorů. High-level submodulů dovolujeme mít definované libovolné množství - aktivní je vždy pouze jeden, ale lze mezi nimi velmi rychle přepínat. 
 
 Veškeré spojení s objekty vnějšího herního světa (např. GUI) jsme soustředili do \textbf{kořenového objektu}. Zde je možné libovolné vnější komponenty odkázat a vnitřní objekty je dohledají dle stanoveného identifikátoru.
 
 Také jsme vytvořili abstrakci pro uživatelský vstup (rozhraní ISwordInput) - výměnou použité implementace by neměl být problém později hráčského šermíře např. změnit na počítačem řízeného nepřítele. Jeho instanci rovněž vnitřní objekty naleznou v kořenovém objektu. 
 
-Celý náš návrh jsme nakonec protkali systémem zranění. Ten je dle našeho návrhu velmi jednoduchý, ale poskytuje značnou úroveň rozšířitelnosti. Není problém, aby různé části těla postavy (oblečené do různé části zbroje) vyhodnocovaly zranění různým způsobem. Zbraní pak může být naprosto jakákoliv entita schopná na části zbroje volat metodu ProcessAttack(), nejsme tedy nutně omezeni pouze na zraňování působením fyzikálních sil.
+Celý náš systém jsme nakonec protkali systémem zranění. Ten je dle našeho návrhu velmi jednoduchý, ale poskytuje značnou úroveň rozšířitelnosti. Není problém, aby různé části těla postavy (oblečené do různé části zbroje) vyhodnocovaly zranění různým způsobem. Zbraní pak může být naprosto jakákoliv entita schopná na části zbroje volat metodu ProcessAttack(), nejsme tedy nutně omezeni pouze na zraňování působením fyzikálních sil.
 
 \section{Schéma ovládání} 
 
