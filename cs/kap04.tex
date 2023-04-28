@@ -140,29 +140,27 @@ Jak jsme se rozhodli v kapitole \ref{goalSettingChapter}, chceme, aby naše hra 
 
 Jak jsme již na mnoha místech nastínili, ovládání meče je v naší situaci těžkým problémem, začněme tedy tím. 
 
+\subsubsection*{Rozbor možností}
+
 Víme, že plnou kontrolu ve všech šesti stupních volnosti hráči poskytnout nemůžeme. Nezbývá nám než z této celkové množiny stavů vybrat nějakou podmnožinu, na kterou jsme schopni vstup z myši a klávesnice namapovat.
 
 Mapování musí především pro hráče být jednoduše myšlenkově uchopitelné. Zároveň ho nechceme omezit na konečnou množinu stavů. Potřebujeme tedy nalézt vhodný matematický formalizmus pro jeho popis - ideálně nějaký, který se bude chovat spojitě\footnote{Spojitost neformálně definujme např. takto: Pro každé dvě polohy kurzoru A, B a mapování f, pokud C je poloha kurzoru nacházející se na cestě z A do B, pak poloha meče f(C) je stejným způsobem mezistav pro f(A), f(B).} a budeme schopni ho pro hráče přehledně vizualizovat.
-
+\bigbreak
 Hra \textbf{\acl{DbtS}} (viz \ref{dieByTheSwordDescriptionSubsection}) řešila velmi podobný problém jako my. Podívejme se tedy nejprve na metody, které svým hráčům poskytla:
 \begin{itemize}
     \item \textbf{Numerická klávesnice} - Existovala pouze pro zajištění přístupnosti v době, kdy myš nebyla rozšířená. Umožňovala malou podmnožinu toho co myš a nijak při tom nezvyšovala uživatelskou přívětivost.
     \item \textbf{Myš} - Jediný z ovladačů, který poskytl spojité mapování. Vyžadovala cvik, ale umožnila kreativní a flexibilní reakce v nezvyklé situaci.
-    \item \textbf{Nahrávky} - Technicky zaručily plnou kontrolu ve všech stupních volnosti zbraně, v praxi však neumožnily reagovat flexibilně na specifickou situaci. (Hráč byl schopen si vést okamžitý myšlenkový přehled o příliš malém množství nahrávek.)
+    \item \textbf{Nahrávky} - Technicky s mečem umožnily vykonávat libovolné pohyby, těchto pohybů však v libovolném okamžiku muselo být definováno malé konečné množství. Hráč tedy nebyl schopen flexibilně reagovat na specifickou situaci. 
 \end{itemize}
+Z tohoto náhledu je zřejmé, že všechny metody kromě myši z podstaty věci smrsknou množinu stavů na konečné množství a neumožní rychlé flexibilní reakce. Dále se tedy zaměříme primárně na použití myši. Klávesnice může zastávat konečné množství doplňujících funkcí, které se na myš nevešly. Nahrávky bude rovněž vhodné interně implementovat, aby byly v případě potřeby k dispozici pro počítačem řízeného nepřítele (v jeho případě je předvídatelnost a nízká flexibilita výhodou).
+\bigbreak
+\textit{Není možné vyloučit, že existují neznámé alternatní způsoby využití myši a klávesnice, které se vymykají závěrům tohoto našeho zamyšlení. Jejich prozkoumání však ponecháme případným navazujícím pracím. Pro ty zde vytvoříme jednoduše myšlenkově uchopitelný kontrolní bod, proti kterému budou moci své výsledky experimentálně srovnávat.}
 
-\subsubsection*{hints}
+\subsubsection*{Volba mapování}
+
+
+\bigbreak
 \begin{itemize}
-    \item výsledek diskuze:
-        \begin{itemize}
-            \item pro hráče chceme ovládání myší
-            \begin{itemize}
-                \item jinou možnost než něco s myší, nebo něco s klávesnicí stejně nemáme
-                \item myš jediná má potenciál umožnit jemnou a flexibilní kontrolu (klávesnice má konečný počet kláves - konečný počet stavů)
-            \end{itemize}
-            \item interně implementujeme i přehrávání nahrávek - bude se hodit pro AI nepřítele (dává nám přímou, dobře uchopitelnou kontrolu nad jeho chováním a tedy obtížností hry) (jednoduchý systém, vhodný pro to v budoucnu sloužit jako základ, proti kterému budeme testovat sofistikovanější AI)
-            \item nějaké kreativnější nápady než s čím už přišlo DbtS necháme na později. teď chceme mít něco, co už víme, že je základně použitelné, abysme vůči tomu později nové výstřelky mohli porovnávat
-        \end{itemize}
     \item jakým formalizmem mapovat polohu myši na polohu meče?:
         \begin{itemize}
             \item nevíme jak přesně to na pozadí dělá DbtS
