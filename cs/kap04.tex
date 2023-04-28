@@ -128,6 +128,8 @@ Také jsme vytvořili abstrakci pro uživatelský vstup (rozhraní ISwordInput) 
 
 Celý náš systém jsme nakonec protkali systémem zranění. Ten je dle našeho návrhu velmi jednoduchý, ale poskytuje značnou úroveň rozšířitelnosti. Není problém, aby různé části těla postavy (oblečené do různé části zbroje) vyhodnocovaly zranění různým způsobem. Zbraní pak může být naprosto jakákoliv entita schopná na části zbroje volat metodu ProcessAttack(), nejsme tedy nutně omezeni pouze na zraňování působením fyzikálních sil.
 
+\pagebreak
+
 \section{Schéma ovládání} 
 
 Rozhraní, skrze která budou jednotlivé komponenty herního systému komunikovat mezi sebou, již máme. Nyní se zaměřme na rozhraní, skrze které s nimi bude komunikovat uživatel.
@@ -158,29 +160,27 @@ Z tohoto náhledu je zřejmé, že všechny metody kromě myši z podstaty věci
 
 \subsubsection*{Volba mapování}
 
+Nástroj ovládání máme stanovený, jaký se tedy nabízí formalizmus pro mapování kurzoru na polohu meče?
 
-\bigbreak
-\begin{itemize}
-    \item jakým formalizmem mapovat polohu myši na polohu meče?:
-        \begin{itemize}
-            \item nevíme jak přesně to na pozadí dělá DbtS
-            \item jednoduchý, dobře vizualizovatelný formalismus.. střílet paprsek z kamery z místa kurzoru a protnout ho s nějakým útvarem 
-            \item po dlouhé úvaze jsme se rozhodli, že pěkný útvar k protínání je kulová plocha
-                \begin{itemize}
-                    \item začneme s ní
-                    \item buď se ukáže jako ideální
-                    \item nebo se od ní odpíchneme abychom se dobrali k něčemu sofistikovanějšímu
-                \end{itemize}
-            \item DbtS umí pěkně mávat mečem ze strany na stranu. Co ale jiné typy pohybu, co člověk s mečem běžně dělá - např. blokování
-                \begin{itemize}
-                    \item mávání s mečem naimplementujeme plnohodnotně jako v DbtS 
-                    \item bude však možné přepínat na další mody ovládání
-                    \item vždy bude aktivní jenom jeden mod - přepínání stiskem příhodné klávesy (např. shift)
-                    \item všechny mody berou na vstupu jeden bod - průnik kurzoru s kulovou plochou - a liší se v algoritmu, pomocí kterého z tohoto bodu určí cílovou polohu meče
-                    \item přesnou matematiku na které stojí oba mody rozebereme později v implementační kapitole \textbf{\footnote{Je rozumný to takhle rozseknout?}} (viz \ref{modesOfSwordMovementSubsection})
-                \end{itemize}
-        \end{itemize}
-\end{itemize}
+\acl{DbtS} umožňuje hráči velmi dobře sekat mečem. Jakým přesným způsobem mapování vykonává, to však není možné bez přístupu ke zdrojovému kódu zjistit. Pokusme se nyní vlastní cestou dobrat k podobnému výsledku.
+
+Po krátké meditaci nad metodami, které nám pro zpracování dat z myši poskytuje Unity (viz \ref{unityInputExplanationSubsection}), jsme se rozhodli, že dobrým krokem pravděpodobně bude vystřelit z pozice kurzoru paprsek do herního světa. Tento paprsek bychom následně mohli protnout skrze nějaký jednoduchý geometrický útvar, který jsme schopni hráči dobře vizualizovat. 
+
+Kdybychom pro jednoduchost prohlásili, že poloha rukojeti meče je nehybná, získaný průnik můžeme interpretovat jako pozici, kam má čepel meče směřovat. Pohybem kurzoru plynule zleva doprava by pak meč měl vykonat sek - rovněž zleva doprava. Plynulost a finesa, s jakými sek bude proveden, závisí na útvaru, který protínáme. 
+
+Po další úvaze jsme se rozhodli, že útvarem, se kterým se pokusíme paprsek protínat, je\textbf{ kulová plocha}. Nabízí nám plynulý přechod mezi stavy, jak se kurzor pohybuje po obrazovce, a její vizualizace nečiní problém. 
+
+\textbf{Provedeme tedy experimentální implementaci s její pomocí, tu otestujeme, a v případě potřeby ji použijeme jako výchozí bod pro implementaci sofistikovanějšího systému.}
+
+\subsubsection*{Moduly ovládání}
+
+Nyní tedy náš systém dovoluje sekat mečem podobně dobře jako \acl{DbtS}. Sekání však zdaleka není jediný typ úkonu, který s mečem má smysl vykonávat. Jakým způsobem tedy můžeme náš současný návrh zobecnit, aby bylo možné vykonávat i jiné typy pohybu?
+
+Řešením je představit další mody ovládání, specializované na specifické činnosti, podobně jako ten náš současný je na sekání. Přepínání mezi nimi nemůže jakkoliv záviset na poloze kurzoru - tím by možnosti každého jednotlivého modu trpěly. Naopak, zde přichází ke slovu klávesnice. Hráči zkrátka dáme možnost ke každému modu přiřadit jednu klávesu - dokud ji hráč drží, tak je daný mod aktivní, jinak se používá ten, který hráč nastavil jako výchozí.
+
+Mapování jednotlivých poloh meče pomocí průniku paprsku a kulové plochy ponecháme jak je, pouze přidáme vrstvu abstrakce - výsledný průnik zkrátka poskytneme aktuálně aktivnímu modu ovládání jako vstup, na základě kterého má polohu meče určit. Zda ho interpretuje jako bod, do kterého směřuje čepel meče ukotveného v pevném bodě či jakkoliv jinak, je plně v jeho režii.
+
+Pro účely naší práce jsme takové mody implementovali dva - základní pro sekání (který jsme nastínili výše), a mod pro blokování - jejich vnitřní logiku rozebereme v \ref{modesOfSwordMovementSubsection}.
 
 \subsection{Ovládání meče - výsledek}
 \begin{itemize}
