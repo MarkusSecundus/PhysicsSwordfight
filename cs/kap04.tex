@@ -193,14 +193,15 @@ Pro vyřešení tohoto problému jsme strávili dlouhé dny živelným experimen
 
 \subsubsection*{Řešení}
 
-Nejprve jsme stanovili rozhraní\footnote{Ve skutečnosti jde o abstraktní třídu dědící z UnityEngine.MonoBehavior abychom zajistili její kompatibilitu se serializačním systémem.} \textbf{IRayIntersectable}. To definuje jedinou metodu GetIntersection(), která jako argument bere paprsek a vrací strukturu popisující výsledek průniku. Tento výsledek zahrnuje bod průniku, střed protnutého útvaru a hodnotu určující jeho váhu 
+Nejprve jsme stanovili rozhraní\footnote{Ve skutečnosti jde o abstraktní třídu dědící z UnityEngine.MonoBehavior abychom zajistili její kompatibilitu se serializačním systémem.} \textbf{IRayIntersectable}. To definuje jedinou metodu GetIntersection(), která jako argument bere paprsek a vrací strukturu popisující výsledek průniku. Tento výsledek zahrnuje flag zda byl průnik nalezen, bod průniku, střed protnutého útvaru a hodnotu určující jeho váhu.
+
+Než se dobereme k implementaci kulové plochy odpovídající tomuto rozhraní, uveďme onen nový prvek, který našemu systému razantně zvýší obecnost. Tím je \textbf{RayIntersectableInterpolation}. Jde o jednoduchou komponentu, která v sobě nese list odkazů na jiné IRayIntersectables. Jeho metoda GetIntersection() se chová tak, že zkrátka vyžádá průniky od všech těchto podprvků a vypočte jejich vážený průměr (dle vah získaných z návratových hodnot) - průměruje jak body průniku, tak i nahlášené středy protnutých útvarů apod. .
+
+Nyní můžeme přistoupit k \textbf{RayIntersectableSphere}.
 
 \begin{itemize}
     \item %ovládání střílením paprsku, který se protne s kulovou plochou jsme naimplementovali
         \begin{itemize}
-            %\item fungovalo rámcově pěkně, ale byly zde nežádoucí okrajové případy (-> např. hráč mohl meč natočit tak, aby probodával jeho tělo)
-            %\item -> \textbf{kulová plocha je fajn, ale potřebuje zobecnit na něco trochu flexibilnějšího}
-            \item rozhraní \textbf{IRayIntersectable} (actually to je abstraktní třída - protože Unity serializer) - metoda GetIntersection(Ray) - vrací struct - ten obsahuje zda byl úspěch, příp. bod průniku, střed proniknuté kulové plochy a váhu výsledku (pro účely interpolace)
             \item \textbf{RayIntersectableSphere}
                 \begin{itemize}
                     \item definovaná středem a poloměrem
@@ -216,11 +217,6 @@ Nejprve jsme stanovili rozhraní\footnote{Ve skutečnosti jde o abstraktní tř�
                         \item bod, který se bude ve výsledkovém structu hlásit jako centrum kulové plochy i když ve skutečnosti není
                         \item potřeba když interpolujeme mezi hodně velkou a hodně malou koulí - aby obě hlásily stejný střed
                     \end{itemize}
-                \end{itemize}
-            \item \textbf{RayIntersectableInterpolation}
-                \begin{itemize}
-                    \item list mnoha IRayIntersectables
-                    \item GetIntersection volá sebe na všech podprvcích - výsledek je pak vážený aritmetický průměr těch, které byly trefené (vážený podle váhy udané ve výsledkovém structu)
                 \end{itemize}
             \item Vizualizace - musí se střílet spousta paprsků z kamery 
             \item díky tomuhle jsme schopní hráči poskytnout průnikový tvar, co se pro něj tváří jako normální, intuitivní kulová plocha, ale proti ní zde máme spoustu dodatečné flexibility, která nám umožní vychytat okrajové případy
