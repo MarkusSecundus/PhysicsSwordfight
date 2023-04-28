@@ -146,7 +146,7 @@ Jak jsme již na mnoha místech nastínili, ovládání meče je v naší situac
 
 Víme, že plnou kontrolu ve všech šesti stupních volnosti hráči poskytnout nemůžeme. Nezbývá nám než z této celkové množiny stavů vybrat nějakou podmnožinu, na kterou jsme schopni vstup z myši a klávesnice namapovat.
 
-Mapování musí především pro hráče být jednoduše myšlenkově uchopitelné. Zároveň ho nechceme omezit na konečnou množinu stavů. Potřebujeme tedy nalézt vhodný matematický formalizmus pro jeho popis - ideálně nějaký, který se bude chovat spojitě\footnote{Spojitost neformálně definujme např. takto: Pro každé dvě polohy kurzoru A, B a mapování f, pokud C je poloha kurzoru nacházející se na cestě z A do B, pak poloha meče f(C) je stejným způsobem mezistav pro f(A), f(B).} a budeme schopni ho pro hráče přehledně vizualizovat.
+Mapování musí především pro hráče být jednoduše myšlenkově uchopitelné. Zároveň ho nechceme omezit na konečnou množinu stavů. Potřebujeme tedy nalézt vhodný matematický formalizmus pro jeho popis - ideálně nějaký, který se bude chovat spojitě\footnote{Spojitost neformálně definujme např. takto: Pro každé dvě polohy kurzoru A, B a mapování f, pokud C je poloha kurzoru nacházející se na cestě z A do B, pak poloha meče f(C) je stejným způsobem mezistav pro f(A), f(B).} a budeme schopni ho pro hráče přehledně vizualizovat. 
 \bigbreak
 Hra \textbf{\acl{DbtS}} (viz \ref{dieByTheSwordDescriptionSubsection}) řešila velmi podobný problém jako my. Podívejme se tedy nejprve na metody, které svým hráčům poskytla:
 \begin{itemize}
@@ -168,26 +168,38 @@ Po krátké meditaci nad metodami, které nám pro zpracování dat z myši posk
 
 Kdybychom pro jednoduchost prohlásili, že poloha rukojeti meče je nehybná, získaný průnik můžeme interpretovat jako pozici, kam má čepel meče směřovat. Pohybem kurzoru plynule zleva doprava by pak meč měl vykonat sek - rovněž zleva doprava. Plynulost a finesa, s jakými sek bude proveden, závisí na útvaru, který protínáme. 
 
-Po další úvaze jsme se rozhodli, že útvarem, se kterým se pokusíme paprsek protínat, je\textbf{ kulová plocha}. Nabízí nám plynulý přechod mezi stavy, jak se kurzor pohybuje po obrazovce, a její vizualizace nečiní problém. 
+Po další úvaze jsme se rozhodli, že útvarem, se kterým se pokusíme paprsek protínat, je\textbf{kulová plocha}. Nabízí nám plynulý přechod mezi stavy, jak se kurzor pohybuje po obrazovce, a její vizualizace nečiní problém. 
 
 \textbf{Provedeme tedy experimentální implementaci s její pomocí, tu otestujeme, a v případě potřeby ji použijeme jako výchozí bod pro implementaci sofistikovanějšího systému.}
 
 \subsubsection*{Moduly ovládání}
 
-Nyní tedy náš systém dovoluje sekat mečem podobně dobře jako \acl{DbtS}. Sekání však zdaleka není jediný typ úkonu, který s mečem má smysl vykonávat. Jakým způsobem tedy můžeme náš současný návrh zobecnit, aby bylo možné vykonávat i jiné typy pohybu?
+Nyní tedy náš systém dovoluje sekat mečem podobně dobře jako \acl{DbtS}. Sekání však zdaleka není jediný typ úkonu, který s mečem má smysl vykonávat. Je tedy nějaký způsob, jak náš současný návrh zobecnit, aby podporoval i další typy pohybu?
 
-Řešením je představit další mody ovládání, specializované na specifické činnosti, podobně jako ten náš současný je na sekání. Přepínání mezi nimi nemůže jakkoliv záviset na poloze kurzoru - tím by možnosti každého jednotlivého modu trpěly. Naopak, zde přichází ke slovu klávesnice. Hráči zkrátka dáme možnost ke každému modu přiřadit jednu klávesu - dokud ji hráč drží, tak je daný mod aktivní, jinak se používá ten, který hráč nastavil jako výchozí.
+Jedním možným řešením je představit další mody ovládání, specializované na specifické činnosti, podobně jako ten náš současný je na sekání. Přepínání mezi nimi nebude jakkoliv záviset na poloze kurzoru - tím by možnosti každého jednotlivého modu trpěly. Naopak, zde přichází ke slovu klávesnice. Hráči zkrátka dáme možnost ke každému modu přiřadit jednu klávesu - dokud ji hráč drží, tak je daný mod aktivní, jinak se používá ten, který hráč nastavil jako výchozí.
 
 Mapování jednotlivých poloh meče pomocí průniku paprsku a kulové plochy ponecháme jak je, pouze přidáme vrstvu abstrakce - výsledný průnik zkrátka poskytneme aktuálně aktivnímu modu ovládání jako vstup, na základě kterého má polohu meče určit. Zda ho interpretuje jako bod, do kterého směřuje čepel meče ukotveného v pevném bodě či jakkoliv jinak, je plně v jeho režii.
 
-Pro účely naší práce jsme takové mody implementovali dva - základní pro sekání (který jsme nastínili výše), a mod pro blokování - jejich vnitřní logiku rozebereme v \ref{modesOfSwordMovementSubsection}.
+Pro účely naší práce jsme takové mody implementovali dva - pro sekání (který jsme nastínili výše) a pro blokování - jejich vnitřní logiku rozebereme v \ref{modesOfSwordMovementSubsection}.
+
 
 \subsection{Ovládání meče - výsledek}
+
+Ovládání založené na kulové ploše jsme implementovali. Jak pro mod sekání, tak pro mod blokování vedlo v typickém případě k plynulému a intuitivnímu dojmu z ovládání. Narazili jsme však na některé nežádané situace v okrajových případech. Na okrajích hráčova zorného pole, kde se bod průniku nalézal v zadní polokouli kulové plochy, bylo např. velmi jednoduché, aby hráč probodl mečem sám sebe. Dalším problémem byly situace, kdy pro paprsek a kulovou plochu žádný průnik neexistoval - v takovém případě jsme neměli jako meči rozkázat změnu polohy - hráč tedy při takových polohách kurzoru nedostal od hry žádnou zpětnou vazbu, čímž utrpěl jeho pocit kontroly a ponoření do hry.
+
+Potřebujeme tedy najít nějaké zobecnění, které zachová veškeré pěkné vlastnosti originální metody v typickém případě, ale dovolí nám podchytit veškeré nevhodné případy okrajové.
+
+Pro vyřešení tohoto problému jsme strávili dlouhé dny živelným experimentováním. Takto vypadá výsledek, ke kterému jsme se dobrali:
+
+\subsubsection*{Řešení}
+
+Nejprve jsme stanovili rozhraní\footnote{Ve skutečnosti jde o abstraktní třídu dědící z UnityEngine.MonoBehavior abychom zajistili její kompatibilitu se serializačním systémem.} \textbf{IRayIntersectable}. To definuje jedinou metodu GetIntersection(), která jako argument bere paprsek a vrací strukturu popisující výsledek průniku. Tento výsledek zahrnuje bod průniku, střed protnutého útvaru a hodnotu určující jeho váhu 
+
 \begin{itemize}
-    \item ovládání střílením paprsku, který se protne s kulovou plochou jsme naimplementovali
+    \item %ovládání střílením paprsku, který se protne s kulovou plochou jsme naimplementovali
         \begin{itemize}
-            \item fungovalo rámcově pěkně, ale byly zde nežádoucí okrajové případy (-> např. hráč mohl meč natočit tak, aby probodával jeho tělo)
-            \item -> \textbf{kulová plocha je fajn, ale potřebuje zobecnit na něco trochu flexibilnějšího}
+            %\item fungovalo rámcově pěkně, ale byly zde nežádoucí okrajové případy (-> např. hráč mohl meč natočit tak, aby probodával jeho tělo)
+            %\item -> \textbf{kulová plocha je fajn, ale potřebuje zobecnit na něco trochu flexibilnějšího}
             \item rozhraní \textbf{IRayIntersectable} (actually to je abstraktní třída - protože Unity serializer) - metoda GetIntersection(Ray) - vrací struct - ten obsahuje zda byl úspěch, příp. bod průniku, střed proniknuté kulové plochy a váhu výsledku (pro účely interpolace)
             \item \textbf{RayIntersectableSphere}
                 \begin{itemize}
