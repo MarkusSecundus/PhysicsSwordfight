@@ -130,16 +130,29 @@ Celý náš systém jsme nakonec protkali systémem zranění. Ten je dle našeh
 
 \section{Schéma ovládání} 
 
+Rozhraní, skrze která budou jednotlivé komponenty herního systému komunikovat mezi sebou, již máme. Nyní se zaměřme na rozhraní, skrze které s nimi bude komunikovat uživatel.
+
+Tomu potřebujeme především poskytnout kontrolu nad pohybem jeho postavy v herním světě a nad pohybem meče, který postava drží.
+
+Jak jsme se rozhodli v kapitole \ref{goalSettingChapter}, chceme, aby naše hra byla přístupná pro běžného uživatele, který je vybaven pouze myší a klávesnicí.
+
 \subsection{Ovládání meče - úvodní zamyšlení}
+
+Jak jsme již na mnoha místech nastínili, ovládání meče je v naší situaci těžkým problémem, začněme tedy tím. 
+
+Víme, že plnou kontrolu ve všech šesti stupních volnosti hráči poskytnout nemůžeme. Nezbývá nám než z této celkové množiny stavů vybrat nějakou podmnožinu, na kterou jsme schopni vstup z myši a klávesnice namapovat.
+
+Mapování musí především pro hráče být jednoduše myšlenkově uchopitelné. Zároveň ho nechceme omezit na konečnou množinu stavů. Potřebujeme tedy nalézt vhodný matematický formalizmus pro jeho popis - ideálně nějaký, který se bude chovat spojitě\footnote{Spojitost neformálně definujme např. takto: Pro každé dvě polohy kurzoru A, B a mapování f, pokud C je poloha kurzoru nacházející se na cestě z A do B, pak poloha meče f(C) je stejným způsobem mezistav pro f(A), f(B).} a budeme schopni ho pro hráče přehledně vizualizovat.
+
+Hra \textbf{\acl{DbtS}} (viz \ref{dieByTheSwordDescriptionSubsection}) řešila velmi podobný problém jako my. Podívejme se tedy nejprve na metody, které svým hráčům poskytla:
 \begin{itemize}
-    \item k dispozici máme myš a klávesnici
-    \item musí být pro hráče jednoduše uchopitelné (- ideálně tedy nějaký pěkně spojitý matematický formalizmus, který jsme pro hráče schopní pěkně vizualizovat)
-    \item diskuze variant co používalo Die by the Sword:
-        \begin{itemize}
-            \item \textbf{Klávesnice} - zastaralý koncept, moderní hráč počítá, že k něčemu využije myš; stejně to tehdy byl jenom slabý odvar z toho, co uměla myš
-            \item \textbf{Myš} - ze všech možností zvládá největší podmnožinu pohybů; vyžaduje cvik, ale umožňuje kreativitu a flexibilní reakce v nezvyklé situaci
-            \item \textbf{Nahrávky} - na první pohled pěkná myšlenka, v praxi však neumožňují flexibilně reagovat na specifickou situaci (hráč je schopen si vést okamžitý myšlenkový přehled o příliš malém množství nahrávek)
-        \end{itemize}
+    \item \textbf{Numerická klávesnice} - Existovala pouze pro zajištění přístupnosti v době, kdy myš nebyla rozšířená. Umožňovala malou podmnožinu toho co myš a nijak při tom nezvyšovala uživatelskou přívětivost.
+    \item \textbf{Myš} - Jediný z ovladačů, který poskytl spojité mapování. Vyžadovala cvik, ale umožnila kreativní a flexibilní reakce v nezvyklé situaci.
+    \item \textbf{Nahrávky} - Technicky zaručily plnou kontrolu ve všech stupních volnosti zbraně, v praxi však neumožnily reagovat flexibilně na specifickou situaci. (Hráč byl schopen si vést okamžitý myšlenkový přehled o příliš malém množství nahrávek.)
+\end{itemize}
+
+\subsubsection*{hints}
+\begin{itemize}
     \item výsledek diskuze:
         \begin{itemize}
             \item pro hráče chceme ovládání myší
