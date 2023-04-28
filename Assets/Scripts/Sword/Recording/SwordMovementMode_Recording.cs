@@ -18,10 +18,10 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Recording
         public UnityEvent<ISwordMovement.MovementCommand> MovementReporter = new UnityEvent<ISwordMovement.MovementCommand>();
         public ScriptSubmodulesContainer<KeyCode, SwordMovement.Submodule, ISwordMovement> Modes;
         IScriptSubmodule<ISwordMovement> submoduleManager;
-        protected override void OnStart(bool wasForced)
+        protected override void OnStart()
         {
-            base.OnStart(wasForced);
-            submoduleManager = new ScriptSubmoduleListManager<KeyCode, SwordMovement.Submodule, ISwordMovement>() { ActivityPredicate = k => Input.GetKey(k), ModesSupplier = () => Modes }.Init(this, wasForced);
+            base.OnStart();
+            submoduleManager = new ScriptSubmoduleListManager<KeyCode, SwordMovement.Submodule, ISwordMovement>() { ActivityPredicate = k => Input.GetKey(k), ModesSupplier = () => Modes }.Init(this);
         }
         public override void OnUpdate(float delta) => submoduleManager.OnUpdate(delta);
         public override void OnDrawGizmos() => submoduleManager?.OnDrawGizmos();

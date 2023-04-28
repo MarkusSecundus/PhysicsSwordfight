@@ -14,7 +14,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
 
         public ExceptionsList Exceptions;
 
-        [System.Serializable] public class ExceptionsList : SerializableDictionary<Damageable, TStats> { }
+        [System.Serializable] public class ExceptionsList : SerializableDictionary<IDamageable, TStats> { }
         protected abstract AttackDeclaration CalculateAttackStats(Collision collision, TStats stats);
 
 

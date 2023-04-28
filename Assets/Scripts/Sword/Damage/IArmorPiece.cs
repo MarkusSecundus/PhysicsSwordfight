@@ -10,11 +10,16 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
     {
         [System.Serializable] public class OnAttackedEvent : UnityEvent<AttackDeclaration> { }
 
-        [field: SerializeField]
-        public virtual Damageable BaseDamageable { get; protected set; }
+
+        public IDamageable BaseDamageable { get; private set; }
         protected abstract AttackDeclaration? ProcessAttackDeclaration(AttackDeclaration attack);
 
         [SerializeField] OnAttackedEvent OnAttacked;
+
+        private void Start()
+        {
+            BaseDamageable = GetComponentInParent<IDamageable>();
+        }
 
         public static bool TryGet(Collider c, out IArmorPiece ret)
         {

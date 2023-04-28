@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &690509277935299851
+--- !u!1 &914446132941591640
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,13 +8,13 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2009610563383063430}
-  - component: {fileID: 5171578593067504416}
-  - component: {fileID: 8284407871338537404}
-  - component: {fileID: 1492528695479737951}
-  - component: {fileID: 6061970437617982785}
-  - component: {fileID: 6265960615852795971}
-  - component: {fileID: 6932391528137955}
+  - component: {fileID: 8339704402682697230}
+  - component: {fileID: 48760356988980407}
+  - component: {fileID: 8385823712147452785}
+  - component: {fileID: 7037720150090839414}
+  - component: {fileID: 7540179020747397437}
+  - component: {fileID: 4760108548882869451}
+  - component: {fileID: 8687008718328225760}
   m_Layer: 11
   m_Name: Weapon
   m_TagString: Untagged
@@ -22,29 +22,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2009610563383063430
+--- !u!4 &8339704402682697230
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690509277935299851}
+  m_GameObject: {fileID: 914446132941591640}
   m_LocalRotation: {x: 0, y: -0.70710677, z: -0.70710677, w: 0}
   m_LocalPosition: {x: -0, y: 0.408, z: 0.578}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 195392920716675695}
+  - {fileID: 5434243444015212773}
   m_Father: {fileID: 0}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 270, y: 90, z: 90}
---- !u!54 &5171578593067504416
+--- !u!54 &48760356988980407
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690509277935299851}
+  m_GameObject: {fileID: 914446132941591640}
   serializedVersion: 4
   m_Mass: 1.5
   m_Drag: 0
@@ -65,13 +65,13 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!153 &8284407871338537404
+--- !u!153 &8385823712147452785
 ConfigurableJoint:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690509277935299851}
+  m_GameObject: {fileID: 914446132941591640}
   m_ConnectedBody: {fileID: 0}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
@@ -167,25 +167,25 @@ ConfigurableJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 9
   m_ConnectedMassScale: 0.01
---- !u!114 &1492528695479737951
+--- !u!114 &7037720150090839414
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690509277935299851}
+  m_GameObject: {fileID: 914446132941591640}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce7fc459989e234408e674dadd8fe4a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Sword>k__BackingField: {fileID: 0}
-  <Joint>k__BackingField: {fileID: 8284407871338537404}
-  <Input>k__BackingField: {fileID: 0}
   Modes:
-    values: []
+    values:
+    - Key: 304
+      Value:
+        rid: 1235462470088785921
     _default:
-      rid: 1235462450841911315
+      rid: 1235462470780583937
   HandleTweaks:
     HandleMovementInterpolationConfig:
       InterpolationFactor: 9
@@ -195,18 +195,24 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 1235462450841911315
+    - rid: 1235462470088785921
+      type: {class: SwordMovementMode_Block, ns: MarkusSecundus.PhysicsSwordfight.Sword.Modules, asm: Assembly-CSharp}
+      data:
+        SwordDirectionHint: {fileID: 0}
+        InputIntersector: {fileID: 0}
+        HoldingForceMultiplier: 20
+    - rid: 1235462470780583937
       type: {class: SwordMovementMode_Basic, ns: MarkusSecundus.PhysicsSwordfight.Sword.Modules, asm: Assembly-CSharp}
       data:
         InputIntersectable: {fileID: 0}
         minLastVectorDiff: 0.3
---- !u!114 &6061970437617982785
+--- !u!114 &7540179020747397437
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690509277935299851}
+  m_GameObject: {fileID: 914446132941591640}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9cb440690e06d84cb794d52314ff608, type: 3}
@@ -220,20 +226,20 @@ MonoBehaviour:
     ForceMultiplierForStandaloneMode: -1
   ActivationRadius: 3
   HierarchiesToIgnore: []
---- !u!114 &6265960615852795971
+--- !u!114 &4760108548882869451
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690509277935299851}
+  m_GameObject: {fileID: 914446132941591640}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 059989545d7a5604fa921092316edae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 506116832097144991}
-  anchor: {fileID: 2009610563383063430}
+  target: {fileID: 5681983478079107605}
+  anchor: {fileID: 8339704402682697230}
   centerOfWeight: {fileID: 0}
   tipPoint: {fileID: 0}
   blockPoint: {fileID: 0}
@@ -241,13 +247,13 @@ MonoBehaviour:
   downHandTarget: {fileID: 0}
   bottom: {fileID: 0}
   edges: []
---- !u!114 &6932391528137955
+--- !u!114 &8687008718328225760
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690509277935299851}
+  m_GameObject: {fileID: 914446132941591640}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45fc533ae5ece4244aecad97c8729b54, type: 3}
@@ -258,13 +264,13 @@ MonoBehaviour:
     DamageMultiplier: 4
   Exceptions:
     values: []
---- !u!1001 &8017539121960544755
+--- !u!1001 &2781085022633151353
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 2009610563383063430}
+    m_TransformParent: {fileID: 8339704402682697230}
     m_Modifications:
     - target: {fileID: 1388242244446646439, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
       propertyPath: m_Name
@@ -277,7 +283,7 @@ PrefabInstance:
     - target: {fileID: 7512588884811610476, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
       propertyPath: anchor
       value: 
-      objectReference: {fileID: 2325208177292025633}
+      objectReference: {fileID: 7609024848889068971}
     - target: {fileID: 7922440363819721628, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -331,15 +337,15 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
---- !u!4 &195392920716675695 stripped
+--- !u!4 &5434243444015212773 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7922440363819721628, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
-  m_PrefabInstance: {fileID: 8017539121960544755}
+  m_PrefabInstance: {fileID: 2781085022633151353}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &506116832097144991 stripped
+--- !u!114 &5681983478079107605 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7512588884811610476, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
-  m_PrefabInstance: {fileID: 8017539121960544755}
+  m_PrefabInstance: {fileID: 2781085022633151353}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -347,8 +353,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 059989545d7a5604fa921092316edae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &2325208177292025633 stripped
+--- !u!4 &7609024848889068971 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5692771887622551250, guid: a98b8cfbe9ea59f40aef451240dc1eea, type: 3}
-  m_PrefabInstance: {fileID: 8017539121960544755}
+  m_PrefabInstance: {fileID: 2781085022633151353}
   m_PrefabAsset: {fileID: 0}

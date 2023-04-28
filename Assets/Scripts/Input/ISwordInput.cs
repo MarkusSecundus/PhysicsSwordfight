@@ -7,14 +7,14 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
 
     public interface ISwordInput
     {
-        public abstract bool GetKey(KeyCode code);
-        public abstract bool GetKeyUp(KeyCode code);
-        public abstract bool GetKeyDown(KeyCode code);
+        public bool GetKey(KeyCode code);
+        public bool GetKeyUp(KeyCode code);
+        public bool GetKeyDown(KeyCode code);
 
-        public abstract float GetAxis(InputAxis axis);
-        public abstract float GetAxisRaw(InputAxis axis);
+        public float GetAxis(InputAxis axis);
+        public float GetAxisRaw(InputAxis axis);
 
-        public abstract Ray? GetInputRay();
+        public Ray? GetInputRay();
 
         public static ISwordInput Get(GameObject self) => self.GetComponentInParent<ISwordInput>();
     }

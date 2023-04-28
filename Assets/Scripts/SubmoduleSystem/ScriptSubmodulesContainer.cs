@@ -40,7 +40,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Submodules
         public System.Func<TKey, bool> ActivityPredicate { protected get; init; }
 
         TSubmodule activeMode;
-        protected override void OnStart(bool wasForced)
+        protected override void OnStart()
         {
             foreach (var mode in ModesSupplier().Values.Values) mode.Init(Script);
         }

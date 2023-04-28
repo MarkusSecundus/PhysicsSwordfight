@@ -30,7 +30,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
 
         private Shuffler<SwordMovementRecord> recordsRandomizer;
 
-        protected override void OnStart(bool wasForced = false)
+        protected override void OnStart()
         {
             CurrentUsecase = SwordRecordUsecase.Generic;
             StartPlaying();

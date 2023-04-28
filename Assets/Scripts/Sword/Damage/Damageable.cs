@@ -7,7 +7,13 @@ using UnityEngine.Events;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
 {
-    public class Damageable : MonoBehaviour
+    public abstract class IDamageable : MonoBehaviour
+    {
+        public abstract float HP { get; protected set; }
+        public abstract void ChangeHP(float deltaHP);
+    }
+
+    public class Damageable : IDamageable
     {
         [System.Serializable] public class OnHpChangedEvent : UnityEvent<HpChangedArgs> { }
 
@@ -20,7 +26,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
 
         public const float MinHP = 0;
         [field: SerializeField] public float MaxHP { get; set; } = 1f;
-        public float HP { get; private set; }
+        public override float HP { get; protected set; }
 
         public bool DestroySelfOnDeath = false;
 
@@ -38,7 +44,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
             OnUpdated.Invoke(args);
         }
 
-        public void ChangeHP(float deltaHP)
+        public override void ChangeHP(float deltaHP)
         {
             HP = Mathf.Clamp(HP + deltaHP, MinHP, MaxHP);
 

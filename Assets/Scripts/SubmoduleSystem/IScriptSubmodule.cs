@@ -11,15 +11,13 @@ namespace MarkusSecundus.PhysicsSwordfight.Submodules
     {
         public TScript Script { get; private set; }
 
-        public IScriptSubmodule<TScript> Init(TScript script, bool forceReInit = false)
+        public IScriptSubmodule<TScript> Init(TScript script)
         {
-            if (this.Script != null && !forceReInit)
-                Debug.LogWarning($"Initializing {this} by {script} - but it was already initialized by '{this.Script}'!", script as Object);
             this.Script = script;
-            OnStart(forceReInit);
+            OnStart();
             return this;
         }
-        protected virtual void OnStart(bool wasForced = false) { }
+        protected virtual void OnStart() { }
 
         public virtual void OnUpdate(float delta) { }
         public virtual void OnFixedUpdate(float delta) { }

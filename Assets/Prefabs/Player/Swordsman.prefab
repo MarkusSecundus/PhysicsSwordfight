@@ -255,7 +255,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ffd90a1a27b9ec45828c268db17fa21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Input: {fileID: 0}
   CameraToUse: {fileID: 5031634135129645071}
   Feet: {fileID: 3081634972033309378}
   Mapping:
@@ -4031,18 +4030,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: Modes.values.Array.data[0].Value
-      value: 1235462450841911320
-      objectReference: {fileID: 0}
-    - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
-      propertyPath: managedReferences[1235462450841911318]
-      value: Assembly-CSharp SwordMovementMode_Recording
-      objectReference: {fileID: 0}
-    - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
-      propertyPath: managedReferences[1235462450841911319]
-      value: Assembly-CSharp SwordMovementMode_Recording
+      value: 1235462470088785921
       objectReference: {fileID: 0}
     - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: managedReferences[1235462450841911320]
+      value: Assembly-CSharp MarkusSecundus.PhysicsSwordfight.Sword.Modules.SwordMovementMode_Block
+      objectReference: {fileID: 0}
+    - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235462470088785921]
       value: Assembly-CSharp MarkusSecundus.PhysicsSwordfight.Sword.Modules.SwordMovementMode_Block
       objectReference: {fileID: 0}
     - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
@@ -4058,6 +4053,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3579963206095328728}
     - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235462470088785921].InputIntersector
+      value: 
+      objectReference: {fileID: 3579963206095328728}
+    - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: managedReferences[1235462450841911315].InputIntersectable
       value: 
       objectReference: {fileID: 4431020137618721820}
@@ -4066,8 +4065,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7656436435612791085}
     - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235462470088785921].SwordDirectionHint
+      value: 
+      objectReference: {fileID: 7656436435612791085}
+    - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: managedReferences[1235462450841911320].HoldingForceMultiplier
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: managedReferences[1235462470088785921].HoldingForceMultiplier
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: managedReferences[1235462450841911318].Modes.values.Array.size

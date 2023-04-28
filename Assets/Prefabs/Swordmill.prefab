@@ -146,7 +146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BaseDamageable>k__BackingField: {fileID: 0}
   OnAttacked:
     m_PersistentCalls:
       m_Calls:
@@ -414,7 +413,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BaseDamageable>k__BackingField: {fileID: 0}
   OnAttacked:
     m_PersistentCalls:
       m_Calls:
@@ -516,7 +514,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2808337142216687973}
-  - {fileID: 4403014005510606754}
+  - {fileID: 6144496727152896554}
   m_Father: {fileID: 0}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -533,7 +531,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Rotor: {fileID: 2808337140929654815}
-  SwordPrototype: {fileID: 6053144460618046872}
+  SwordPrototype: {fileID: 5951887323213778773}
   SwordsCount: 6
 --- !u!114 &7473588216747227809
 MonoBehaviour:
@@ -771,6 +769,14 @@ PrefabInstance:
       propertyPath: HierarchiesToIgnore.Array.data[0]
       value: 
       objectReference: {fileID: 2808337142474496025}
+    - target: {fileID: 7540179020747397437, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: HierarchiesToIgnore.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540179020747397437, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: HierarchiesToIgnore.Array.data[0]
+      value: 
+      objectReference: {fileID: 2808337142474496025}
     - target: {fileID: 8284407871338537404, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_MassScale
       value: 9
@@ -795,20 +801,41 @@ PrefabInstance:
       propertyPath: m_ConnectedMassScale
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: m_ConnectedBody
+      value: 
+      objectReference: {fileID: 2808337140929654818}
+    - target: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: m_ConnectedAnchor.x
+      value: 0.0000012367964
+      objectReference: {fileID: 0}
+    - target: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 0.408
+      objectReference: {fileID: 0}
+    - target: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: m_ConnectedAnchor.z
+      value: 0.5779996
+      objectReference: {fileID: 0}
+    - target: {fileID: 8687008718328225760, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: Exceptions.values.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1492528695479737951, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+    - {fileID: 7037720150090839414, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
---- !u!4 &4403014005510606754 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2009610563383063430, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+--- !u!153 &5951887323213778773 stripped
+ConfigurableJoint:
+  m_CorrespondingSourceObject: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
   m_PrefabInstance: {fileID: 2808337140899281956}
   m_PrefabAsset: {fileID: 0}
---- !u!153 &6053144460618046872 stripped
-ConfigurableJoint:
-  m_CorrespondingSourceObject: {fileID: 8284407871338537404, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+--- !u!4 &6144496727152896554 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8339704402682697230, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
   m_PrefabInstance: {fileID: 2808337140899281956}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5367308194861561147

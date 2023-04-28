@@ -8,7 +8,6 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
     {
         public float MinDamage = 2f;
         public float DamageMultiplier = 1f;
-        public override Damageable BaseDamageable => base.BaseDamageable ??= GetComponentInParent<Damageable>();
 
         protected override AttackDeclaration? ProcessAttackDeclaration(AttackDeclaration attack)
         {
