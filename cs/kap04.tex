@@ -207,28 +207,13 @@ Dalším volitelnám parametrem je \textbf{falešný střed} - pokud ten nastav�
 
 \subsubsection*{Zhodnocení}
 
-Slabší stránkou řešení, které jsme si právě představili, jsou možnosti jeho vizualizace. Jediným řešením, které nám rozhraní IRayIntersectable umožňuje, je vyslat velké množství paprsků a vytvořit mesh pospojováním nalezených průsečíků. Zároveň možnost vizualizace je při editaci jakkoliv netriviálního takovéhoto systému naprosto nezbytná.
+Slabší stránkou řešení, které jsme si právě představili, jsou možnosti jeho vizualizace. Jedinou cestou, kterou nám rozhraní IRayIntersectable umožňuje, je vyslat velké množství paprsků a vytvořit mesh pospojováním nalezených průsečíků. Taková metoda je výpočetně náročná, uživatel musí činit kompromis mezi mírou detailu a schopností běžet v reálném čase. Toto činí problém především při editaci složitějšího IRayIntersectable systému, kdy je značná míra detailu třeba, aby bylo možné pohledem rozpoznat, zda jsou přechody mezi sférami vlivu jednotlivých dílčích prvků plynulé.
+
+
 
 \begin{itemize}
     \item %ovládání střílením paprsku, který se protne s kulovou plochou jsme naimplementovali
-        \begin{itemize}
-            %\item \textbf{RayIntersectableSphere}
-            %    \begin{itemize}
-            %        %\item definovaná středem a poloměrem
-            %        %\item volitelný parametr - \textbf{díra}
-            %        %    \begin{itemize}
-            %        %        \item jiná RayIntersectableSphere
-            %        %        \item pokud se průnik paprsku nachází v díře (je vzdálený od jejího středu míň než její poloměr), nahlásí se jako netrefa, nebo se mu dle vzdálenosti od středu díry %sníží váha
-            %        %        \item váhu výsledku (float 0-1), příp. její závislost na vzdálenosti průniku od středu díry konfiguruje uživatel skrz AnimationCurve
-            %        %        \item díry se ukázalo, že jsou potřeba, aby se při interpolaci (viz níže) mezi velkou a malou koulí dal udělat hladký přechod
-            %        %    \end{itemize}
-            %        \item %další volitelný parametr - \textbf{center override}
-            %        %\begin{itemize}
-            %        %    \item bod, který se bude ve výsledkovém structu hlásit jako centrum kulové plochy i když ve skutečnosti není
-            %        %    \item potřeba když interpolujeme mezi hodně velkou a hodně malou koulí - aby obě hlásily stejný střed
-            %        %\end{itemize}
-            %    \end{itemize}
-            %\item Vizualizace - musí se střílet spousta paprsků z kamery 
+        \begin{itemize 
             \item díky tomuhle jsme schopní hráči poskytnout průnikový tvar, co se pro něj tváří jako normální, intuitivní kulová plocha, ale proti ní zde máme spoustu dodatečné flexibility, která nám umožní vychytat okrajové případy
             \item pomocí tohohle se dají poskládat dost komplexní útvary, co se pořád tváří pěkně plynule a spojitě - ale nejsou plynulé a spojité vždycky, člověk si musí trochu pohrát s AnimationCurve u děr aby nebyly ostré přechody tam kde končí/začíná nějaká koule
             \item Další flexibilita se dá přidat přidáním dalších custom IRayIntersectables
