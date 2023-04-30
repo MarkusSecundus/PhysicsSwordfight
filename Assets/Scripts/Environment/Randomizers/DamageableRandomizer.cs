@@ -9,11 +9,17 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Environment.Randomization
 {
-
+    /// <summary>
+    /// Randomizes stats of a <see cref="Damageable"/>
+    /// </summary>
     [RequireComponent(typeof(Damageable))]
     public class DamageableRandomizer : MonoBehaviour, IRandomizer
     {
+        /// <summary>
+        /// Health Points of the damageable
+        /// </summary>
         public Interval<float> Hp;
+        /// <inheritdoc/>
         public void Randomize(System.Random random)
         {
             var dmg = GetComponent<Damageable>();

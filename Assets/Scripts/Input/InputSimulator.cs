@@ -5,7 +5,9 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Input
 {
-
+    /// <summary>
+    /// Variant of <see cref="ISwordInput"/> whose values are set by a script.
+    /// </summary>
     public class InputSimulator : MonoBehaviour, ISwordInput
     {
         private static float ClampAxis(float axis) => Mathf.Clamp(axis, -1f, 1f);

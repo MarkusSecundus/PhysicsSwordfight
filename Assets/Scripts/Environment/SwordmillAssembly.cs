@@ -11,11 +11,22 @@ using static MarkusSecundus.Utils.Op;
 
 namespace MarkusSecundus.PhysicsSwordfight.Environment
 {
-
+    /// <summary>
+    /// Component responsible for assembling a swordmill - sphere ("rotor") on a stick that has swords attached to it and rotates.
+    /// </summary>
     public class SwordmillAssembly : MonoBehaviour
     {
+        /// <summary>
+        /// The central rotating piece that the swords are connected to
+        /// </summary>
         public ConfigurableJoint Rotor;
+        /// <summary>
+        /// Prototype of the sword
+        /// </summary>
         public ConfigurableJoint SwordPrototype;
+        /// <summary>
+        /// How many swords should be spawned
+        /// </summary>
         public int SwordsCount = 1;
 
         void Start()

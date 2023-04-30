@@ -7,28 +7,39 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Environment
 {
-
+    /// <summary>
+    /// Object that can shoot projectiles
+    /// </summary>
     public class Shooter : MonoBehaviour
     {
-        public GameObject Projectile;
+        /// <summary>
+        /// Prototype of the projectile to be shot
+        /// </summary>
+        public Rigidbody Projectile;
 
-        public bool deactivateProjectileTemplate = true;
-
+        /// <summary>
+        /// Force impulse to apply to the projectile when shooting it
+        /// </summary>
         public Vector3 shootForce;
-        public ForceMode shootMode = ForceMode.VelocityChange;
-
+        /// <summary>
+        /// How many projectiles max can be in the pool
+        /// </summary>
         public int maxProjectileInExistenceCount = 999;
 
+        /// <summary>
+        /// Sound variants to play on shot
+        /// </summary>
         public AudioClip[] ShootSounds;
 
+        /// <summary>
+        /// Pool of shot projectiles
+        /// </summary>
         private Queue<GameObject> Projectiles = new Queue<GameObject>();
 
         private AudioSource audioSrc;
         private void Start()
         {
             audioSrc = GetComponent<AudioSource>();
-            if (deactivateProjectileTemplate)
-                Projectile.SetActive(false);
         }
 
 
@@ -37,15 +48,17 @@ namespace MarkusSecundus.PhysicsSwordfight.Environment
             while (Projectiles.Count > 0) Destroy(Projectiles.Dequeue());
         }
 
-
+        /// <summary>
+        /// Shoot a projectile
+        /// </summary>
         public void DoShoot()
         {
             if (ShootSounds.IsNotNullNotEmpty()) audioSrc.PlayOneShot(ShootSounds.RandomElement());
-            var projectile = Projectile.InstantiateWithTransform();
+            var projectile = Projectile.gameObject.InstantiateWithTransform();
             Projectiles.Enqueue(projectile);
             while (Projectiles.Count > maxProjectileInExistenceCount) Destroy(Projectiles.Dequeue());
             var rb = projectile.GetComponent<Rigidbody>();
-            rb.AddRelativeForce(shootForce, shootMode);
+            rb.AddRelativeForce(shootForce, ForceMode.Impulse);
         }
     }
 }

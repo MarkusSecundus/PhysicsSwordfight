@@ -7,28 +7,49 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Environment
 {
-
+    /// <summary>
+    /// Component responsible for the movement of Swordmill's rotor
+    /// </summary>
     [RequireComponent(typeof(SwordmillAssembly))]
     public class SwordmillBehavior : MonoBehaviour
     {
-        SwordmillAssembly assembly;
 
-        ConfigurableJoint rotor => assembly.Rotor;
         [System.Serializable]
         public struct MovementStep
         {
+            /// <summary>
+            /// Target position - point relative to the original rotation of swordmill's rotor
+            /// </summary>
             public Vector3 Offset;
+            /// <summary>
+            /// How many seconds traveling to this position will take
+            /// </summary>
             public float Duration;
         }
         [System.Serializable]
         public struct RotationStep
         {
+            /// <summary>
+            /// Target rotation of the rotor
+            /// </summary>
             public Vector3 Rotation;
+            /// <summary>
+            /// How many seconds getting to this position will take
+            /// </summary>
             public float Duration;
         }
-
+        /// <summary>
+        /// List of steps describing the swordmill's movement cycle
+        /// </summary>
         public MovementStep[] Movements;
+        /// <summary>
+        /// List of steps describing the swordmill's rotation cycle
+        /// </summary>
         public RotationStep[] Rotations;
+
+
+        SwordmillAssembly assembly;
+        ConfigurableJoint rotor => assembly.Rotor;
 
         Vector3 originalConnectedAnchor, originalTargetAngularVelocity;
         void Start()

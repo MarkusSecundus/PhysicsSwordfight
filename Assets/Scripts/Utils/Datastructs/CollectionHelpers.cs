@@ -1,3 +1,4 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -127,7 +128,7 @@ namespace MarkusSecundus.Utils.Datastructs
 
 
         public static bool IsNotNullNotEmpty<T>(this IReadOnlyList<T> self)
-            => self != null && self.Count > 0;
+            => self.IsNotNil() && self.Count > 0;
 
 
     }

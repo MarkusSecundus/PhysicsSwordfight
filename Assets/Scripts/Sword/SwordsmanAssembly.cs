@@ -2,6 +2,7 @@ using MarkusSecundus.PhysicsSwordfight.Cosmetics;
 using MarkusSecundus.PhysicsSwordfight.GUI;
 using MarkusSecundus.PhysicsSwordfight.Sword;
 using MarkusSecundus.PhysicsSwordfight.Sword.Damage;
+using MarkusSecundus.PhysicsSwordfight.Symbols;
 using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
 using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using System.Collections;
@@ -26,11 +27,11 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
         /// <summary>
         /// Actual camera that should follow the camera stub inside the Swordsman. Optional parameter.
         /// </summary>
-        public CameraFollowPoint Camera;
+        public ComponentSymbol<CameraFollowPoint> Camera;
         /// <summary>
-        /// TODO: GET RID OF THIS!!!!
+        /// HUD to be used for displaying swordsman's HP state
         /// </summary>
-        public DamageHUD DamageReport;
+        public ComponentSymbol<DamageHUD> DamageReport;
 
         /// <summary>
         /// Parameters for swordsman's death actions
@@ -50,13 +51,15 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
 
         void Start()
         {
-            if (Camera.IsNotNil() && Player.CameraToUse.IsNotNil())
+            var camera = Camera.Get();
+            if (camera.IsNotNil() && Player.CameraToUse.IsNotNil())
             {
-                Camera.Target = Player.CameraToUse;
+                camera.Target = Player.CameraToUse;
             }
-            if (DamageReport.IsNotNil())
+            var damageReport = DamageReport.Get();
+            if (damageReport.IsNotNil())
             {
-                DamageReport.Target = Player.GetComponent<Damageable>();
+                damageReport.Target = Player.GetComponent<Damageable>();
             }
         }
         /// <summary>

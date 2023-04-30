@@ -14,18 +14,36 @@ using UnityEngine.EventSystems;
 
 namespace MarkusSecundus.PhysicsSwordfight.Input
 {
-
+    /// <summary>
+    /// Decorator for <see cref="ISwordInput"/> that records its values and reports finished reporting via an event.
+    /// </summary>
     public class SwordInputRecorder : MonoBehaviour, ISwordInput
     {
+        /// <summary>
+        /// Input provider to be recorded. Must implement <see cref="ISwordInput"/>.
+        /// </summary>
         public Component InputToRecord;
         ISwordInput inputToRecord => (ISwordInput)InputToRecord;
 
-        public KeyCode startRecordingKey = KeyCode.F7, finishRecordingKey = KeyCode.F8;
+        /// <summary>
+        /// Pressing this key starts the recording
+        /// </summary>
+        public KeyCode StartRecordingKey = KeyCode.F7;
+        /// <summary>
+        /// Pressing this key finishes the recording and invoke <see cref="OnRecordFinished"/> event with it.
+        /// </summary>
+        public KeyCode FinishRecordingKey = KeyCode.F8;
 
-        public UnityEvent<List<Frame>> onRecordFinished;
+        /// <summary>
+        /// Callback to call on each record when its recording is finished.
+        /// </summary>
+        public UnityEvent<List<Frame>> OnRecordFinished;
 
         private HashSet<InputAxis> axesToRecord = new HashSet<InputAxis>();
 
+        /// <summary>
+        /// Captured state of a single recorded frame.
+        /// </summary>
         [System.Serializable]
         public struct Frame
         {
@@ -35,14 +53,21 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
             [SerializeField]
             public HashSet<KeyCode> KeysPressed;
             /// <summary>
-            /// In coordinates relative to the recorder's transform!
             /// Ray representing projection of the mouse cursor.
+            /// In coordinates relative to the recorder's transform!
             /// </summary>
             [SerializeField]
             public SerializableRay? CursorRay;
 
+            /// <summary>
+            /// List of axis values
+            /// </summary>
             [SerializeField]
             public Dictionary<InputAxis, float> Axes;
+            /// <summary>
+            /// List of raw axis values
+            /// </summary>
+            [SerializeField]
             public Dictionary<InputAxis, float> AxesRaw;
         }
 
@@ -51,8 +76,8 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
 
         private void Update()
         {
-            if (inputToRecord.GetKeyDown(finishRecordingKey)) FinishRecording();
-            if (inputToRecord.GetKeyDown(startRecordingKey)) StartRecording();
+            if (inputToRecord.GetKeyDown(FinishRecordingKey)) FinishRecording();
+            if (inputToRecord.GetKeyDown(StartRecordingKey)) StartRecording();
         }
 
         private void FixedUpdate()
@@ -103,15 +128,19 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
             Debug.Log($"Recording finished! Number of frames recorded: {currentRecording.Count}. Duration: {Time.timeAsDouble - timeStamp}");
             var recording = currentRecording;
             currentRecording = null;
-            onRecordFinished?.Invoke(recording);
+            OnRecordFinished?.Invoke(recording);
         }
 
+        /// <inheritdoc/>
         public bool GetKey(KeyCode code) => inputToRecord.GetKey(code);
 
+        /// <inheritdoc/>
         public bool GetKeyUp(KeyCode code) => inputToRecord.GetKeyUp(code);
 
+        /// <inheritdoc/>
         public bool GetKeyDown(KeyCode code) => inputToRecord.GetKeyDown(code);
 
+        /// <inheritdoc/>
         public float GetAxis(InputAxis axis)
         {
             float ret() => inputToRecord.GetAxis(axis);
@@ -121,6 +150,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
             }
             return ret();
         }
+        /// <inheritdoc/>
         public float GetAxisRaw(InputAxis axis)
         {
             float ret() => inputToRecord.GetAxisRaw(axis);
@@ -131,6 +161,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
             return ret();
         }
 
+        /// <inheritdoc/>
         public Ray? GetInputRay() => inputToRecord.GetInputRay();
     }
 

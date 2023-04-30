@@ -8,20 +8,33 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Environment.Randomization
 {
-
+    /// <summary>
+    /// Provides common functionality for randomizing <see cref="Transform"/> parameters
+    /// </summary>
     public class TransformRandomizer : MonoBehaviour, IRandomizer
     {
-        public Vector2 ScaleMin = Vector2.one, ScaleMax = Vector2.one;
-        public Vector3 RotationMin = Vector3.zero, RotationMax = new Vector3(0, 360f, 0);
-        public Vector3 PlaceOffsetMin = Vector3.zero, PlaceOffsetMax = Vector3.zero;
+        /// <summary>
+        /// Range for the scale to be applied. X value will be used for Z as well to ensure symmetry
+        /// </summary>
+        public Interval<Vector2> Scale = new Interval<Vector2>(Vector2.one, Vector2.one);
+        /// <summary>
+        /// Range for the rotation to be applied. Euler angles in degrees.
+        /// </summary>
+        public Interval<Vector3> Rotation = new Interval<Vector3>(Vector3.zero, new Vector3(0, 360f, 0));
+        /// <summary>
+        /// Distance in world space by which to offset the current position.
+        /// </summary>
+        public Interval<Vector3> PlaceOffset = new Interval<Vector3>(Vector3.zero, Vector3.zero);
+
+        /// <inheritdoc/>
         public void Randomize(System.Random random)
         {
-            var scale = random.NextVector2(ScaleMin, ScaleMax).xyx();
-            var rotation = random.NextVector3(RotationMin, RotationMax);
+            var scale = random.Next(Scale).xyx();
+            var rotation = random.Next(Rotation);
 
             transform.localScale = transform.localScale.MultiplyElems(scale);
             transform.localRotation *= Quaternion.Euler(rotation);
-            transform.position += random.NextVector3(PlaceOffsetMin, PlaceOffsetMax);
+            transform.position += random.Next(PlaceOffset);
         }
     }
 }

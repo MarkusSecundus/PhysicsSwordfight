@@ -7,7 +7,9 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
     /// <summary>
     /// Provider of keyboard and mouse user input.
     /// 
+    /// <para>
     /// For basic implementation that reads input from <see cref="UnityEngine.Input"/> see <see cref="BasicSwordInput"/>.
+    /// </para>
     /// </summary>
     public interface ISwordInput
     {

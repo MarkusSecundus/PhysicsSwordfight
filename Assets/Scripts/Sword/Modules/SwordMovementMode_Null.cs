@@ -12,5 +12,5 @@ using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
 {
     [System.Serializable]
-    public class SwordMovementMode_Null : SwordMovement.Submodule{}
+    public class SwordMovementMode_Null : SwordMovement.Module{}
 }
