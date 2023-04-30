@@ -144,7 +144,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
             recordPlayer = new SwordMovementMode_PlayRecord { Records = recordsList };
             recordPlayer.Init(Sword);
 
-            Sword.Modes = new ScriptSubmodulesContainer<KeyCode, SwordMovement.Submodule, ISwordMovement> { Default = recordPlayer };
+            Sword.Modes = new ScriptSubmodulesContainer<KeyCode, SwordMovement.Module, ISwordMovement> { Default = recordPlayer };
         }
 
         void SetSwordRecord()

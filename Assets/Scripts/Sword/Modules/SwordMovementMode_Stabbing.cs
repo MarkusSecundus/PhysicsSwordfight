@@ -14,7 +14,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
 
 
     [System.Serializable]
-    public class SwordMovementMode_Stabbing : SwordMovement.Submodule
+    public class SwordMovementMode_Stabbing : SwordMovement.Module
     {
         public Transform SwordDirectionHint;
         public IRayIntersectable InputIntersector;

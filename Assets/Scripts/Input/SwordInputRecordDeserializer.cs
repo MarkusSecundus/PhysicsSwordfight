@@ -8,7 +8,6 @@ using JsonSerializer = Newtonsoft.Json.JsonConvert;
 
 namespace MarkusSecundus.PhysicsSwordfight.Input
 {
-
     public class SwordInputRecordDeserializer : MonoBehaviour
     {
         public string[] paths;

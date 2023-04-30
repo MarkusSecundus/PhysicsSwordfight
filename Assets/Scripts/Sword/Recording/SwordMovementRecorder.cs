@@ -26,7 +26,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Recording
         public ResultFilePathDescriptor ResultDestination;
 
         ISwordInput Input => Target.Input;
-        Transform SwordWielder => Target.Joint.connectedBody.transform;
+        Transform SwordWielder => Target.SwordWielder;
 
         private void Start()
         {
@@ -39,7 +39,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Recording
             var recorderModule = new SwordMovementMode_Recording() { Modes = Target.Modes };
             recorderModule.Init(Target);
             recorderModule.MovementReporter.AddListener(DoRecord);
-            Target.Modes = new ScriptSubmodulesContainer<KeyCode, SwordMovement.Submodule, ISwordMovement> { Default = recorderModule, Values = new Dictionary<KeyCode, SwordMovement.Submodule>() };
+            Target.Modes = new ScriptSubmodulesContainer<KeyCode, SwordMovement.Module, ISwordMovement> { Default = recorderModule, Values = new Dictionary<KeyCode, SwordMovement.Module>() };
         }
 
         List<SwordMovementRecord.Frame> currentFrame = null;

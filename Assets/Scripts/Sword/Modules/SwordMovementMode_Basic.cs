@@ -7,7 +7,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
 {
 
     [System.Serializable]
-    public class SwordMovementMode_Basic : SwordMovement.Submodule
+    public class SwordMovementMode_Basic : SwordMovement.Module
     {
         public IRayIntersectable InputIntersectable;
 

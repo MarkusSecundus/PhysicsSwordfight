@@ -7,22 +7,55 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Animation
 {
+    /// <summary>
+    /// Component to ensure swordsman's detailed body is holding sword in its hands.
+    /// </summary>
     public class SwordsmanBodyProceduralAnimation : MonoBehaviour
     {
+        /// <summary>
+        /// Sword to hold
+        /// </summary>
         public SwordDescriptor Sword;
 
         [SerializeField] private SwordsmanModelDescriptor Model;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [System.Serializable]
         public struct SwordsmanModelDescriptor
         {
-            public ArmIKDescriptor RightArm, LeftArm;
+            /// <summary>
+            /// Rig bones for swordsman's right arm
+            /// </summary>
+            public ArmIKDescriptor RightArm;
+            /// <summary>
+            /// Rig bones for swordsman's left arm
+            /// </summary>
+            public ArmIKDescriptor LeftArm;
 
             [System.Serializable]
             public struct ArmIKDescriptor
             {
-                public Transform Target, Hints, Look;
+                /// <summary>
+                /// Point defining IK target
+                /// </summary>
+                public Transform Target;
+                /// <summary>
+                /// Point defining IK hint
+                /// </summary>
+                public Transform Hints;
+                /// <summary>
+                /// Point where the hand should be looking at
+                /// </summary>
+                public Transform Look;
+                /// <summary>
+                /// Bone chain describing the hand
+                /// </summary>
                 public Transform[] Bones;
+                /// <summary>
+                /// Leaf hand bone
+                /// </summary>
                 public Transform HandTipBone;
             }
 

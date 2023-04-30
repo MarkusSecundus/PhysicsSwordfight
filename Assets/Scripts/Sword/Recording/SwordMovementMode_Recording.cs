@@ -9,19 +9,19 @@ using UnityEngine.Events;
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Recording
 {
 
-    public class SwordMovementMode_Recording : SwordMovement.Submodule, ISwordMovement
+    public class SwordMovementMode_Recording : SwordMovement.Module, ISwordMovement
     {
         public SwordDescriptor Sword => Script.Sword;
         public ISwordInput Input => Script.Input;
         public Transform SwordWielder => Script.SwordWielder;
 
         public UnityEvent<ISwordMovement.MovementCommand> MovementReporter = new UnityEvent<ISwordMovement.MovementCommand>();
-        public ScriptSubmodulesContainer<KeyCode, SwordMovement.Submodule, ISwordMovement> Modes;
+        public ScriptSubmodulesContainer<KeyCode, SwordMovement.Module, ISwordMovement> Modes;
         IScriptSubmodule<ISwordMovement> submoduleManager;
         protected override void OnStart()
         {
             base.OnStart();
-            submoduleManager = new ScriptSubmoduleListManager<KeyCode, SwordMovement.Submodule, ISwordMovement>() { ActivityPredicate = k => Input.GetKey(k), ModesSupplier = () => Modes }.Init(this);
+            submoduleManager = new ScriptSubmoduleListManager<KeyCode, SwordMovement.Module, ISwordMovement>() { ActivityPredicate = k => Input.GetKey(k), ModesSupplier = () => Modes }.Init(this);
         }
         public override void OnUpdate(float delta) => submoduleManager.OnUpdate(delta);
         public override void OnDrawGizmos() => submoduleManager?.OnDrawGizmos();

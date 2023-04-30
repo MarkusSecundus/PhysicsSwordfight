@@ -6,7 +6,9 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Input
 {
-
+    /// <summary>
+    /// Input axes defined in the project. To not waste hours of debugging with Unity's default stringly typed nonsense.
+    /// </summary>
     public enum InputAxis
     {
         None = 0,
@@ -16,12 +18,5 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
         HorizontalQE = 6,
         MouseX = 4,
         MouseY = 5
-    }
-    public static class InputAxisExtensions
-    {
-        public static string Name(this InputAxis axis)
-        {
-            return axis.ToString();
-        }
     }
 }

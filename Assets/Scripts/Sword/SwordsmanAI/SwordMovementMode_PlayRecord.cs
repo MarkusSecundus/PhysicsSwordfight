@@ -10,7 +10,7 @@ using UnityEngine.Events;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
 {
-    public class SwordMovementMode_PlayRecord : SwordMovement.Submodule
+    public class SwordMovementMode_PlayRecord : SwordMovement.Module
     {
         public IDictionary<SwordRecordUsecase, SwordMovementRecord[]> Records { protected get; set; }
         public float PlaySpeed = 1f;

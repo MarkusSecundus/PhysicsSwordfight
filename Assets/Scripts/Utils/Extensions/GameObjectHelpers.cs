@@ -115,16 +115,18 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Extensions
         {
             static readonly Regex Format = new Regex(@"^(?<Callee>[a-zA-Z][a-zA-Z0-9]*)\.(?<MessageName>[a-zA-Z][a-zA-Z0-9]*)$");
 
-            public string CalleeName { get; init; }
-            public string Message { get; init; }
-
+            public string CalleeName { get; set; }
+            public string Message { get; set; }
+            public object Argument { get; set; }
             public object Invoke(object callee, System.Action<string> logError = null)
             {
                 var methodToInvoke = callee.GetType().GetMethod(Message);
                 if (methodToInvoke == null)
                     logError?.Invoke($"Called message '{Message}' does not exist on object '{callee}'({CalleeName})");
-                else
+                else if(Argument == null)
                     return methodToInvoke.Invoke(callee, System.Array.Empty<object>());
+                else
+                    return methodToInvoke.Invoke(callee, new object[] {Argument});
                 return null;
             }
             public static IndirectMessage? Make(string calleeAndMessage, System.Action<string> logError = null)

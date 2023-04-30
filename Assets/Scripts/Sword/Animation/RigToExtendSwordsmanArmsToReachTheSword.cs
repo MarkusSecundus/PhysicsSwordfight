@@ -11,6 +11,9 @@ using UnityEngine.Animations.Rigging;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Animation
 {
+    /// <summary>
+    /// Procedural rig constraint that extends lengths of bone chain to ensure it can reach a set point. Supposed to be used as preprocess for IK constraint.
+    /// </summary>
     public class RigToExtendSwordsmanArmsToReachTheSword : RigConstraint<RigToExtendSwordsmanArmsToReachTheSword.Job, RigToExtendSwordsmanArmsToReachTheSword.Data, RigToExtendSwordsmanArmsToReachTheSword.Binder>
     {
         [BurstCompile]

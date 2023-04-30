@@ -10,43 +10,86 @@ using static MarkusSecundus.Utils.Op;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword
 {
-
+    /// <summary>
+    /// Component responsible for swordsman's movement. Allows normal walking forwards/backwards and sideways + looking left/right, up/down.
+    /// </summary>
+    [RequireComponent(typeof(Rigidbody))]
     public class SwordsmanMovement : MonoBehaviour
     {
-        [System.Serializable]
-        public struct KeyPair
-        {
-            public KeyCode Increment, Decrement;
-        }
-
+        /// <summary>
+        /// Container defining input mapping
+        /// </summary>
         [System.Serializable]
         public class InputMapping
         {
+            /// <summary>
+            /// Key to initiate jump
+            /// </summary>
             public KeyCode Jump = KeyCode.LeftShift;
+            /// <summary>
+            /// Axis for walking in backward/forward direction
+            /// </summary>
             public InputAxis WalkForwardBackward = InputAxis.Vertical;
+            /// <summary>
+            /// Axis for walking in left/right direction
+            /// </summary>
             public InputAxis StrafeLeftRight = InputAxis.Horizontal;
+            /// <summary>
+            /// Axis for rotating camera up/down
+            /// </summary>
             public InputAxis LookUpDown = InputAxis.MouseY;
+            /// <summary>
+            /// Axis for rotating camera left/right
+            /// </summary>
             public InputAxis LookLeftRight = InputAxis.MouseX;
+            /// <summary>
+            /// Axis for rotating the swordsman's body left/right
+            /// </summary>
             public InputAxis RotateLeftRight = InputAxis.HorizontalSecondary;
         }
+        /// <summary>
+        /// Container defining parameters for movement speed and stuff
+        /// </summary>
         [System.Serializable]
         public class InputMultipliers
         {
+            /// <summary>
+            /// Speed of walking backward/forward
+            /// </summary>
             public float WalkForwardBackward = 1f;
+            /// <summary>
+            /// Speed of walking left/right
+            /// </summary>
             public float StrafeLeftRight = 1f;
-            public float WalkMidairMultiplier = 0.5f;
-
+            /// <summary>
+            /// Speed of rotating swordsman's body left/right
+            /// </summary>
             public float RotateLeftRight = 1f;
-            public float RotateLeftRightDecellerateThreshold = Mathf.Epsilon;
-            public float RotateLeftRightStabilizationRate = 1f;
 
+            /// <summary>
+            /// Speed of rotating camera up/down
+            /// </summary>
             public float LookUpDown = 1f;
-            public float LookLeftRight = 0.1f;
-            public Interval<Vector3> LookConstraints;
+            /// <summary>
+            /// Speed of rotating camera left/right
+            /// </summary>
+            public float LookLeftRight = 0f;
+            /// <summary>
+            /// Min and max constraints of the camera's rotation
+            /// </summary>
+            public Interval<Vector3> LookConstraints = new Interval<Vector3>(new Vector3(-180f, 0,0), new Vector3(180f, 0,0));
 
+            /// <summary>
+            /// Force impulse to apply when jumping
+            /// </summary>
             public Vector3 Jump = Vector3.up;
-
+            /// <summary>
+            /// Force to be applied as gravity when in midair (cannot jump)
+            /// </summary>
             public Vector3 Gravity = new Vector3(0, -9.81f, 0);
+            /// <summary>
+            /// Force to be applied as gravity when grounded (can jump)
+            /// </summary>
             public Vector3 GravityWhenGrounded = new Vector3(0, -9.81f, 0);
         }
 
@@ -56,26 +99,55 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
             public const ForceMode JumpMode = ForceMode.VelocityChange;
         }
 
-
+        /// <summary>
+        /// Input provider to be used
+        /// </summary>
         public ISwordInput Input;
+        /// <summary>
+        /// Camera to be rotated
+        /// </summary>
         public Transform CameraToUse;
+        /// <summary>
+        /// Trigger collider - IFF triggered, swordsman is considered as grounded and can jump
+        /// </summary>
         public TriggerActivityInfo Feet;
 
         private new Rigidbody rigidbody;
-
+        /// <summary>
+        /// Container defining input mapping
+        /// </summary>
         public InputMapping Mapping = new InputMapping();
+        /// <summary>
+        /// Container defining parameters for movement speed and stuff
+        /// </summary>
         public InputMultipliers Tweaks = new InputMultipliers();
 
-
+        /// <summary>
+        /// Container defining movement directions
+        /// </summary>
         public readonly struct MovementDirectionBasesList
         {
             readonly SwordsmanMovement self;
-            public MovementDirectionBasesList(SwordsmanMovement self) => this.self = self;
 
+            internal MovementDirectionBasesList(SwordsmanMovement self) => this.self = self;
+
+            /// <summary>
+            /// Direction for walking forward, in world space
+            /// </summary>
             public Vector3 WalkForwardBackwardBase => self.transform.forward;
+            /// <summary>
+            /// Direction for walking left, in world space
+            /// </summary>
             public Vector3 StrafeLeftRightBase => self.transform.right;
+
+            /// <summary>
+            /// Axis for rotating left/right, in world space
+            /// </summary>
             public Vector3 RotateLeftRightAxis => self.transform.up;
         }
+        /// <summary>
+        /// Container defining movement directions
+        /// </summary>
         public MovementDirectionBasesList MovementDirectionBases => new MovementDirectionBasesList(this);
 
 
