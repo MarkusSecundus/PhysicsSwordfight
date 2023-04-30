@@ -7,6 +7,11 @@ using UnityEngine.Events;
 
 namespace MarkusSecundus.PhysicsSwordfight.GUI
 {
+    /// <summary>
+    /// GUI component for key-picking button.
+    /// 
+    /// TODO: finish the game logic or throw this out!
+    /// </summary>
     public class KeyPicker : MonoBehaviour
     {
         [System.Serializable] public class KeySetEvent : UnityEvent<KeyCode> { }

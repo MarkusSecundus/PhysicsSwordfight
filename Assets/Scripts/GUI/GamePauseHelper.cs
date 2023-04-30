@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.GUI
 {
+    /// <summary>
+    /// TODO: figure out if this should be thrown out!
+    /// </summary>
     public class GamePauseHelper : MonoBehaviour
     {
         public GameObject GameRoot, PauseRoot;
