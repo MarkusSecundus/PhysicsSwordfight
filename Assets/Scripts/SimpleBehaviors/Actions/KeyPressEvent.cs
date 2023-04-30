@@ -6,8 +6,14 @@ using UnityEngine.Events;
 
 namespace MarkusSecundus.PhysicsSwordfight.Actions
 {
+    /// <summary>
+    /// Simple action that listens for keypresses and fires events registered for particular keys
+    /// </summary>
     public class KeyPressEvent : MonoBehaviour
     {
+        /// <summary>
+        /// Map of events to be invoked for specific keys being pressed
+        /// </summary>
         public SerializableDictionary<KeyCode, UnityEvent> Events;
 
         void Update()

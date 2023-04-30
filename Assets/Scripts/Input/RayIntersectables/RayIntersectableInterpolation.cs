@@ -6,7 +6,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
 {
 
     /// <summary>
-    /// Implementation if <see cref="IRayIntersectable"/> that interpolates between a list of other intersectable objects.
+    /// Implementation of <see cref="IRayIntersectable"/> that interpolates between a list of other intersectable objects.
     /// </summary>
     [System.Serializable]
     public class RayIntersectableInterpolation : IRayIntersectable

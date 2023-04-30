@@ -13,7 +13,9 @@ namespace MarkusSecundus.PhysicsSwordfight.Environment
     [RequireComponent(typeof(SwordmillAssembly))]
     public class SwordmillBehavior : MonoBehaviour
     {
-
+        /// <summary>
+        /// Describes one step of the swordmill rotor's movement path
+        /// </summary>
         [System.Serializable]
         public struct MovementStep
         {
@@ -26,6 +28,9 @@ namespace MarkusSecundus.PhysicsSwordfight.Environment
             /// </summary>
             public float Duration;
         }
+        /// <summary>
+        /// Describes one step of the swordmill rotor's rotation path
+        /// </summary>
         [System.Serializable]
         public struct RotationStep
         {

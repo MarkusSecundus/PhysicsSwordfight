@@ -10,7 +10,6 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
     /// </summary>
     public class BasicSwordInput : MonoBehaviour, ISwordInput
     {
-
         bool isDisabled => !this.enabled;
 
         /// <summary>

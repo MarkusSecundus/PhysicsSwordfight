@@ -7,19 +7,44 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
 {
-
+    /// <summary>
+    /// <see cref="IRayIntersectable"/> implementation of 3D sphere.
+    /// </summary>
     [System.Serializable]
     public class RayIntersectableSphere : IRayIntersectable
     {
+        /// <summary>
+        /// What to do when the sphere was not hit
+        /// </summary>
         public enum OnMissedPolicy
         {
-            DoNothing, TakeLeastDistance, Project
+            /// <summary>
+            /// Just report <see cref="RayIntersection.Null"/>. Default behavior
+            /// </summary>
+            DoNothing, 
+            /// <summary>
+            /// Return point on the ray with least distance from the sphere's center
+            /// </summary>
+            TakeLeastDistance, 
+            /// <summary>
+            /// Take point on the ray with least distance from the sphere's center and project it on the sphere.
+            /// </summary>
+            Project
         }
-
+        /// <summary>
+        /// Center of the sphere
+        /// </summary>
         public Transform Center;
+        /// <summary>
+        /// Radius of the sphere
+        /// </summary>
         public float Radius;
+        /// <summary>
+        /// What to do when the sphere was not hit
+        /// </summary>
         public OnMissedPolicy OnMissed = OnMissedPolicy.DoNothing;
 
+        /// <inheritdoc/>
         protected override RayIntersection GetIntersection_impl(Ray r) => new RayIntersection(ComputeIntersection(r), Center.position);
         private Vector3? ComputeIntersection(Ray r)
         {
