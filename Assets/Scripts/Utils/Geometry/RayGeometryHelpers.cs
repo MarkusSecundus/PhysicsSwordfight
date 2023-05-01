@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Utils.Geometry
 {
+    /// <summary>
+    /// Static class providing methods for performing geometric computations on rays
+    /// </summary>
     public static class RayGeometryHelpers
     {
         private struct ShortestRayConnectionResult
@@ -46,6 +49,12 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Geometry
 
             return new ShortestRayConnectionResult { resultDirection = resultDirection, t1 = t1, t2 = t2, t3 = t3 };
         }
+        /// <summary>
+        /// Get shortes ray connecting two other rays in space.
+        /// </summary>
+        /// <param name="self">One ray</param>
+        /// <param name="other">Other ray</param>
+        /// <returns>Shortest connection between the two rays</returns>
         public static ScaledRay GetShortestRayConnection(this ScaledRay self, ScaledRay other)
         {
             var result = GetShortestRayConnection_impl(self, other);
@@ -55,7 +64,12 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Geometry
             return ScaledRay.FromPoints(resultOrigin, resultEnd);
         }
 
-        //Same as GetShortestRayConnection(..) but considers the ray to represent finite line segments (that have a beginning and an end)
+        /// <summary>
+        /// Get shortes ray connecting two other rays in space. Rays are considered finite line segments beginning in <see cref="ScaledRay.origin"/> and ending in <see cref="ScaledRay.end"/>
+        /// </summary>
+        /// <param name="self">One ray</param>
+        /// <param name="other">Other ray</param>
+        /// <returns>Shortest connection between the two line segments</returns>
         public static ScaledRay GetShortestScaledRayConnection(this ScaledRay self, ScaledRay other)
         {
             var result = GetShortestRayConnection_impl(self, other);
@@ -66,26 +80,27 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Geometry
         }
 
 
-        public static double GetRayPointWithLeastDistance_GetParameter(this Ray self, Vector3 v)
+        static double GetRayPointWithLeastDistance_GetParameter(this ScaledRay self, Vector3 v)
         {
             return -Vector3.Dot((self.origin - v), self.direction) / self.direction.magnitude.Pow2();
         }
 
-        public static Vector3 GetRayPointWithLeastDistance(this Ray self, Vector3 v)
+        /// <summary>
+        /// Project given point on a given ray.
+        /// </summary>
+        /// <param name="self">Ray on which the projection lies.</param>
+        /// <param name="v">Point to project</param>
+        /// <returns>Projection of <paramref name="v"/> on <paramref name="self"/></returns>
+        public static Vector3 GetRayPointWithLeastDistance(this ScaledRay self, Vector3 v)
             => self.GetPoint(self.GetRayPointWithLeastDistance_GetParameter(v));
 
-
-        public static Vector3 GetPoint(this Ray self, double t)
+        /// <summary>
+        /// Get point going along the ray.
+        /// </summary>
+        /// <param name="self">Ray on which the point lies</param>
+        /// <param name="t">Distance to travel from origin</param>
+        /// <returns><c>self.origin + t*self.direction</c></returns>
+        public static Vector3 GetPoint(this ScaledRay self, double t)
             => self.origin + (float)t * self.direction;
-
-        public static double PointDistanceFromRay(this Ray self, Vector3 v)
-        {
-            Vector3 o = self.origin, s = self.direction;
-
-            double dst = Vector3.Cross(s, o - v).sqrMagnitude / s.sqrMagnitude;
-
-            return dst;
-        }
-
     }
 }

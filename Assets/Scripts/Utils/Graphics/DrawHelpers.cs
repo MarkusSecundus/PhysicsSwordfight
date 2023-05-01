@@ -6,13 +6,25 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Utils.Graphics
 {
+    /// <summary>
+    /// Static class providing methods for drawing shapes
+    /// </summary>
     public static class DrawHelpers
     {
+        /// <summary>
+        /// Delegate for drawing lines
+        /// </summary>
+        /// <typeparam name="TVect">Vector type</typeparam>
+        /// <param name="lineBegin">origin point of the line</param>
+        /// <param name="lineEnd">end point of the line</param>
         public delegate void LineDrawer<TVect>(TVect lineBegin, TVect lineEnd);
 
-        public static void DrawDirectedLine(this LineDrawer<Vector3> self, Vector3 begin, Vector3 direction)
-            => self(begin, begin + direction);
-
+        /// <summary>
+        /// Draw 2D wire circle with center in origin.
+        /// </summary>
+        /// <param name="radius">Radius of the circle</param>
+        /// <param name="segments">Number of segments of the circle</param>
+        /// <param name="drawLine">Function to draw the lines</param>
         public static void DrawWireCircle(float radius, int segments, LineDrawer<Vector2> drawLine)
         {
             Vector2 v = new Vector2(radius, 0);
@@ -23,6 +35,14 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Graphics
             }
         }
 
+        /// <summary>
+        /// Draw 2D wire sphere at given position in space
+        /// </summary>
+        /// <param name="center">Center of the sphere</param>
+        /// <param name="radius">Radius of the sphere</param>
+        /// <param name="drawLine">Function for drawing the lines</param>
+        /// <param name="segments">Number of segments of each circle component</param>
+        /// <param name="circles">How many circles the sphere consists of</param>
         public static void DrawWireSphere(Vector3 center, float radius, LineDrawer<Vector3> drawLine, int? segments = null, int? circles = null)
         {
             int segm = segments ?? computeCircleSegments(radius);
@@ -44,7 +64,14 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Graphics
             int computeSphereCircles(float radius) => (int)Mathf.Max(2, Mathf.Ceil(Mathf.Sqrt(radius) * 18f));
         }
 
-
+        /// <summary>
+        /// Visualize a plane segment arround given point in space. Draws the lines from points on sides - uses <c>2*diameter</c> lines.
+        /// </summary>
+        /// <param name="plane">Plane to visualize</param>
+        /// <param name="center">Point on a plane to serve as center of the visualization</param>
+        /// <param name="drawLine">Function for drawing the lines</param>
+        /// <param name="diameter">Size of the visualized plane segment</param>
+        /// <param name="segments">How detailed the visualization is</param>
         public static void DrawPlaneSegment(Plane plane, Vector3 center, LineDrawer<Vector3> drawLine, Vector2 diameter = default, int segments = 24)
         {
             if (diameter == default) diameter = new Vector2(1, 1);
@@ -75,7 +102,14 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Graphics
             }
         }
 
-
+        /// <summary>
+        /// Visualize a plane segment arround given point in space. Draws lines inside the plane - uses <c>diameter^2</c> lines.
+        /// </summary>
+        /// <param name="plane">Plane to visualize</param>
+        /// <param name="center">Point on a plane to serve as center of the visualization</param>
+        /// <param name="drawLine">Function for drawing the lines</param>
+        /// <param name="diameter">Size of the visualized plane segment</param>
+        /// <param name="segments">How detailed the visualization is</param>
         public static void DrawPlaneSegmentInterstepped(Plane plane, Vector3 center, LineDrawer<Vector3> drawLine, Vector2 diameter = default, int segments = 24)
         {
             if (diameter == default) diameter = new Vector2(1, 1);

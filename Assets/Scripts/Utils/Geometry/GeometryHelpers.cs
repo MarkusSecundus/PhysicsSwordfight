@@ -6,8 +6,18 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Utils.Geometry
 {
+    /// <summary>
+    /// Static class providing methods that are generally useful in geometry computations
+    /// </summary>
     public static class GeometryHelpers
     {
+        /// <summary>
+        /// Solves quadratic equation in format <c>a*x^2 + b*x + c = 0</c>. Doesn't consider imaginary solutions.
+        /// </summary>
+        /// <param name="a">Quadratic parameter</param>
+        /// <param name="b">Linear parameter</param>
+        /// <param name="c">Constant parameter</param>
+        /// <returns>Both solutions if provided equation has two real solutions. Just <c>x1</c> if it has one, or <c>(null, null)</c> if the equation has no real solution.</returns>
         public static (double? x1, double? x2) SolveQuadraticEquation(double a, double b, double c)
         {
             double D = b * b - 4 * a * c;
@@ -27,7 +37,8 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Geometry
             return (x1, x2);
         }
 
-        public static (Vector3? First, Vector3? Second) GetPointsFromParameters(this Ray self, (double? t1, double? t2) parameters)
+
+        internal static (Vector3? First, Vector3? Second) GetPointsFromParameters(this ScaledRay self, (double? t1, double? t2) parameters)
         {
             (var t1, var t2) = parameters;
 
@@ -36,40 +47,5 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Geometry
                 t2 == null ? (Vector3?)null : self.GetPoint(t2.Value)
                 );
         }
-
-
-        /// <summary>
-        /// Computes angles of a triangle (described by the lengths of its sides) using the cosine theorem
-        /// </summary>
-        /// <returns></returns>
-        public static (float a, float b, float c) GetTriangleAngles_sss(float lengthA, float lengthB, float lengthC)
-        {
-            var cosA = getCos(lengthA, lengthB, lengthC);
-            var cosB = getCos(lengthB, lengthC, lengthA);
-            var cosC = getCos(lengthC, lengthA, lengthB);
-
-            return (Mathf.Acos(cosA) * Mathf.Rad2Deg, Mathf.Acos(cosB) * Mathf.Rad2Deg, Mathf.Acos(cosC) * Mathf.Rad2Deg);
-
-            float getCos(float a, float b, float c) => (b * b + c * c - a * a) / (2 * b * c);
-        }
-
-
-        /// <summary>
-        /// According to cosine lemma
-        /// </summary>
-        /// <returns>Angle in radians</returns>
-        public static double ComputeTriangleAngle_sss(double oppositeSide, double adjacent1, double adjacent2)
-        {
-            if (adjacent1 == 0) throw new ArgumentException("Adjacent sides cannot be zero!", nameof(adjacent1));
-            if (adjacent2 == 0) throw new ArgumentException("Adjacent sides cannot be zero!", nameof(adjacent2));
-
-            double cos = (adjacent1 * adjacent1 + adjacent2 * adjacent2 - oppositeSide * oppositeSide) / (2 * adjacent1 * adjacent2);
-
-
-            return Math.Acos(cos);
-        }
-
-
-
     }
 }

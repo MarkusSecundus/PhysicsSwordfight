@@ -48,12 +48,12 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
         protected override RayIntersection GetIntersection_impl(Ray r) => new RayIntersection(ComputeIntersection(r), Center.position);
         private Vector3? ComputeIntersection(Ray r)
         {
-            var result = r.IntersectSphere(new Sphere(Center.position, Radius));
+            var result = r.AsRay().IntersectSphere(new Sphere(Center.position, Radius));
             if (result.First != null) return result.First.Value;
             Vector3? ret = OnMissed switch
             {
-                OnMissedPolicy.TakeLeastDistance => r.GetRayPointWithLeastDistance(Center.position),
-                OnMissedPolicy.Project => new Sphere(Center.position, Radius).ProjectPoint(r.GetRayPointWithLeastDistance(Center.position)),
+                OnMissedPolicy.TakeLeastDistance => r.AsRay().GetRayPointWithLeastDistance(Center.position),
+                OnMissedPolicy.Project => new Sphere(Center.position, Radius).ProjectPoint(r.AsRay().GetRayPointWithLeastDistance(Center.position)),
                 _ => null
             };
             return ret;

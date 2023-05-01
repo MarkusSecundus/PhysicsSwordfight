@@ -41,7 +41,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
 
             var bladeAxis = Sword.SwordBladeAsRay();
             var swordLength = bladeAxis.length;
-            var blockPointProjection = bladeAxis.AsRay().GetRayPointWithLeastDistance(bladeEdgeBlockPoint.position);
+            var blockPointProjection = bladeAxis.GetRayPointWithLeastDistance(bladeEdgeBlockPoint.position);
             float bladeTipDistance = blockPointProjection.Distance(bladeAxis.end),
                   handleDistance = blockPointProjection.Distance(bladeAxis.origin)
                 ;
