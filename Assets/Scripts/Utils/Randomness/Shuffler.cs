@@ -7,13 +7,22 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Utils.Randomness
 {
+    /// <summary>
+    /// Source of random elements operating via a shuffled list.
+    /// </summary>
+    /// <typeparam name="T">Type of elements</typeparam>
     public struct Shuffler<T>
     {
-        public IReadOnlyList<T> Items { get; }
 
+        /// <summary>
+        /// Init the shuffler
+        /// </summary>
+        /// <param name="randomizer">Source of randomness</param>
+        /// <param name="items">List of items to be randomized</param>
+        /// <param name="windowSize">Window size in multiples of <c>items.Count</c></param>
         public Shuffler(System.Random randomizer, IReadOnlyList<T> items, int windowSize)
         {
-            (Items, rand) = (items, randomizer);
+            rand =  randomizer;
             window = items.RepeatList(windowSize).ToArray();
             nextIndex = window.Length;
         }
@@ -27,6 +36,10 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Randomness
         private System.Random rand;
         private T[] window;
         private int nextIndex;
+        /// <summary>
+        /// Get next random element
+        /// </summary>
+        /// <returns>Next random element</returns>
         public T Next()
         {
             if (window.Length <= 0) return default;
