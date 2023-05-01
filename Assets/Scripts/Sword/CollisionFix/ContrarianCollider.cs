@@ -9,13 +9,25 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
 {
-
+    /// <summary>
+    /// Simple implementation of <see cref="ContrarianColliderBase"/> to enable testing if tunneling-prevention works in controlled environment without all the machinery of <see cref="CollisionFix"/>.
+    /// </summary>
     public class ContrarianCollider : ContrarianColliderBase
     {
-        public SwordDescriptor Target, Host;
+        /// <summary>
+        /// Sword where this fixer collider is placed
+        /// </summary>
+        public SwordDescriptor Target;
+        /// <summary>
+        /// The other sword whose tunneling should be prevented
+        /// </summary>
+        public SwordDescriptor Host;
+        /// <inheritdoc/>
         protected override ScaledRay GetTarget() => Target.SwordAsRay();
+        /// <inheritdoc/>
         protected override ScaledRay GetHost() => Host.SwordAsRay();
 
+        /// <inheritdoc/>
         protected override void Awake()
         {
             base.Awake();
@@ -30,127 +42,100 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
     }
 
     /// <summary>
-    /// 
+    /// Component for preventing tunneling of two sword-like objects by creating a big collider that lives inside one of them and rotates to always face the other.
     /// </summary>
     public abstract class ContrarianColliderBase : MonoBehaviour
     {
+        /// <summary>
+        /// Configurable parameters
+        /// </summary>
         [System.Serializable]
         public struct Configuration
         {
-            public Mode mode;
-            public float ColliderDepth, Tolerance, Overreach, ForceMultiplierForStandaloneMode;
+            /// <summary>
+            /// Diameter of the collider.
+            /// </summary>
+            public float ColliderDepth;
+            /// <summary>
+            /// Max distance of the blades at which tunneling is prevented. 
+            /// </summary>
+            public float Tolerance;
+            /// <summary>
+            /// Added diameter to the collider that is ignored in it's positioning computation. Used for preventing a sword getting stuck between other sword and its collider.
+            /// </summary>
+            public float Overreach;
 
-            public static Configuration Default => new Configuration { mode = Mode.Hosted, ColliderDepth = 1f, Tolerance = 0.3f, Overreach = 0.1f, ForceMultiplierForStandaloneMode = -1f };
+            /// <summary>
+            /// Default value for the editor
+            /// </summary>
+            public static Configuration Default => new Configuration { ColliderDepth = 1f, Tolerance = 0.3f, Overreach = 0.1f };
         }
 
+        /// <summary>
+        /// Configurable parameters
+        /// </summary>
         public Configuration Config = Configuration.Default;
 
-        public enum Mode
-        {
-            Standalone, Hosted, StandaloneDynamic
-        }
-
+        /// <summary>
+        /// Ray describing the sword where this fixer collider is placed
+        /// </summary>
         protected abstract ScaledRay GetTarget();
+        /// <summary>
+        /// Ray describing the other sword whose tunneling should be prevented
+        /// </summary>
         protected abstract ScaledRay GetHost();
 
-
+        /// <summary>
+        /// Collider that performs the tunneling-prevention job
+        /// </summary>
         protected new BoxCollider collider;
 
 
-        private Rigidbody HostRigidbody, rb;
+        Rigidbody HostRigidbody;
 
+        /// <summary>
+        /// Makes sure this collision fixing utility doesn't collide with specified non-target collider
+        /// </summary>
+        /// <param name="other">Collider to be ignored</param>
+        /// <param name="shouldIgnore"><c>true</c> if the collisions should be ignored, <c>false</c> if they should not</param>
         public void IgnoreCollisions(Collider other, bool shouldIgnore = true) => Physics.IgnoreCollision(collider, other, shouldIgnore);
 
+        /// <summary>
+        /// Standard Unity message for component initialization
+        /// </summary>
+        protected virtual void Awake(){}
 
-        protected virtual void Awake()
-        {
-        }
-
-
+        /// <summary>
+        /// Initialize the collider from script
+        /// </summary>
+        /// <param name="hostRigidbody">The sword where this fixer collider is to be placed</param>
         protected void SetUp(Rigidbody hostRigidbody)
         {
             HostRigidbody = hostRigidbody.GetComponent<Rigidbody>();
             var bladeLength = GetHost().length;
             var sideLength = (Config.ColliderDepth + Config.Overreach) / Mathf.Sqrt(2f);
 
-            if (Config.mode == Mode.StandaloneDynamic)
-            {
-                collider = transform.CreateChild("collider").AddComponent<BoxCollider>();
-            }
-            else
-            {
-                collider = gameObject.AddComponent<BoxCollider>();
-            }
+            collider = gameObject.AddComponent<BoxCollider>();
             collider.size = new Vector3(sideLength, bladeLength, sideLength);
             collider.gameObject.layer = ColliderLayer.CollisionFix;
 
-            switch (Config.mode)
-            {
-                case Mode.Standalone:
-                    {
-                        rb = gameObject.AddComponent<Rigidbody>();
-                        rb.isKinematic = true;
-                    }
-                    break;
-                case Mode.StandaloneDynamic:
-                    {
-                        rb = gameObject.AddComponent<Rigidbody>();
-                        rb.MimicStateOf(hostRigidbody);
-
-                    }
-                    break;
-                case Mode.Hosted:
-                    {
-                        gameObject.transform.SetParent(HostRigidbody.transform);
-                    }
-                    break;
-            }
+            gameObject.transform.SetParent(HostRigidbody.transform);
         }
 
 
-
-        private void OnCollisionEnter(Collision collision) => OnCollision(collision);
-        private void OnCollisionStay(Collision collision) => OnCollision(collision);
-        private void OnCollisionExit(Collision collision) => OnCollision(collision);
-
-        void OnCollision(Collision collision)
-        {
-            if (Config.mode == Mode.Standalone)
-            {
-                foreach (var c in collision.IterateContacts())
-                {
-                    HostRigidbody.AddForceAtPosition(c.impulse * Config.ForceMultiplierForStandaloneMode, c.point, ForceMode.VelocityChange);
-                    //if (c.impulse == Vector3.zero) continue;
-                    //Debug.Log($"fr. {Time.frameCount} - adding force {c.impulse.ToStringPrecise()}");
-                    //DrawHelpers.DrawWireSphere(c.point, 0.03f, (a, b) => Debug.DrawLine(a, b, Color.green));
-                    //Debug.DrawLine(c.point, c.point + c.impulse, Color.red);
-                    //Debug.DrawLine(c.point, c.point + c.normal, Color.blue);
-                }
-            }
-            else if (Config.mode == Mode.StandaloneDynamic)
-            {
-                var (velocityDelta, angularVelocityDelta) = (rb.velocity - lastVelocity, rb.angularVelocity - lastAngularVelocity);
-                if (velocityDelta != Vector3.zero || angularVelocityDelta != Vector3.zero)
-                {
-                    Debug.Log($"Applying deltas: {velocityDelta} - angular{angularVelocityDelta} ; col({collision.gameObject})", this);
-                    HostRigidbody.velocity += velocityDelta;
-                    HostRigidbody.angularVelocity += angularVelocityDelta;
-                }
-                SetVelocties();
-            }
-        }
-
-
-        private void SetVelocties() => (rb.transform.position, rb.transform.rotation, rb.velocity, rb.angularVelocity) = (HostRigidbody.position, HostRigidbody.rotation, HostRigidbody.velocity, HostRigidbody.angularVelocity);
-
+        /// <summary>
+        /// Calls <see cref="UpdateColliderPosition"/>
+        /// </summary>
         protected virtual void FixedUpdate()
         {
             UpdateColliderPosition();
         }
 
-        private Vector3 lastVelocity = Vector3.zero, lastAngularVelocity = Vector3.zero;
 
-        private Vector3 lastDirection = NumericConstants.NaNVector3;
+        Vector3 lastDirection = NumericConstants.NaNVector3;
+        /// <summary>
+        /// Updates position of the collider to face the target sword
+        /// </summary>
         protected void UpdateColliderPosition()
         {
             ScaledRay thisSword = GetHost(), otherSword = GetTarget();
@@ -184,17 +169,12 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
             var position = bladeCenter + direction * Config.ColliderDepth * 0.5f;
 
 
-            if (Config.mode == Mode.StandaloneDynamic)
-            {
-                SetVelocties();
-                (lastVelocity, lastAngularVelocity) = (rb.velocity, rb.angularVelocity);
-            }
             collider.transform.position = position;
             collider.transform.rotation = Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(direction, bladeDirection);
 
         }
 
-        private static ScaledRay AccountForCurrentMotion(ScaledRay position, Rigidbody rb, float delta)
+        static ScaledRay AccountForCurrentMotion(ScaledRay position, Rigidbody rb, float delta)
         {
             var toRotate = Quaternion.Euler((rb.angularVelocity + 0f * rb.GetAccumulatedTorque() * delta / rb.mass) * delta);
             var toMove = (rb.velocity + 0f * rb.GetAccumulatedForce() * delta / rb.mass) * delta;
@@ -209,13 +189,16 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
             Vector3 rotate(Vector3 v) => rb.transform.LocalToGlobal(toRotate * rb.transform.GlobalToLocal(v));
         }
 
-        /*private void OnDrawGizmos()
+#if false
+        private void OnDrawGizmos()
         {
-            Ray thisSword = SwordDescriptor.SwordBladeAsRay(), otherSword = GetTarget().SwordBladeAsRay();
+            var thisSword = GetHost();
+            var otherSword = GetTarget();
             var toDraw = thisSword.GetShortestRayConnection(otherSword);
 
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(toDraw);
-        }*/
+            Gizmos.DrawRay(toDraw.origin, toDraw.direction);
+        }
+#endif
     }
 }
