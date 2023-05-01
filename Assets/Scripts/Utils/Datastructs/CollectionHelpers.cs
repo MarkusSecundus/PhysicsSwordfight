@@ -127,6 +127,7 @@ namespace MarkusSecundus.Utils.Datastructs
         }
 
 
+        public static bool IsNullOrEmpty<T>(this IReadOnlyList<T> self) => !self.IsNotNullNotEmpty();
         public static bool IsNotNullNotEmpty<T>(this IReadOnlyList<T> self)
             => self.IsNotNil() && self.Count > 0;
 

@@ -4,8 +4,14 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
 {
+    /// <summary>
+    /// Component that disables collisions of <c>this</c> gameobject with specified colliders on startup and then destroys itself.
+    /// </summary>
     public class CollisionDisabler : MonoBehaviour
     {
+        /// <summary>
+        /// Colliders that should no longer collide with <c>this</c> gameobject
+        /// </summary>
         public Collider[] ToDisable;
 
 
@@ -16,6 +22,7 @@ namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
             foreach (var local in localColliders)
                 foreach (var other in ToDisable)
                     Physics.IgnoreCollision(local, other);
+            Destroy(this);
         }
     }
 }

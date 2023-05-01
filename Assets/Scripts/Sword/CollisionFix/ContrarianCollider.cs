@@ -79,7 +79,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
                 collider = gameObject.AddComponent<BoxCollider>();
             }
             collider.size = new Vector3(sideLength, bladeLength, sideLength);
-            collider.gameObject.layer = ColliderLayers.CollisionFix;
+            collider.gameObject.layer = ColliderLayer.CollisionFix;
 
             switch (Config.mode)
             {

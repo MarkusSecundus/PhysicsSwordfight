@@ -61,13 +61,13 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
 
         protected override void OnDrawGizmos()
         {
-            if (Hole != null || OnMissed != OnMissedPolicy.DoNothing)
+            if (false && (Hole != null || OnMissed != OnMissedPolicy.DoNothing))
                 base.OnDrawGizmos();
             else
             {
                 if (!ShouldDrawGizmo) return;
 
-                Gizmos.color = Color.green;
+                Gizmos.color = GizmoColor;
                 DrawHelpers.DrawWireSphere(Center.position, Radius, Gizmos.DrawLine);
             }
         }

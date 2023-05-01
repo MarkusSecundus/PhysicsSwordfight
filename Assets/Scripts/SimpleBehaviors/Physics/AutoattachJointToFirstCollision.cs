@@ -1,21 +1,27 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.Utils.Datastructs;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
 {
+    /// <summary>
+    /// Component that connects joints of its gameobject to the first rigidbody it collides with and then destroys itself.
+    /// </summary>
+    [RequireComponent(typeof(Joint))]
     public class AutoattachJointToFirstCollision : MonoBehaviour
     {
-
-        private void OnCollisionEnter(Collision collision)
+        void OnCollisionEnter(Collision collision)
         {
             var rb = collision.gameObject.GetComponent<Rigidbody>();
             if (rb == null) return;
 
-            var joint = GetComponent<Joint>();
-            if (joint == null) throw new System.ArgumentException($"Object {gameObject.name} has no component of type {nameof(Joint)}!");
+            var joints = GetComponents<Joint>();
+            if (joints.IsNullOrEmpty()) throw new System.ArgumentException($"Object {gameObject.name} has no component of type {nameof(Joint)}!");
 
-            joint.connectedBody ??= rb;
+            foreach(var joint in joints)
+                if(joint.connectedArticulationBody.IsNil()) joint.connectedBody ??= rb;
 
             Destroy(this);
         }

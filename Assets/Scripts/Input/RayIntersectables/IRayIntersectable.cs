@@ -72,6 +72,10 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
         /// How big is the radius in which the gizmo visualization rays should be thrown compared to the main camera's standard FOV. Intended to be used from editor.
         /// </summary>
         public float GizmoOvershoot = 1f;
+        /// <summary>
+        /// Color to be used when drawing the gizmo
+        /// </summary>
+        public Color GizmoColor = Color.cyan;
 
         /// <summary>
         /// Doesn't affect computation of the intersection. If set, <c>position</c> of this will replace the original <see cref="RayIntersection.InputorCenter"/> in the return value of <see cref="GetIntersection(Ray)"/>.
@@ -129,7 +133,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
         protected virtual void OnDrawGizmos()
         {
             if (!ShouldDrawGizmo) return;
-            Gizmos.color = Color.cyan;
+            Gizmos.color = GizmoColor;
             this.Visualize(Camera.main, Gizmos.DrawLine, GizmoSegments, GizmoOvershoot);
         }
     }

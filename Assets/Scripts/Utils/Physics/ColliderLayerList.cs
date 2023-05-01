@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
 {
-    public static class ColliderLayers
+    public static class ColliderLayer
     {
         public static readonly int
             Default = init(),

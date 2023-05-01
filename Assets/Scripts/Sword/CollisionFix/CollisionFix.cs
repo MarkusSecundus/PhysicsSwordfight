@@ -11,9 +11,9 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
 {
 
     [RequireComponent(typeof(SwordDescriptor)), RequireComponent(typeof(Rigidbody))]
-    public partial class CollisionFix : MonoBehaviour
+    public partial class CollisionFix : MonoBehaviour 
     {
-        public static int TargetLayer => ColliderLayers.CollisionFix;
+        public static int TargetLayer => ColliderLayer.CollisionFix;
 
         [SerializeField]
         ContrarianCollider.Configuration ColliderConfig = ContrarianCollider.Configuration.Default;
