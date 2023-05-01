@@ -232,16 +232,19 @@ Vynaložením většího úsilí lze vytvořit i značně komplexní útvary, je
 Přesto je však nutné zdůraznit, že tato konkrétní metoda vznikla jako produkt živelného experimentování - pro navazující výzkum by pravděpodobně nemělo být obtížné nalézt alternativu, která tvůrci hry poskytne stejnou moc, ale čistší a na použití pohodlnější cestou. 
 
 \subsection{Ovládání postavy}
-\begin{itemize}
-    \item ovládání meče už máme - ale co zbytek?
-    \item ideálně klasické WASD co všichni znají - funguje pro pohyb dopředu/dozadu a úskoky doleva/doprava
-    \item problém - vertikální i horizontální osa kurzoru jsou potřeba pro účely meče - jak se má hráč rozhlížet do stran?
-    \item rozhlížení nahoru/dolu - kosmetická záležitost kamery - když použijeme myš, zdá se být v pohodě
-    \item rozhlížení doleva/doprava - udává směr chůze - nemůžeme jen tak dělat kurzorem, to by hráče mátlo když chce jenom sekat mečem 
-    \item řešení - prostě na rozhlížení do stran použít klávesy QE - blbuvzdorné, dobře pochopitelné pro hráče, dobrý výchozí bod se kterým porovnávat při experimentech
-    \item lepší řešení - možné téma budoucí práce
-\end{itemize}
 
+Ovládání meče tedy máme vyřešené, nyní zbývá navrhnout ovládání pohybu postavy po herním světě - ideálně takové, aby jeho zapojením ovládání meče nijak neutrpělo. 
+
+Jako základ jsme použili klasické, všeobecně známé schéma kláves \textbf{WASD} pro chůzi dopředu, dozadu a úkroky do stran. Ovládání meče z takového rozhodnutí nijak netrpí, naopak se tím levá ruka dostává do oblasti klávesnice, kde se nalézá mnoho kláves (Shift, Ctrl,...) přirozeně se nabízejících pro přepínání mezi jednotlivými mody ovládání meče.
+
+Problémem je však \textbf{rozhlížení} hráčské postavy - to bývá tradičně ovládáno pohybem myši, v naší hře je však myš plně využita pro ovládání meče - koncept, jež je k rozhlížení postavy ortogonální. 
+
+Rozhlížení nahoru/dolů je čistě kosmetická záležitost implementovaná natáčením kamery. Po testování jsme došli k závěru, že jeho ovládání pomocí myši nemá na hráčský zážitek natolik negativní vliv, aby bylo neakceptovatelné. 
+
+Problémem je však rozhlížení do stran - při testování vyšlo najevo, že jeho namapováním na pohyb myši vedlo k velmi matoucímu hernímu zážitku. Zvolili jsme tedy jednoduché náhradní řešení namapovat jej na klávesy QE. Toto řešení není zcela intuitivní a vyžaduje čas, aby si na něj hráč zvykl, avšak poté se zdá být použitelné poměrně dobře.
+
+\bigbreak
+Celkově jsme tedy pro ovládání postavy použili klasické schéma WASD udávající pohyb dopředu a do stran doplněné klávesami QE pro natáčení postavy do stran, myš slouží k rozhlížení pouze nahoru/dolů. Toto řešení se zdá být pro zaručení ovladatelnosti a dobrého hráčského zážitku dostatečné. Nalezení ještě lepší alternativy ponecháme jako téma pro navazující práce.
 
 \section{Shrnutí}
 
@@ -249,17 +252,19 @@ V první části kapitoly jsme stanovili objektový návrh hlavních prvků naš
 
 \textbf{Šermíř} je typickou herní postavou, která čte vstupy od uživatele a v závislosti na nich se pohybuje po herním světě (komponenta SwordsmanMovement). Je vybaven jednoduchým colliderem pro kolize s herním světem a detailním modelem, který koliduje s nepřátelskými meči a je procedurálně animován, aby se vizuálně tvářil držet vlastní meč (komponenta SwordsmanBodyProceduralAnimation). 
 
-\textbf{Meč} je samostatným objektem v hierarchii. Drží si referenci na šermíře, jímž je držen, a při určování svého pohybu bere v úvahu jeho pozici. Celkově však probíhá pohyb meče plně v jeho vlastní režii - zodpovědnou komponentou je SwordMovement. Ta operuje jako stavový automat. Tvůrce hry v editoru nakonfiguruje seznam stavů (potomci třídy SwordMovement.Submodule) a jejich mapování na stisknuté klávesy, SwordMovement pak dle vstupu od uživatele vybírá, který stav je aktivní - na tom jediném volá metodu OnFixedUpdate. V této metodě submodul provádí libovolnou vnitřní logiku (konkrétní příklady ukážeme v \ref{modesOfSwordMovementSubsection}) a nakonec na instanci SwordMovement zavolá metodu MoveSword(), které jako argument předá žádanou pozici meče. SwordMovement se následně postará o jeho plynulý přesun. 
+\textbf{Meč} je samostatným objektem v hierarchii. Drží si referenci na šermíře, jímž je držen, a při určování svého pohybu bere v úvahu jeho pozici. Celkově však probíhá pohyb meče plně v jeho vlastní režii - zodpovědnou komponentou je SwordMovement. Ta operuje jako stavový automat. Tvůrce hry v editoru nakonfiguruje seznam stavů (potomci třídy SwordMovement.Module) a jejich mapování na stisknuté klávesy, SwordMovement pak dle vstupu od uživatele vybírá, který stav je aktivní - na tom jediném volá metodu OnFixedUpdate. V této metodě submodul provádí libovolnou vnitřní logiku (konkrétní příklady ukážeme v \ref{modesOfSwordMovementSubsection}) a nakonec na instanci SwordMovement zavolá metodu MoveSword(), které jako argument předá žádanou pozici meče. SwordMovement se následně postará o jeho plynulý přesun. 
 
-Meč i šermíř jsou dětmi společného \textbf{kořenového objektu} - jeho starostí je, aby byly meč a šermíř řádně pospojované jeden s druhým a s objekty vnějšího světa. Konfigurujeme zde např. zdroj uživatelského vstupu (komponenta dědící z ISwordInput) či reference na kameru a prvky GUI (healthbar apod.).
+Meč i šermíř jsou dětmi společného \textbf{kořenového objektu} - jeho starostí je, aby byly meč a šermíř řádně pospojované jeden s druhým a s objekty vnějšího světa. Konfigurujeme zde např. zdroj uživatelského vstupu (komponenta dědící z \textbf{ISwordInput}) či reference na kameru a prvky GUI (healthbar apod.).
 
-Celkově by tento návrh měl poskytovat dobrou rozšiřitelnost logiky pro ovládání meče (stačí přidat nový SwordMovement.Submodule), implementace počítačem řízených šermířů by tomuto návrhu rovněž neměla činit problém (stačí vyměnit zdroj vstupu a odebrat reference na GUI).
+Celkově by tento návrh měl poskytovat dobrou rozšiřitelnost logiky pro ovládání meče (stačí přidat nový SwordMovement.Module), implementace počítačem řízených šermířů by tomuto návrhu rovněž neměla činit problém (stačí vyměnit zdroj vstupu a odebrat reference na GUI).
+
+Tímto návrhem jsme následně protkali \textbf{systém životů a poškození} - šermíř definuje komponentu \textbf{Damageable}, jednotlivé collidery v jeho detailním těle jsou doplněny komponentami implementujícími \textbf{IArmorPiece}, schopnost je zranit je dodána meči komponentou \textbf{BasicImpactWeapon}. Systém poškození jsme navrhli velmi jednoduchý, ale rovněž značně flexibilní - není problém definovat různě se chovající zbroj pro různé části šermířova těla; zbraní je cokoliv, co je na instanci IArmorPiece schopné volat metodu ProcessAttack() - jsou tedy umožněny i typy zbraní nezaložené na fyzice.
 
 \bigbreak
 
 Druhou část kapitoly jsme věnovali zamyšlení nad rozhraním, skrze které bude probíhat komunikace mezi hrou a hráčem - předně jsme se zaměřili na ovládání meče (které, jak jsme nastínili v \ref{gamesWithMoreDirectControll}, představuje těžký problém).
 
-Rozhodli jsme se pro \textbf{ovládání pomocí myši}. Nejprve jsme zkusili provádět mapování tak, že jsme dle polohy kurzoru z kamery stříleli paprsek a ten protínali s kulovou plochou - průnik odpovídal bodu, kterým má procházet čepel meče\footnote{Toto platí při použití základního submodulu pro sekání. Obecně bod průniku slouží jako vstup, ze kterého instance SwordMovement.Submodule může vydedukovat cokoliv uzná za vhodné.}. Toto v praxi fungovalo vcelku pěkně a tvářilo se jako pro hráče intuitivně uchopitelný formalizmus. Vyskytovaly se zde však okrajové případy, které např. pro hráče činily jednoduchým, aby sám sebe mečem probodnul.
+Rozhodli jsme se pro \textbf{ovládání pomocí myši}. Nejprve jsme zkusili provádět mapování tak, že jsme dle polohy kurzoru z kamery stříleli paprsek a ten protínali s kulovou plochou - průnik odpovídal bodu, kterým má procházet čepel meče\footnote{Toto platí při použití základního submodulu pro sekání. Obecně bod průniku slouží jako vstup, ze kterého instance SwordMovement.Module může vydedukovat cokoliv uzná za vhodné.}. Toto v praxi fungovalo vcelku pěkně a tvářilo se jako pro hráče intuitivně uchopitelný formalizmus. Vyskytovaly se zde však okrajové případy, které např. pro hráče činily jednoduchým, aby sám sebe mečem probodnul.
 
 Proto jsme systém zobecnili - místo jediné kulové plochy je možné jich definovat několik a mezi jednotlivými průniky se počítá vážený průměr. Touto metodou jsme schopni zachovat vše, co na předchozí variantě fungovalo dobře, ale zároveň je nám poskytnuta dodatečná flexibilita, která umožňuje ošetřit okrajové případy.
 
