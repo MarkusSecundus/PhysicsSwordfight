@@ -109,7 +109,7 @@ Tuto komponentu v našem případě umístíme do kořenového objektu meče\foo
     \center
     \includegraphics[width=145mm]{../img/Structure-diagram.png}
     \caption{Diagram znázorňující strukturu našeho systému}
-    \label{obr04:diagram}
+    \label{obr04:objectModelDiagram}
 \end{figure} 
 
 \subsection{Zhodnocení návrhu} 
@@ -168,9 +168,16 @@ Po krátké meditaci nad metodami, které nám pro zpracování dat z myši posk
 
 Kdybychom pro jednoduchost prohlásili, že poloha rukojeti meče je nehybná, získaný průnik můžeme interpretovat jako pozici, kam má čepel meče směřovat. Pohybem kurzoru plynule zleva doprava by pak meč měl vykonat sek - rovněž zleva doprava. Plynulost a finesa, s jakými sek bude proveden, závisí na útvaru, který protínáme. 
 
-Po další úvaze jsme se rozhodli, že útvarem, se kterým se pokusíme paprsek protínat, je\textbf{kulová plocha}. Nabízí nám plynulý přechod mezi stavy, jak se kurzor pohybuje po obrazovce, a její vizualizace nečiní problém. 
+Po další úvaze jsme se rozhodli, že útvarem, se kterým se pokusíme paprsek protínat, je \textbf{kulová plocha}. Nabízí nám plynulý přechod mezi stavy, jak se kurzor pohybuje po obrazovce, a její vizualizace nečiní problém (viz obr.\ref{obr04:sphereVisualization}).
 
 \textbf{Provedeme tedy experimentální implementaci s její pomocí, tu otestujeme, a v případě potřeby ji použijeme jako výchozí bod pro implementaci sofistikovanějšího systému.}
+
+\begin{figure}[ht]\centering
+    \center
+    \includegraphics[width=140mm]{../img/IntersectableSphere.png}
+    \caption{Vizualizace - Ovládání meče průnikem paprsku s kulovou plochou}
+    \label{obr04:sphereVisualization}
+\end{figure} 
 
 \subsubsection*{Moduly ovládání}
 
@@ -207,20 +214,22 @@ Dalším volitelnám parametrem je \textbf{falešný střed} - pokud ten nastav�
 
 \subsubsection*{Zhodnocení}
 
-Slabší stránkou řešení, které jsme si právě představili, jsou možnosti jeho vizualizace. Jedinou cestou, kterou nám rozhraní IRayIntersectable umožňuje, je vyslat velké množství paprsků a vytvořit mesh pospojováním nalezených průsečíků. Taková metoda je výpočetně náročná, uživatel musí činit kompromis mezi mírou detailu a schopností běžet v reálném čase. Toto činí problém především při editaci složitějšího IRayIntersectable systému, kdy je značná míra detailu třeba, aby bylo možné pohledem rozpoznat, zda jsou přechody mezi sférami vlivu jednotlivých dílčích prvků plynulé.
+Slabší stránkou řešení, které jsme si právě představili, jsou možnosti jeho \textbf{vizualizace}. Jedinou cestou, kterou nám rozhraní IRayIntersectable umožňuje, je vyslat velké množství paprsků a vytvořit mesh pospojováním nalezených průsečíků. Taková metoda je výpočetně náročná, uživatel musí činit kompromis mezi mírou detailu a schopností běžet v reálném čase. Toto činí problém především při editaci složitějšího IRayIntersectable systému, kdy je značná míra detailu třeba, aby bylo možné pohledem rozpoznat, zda jsou přechody mezi sférami vlivu jednotlivých dílčích prvků plynulé. 
 
+Přes toto drobné nepohodlí však tato metoda stále nabízí velmi mocný nástroj. Poskytnout hráči útvar, který se chová podobně intuitivně jako obyčejná kulová plocha, ale nežádané okrajové případy jsou v něm ošetřené, není obtížné - na obr.\ref{obr04:IRayIntersectableVisualization} může čtenář najít vizualizaci objektu, který hra v praxi používá pro mod blokování. 
 
+\begin{figure}[ht]\centering
+    \center
+    \includegraphics[width=135mm]{../img/IRayIntersectable-spheres.png}
+    \includegraphics[width=135mm]{../img/IRayIntersectable-result.png}
+    \includegraphics[width=135mm]{../img/IRayIntersectable-both.png}
+    \caption{Vizualizace - složený IRayIntersectable útvar (červená koule je díra, ostatní barvy jsou dílčí prvky)}
+    \label{obr04:IRayIntersectableVisualization}
+\end{figure} 
 
-\begin{itemize}
-    \item %ovládání střílením paprsku, který se protne s kulovou plochou jsme naimplementovali
-        \begin{itemize}
-            \item díky tomuhle jsme schopní hráči poskytnout průnikový tvar, co se pro něj tváří jako normální, intuitivní kulová plocha, ale proti ní zde máme spoustu dodatečné flexibility, která nám umožní vychytat okrajové případy
-            \item pomocí tohohle se dají poskládat dost komplexní útvary, co se pořád tváří pěkně plynule a spojitě - ale nejsou plynulé a spojité vždycky, člověk si musí trochu pohrát s AnimationCurve u děr aby nebyly ostré přechody tam kde končí/začíná nějaká koule
-            \item Další flexibilita se dá přidat přidáním dalších custom IRayIntersectables
-            \item (insert vizualizaci jak vypadá IRayIntersectable kterej používá blocking mode)
-            \item poznámka: k tomuto řešení jsme došli živelně experimentováním v průběhu času - teď když už je hotové, dost pravděpodobně by šlo najít alternativu, co by byla jednodušší a srovnatelně mocná (kdyby to někomu stálo za práci)
-        \end{itemize}
-\end{itemize}
+Vynaložením většího úsilí lze vytvořit i značně komplexní útvary, jež se stále chovají plynule a spojitě\footnote{K zaručení plynulosti a spojitosti je však třeba jisté množství ruční práce při polohovaní děr a ladění jejich přechodových křivek.}. Ještě větší flexibilitu přirozeně zajišťuje možnost definice vlastních IRayIntersectable komponent. 
+
+Přesto je však nutné zdůraznit, že tato konkrétní metoda vznikla jako produkt živelného experimentování - pro navazující výzkum by pravděpodobně nemělo být obtížné nalézt alternativu, která tvůrci hry poskytne stejnou moc, ale čistší a na použití pohodlnější cestou. 
 
 \subsection{Ovládání postavy}
 \begin{itemize}
