@@ -56,20 +56,20 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Extensions
         /// <param name="self">Transform determining the local space</param>
         /// <param name="r">Ray to be transformed</param>
         /// <returns>Value of <paramref name="r"/> in world space</returns>
-        public static Ray LocalToGlobal(this Transform self, Ray r) => r.GenericTransform(self.LocalToGlobal);
+        public static ScaledRay LocalToGlobal(this Transform self, ScaledRay r) => r.GenericTransform(self.LocalToGlobal);
         /// <summary>
         /// Transform a ray from world space to local space. Same as transforming both its points with <see cref="Transform.InverseTransformPoint(Vector3)"/> but with more readable name.
         /// </summary>
         /// <param name="self">Transform determining the local space</param>
         /// <param name="r">Ray to be transformed</param>
         /// <returns>Value of <paramref name="r"/> in space local to <paramref name="self"/></returns>
-        public static Ray GlobalToLocal(this Transform self, Ray r) => r.GenericTransform(self.GlobalToLocal);
+        public static ScaledRay GlobalToLocal(this Transform self, ScaledRay r) => r.GenericTransform(self.GlobalToLocal);
 
 
-        static Ray GenericTransform(this Ray r, System.Func<Vector3, Vector3> transformPoints)
+        static ScaledRay GenericTransform(this ScaledRay r, System.Func<Vector3, Vector3> transformPoints)
         {
             Vector3 a = transformPoints(r.origin), b = transformPoints(r.origin + r.direction);
-            return new Ray(a, b - a);
+            return ScaledRay.FromPoints(a, b);
         }
 
         /// <summary>

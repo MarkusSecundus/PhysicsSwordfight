@@ -1,4 +1,5 @@
 using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
+using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using MarkusSecundus.PhysicsSwordfight.Utils.Serialization;
 using MarkusSecundus.Utils;
 using MarkusSecundus.Utils.Datastructs;
@@ -100,7 +101,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
 
 
             var ray = inputToRecord.GetInputRay();
-            frame.CursorRay = ray == null ? (Ray?)null : transform.GlobalToLocal(ray.Value);
+            frame.CursorRay = ray == null ? (ScaledRay?)null : transform.GlobalToLocal(ray.Value.AsRay());
 
             currentRecording.Add(frame);
         }
