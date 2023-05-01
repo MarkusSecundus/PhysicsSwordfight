@@ -60,7 +60,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
         {
             var botom = self.SwordBottom.position;
             var direction = self.SwordTip.position - botom;
-            return new ScaledRay(botom, direction);
+            return ScaledRay.FromDirection(botom, direction);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
         {
             var botom = self.SwordAnchor.position;
             var direction = self.SwordTip.position - botom;
-            return new ScaledRay(botom, direction);
+            return ScaledRay.FromDirection(botom, direction);
         }
 
     }

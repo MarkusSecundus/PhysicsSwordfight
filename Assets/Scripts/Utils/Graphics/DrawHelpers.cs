@@ -51,7 +51,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Graphics
             var rot = Matrix4x4.Rotate(Quaternion.Euler(0, 0, NumericConstants.MaxDegree / 2 / circs));
             DrawWireCircle(radius, segm, (v, w) =>
             {
-                Vector3 a = v.x0z(), b = w.x0z();
+                Vector3 a = v.x0y(), b = w.x0y();
                 for (int t = 0; t < circs; ++t)
                 {
                     drawLine(a + center, b + center);
