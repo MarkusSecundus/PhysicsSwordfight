@@ -19,9 +19,18 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Animation
         [BurstCompile]
         public struct Job : IWeightedAnimationJob
         {
-            public NativeArray<ReadWriteTransformHandle> armSegments;
-            public ReadOnlyTransformHandle targetPoint;
-            public float multiplier;
+            /// <summary>
+            /// Bones of the arm
+            /// </summary>
+            public NativeArray<ReadWriteTransformHandle> ArmSegments;
+            /// <summary>
+            /// Point in worldspace that should be made reachable for the arm
+            /// </summary>
+            public ReadOnlyTransformHandle TargetPoint;
+            /// <summary>
+            /// How much this constraint should overshoot - <c>1f</c> will be just reachable (which is still not totally stable for IK constraints).
+            /// </summary>
+            public float Multiplier;
 
             public FloatProperty jobWeight { get; set; }
             public void ProcessRootMotion(AnimationStream stream) { }
@@ -31,16 +40,16 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Animation
                 float weight = jobWeight.Get(stream);
                 if (weight <= 0f) return;
 
-                var rootPos = armSegments[0].GetPosition(stream);
-                var targetPos = targetPoint.GetPosition(stream);
-                var targetLength = targetPos.Distance(rootPos) * multiplier * weight;
+                var rootPos = ArmSegments[0].GetPosition(stream);
+                var targetPos = TargetPoint.GetPosition(stream);
+                var targetLength = targetPos.Distance(rootPos) * Multiplier * weight;
 
 
                 float lengthSum = 0f;
                 var lastPos = rootPos;
-                for (int t = 1; t < armSegments.Length; ++t)
+                for (int t = 1; t < ArmSegments.Length; ++t)
                 {
-                    var currentPos = armSegments[t].GetPosition(stream);
+                    var currentPos = ArmSegments[t].GetPosition(stream);
                     lengthSum += currentPos.Distance(lastPos);
                     lastPos = currentPos;
                 }
@@ -49,10 +58,10 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Animation
                 var ratio = targetLength / lengthSum;
 
                 //TODO: make it correctly take in consideration the transform's scale
-                for (int t = 1; t < armSegments.Length; ++t)
+                for (int t = 1; t < ArmSegments.Length; ++t)
                 {
-                    var currentPos = armSegments[t].GetLocalPosition(stream);
-                    armSegments[t].SetLocalPosition(stream, currentPos * ratio);
+                    var currentPos = ArmSegments[t].GetLocalPosition(stream);
+                    ArmSegments[t].SetLocalPosition(stream, currentPos * ratio);
                 }
             }
 
@@ -60,33 +69,42 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Animation
         [System.Serializable]
         public struct Data : IAnimationJobData
         {
-            public TransformChain target;
-            [SyncSceneToStream] public Transform sourceObject;
-            public float multiplier;
+            /// <summary>
+            /// Bones of the arm
+            /// </summary>
+            public TransformChain Target;
+            /// <summary>
+            /// Point in worldspace that should be made reachable for the arm
+            /// </summary>
+            [SyncSceneToStream] public Transform SourceObject;
+            /// <summary>
+            /// How much this constraint should overshoot - <c>1f</c> will be just reachable (which is still not totally stable for IK constraints).
+            /// </summary>
+            public float Multiplier;
 
-            public bool IsValid() => target.IsValid() && sourceObject.IsNotNil();
-            public void SetDefaultValues() => (target, sourceObject, multiplier) = (default, null, 1.1f);
+            public bool IsValid() => Target.IsValid() && SourceObject.IsNotNil();
+            public void SetDefaultValues() => (Target, SourceObject, Multiplier) = (default, null, 1.1f);
         }
 
         public class Binder : AnimationJobBinder<Job, Data>
         {
             public override Job Create(Animator animator, ref Data data, Component component)
             {
-                var armSegmentsManaged = data.target.ToArray();
+                var armSegmentsManaged = data.Target.ToArray();
                 var armSegments = new NativeArray<ReadWriteTransformHandle>(armSegmentsManaged.Length, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
                 for (int t = 0; t < armSegments.Length; ++t)
                     armSegments[t] = ReadWriteTransformHandle.Bind(animator, armSegmentsManaged[t]);
                 return new Job
                 {
-                    armSegments = armSegments,
-                    targetPoint = ReadOnlyTransformHandle.Bind(animator, data.sourceObject),
-                    multiplier = data.multiplier
+                    ArmSegments = armSegments,
+                    TargetPoint = ReadOnlyTransformHandle.Bind(animator, data.SourceObject),
+                    Multiplier = data.Multiplier
                 };
             }
 
             public override void Destroy(Job job)
             {
-                job.armSegments.Dispose();
+                job.ArmSegments.Dispose();
             }
         }
     }

@@ -12,9 +12,9 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
 
     public partial class CollisionFix
     {
-        private readonly AttachedFixersTable attachedFixers = new AttachedFixersTable();
+        readonly AttachedFixersTable attachedFixers = new AttachedFixersTable();
 
-        public class CollisionFixManager : MonoBehaviour
+        class CollisionFixManager : MonoBehaviour
         {
             private readonly ColliderToParentTable fixByCollider = new ColliderToParentTable();
 

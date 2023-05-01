@@ -17,10 +17,13 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Animation
         /// </summary>
         public SwordDescriptor Sword;
 
+        /// <summary>
+        /// Description of the bone rig to be procedurally animated
+        /// </summary>
         [SerializeField] private SwordsmanModelDescriptor Model;
 
         /// <summary>
-        /// 
+        /// Description of the bone rig to be procedurally animated
         /// </summary>
         [System.Serializable]
         public struct SwordsmanModelDescriptor

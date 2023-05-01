@@ -29,6 +29,9 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public abstract class ContrarianColliderBase : MonoBehaviour
     {
         [System.Serializable]

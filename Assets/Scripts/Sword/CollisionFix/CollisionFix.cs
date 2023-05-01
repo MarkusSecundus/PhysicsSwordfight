@@ -9,33 +9,57 @@ using UnityEngine.SceneManagement;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
 {
-
+    /// <summary>
+    /// Component that solves the issue of sword blades tunneling through one-another.
+    /// 
+    /// <para>
+    /// CCD doesn't work in this case because according to Unity docs <see href="https://docs.unity3d.com/Manual/ContinuousCollisionDetection.html"/>, classical dynamic collision detection totally ignores angular motion. 
+    /// Speculative CCD seems to suffer from tunneling just as much as DCD does.
+    /// </para>
+    /// <para>
+    /// The way this component solves the issue is by adding additional big collider for every other sword, that collides just with that one other sword and is rotated to always face the other sword's blade.
+    /// For details see <see cref="ContrarianColliderBase"/>.
+    /// </para>
+    /// </summary>
     [RequireComponent(typeof(SwordDescriptor)), RequireComponent(typeof(Rigidbody))]
     public partial class CollisionFix : MonoBehaviour 
     {
+        /// <summary>
+        /// <see cref="ColliderLayer"/> in which all collision-fix colliders should operate.
+        /// </summary>
         public static int TargetLayer => ColliderLayer.CollisionFix;
 
+        /// <summary>
+        /// Config to be used by all created <see cref="Fixer"/> instances
+        /// </summary>
         [SerializeField]
         ContrarianCollider.Configuration ColliderConfig = ContrarianCollider.Configuration.Default;
 
         [SerializeField] private float ActivationRadius = 3f;
 
+        /// <summary>
+        /// Hierarchies whose member-objects should be ignored when creating fixer colliders
+        /// </summary>
         [SerializeField] Transform[] HierarchiesToIgnore;
 
+        /// <summary>
+        /// All colliders of this rigidbody - for disabling their collisions with other <see cref="Fixer"/>s
+        /// </summary>
         public IReadOnlyList<Collider> AllColliders { get; private set; }
-        private Rigidbody Rigidbody { get; set; }
-        private SwordDescriptor SwordDescriptor { get; set; }
 
-        private CollisionFixManager manager;
+        new Rigidbody rigidbody { get; set; }
+        SwordDescriptor swordDescriptor { get; set; }
 
-        private CallbackedTrigger InstanceCreator;
-        private void Awake()
+        CollisionFixManager manager;
+
+        CallbackedTrigger instanceCreator;
+        void Awake()
         {
-            this.Rigidbody = GetComponent<Rigidbody>();
-            this.SwordDescriptor = GetComponent<SwordDescriptor>();
+            this.rigidbody = GetComponent<Rigidbody>();
+            this.swordDescriptor = GetComponent<SwordDescriptor>();
             this.AllColliders = GetComponentsInChildren<Collider>();
 
-            InstanceCreator = transform.CreateChild("trigger").AddComponent<CallbackedTrigger>()
+            instanceCreator = transform.CreateChild("trigger").AddComponent<CallbackedTrigger>()
                 .Add<SphereCollider>(c => c.radius = ActivationRadius)
                 .Init(CollisionFix.TargetLayer, onEnter: AreaEntered);
 
@@ -43,47 +67,68 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
             manager.Register(this);
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
             manager.Unregister(this);
         }
 
-        private bool IsInIgnoreList(Transform t) => t == this.transform || HierarchiesToIgnore.Any(h => t.IsDescendantOf(h));
+        bool IsInIgnoreList(Transform t) => t == this.transform || HierarchiesToIgnore.Any(h => t.IsDescendantOf(h));
 
         void AreaEntered(Collider collider)
         {
             if (manager.TryFindFixer(collider, out var other) && !IsInIgnoreList(other.transform))
             {
                 manager.EnableFixer(this, other);
-                foreach (var c in InstanceCreator.Colliders) other.SetIgnoreCollisions(c);
+                foreach (var c in instanceCreator.Colliders) other.SetIgnoreCollisions(c);
             }
             else
             {
-                foreach (var c in InstanceCreator.Colliders) Physics.IgnoreCollision(c, collider);
+                foreach (var c in instanceCreator.Colliders) Physics.IgnoreCollision(c, collider);
             }
         }
 
-        private void SetIgnoreCollisions(Collider collider, bool ignoreCollisions = true)
+        void SetIgnoreCollisions(Collider collider, bool ignoreCollisions = true)
         {
             foreach (var c in AllColliders) Physics.IgnoreCollision(c, collider, ignoreCollisions);
         }
 
-
+        /// <summary>
+        /// Component responsible for positioning a fixer-collider to prevent tunneling of a specific target sword.
+        /// </summary>
         public class Fixer : ContrarianColliderBase
         {
-            public CollisionFix Host, Target;
+            /// <summary>
+            /// Sword where this fixer collider is placed
+            /// </summary>
+            public CollisionFix Host;
+            /// <summary>
+            /// The other sword whose tunneling should be prevented
+            /// </summary>
+            public CollisionFix Target;
 
-            protected override ScaledRay GetHost() => Host.SwordDescriptor.SwordAsRay();
-            protected override ScaledRay GetTarget() => Target.SwordDescriptor.SwordAsRay();
+            /// <inheritdoc/>
+            protected override ScaledRay GetHost() => Host.swordDescriptor.SwordAsRay();
+            /// <inheritdoc/>
+            protected override ScaledRay GetTarget() => Target.swordDescriptor.SwordAsRay();
 
+            /// <summary>
+            /// Set all colliders of this fixer to not collide with specified sword
+            /// </summary>
+            /// <param name="fix"></param>
             public void SetIgnoreCollisions(CollisionFix fix) => fix.SetIgnoreCollisions(this.collider);
 
-            private SphereCollider trigger;
+            SphereCollider trigger;
+            /// <summary>
+            /// Fluently initialize this component from a script
+            /// </summary>
+            /// <param name="host">Sword where this fixer collider is to be placed</param>
+            /// <param name="target">The other sword whose tunneling should be prevented</param>
+            /// <returns><c>this</c> for chaining purposes</returns>
             public Fixer Init(CollisionFix host, CollisionFix target)
             {
                 (this.Host, this.Target) = (host, target);
                 this.Config = host.ColliderConfig;
-                this.SetUp(host.Rigidbody);
+                this.SetUp(host.rigidbody);
                 this.SetIgnoreCollisions(host);
                 trigger = gameObject.AddComponent<SphereCollider>();
                 trigger.isTrigger = true;
@@ -91,7 +136,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
                 return this;
             }
 
-            private void OnTriggerEnter(Collider other)
+            void OnTriggerEnter(Collider other)
             {
                 if (Host.manager.TryFindFixer(other, out var justHit))
                 {

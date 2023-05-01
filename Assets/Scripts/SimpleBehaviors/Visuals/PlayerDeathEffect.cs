@@ -8,14 +8,32 @@ using UnityEngine.Events;
 
 namespace MarkusSecundus.PhysicsSwordfight.Cosmetics
 {
+    /// <summary>
+    /// Component taking care of death effect - camera flows above the player's head and then death screen pops up.
+    /// </summary>
     public class PlayerDeathEffect : MonoBehaviour
     {
+        /// <summary>
+        /// Destination for the camera to reach
+        /// </summary>
         public Transform CameraDestination;
+        /// <summary>
+        /// How many seconds the whole visual effect takes.
+        /// </summary>
         public float MovementDuration;
+        /// <summary>
+        /// How many seconds until <see cref="OnPopup"/> event is fired. Must be lesser than <see cref="MovementDuration"/>
+        /// </summary>
         public FloatSymbol PopupDuration = new FloatSymbol { Default = 1.3f };
 
+        /// <summary>
+        /// Event to fire after <see cref="PopupDuration"/> is reached.
+        /// </summary>
         public UnityEvent OnPopup;
 
+        /// <summary>
+        /// Play the death effect
+        /// </summary>
         public void DoPlay()
         {
             float popupDuration = PopupDuration.Get();
