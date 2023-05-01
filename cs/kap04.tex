@@ -105,12 +105,6 @@ Konkrétní implementací, kterou použijeme, je \textbf{BasicImpactWeapon}. Jej
 Tuto komponentu v našem případě umístíme do kořenového objektu meče\footnote{Bylo by pěkné moci ji umístit přímo do čepele, jak jsme však zmínili v \ref{collidersPhysicsIntroSubsection}, komponenta poslouchající na OnCollision se musí nalézat ve stejném objektu jako Rigidbody. }.
 
 
-\begin{figure}[ht]\centering
-    \center
-    \includegraphics[width=145mm]{../img/Structure-diagram.png}
-    \caption{Diagram znázorňující strukturu našeho systému}
-    \label{obr04:objectModelDiagram}
-\end{figure} 
 
 \subsection{Zhodnocení návrhu} 
 
@@ -128,6 +122,12 @@ Také jsme vytvořili abstrakci pro uživatelský vstup (rozhraní ISwordInput) 
 
 Celý náš systém jsme nakonec protkali systémem zranění. Ten je dle našeho návrhu velmi jednoduchý, ale poskytuje značnou úroveň rozšířitelnosti. Není problém, aby různé části těla postavy (oblečené do různé části zbroje) vyhodnocovaly zranění různým způsobem. Zbraní pak může být naprosto jakákoliv entita schopná na části zbroje volat metodu ProcessAttack(), nejsme tedy nutně omezeni pouze na zraňování působením fyzikálních sil.
 
+\begin{figure}[p]\centering
+    \center
+    \includegraphics[width=145mm]{../img/Structure-diagram.png}
+    \caption{Diagram znázorňující strukturu našeho systému}
+    \label{obr04:objectModelDiagram}
+\end{figure} 
 \pagebreak
 
 \section{Schéma ovládání} 
@@ -179,6 +179,8 @@ Po další úvaze jsme se rozhodli, že útvarem, se kterým se pokusíme paprse
     \label{obr04:sphereVisualization}
 \end{figure} 
 
+\pagebreak
+
 \subsubsection*{Moduly ovládání}
 
 Nyní tedy náš systém dovoluje sekat mečem podobně dobře jako \acl{DbtS}. Sekání však zdaleka není jediný typ úkonu, který s mečem má smysl vykonávat. Je tedy nějaký způsob, jak náš současný návrh zobecnit, aby podporoval i další typy pohybu?
@@ -212,13 +214,20 @@ Nakonec jsme díru zobecnili ještě více - místo striktního je/není v díř
 
 Dalším volitelnám parametrem je \textbf{falešný střed} - pokud ten nastavíme, výpočet průniku se nijak neovlivní, v návratové hodnotě však místo skutečného středu kružnice bude udána poloha tohoto bodu. Střed kružnice slouží v některých modech ovládání jako dodatečný orientační bod. Díky tomuto parametru jsme schopni složit dohromady kružnice s velmi se lišícími velikostmi a zajistit, aby se všechny tvářily jako pouhá součást jednoho celkového útvaru. 
 
+
 \subsubsection*{Zhodnocení}
 
 Slabší stránkou řešení, které jsme si právě představili, jsou možnosti jeho \textbf{vizualizace}. Jedinou cestou, kterou nám rozhraní IRayIntersectable umožňuje, je vyslat velké množství paprsků a vytvořit mesh pospojováním nalezených průsečíků. Taková metoda je výpočetně náročná, uživatel musí činit kompromis mezi mírou detailu a schopností běžet v reálném čase. Toto činí problém především při editaci složitějšího IRayIntersectable systému, kdy je značná míra detailu třeba, aby bylo možné pohledem rozpoznat, zda jsou přechody mezi sférami vlivu jednotlivých dílčích prvků plynulé. 
 
 Přes toto drobné nepohodlí však tato metoda stále nabízí velmi mocný nástroj. Poskytnout hráči útvar, který se chová podobně intuitivně jako obyčejná kulová plocha, ale nežádané okrajové případy jsou v něm ošetřené, není obtížné - na obr.\ref{obr04:IRayIntersectableVisualization} může čtenář najít vizualizaci objektu, který hra v praxi používá pro mod blokování. 
 
-\begin{figure}[ht]\centering
+
+Vynaložením většího úsilí lze vytvořit i značně komplexní útvary, jež se stále chovají plynule a spojitě\footnote{K zaručení plynulosti a spojitosti je však třeba jisté množství ruční práce při polohovaní děr a ladění jejich přechodových křivek.}. Ještě větší flexibilitu přirozeně zajišťuje možnost definice vlastních IRayIntersectable komponent. 
+
+Přesto je však nutné zdůraznit, že tato konkrétní metoda vznikla jako produkt živelného experimentování - pro navazující výzkum by pravděpodobně nemělo být obtížné nalézt alternativu, která tvůrci hry poskytne stejnou moc, ale čistší a na použití pohodlnější cestou. 
+
+
+\begin{figure}[p]\centering
     \center
     \includegraphics[width=135mm]{../img/IRayIntersectable-spheres.png}
     \includegraphics[width=135mm]{../img/IRayIntersectable-result.png}
@@ -227,9 +236,7 @@ Přes toto drobné nepohodlí však tato metoda stále nabízí velmi mocný ná
     \label{obr04:IRayIntersectableVisualization}
 \end{figure} 
 
-Vynaložením většího úsilí lze vytvořit i značně komplexní útvary, jež se stále chovají plynule a spojitě\footnote{K zaručení plynulosti a spojitosti je však třeba jisté množství ruční práce při polohovaní děr a ladění jejich přechodových křivek.}. Ještě větší flexibilitu přirozeně zajišťuje možnost definice vlastních IRayIntersectable komponent. 
-
-Přesto je však nutné zdůraznit, že tato konkrétní metoda vznikla jako produkt živelného experimentování - pro navazující výzkum by pravděpodobně nemělo být obtížné nalézt alternativu, která tvůrci hry poskytne stejnou moc, ale čistší a na použití pohodlnější cestou. 
+\pagebreak
 
 \subsection{Ovládání postavy}
 
