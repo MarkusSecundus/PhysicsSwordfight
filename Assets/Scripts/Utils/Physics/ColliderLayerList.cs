@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
 {
+    /// <summary>
+    /// Collider layers defined in the project. To not waste hours of debugging with Unity's default intly typed nonsense.
+    /// </summary>
     public static class ColliderLayer
     {
         public static readonly int
@@ -21,7 +24,7 @@ namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
             PlayerSimpleBody = init(),
             CollisionFix = init();
 
-        private static int init([System.Runtime.CompilerServices.CallerMemberName] string fieldName = null) => LayerMask.NameToLayer(fieldName);
+        static int init([System.Runtime.CompilerServices.CallerMemberName] string fieldName = null) => LayerMask.NameToLayer(fieldName);
     }
 
 }

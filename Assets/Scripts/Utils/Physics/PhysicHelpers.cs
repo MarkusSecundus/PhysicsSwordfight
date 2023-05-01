@@ -5,15 +5,30 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
 {
+    /// <summary>
+    /// Static class containing convenience extensions methods for physics-related stuff
+    /// </summary>
     public static class PhysicsHelpers
     {
-
+        /// <summary>
+        /// Iterate through contacts provided by <see cref="Collision"/> without leaking memory.
+        /// </summary>
+        /// <param name="self">Collision that's currently being resolved</param>
+        /// <returns>Generator that iterates through collission contacts</returns>
         public static IEnumerable<ContactPoint> IterateContacts(this Collision self)
         {
             for (int t = 0; t < self.contactCount; ++t) yield return self.GetContact(t);
         }
 
-
+        /// <summary>
+        /// Try to obtain the collider that resides in the gameobject that is currently receiving OnCollision callback.
+        /// 
+        /// <para>
+        /// Will fail and return <c>null</c> if the collision has no contacts, because Unity devs are f**ing i****s who can't just add this field directly to the <see cref="Collision"/>.
+        /// </para>
+        /// </summary>
+        /// <param name="self">Collision that's currently being resolved</param>
+        /// <returns>thisCollider or <c>null</c> if there are no contact points</returns>
         public static Collider ThisCollider(this Collision self)
         {
             if (self.contactCount <= 0)
@@ -33,66 +48,25 @@ namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
             return ret;
         }
 
+        /// <summary>
+        /// Apply force to a rigidbody exactly enough to set it to desired velocity.
+        /// </summary>
+        /// <param name="self">Rigidbody to apply force on</param>
+        /// <param name="velocity">Target velocity</param>
         public static void MoveToVelocity(this Rigidbody self, Vector3 velocity)
         {
             var toApply = velocity - self.velocity;
             self.AddForce(toApply, ForceMode.VelocityChange);
         }
+        /// <summary>
+        /// Apply torque to a rigidbody exactly enough to set it to desired velocity.
+        /// </summary>
+        /// <param name="self">Rigidbody to apply torque on</param>
+        /// <param name="velocity">Target angular velocity</param>
         public static void MoveToAngularVelocity(this Rigidbody self, Vector3 velocity)
         {
             var toApply = velocity - self.angularVelocity;
             self.AddTorque(toApply, ForceMode.VelocityChange);
-            //Debug.Log($"applied torque {toApply}, target: {velocity} -> velocity{self.angularVelocity}");
-        }
-
-        public static Rigidbody MimicVolatilesOf(this Rigidbody self, Rigidbody toMimic)
-        {
-            self.position = toMimic.position;
-            self.rotation = toMimic.rotation;
-            self.velocity = toMimic.velocity;
-            self.angularVelocity = toMimic.angularVelocity;
-
-            return self;
-        }
-
-        public static Rigidbody MimicStateOf(this Rigidbody self, Rigidbody toMimic)
-        {
-
-            self.automaticCenterOfMass = false;
-            self.centerOfMass = toMimic.centerOfMass;
-
-            self.automaticInertiaTensor = false;
-            self.inertiaTensor = toMimic.inertiaTensor;
-            self.inertiaTensorRotation = toMimic.inertiaTensorRotation;
-
-            self.drag = toMimic.drag;
-            self.angularDrag = toMimic.angularDrag;
-            self.maxAngularVelocity = toMimic.maxAngularVelocity;
-            self.maxDepenetrationVelocity = toMimic.maxDepenetrationVelocity;
-            self.maxLinearVelocity = toMimic.maxLinearVelocity;
-            self.useGravity = toMimic.useGravity;
-            self.mass = toMimic.mass;
-            self.maxDepenetrationVelocity = toMimic.maxDepenetrationVelocity;
-
-            self.sleepThreshold = toMimic.sleepThreshold;
-            self.solverIterations = toMimic.solverIterations;
-            self.solverVelocityIterations = toMimic.solverVelocityIterations;
-
-            return self.MimicVolatilesOf(toMimic);
-        }
-
-        public static Rigidbody MimicAllOf(this Rigidbody self, Rigidbody toMimic)
-        {
-            self.collisionDetectionMode = toMimic.collisionDetectionMode;
-            self.constraints = toMimic.constraints;
-            self.detectCollisions = toMimic.detectCollisions;
-            self.excludeLayers = toMimic.excludeLayers;
-            self.freezeRotation = toMimic.freezeRotation;
-            self.includeLayers = toMimic.includeLayers;
-            self.interpolation = toMimic.interpolation;
-            self.isKinematic = toMimic.isKinematic;
-
-            return self.MimicStateOf(toMimic);
         }
     }
 
