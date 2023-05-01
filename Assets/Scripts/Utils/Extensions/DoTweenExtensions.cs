@@ -10,6 +10,9 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Utils.Extensions
 {
+    /// <summary>
+    /// Static class containing convenience extensions methods for tweening more obscure properties
+    /// </summary>
     public static class DoTweenExtensions
     {
         public static TweenerCore<Vector3, Vector3, VectorOptions> DOConnectedAnchor(this ConfigurableJoint joint, Vector3 endValue, float duration)
