@@ -22,7 +22,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Recording
             [JsonProperty] string __SegmentEndMarker { get => "END OF SEGMENT"; set { } }
 
             [JsonIgnore] double? _totalDuration;
-            [JsonIgnore] public double TotalDuration => Frames.IsEmpty() ? 0f : _totalDuration ??= Frames.Select(f => f.DeltaTime).Sum();
+            [JsonIgnore] public double TotalDuration => Frames.IsNullOrEmpty() ? 0f : _totalDuration ??= Frames.Select(f => f.DeltaTime).Sum();
         }
 
         [JsonProperty] public Segment Begin { get; init; }

@@ -51,7 +51,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
 
         private void StartPlaying()
         {
-            if (Records[CurrentUsecase].IsEmpty()) currentlyPlaying = null;
+            if (Records[CurrentUsecase].IsNullOrEmpty()) currentlyPlaying = null;
             else currentlyPlaying = recordsRandomizer.Next();
             currentFrameIndex = -1;
         }

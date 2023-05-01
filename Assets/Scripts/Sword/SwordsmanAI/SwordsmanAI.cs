@@ -134,11 +134,11 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
         private static readonly DefaultValDict<TextAsset, SwordMovementRecord> recordCache = new DefaultValDict<TextAsset, SwordMovementRecord>(t => JsonConvert.DeserializeObject<SwordMovementRecord>(t.text));
         void SetupSwordRecordPlayer()
         {
-            var recordsList = SwordControl.Records.Values.Select(
+            var recordsList = new Dictionary<SwordRecordUsecase, SwordMovementRecord[]>(SwordControl.Records.Values.Select(
                 kv => new KeyValuePair<SwordRecordUsecase, SwordMovementRecord[]>(kv.Key,
                     kv.Value.Select(t => recordCache[t]).ToArray()
                 )
-            ).ToDictionary();
+            ));
             foreach (var (usecase, arr) in recordsList) Debug.Log($"Loaded {arr.Length} records for section {usecase}", this);
 
             recordPlayer = new SwordMovementMode_PlayRecord { Records = recordsList };

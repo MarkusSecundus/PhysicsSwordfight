@@ -53,7 +53,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Environment
         /// </summary>
         public void DoShoot()
         {
-            if (ShootSounds.IsNotNullNotEmpty()) audioSrc.PlayOneShot(ShootSounds.RandomElement());
+            if (!ShootSounds.IsNullOrEmpty()) audioSrc.PlayOneShot(ShootSounds.RandomElement());
             var projectile = Projectile.gameObject.InstantiateWithTransform();
             Projectiles.Enqueue(projectile);
             while (Projectiles.Count > maxProjectileInExistenceCount) Destroy(Projectiles.Dequeue());
