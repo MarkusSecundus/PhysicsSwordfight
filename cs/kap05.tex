@@ -8,7 +8,7 @@ Podrobnou programátorskou dokumentaci k jednotlivým komponentám psanou v angl
 
 \section{Implementace základních komponent}
 \begin{itemize}
-  \item \textbf{Šermíř}
+  \item \subsection{Šermíř}
     \begin{itemize}
       \item zákl. prvky: Rigidbody (nekinematické), SwordsmanMovement
       \item z parenta si natáhne instanci ISwordInput - na něm se ptá na hodnoty vstupních Axis + stisknutost kláves (podle nich pak působí silama aby vyvolával pohyb hráče)
@@ -37,81 +37,52 @@ Podrobnou programátorskou dokumentaci k jednotlivým komponentám psanou v angl
       \item kdokoliv se může šťourat v rigidbody a jointu a tweakovat tam parametry
       \item vevnitř... model meče - samostatný prefab - obsahuje mesh, collidery, spoustu drobných transformů co popisujou význačné body
       \item pro použití ostatními entitami meč poskytuje komponentu SwordDescriptor - v té je zaznamenaný výčet transformů co odpovídají význačným bodům
-    \end{itemize}
-\end{itemize}
+      
+      
+    \item Jak vypadají z hlediska objektováho návrhu už čtenář ví, tady jenom popíšeme implementaci modulu pro sekání a modulu pro blokování
+    \item \textbf{Abstrakce} 
+      \begin{itemize}
+        \item SwordMovement.Submodule
+          \begin{itemize}
+            \item samostatná abstraktní třída, nedědí z Unity.Object
+            \item má metody jako OnUpdate, OnActivated, OnDeactivated apod. - za jejich volání nese zodpovědnost SwordMovement
+            \item může volat metody na SwordMovementu (je do ní injectnuta instance rozrhraní ISwordMovement)
+          \end{itemize}
+        \item ISwordMovement
+          \begin{itemize}
+            \item Jednoduché rozhraní, exposuje jenom to, co submodul může potřebovat
+            \item šikovné ho mít pro účely mockování v unit testech a taky protože takhle jsme schopní mezi SwordMovement a jeho komponenty nacpat dekorátor (kterej se tváří jako jediná aktivní komponenta, původní komponenty si ukradne pro sebe, sám se stará o správu toho, která je aktivní, a místo oficiálního SwordMovementu do nich injectne sebe) - takhle se dá např. elegantně nahrávat rozkazy pro pohyb meče (využijeme v \ref{knightEnemySubsection})
+            \item věci, které exposuje: SwordDescriptor popisující meč, ISwordInput, Transform sword wieldera, metodu MoveSword()
+          \end{itemize}
+        \item Správu toho která komponenta je aktivní jsme enkapsulovali do třídy ScriptSubmodulesContainer -> dekorátor mezi SwordMovementem a jeho Submodulama se dá napsat celkem bez námahy
+        \item Konfigurace submodulů z editoru - list párů klávesa-submodul ; submodule picker má dropdown, kde můžeme vybírat ze všech typů dědících ze SwordMovement.Submodule a pro vybraný typ se pak zobrazí defaultní picker - neskonalé díky: \href{https://github.com/lordconstant/SubclassPropertyDrawer}{lordconstant}
+      \end{itemize}
+    \item \textbf{Metoda SwordMovement.MoveSword()} \label{swordMovementMoveSwordImplementationSubsection}
+      \begin{itemize}
+        \item vstupy: anchorPoint (poloha meče) + swordDirection (směr kam je namířený) + upDirection (směr nahoru - podle něj se počítá natočení kolem vlastní osy) + holdingForce (faktor síly držení)
+        \item podle směru namíření a směru nahoru se nastaví cílová rotace mečového jointu
+          \begin{itemize}
+            \item stačí podle nich spočítat cílovou rotaci a tu nastavit jako targetRotation ConfigurableJointu (spočítat jí je ale netriviální problém - viz \ref{howToSetJointsTargetRotationSection})
+          \end{itemize}
+        \item nastavení polohy meče podle vyžádané cílové polohy...
+          \begin{itemize}
+            \item ConfigurableJoint podporuje stejně jako targetRotation i targetPosition - ta se ale při testování zdála nestabilní (čas od času meč odskočil 10 metrů vedle)
+            \item ConfigurableJoint má property connectedAnchor - pozice místa kam je předmět jointem ukotvený, relativní vůči rigidbody ke kterému je joint ukotvený - jeho změnou můžeme efektivně mečem pohybovat
+            \item potřeba nastavit Joint.autoConfigureConnectedAnchor = false
+            \item chceme plynulý pohyb konzistentní rychlostí VS Joint.connectedAnchor se dá jenom natvrdo nastavit, neexistuje žádný targetConnectedAnchor 
+            \item DOTween nejde použít (cílová pozice connectedAnchoru se potenciálně mění každý snímek - DOTween je stavěný na to, že cíl je známý od začátku a nemění se)
+            \item řešení - vést si prostě target hodnotu a každý snímek connectedAnchor posunout o (target - currentConnectedAnchor)*deltaTime*speedFactor/*nastavitelný z editoru*/
+            \item celou tuhle logiku jsme enkapsulovali do třídy RetargetableInterpolator - ta běží na pozadí jako korutina a jenom nastavujeme její target hodnotu
+          \end{itemize}
+        \item faktor síly držení
+          \begin{itemize}
+            \item důvod: někdy je správně defaultní síla, jakou hráč meč drží, někdy (modul blokování) ale např. potřebujeme, aby byl meč drženej tak silně, že rána druhého meče ho nedokáže srazit dolů
+            \item na začátku si uložíme původní Joint.slerpDrive.positionSpring - nastavení faktoru síly držení znamená kolikanásobek téhle původní hodnoty se má začít používat
+            \item plynulá změna - interpolujeme stejně jako Joint.connectedAnchor
+            \item volitelný parametr - když není, bere se to jako by byla dodána hodnota 1 (-> 1-násobek původní síly)
+          \end{itemize}
+      \end{itemize}
 
-\subsection{Moduly ovládání meče} \label{modesOfSwordMovementSubsection}
-\begin{itemize}
-  \item Jak vypadají z hlediska objektováho návrhu už čtenář ví, tady jenom popíšeme implementaci modulu pro sekání a modulu pro blokování
-  \item \textbf{Abstrakce} 
-    \begin{itemize}
-      \item SwordMovement.Submodule
-        \begin{itemize}
-          \item samostatná abstraktní třída, nedědí z Unity.Object
-          \item má metody jako OnUpdate, OnActivated, OnDeactivated apod. - za jejich volání nese zodpovědnost SwordMovement
-          \item může volat metody na SwordMovementu (je do ní injectnuta instance rozrhraní ISwordMovement)
-        \end{itemize}
-      \item ISwordMovement
-        \begin{itemize}
-          \item Jednoduché rozhraní, exposuje jenom to, co submodul může potřebovat
-          \item šikovné ho mít pro účely mockování v unit testech a taky protože takhle jsme schopní mezi SwordMovement a jeho komponenty nacpat dekorátor (kterej se tváří jako jediná aktivní komponenta, původní komponenty si ukradne pro sebe, sám se stará o správu toho, která je aktivní, a místo oficiálního SwordMovementu do nich injectne sebe) - takhle se dá např. elegantně nahrávat rozkazy pro pohyb meče (využijeme v \ref{knightEnemySubsection})
-          \item věci, které exposuje: SwordDescriptor popisující meč, ISwordInput, Transform sword wieldera, metodu MoveSword()
-        \end{itemize}
-      \item Správu toho která komponenta je aktivní jsme enkapsulovali do třídy ScriptSubmodulesContainer -> dekorátor mezi SwordMovementem a jeho Submodulama se dá napsat celkem bez námahy
-      \item Konfigurace submodulů z editoru - list párů klávesa-submodul ; submodule picker má dropdown, kde můžeme vybírat ze všech typů dědících ze SwordMovement.Submodule a pro vybraný typ se pak zobrazí defaultní picker - neskonalé díky: \href{https://github.com/lordconstant/SubclassPropertyDrawer}{lordconstant}
-    \end{itemize}
-  \item \textbf{Metoda SwordMovement.MoveSword()} \label{swordMovementMoveSwordImplementationSubsection}
-    \begin{itemize}
-      \item vstupy: anchorPoint (poloha meče) + swordDirection (směr kam je namířený) + upDirection (směr nahoru - podle něj se počítá natočení kolem vlastní osy) + holdingForce (faktor síly držení)
-      \item podle směru namíření a směru nahoru se nastaví cílová rotace mečového jointu
-        \begin{itemize}
-          \item stačí podle nich spočítat cílovou rotaci a tu nastavit jako targetRotation ConfigurableJointu (spočítat jí je ale netriviální problém - viz \ref{howToSetJointsTargetRotationSection})
-        \end{itemize}
-      \item nastavení polohy meče podle vyžádané cílové polohy...
-        \begin{itemize}
-          \item ConfigurableJoint podporuje stejně jako targetRotation i targetPosition - ta se ale při testování zdála nestabilní (čas od času meč odskočil 10 metrů vedle)
-          \item ConfigurableJoint má property connectedAnchor - pozice místa kam je předmět jointem ukotvený, relativní vůči rigidbody ke kterému je joint ukotvený - jeho změnou můžeme efektivně mečem pohybovat
-          \item potřeba nastavit Joint.autoConfigureConnectedAnchor = false
-          \item chceme plynulý pohyb konzistentní rychlostí VS Joint.connectedAnchor se dá jenom natvrdo nastavit, neexistuje žádný targetConnectedAnchor 
-          \item DOTween nejde použít (cílová pozice connectedAnchoru se potenciálně mění každý snímek - DOTween je stavěný na to, že cíl je známý od začátku a nemění se)
-          \item řešení - vést si prostě target hodnotu a každý snímek connectedAnchor posunout o (target - currentConnectedAnchor)*deltaTime*speedFactor/*nastavitelný z editoru*/
-          \item celou tuhle logiku jsme enkapsulovali do třídy RetargetableInterpolator - ta běží na pozadí jako korutina a jenom nastavujeme její target hodnotu
-        \end{itemize}
-      \item faktor síly držení
-        \begin{itemize}
-          \item důvod: někdy je správně defaultní síla, jakou hráč meč drží, někdy (modul blokování) ale např. potřebujeme, aby byl meč drženej tak silně, že rána druhého meče ho nedokáže srazit dolů
-          \item na začátku si uložíme původní Joint.slerpDrive.positionSpring - nastavení faktoru síly držení znamená kolikanásobek téhle původní hodnoty se má začít používat
-          \item plynulá změna - interpolujeme stejně jako Joint.connectedAnchor
-          \item volitelný parametr - když není, bere se to jako by byla dodána hodnota 1 (-> 1-násobek původní síly)
-        \end{itemize}
-    \end{itemize}
-  \item \textbf{Modul pro sekání:} 
-    \begin{itemize}
-      \item velmi jednoduchý
-      \item má z editoru nastavitelný IRayIntersectable - prostě jenom vezme paprsek ze vstupu a intersectne ho
-      \item když průnik není, nic neudělá
-      \item když průnik je, nastaví hlášený střed koule jako handlePoint, lookDirection je (intersection.Value - intersection.Center)
-      \item upVector je lookDirection.Cross(lastLookDirection) 
-      \item (insert náčrt here)
-    \end{itemize}
-  \item \textbf{Modul pro blokování:} 
-    \begin{itemize}
-      \item \textbf{jak blokování funguje...}
-        \begin{itemize}
-          \item předpokládejme že útočník proti mně seká
-          \item chci jeho meči nastavit do cesty vlastní meč - tak, aby můj meč protivník nesrazil na stranu
-          \item chci trefit jeho meč svojí vlastní čepelí - nějakým bodem, co je blízko u rukojeti (tam jde proti mně nejmenší páka) 
-        \end{itemize}
-      \item \textbf{jako ho naimplementujeme...}
-        \begin{itemize}
-          \item ze vstupu paprsek -> intersectneme s IRayIntersectable -> s výsledkem dále pracujeme
-          \item na meči vyznačený... Bod blokování - chceme přesunout meč tak, aby tenhle bod odpovídal intersection.Value
-          \item dále máme zvenčí definovaný bod blockingHint - ten determinuje směr jak bude meč natočený
-          \item let blockPlane = new Plocha(bod: intersection.Value, normála: (intersection.Value - intersection.SphereCenter))
-          \item let bladeDirection = (blockPlane.Project(blockingHint) - intersection.Value).normalized
-          \item TODO: dokončit!
-        \end{itemize}
-      \item (insert náčrt here)
     \end{itemize}
 \end{itemize}
 

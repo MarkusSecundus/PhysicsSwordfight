@@ -9,6 +9,12 @@ V této kapitole nejprve čtenáři představíme objektový návrh, který bude
 
 Chceme vytvořit akční hru zaměřenou na boj s mečem. Základními požadavky tedy je, aby hráč mohl chodit po herním světě, máchat svou zbraní a tím zraňovat další entity. Takovými entitami může být víceméně cokoliv - např. trénovací panák nebo nosný trám nepřátelské věže - avšak bylo by pěkné, kdybychom umožnili, aby jedním z typů nepřátel byla i počítačem řízená verze hráčské postavy.
 
+\begin{figure}[p]\centering
+    \center
+    \includegraphics[width=145mm]{../img/Structure-diagram.png}
+    \caption{Diagram znázorňující strukturu našeho systému}
+    \label{obr04:objectModelDiagram}
+\end{figure} 
 
 \subsection{Abstrakce uživatelského vstupu}
 
@@ -122,13 +128,6 @@ Také jsme vytvořili abstrakci pro uživatelský vstup (rozhraní ISwordInput) 
 
 Celý náš systém jsme nakonec protkali systémem zranění. Ten je dle našeho návrhu velmi jednoduchý, ale poskytuje značnou úroveň rozšířitelnosti. Není problém, aby různé části těla postavy (oblečené do různé části zbroje) vyhodnocovaly zranění různým způsobem. Zbraní pak může být naprosto jakákoliv entita schopná na části zbroje volat metodu ProcessAttack(), nejsme tedy nutně omezeni pouze na zraňování působením fyzikálních sil.
 
-\begin{figure}[p]\centering
-    \center
-    \includegraphics[width=145mm]{../img/Structure-diagram.png}
-    \caption{Diagram znázorňující strukturu našeho systému}
-    \label{obr04:objectModelDiagram}
-\end{figure} 
-\pagebreak
 
 \section{Schéma ovládání} 
 
@@ -151,7 +150,7 @@ Mapování musí především pro hráče být jednoduše myšlenkově uchopitel
 Hra \textbf{\acl{DbtS}} (viz \ref{dieByTheSwordDescriptionSubsection}) řešila velmi podobný problém jako my. Podívejme se tedy nejprve na metody, které svým hráčům poskytla:
 \begin{itemize}
     \item \textbf{Numerická klávesnice} - Existovala pouze pro zajištění přístupnosti v době, kdy myš nebyla rozšířená. Umožňovala malou podmnožinu toho co myš a nijak při tom nezvyšovala uživatelskou přívětivost.
-    \item \textbf{Myš} - Jediný z ovladačů, který poskytl spojité mapování. Vyžadovala cvik, ale umožnila kreativní a flexibilní reakce v nezvyklé situaci.
+    \item \textbf{Myš} - Jediný z ovladačů, který poskytl spojité mapování. Vyžadovala cvik, ale umožnila kreativní a flexibilní reakce v neočekávané situaci.
     \item \textbf{Nahrávky} - Technicky s mečem umožnily vykonávat libovolné pohyby, těchto pohybů však v libovolném okamžiku muselo být definováno malé konečné množství. Hráč tedy nebyl schopen flexibilně reagovat na specifickou situaci. 
 \end{itemize}
 Z tohoto náhledu je zřejmé, že všechny metody kromě myši z podstaty věci smrsknou množinu stavů na konečné množství a neumožní rychlé flexibilní reakce. Dále se tedy zaměříme primárně na použití myši. Klávesnice může zastávat konečné množství doplňujících funkcí, které se na myš nevešly. Nahrávky bude rovněž vhodné interně implementovat, aby byly v případě potřeby k dispozici pro počítačem řízeného nepřítele (v jeho případě je předvídatelnost a nízká flexibilita výhodou).
@@ -169,8 +168,8 @@ Po krátké meditaci nad metodami, které nám pro zpracování dat z myši posk
 Kdybychom pro jednoduchost prohlásili, že poloha rukojeti meče je nehybná, získaný průnik můžeme interpretovat jako pozici, kam má čepel meče směřovat. Pohybem kurzoru plynule zleva doprava by pak meč měl vykonat sek - rovněž zleva doprava. Plynulost a finesa, s jakými sek bude proveden, závisí na útvaru, který protínáme. 
 
 Po další úvaze jsme se rozhodli, že útvarem, se kterým se pokusíme paprsek protínat, je \textbf{kulová plocha}. Nabízí nám plynulý přechod mezi stavy, jak se kurzor pohybuje po obrazovce, a její vizualizace nečiní problém (viz obr.\ref{obr04:sphereVisualization}).
-
-\textbf{Provedeme tedy experimentální implementaci s její pomocí, tu otestujeme, a v případě potřeby ji použijeme jako výchozí bod pro implementaci sofistikovanějšího systému.}
+\bigbreak
+Provedeme tedy experimentální implementaci s její pomocí, tu otestujeme, a v případě potřeby ji použijeme jako výchozí bod pro implementaci sofistikovanějšího systému.
 
 \begin{figure}[ht]\centering
     \center
@@ -181,16 +180,115 @@ Po další úvaze jsme se rozhodli, že útvarem, se kterým se pokusíme paprse
 
 \pagebreak
 
-\subsubsection*{Moduly ovládání}
+\subsection{Ovládání meče - moduly}
 
 Nyní tedy náš systém dovoluje sekat mečem podobně dobře jako \acl{DbtS}. Sekání však zdaleka není jediný typ úkonu, který s mečem má smysl vykonávat. Je tedy nějaký způsob, jak náš současný návrh zobecnit, aby podporoval i další typy pohybu?
 
-Jedním možným řešením je představit další mody ovládání, specializované na specifické činnosti, podobně jako ten náš současný je na sekání. Přepínání mezi nimi nebude jakkoliv záviset na poloze kurzoru - tím by možnosti každého jednotlivého modu trpěly. Naopak, zde přichází ke slovu klávesnice. Hráči zkrátka dáme možnost ke každému modu přiřadit jednu klávesu - dokud ji hráč drží, tak je daný mod aktivní, jinak se používá ten, který hráč nastavil jako výchozí.
+Jedním možným řešením je představit další mody ovládání, specializované na specifické činnosti, podobně jako ten náš současný je na sekání. Přepínání mezi nimi nebude jakkoliv záviset na poloze kurzoru - tím by možnosti každého jednotlivého modu utrpěly. Naopak, zde přichází ke slovu klávesnice. Hráči zkrátka dáme možnost ke každému modu přiřadit jednu klávesu - dokud ji hráč drží, tak je daný mod aktivní, jinak se používá ten, který hráč nastavil jako výchozí.
 
 Mapování jednotlivých poloh meče pomocí průniku paprsku a kulové plochy ponecháme jak je, pouze přidáme vrstvu abstrakce - výsledný průnik zkrátka poskytneme aktuálně aktivnímu modu ovládání jako vstup, na základě kterého má polohu meče určit. Zda ho interpretuje jako bod, do kterého směřuje čepel meče ukotveného v pevném bodě či jakkoliv jinak, je plně v jeho režii.
 
-Pro účely naší práce jsme takové mody implementovali dva - pro sekání (který jsme nastínili výše) a pro blokování - jejich vnitřní logiku rozebereme v \ref{modesOfSwordMovementSubsection}.
+Pro účely naší práce jsme takové mody implementovali dva - pro sekání (který jsme nastínili výše) a pro blokování. Ty si nyní blíže popíšeme.
 
+\subsubsection*{Formát příkazů pro meč}
+
+Než přistoupíme k popisu, nejprve stručně nastíníme formát, jímž je poloha meče udávána. Důvody, proč byl zvolen, ponecháme sekci \ref{swordMovementMoveSwordImplementationSubsection} v implementační kapitole.
+
+Polohu meče definujeme těmito třemi vektory:
+\begin{enumerate}
+    \item \textbf{Poloha rukojeti} - Meč je šermířem držen v jediném bodě, jenž se nachází uprostřed jeho rukojeti. Zde poskytnutý bod udává polohu relativní vůči šermíři, kde se tento střed rukojeti má nalézat.
+    \item \textbf{Směr meče} - Směr udávající natočení meče v prostoru kolem středu jeho rukojeti. Pokud přičteme vektor Směru natočení k Poloze rukojeti, dostaneme bod, kterým by čepel meče měla procházet.
+    \item \textbf{Normála na čepel meče} - Směr natočení sám nestačí na plné určení rotace meče se všemi 3 stupni volnosti - nedá nám informaci ohledně rotace kolem jeho vlastní osy (natočení čepele). Tento směr by měl být ortogonální na Směr natočení. Obě hrany ostří čepele se budou nalézat v rovině určené Bodem rukojeti a touto normálou.   
+\end{enumerate}
+
+\begin{figure}[ht]\centering
+    \center
+    \includegraphics[width=140mm]{../img/diagram-swordPositioning.png}
+    \caption{Diagram znázorňující kontrolní body meče}
+    \label{obr04:swordPositioningDiagram}
+\end{figure} 
+
+
+\subsubsection*{Mod pro sekání}
+
+Mod pro sekání jsme si již výše letmo nastínili, nyní ho popišme řádně. Jeho logika je velmi jednoduchá.
+
+Na vstupu dostane tyto informace:
+\begin{enumerate}
+    \item \textit{Bod průniku} - Bod ve kterém paprsek protnul ovladací kulovou plochu
+    \item \textit{Minulý Směr meče} - Směr meče zapamatovaný z hlášení předchozího snímku
+    \item \textit{Bod rukojeti} - Pevně určený bod\footnote{Po představení IRayIntersectables v další sekci je z konstantního bodu změněn na bod určený nahlášeným středem protunutého útvaru (viz \ref{resultSwordControlsSolutionSubsubsection}).}
+\end{enumerate}
+
+Algoritmus probíhá takto:
+\begin{enumerate}
+    \addtocounter{enumi}{-1}
+    \item Pokud k žádnému průniku nedošlo, algoritmus skončí a meči ponechá jeho dosavadní cílovou pozici. Jinak pokračuje.
+    \item Jako hodnota \textit{Polohy rukojeti} je zkrátka nahlášen \textit{Bod rukojeti}, získaný ze vstupu.
+    \item \textit{Směr meče} je stanoven jako vektor směru vedoucího z \textit{Bodu průniku} do \textit{Bodu rukojeti} - čepel zkrátka prochází \textit{Bodem průniku}.
+    \item \textit{Normála na čepel meče} je určena jako vektorový součin \textit{Současného} a \textit{Minulého směru meče}. Ostrá hrana čepele je tedy natočena tím směrem, kam se meč v průběhu času pohybuje. 
+    \item Nakonec algoritmus předá vypočítané instrukce meči a nastaví hodnotu Minulého bodu průniku pro použití v příští iteraci.
+\end{enumerate}
+
+\begin{figure}[ht]\centering
+    \center
+    \includegraphics[width=140mm]{../img/diagram-slashingMode.png}
+    \caption{Diagram znázorňující mod sekání zjednodušeně ve 2D (meč modře, paprsek zlatě, vstupní body znázorněny dle číslování výše)}
+    \label{obr04:swordSlashingMode2D}
+\end{figure} 
+ 
+Výsledkem je meč, který šermíř drží v jednom bodě\footnote{To není problém - nic nám nebrání umístit bod, ve kterém ho šermíř drží, např. do volného prostoru pod mečem, čímž dosáhneme vizuálního dojmu, že šermíř mečem mává plnohodnotně.} bodě a hráč má plnou svobodu jak s ním máchat. Čepel meče se natáčí automaticky tak, aby mířila ostrou hranou tam, kam šermíř seká.
+
+\subsubsection*{Mod pro blokování}
+
+Mod pro blokování je o poznání složitější.
+
+Pro jeho pochopení si nejprve zmiňme, jak blokování probíhá v reálném světě. Základní myšlenkou šermíře, na kterého je veden úder, je postavit protivníkově zbrani do cesty tu jeho tak, aby úder zastavila a nebyla náporem sražena na stranu. To znamená, že nepřátelskou zbraň chce trefit ostrou hranou vlastní čepele\footnote{Plochá strana není praktická z mnoha důvodů - šermíř by musel zdlouhavě přehmatávat, aby meč o 90° zrotoval a měl v úchopu sílu. Meč by i tak bylo jednodušší srazit na stranu, protože plochá strana nesoustředí sílu srovantelně dobře jako tenká hrana. Dále by se tím znehodnotila ochrana rukou, kterou šermířovi poskytuje záštita.}. Bod, ve kterém nepřítelovu zbraň trefí, by rovněž měl být co nejblíže rukojeti - čím dále od ní, tím větší páka nepříteli pomáhá meč srazit na stranu.
+
+\pagebreak
+
+Nyní k implementaci. Na vstupu dostaneme tyto informace:
+\begin{enumerate}
+    \item \textit{Bod průniku} - Bod ve kterém paprsek protnul ovladací kulovou plochu
+    \item \textit{Střed ovladací kružnice} - Střed kružnice, jíž paprsek protnul
+    \item \textit{Bod nápovědy} - Pevný bod, který nám pomůže vybrat směr meče
+\end{enumerate}
+
+Dále pevné body, které vyznačíme na meči:
+\begin{enumerate}
+    \item \textit{Špička čepele} - Bod na meči vyznačující špičku jeho čepele, leží na středové ose meče
+    \item \textit{Bod rukojeti} - Bod, ve kterém je meč ukotven k šermířovi, leží na středové ose meče
+    \item \textit{Blokovací bod} - Bod na čepeli meče blízko u rukojeti - ten, do kterého chceme trefit nepřátelský zásah 
+\end{enumerate}
+
+Naším záměrem je napolohovat meč tak, aby optimálně vyblokoval úder vedený na \textit{Bod průniku}. Tedy aby \textit{Bod průniku} se shodoval s \textit{Blokovacím bodem} a čepel byla natočená tak, že \textit{Blokovací bod} směřuje ven od šermířova těla, odkud je pravděpodobně veden útočníkův úder. Pozic, které toto splňují, existuje nekonečně mnoho - volíme tu jednu, kde špička čepele směřuje směrem k \textit{Bodu nápovědy}.
+
+Algoritmus, který jsme zvolili, vypadá následovně:
+\begin{enumerate}
+    \addtocounter{enumi}{-1}
+    \item Pokud nebyl dodán validní vstup (žádný průnik), algoritmus skončí a meči ponechá jeho dosavadní cílovou pozici. Jinak pokračuje.
+    \bigbreak
+    \item OsaMeče := nová Přímka(bod1: BodRukojeti, bod2: ŠpičkaČepele)
+    \item BlokovacíBodNaOse := OsaMeče::Projekce(BlokovacíBod)
+    \item VzdálenostBlokovacíhoBoduOdRukojeti := BlokovacíBodNaOse::Vzdálenost(BodRukojeti)
+    \bigbreak
+    \item TečnáRovina := nová Rovina(bod: BodPrůniku, normála: (BodPrůniku - StředOvladacíKružnice) )
+    \item BodKamSměřujeČepel := TečnáRovina::Projekce(BodNápovědy)
+    \bigbreak
+    \item Výstup.SměrMeče := BodKamSměřujeČepel - BodPrůniku
+    \item Výstup.PolohaRukojeti := BodPrůniku - Výstup.SměrMeče::Normalizovaný() * VzdálenostBlokovacíhoBoduOdRukojeti
+    \item Výstup.NormálaNaČepelMeče := TečnáRovina.Normála::VektorovýSoučin(Výstup.SměrMeče)
+\end{enumerate}
+
+\textit{Abychom zachovali předsevzetí, že \textit{Blokovací bod} leží přesně v \textit{Bodu průniku}, měli bychom ještě \textit{Polohu rukojeti} posunout o \textit{TečnáPlocha.Normála * BlokovacíBod::Vzdálenost(BlokovacíBodNaOse)}. V praxi je to však velmi drobný detail, který opomíjíme.}
+
+Vhodným umístěním pro \textit{Bod nápovědy} je např. několik metrů před šermířem, ve výšce mírně nad jeho hlavou - při blokování v horní polovině šermířova těla pak meč má náklon tak akorát, aby se pohodlně blokovaly údery vedené šikmo, seshora i z boku - viz obr. TODO. Spodní polovina těla tím však trpí - meč je téměř zcela vertikální a šermíř ho drží velmi nepřirozeně vypadajícím způsobem - viz obr. TODO2. 
+ 
+V praxi tedy místo jediného \textit{Bodu nápovědy} definujeme jejich množinu - použije se ten s nejmenší vzdáleností k \textit{Bodu průniku}. Prvky množiny může být např. onen bod před šermířem mírně nad hlavou a druhý analogický bod před šermířem v úrovni jeho nohou.  
+
+\bigbreak
+
+Po těchto drobných úpravách algoritmu a ručním vyladění bodů nápovědy a průsečíkového útvaru získáváme mod, s kterým lze blokovat údery vedené z široké škály směrů. Jakmile hráč získá trochu cviku, je navíc ovládání vcelku intuitivní.
 
 \subsection{Ovládání meče - výsledek}
 
@@ -200,7 +298,7 @@ Potřebujeme tedy najít nějaké zobecnění, které zachová veškeré pěkné
 
 Pro vyřešení tohoto problému jsme strávili dlouhé dny živelným experimentováním. Takto vypadá výsledek, ke kterému jsme se dobrali:
 
-\subsubsection*{Řešení}
+\subsubsection*{Řešení} \label{resultSwordControlsSolutionSubsubsection}
 
 Nejprve jsme stanovili rozhraní\footnote{Ve skutečnosti jde o abstraktní třídu dědící z UnityEngine.MonoBehavior abychom zajistili její kompatibilitu se serializačním systémem.} \textbf{IRayIntersectable}. To definuje jedinou metodu GetIntersection(), která jako argument bere paprsek a vrací strukturu popisující výsledek průniku. Tento výsledek zahrnuje flag zda byl průnik nalezen, bod průniku, střed protnutého útvaru a hodnotu určující jeho váhu.
 \bigbreak
