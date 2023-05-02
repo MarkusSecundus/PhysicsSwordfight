@@ -170,6 +170,13 @@ Velmi důležitým aspektem tohoto chování, který oficielní dokumentace zcel
 
 Poslední důležitou problematikou, kterou letmo zmíníme, jsou metody \textbf{detekce kolizí}. Výchozí je detekce diskrétní - ta zkrátka každý krok simulace projde celou scénu a provede testy, zda aktuálně nějaké objekty mají neprázdný průnik. To je rychlé a v mnoha případech funguje dostatečně dobře. Problém však činí rychle letící či malé objekty - klasickým případem je projektil vystřelený z palné zbraně. U toho se může stát, že v jednom snímku je na jedné straně stěny, ve snímku následujícím již zcela na straně druhé, aniž by jakákoliv kolize byla detekována - projektil tzv. \textbf{protuneloval}. Řešení tohoto problému nabízí \textbf{spojitá detekce kolizí} - ta propočítává celkovou dráhu objektu v průběhu času mezi snímky a ústí tedy v horší výkon. Konkrétní implementace, které Unity nabízí, budou velmi relevantní pro \ref{swordCollisionsSection} a podrobně je tedy představíme tam.
 
+\begin{figure}[ht]\centering
+    \center
+    \includegraphics[width=90mm]{../img/diagram-tunneling.png}
+    \caption{Diagram zachycující protunelování malého objektu skrze překážku}
+    \label{obr03:tunneling}
+\end{figure} 
+
 \subsection{Joint}
 
 Jointy jsou nástrojem, který umožňuje definovat \textbf{složitější vztahy mezi několika rigidbodies}. Najdeme zde například FixedJoint, který pevně spojí dvě oddělená tělesa dohromady, HingeJoint, který umožní otáčet jedním kolem druhého jako dveřmi v pantech, či SpringJoint, který vytvoří flexibilní spojení napodobující pružinu. Zapojením většího množství rigidbodies pospojovaných skrze CharacterJointy pak není obtížné vytvořit například kovový řetěz jehož jednotlivé články se realisticky pohybují.
