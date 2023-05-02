@@ -9,26 +9,54 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Recording
 {
-
+    /// <summary>
+    /// Utility class for recording sword movement commands into JSON files.
+    /// 
+    /// <para>
+    /// Creates an instance of <see cref="SwordMovementMode_Recording"/> that gets injected into target <see cref="SwordMovement"/>.
+    /// </para>
+    /// </summary>
     public class SwordMovementRecorder : MonoBehaviour
     {
+        /// <summary>
+        /// <see cref="SwordMovement"/> to record
+        /// </summary>
         [SerializeField] SwordMovement Target;
-        public KeyCode BeginRecordKey = KeyCode.F6,
-                         EndRecordKey = KeyCode.F7;
+        /// <summary>
+        /// Key to start recording
+        /// </summary>
+        public KeyCode BeginRecordKey = KeyCode.F6;
+        /// <summary>
+        /// Key to finish recording and save the result track to a file
+        /// </summary>
+        public KeyCode EndRecordKey = KeyCode.F7;
 
+        /// <summary>
+        /// Instructions for saving finished tracks to filesystem
+        /// </summary>
         [System.Serializable]
         public class ResultFilePathDescriptor
         {
-            public string Path = "/data/", Extension = ".json";
+            /// <summary>
+            /// Path format for the recording files, containing <c>{0}</c> as placeholder for the file index.
+            /// </summary>
+            public string Format = "/data/{0}.json";
+            /// <summary>
+            /// Index for the next file to be saved
+            /// </summary>
             public int NextIndex = 1;
-            public string GetNextPath() => $"{Path}{NextIndex++}{Extension}";
+            /// <summary>
+            /// Move index by one and get corresponding full path
+            /// </summary>
+            /// <returns>Full path for the next file to be recorded</returns>
+            public string GetNextPath() => string.Format(Format, NextIndex++);
         }
         public ResultFilePathDescriptor ResultDestination;
 
         ISwordInput Input => Target.Input;
         Transform SwordWielder => Target.SwordWielder;
 
-        private void Start()
+        void Start()
         {
             Target = Target.IfNil(GetComponentInChildren<SwordMovement>());
             SetUpRecording();
@@ -45,7 +73,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Recording
         List<SwordMovementRecord.Frame> currentFrame = null;
         bool isRecording => currentFrame != null;
         double beginTime;
-        private void Update()
+        void Update()
         {
             if (!isRecording && Input.GetKeyDown(BeginRecordKey))
                 startRecording();
@@ -61,7 +89,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Recording
             void finishRecording()
             {
                 if (!isRecording) return;
-                var finishedRecord = new SwordMovementRecord { Loop = new SwordMovementRecord.Segment { Frames = currentFrame.ToArray() } };
+                var finishedRecord = new SwordMovementRecord { Loop = new SwordMovementRecord.Track { Frames = currentFrame.ToArray() } };
                 currentFrame = null;
                 Debug.Log($"Finished recording - new record is {finishedRecord.Loop.Frames.Length} long", this);
                 saveRecord(finishedRecord);

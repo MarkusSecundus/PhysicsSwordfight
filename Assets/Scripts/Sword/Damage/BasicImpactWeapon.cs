@@ -6,49 +6,85 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
 {
+    /// <summary>
+    /// Base class for weapons that attack by colliding with other objects.
+    /// 
+    /// <para>See <see cref="IDamageable"/>, <see cref="IArmorPiece"/>.</para>
+    /// </summary>
+    /// <typeparam name="TStats">Stats describing the weapon</typeparam>
     public abstract class ImpactWeapon<TStats> : MonoBehaviour
     {
+        /// <summary>
+        /// Minimal interval between two attacks on the same <see cref="IDamageable"/> entity being registered
+        /// </summary>
         public float SecondsBetweenAttacks = 0.2f;
 
+        /// <summary>
+        /// Stats describing the weapon
+        /// </summary>
         public TStats Stats;
 
+        /// <summary>
+        /// List of specific <see cref="IDamageable"/>s  agains which special stats should be used
+        /// </summary>
         public ExceptionsList Exceptions;
 
+        /// <summary>
+        /// List of specific <see cref="IDamageable"/>s  agains which special stats should be used
+        /// </summary>
         [System.Serializable] public class ExceptionsList : SerializableDictionary<IDamageable, TStats> { }
-        protected abstract AttackDeclaration CalculateAttackStats(Collision collision, TStats stats);
+
+        /// <summary>
+        /// Calculate attack declaration according to the occured collision and stats
+        /// </summary>
+        /// <param name="collision">Collision that initiated the attack</param>
+        /// <param name="stats">Stats to be used against the attacked entity</param>
+        /// <returns>Declaration of the attack or <c>null</c> if the attack should be cancelled instead</returns>
+        protected abstract AttackDeclaration? CalculateAttackStats(Collision collision, TStats stats);
 
 
-        private readonly HashSet<IArmorPiece> targeted = new HashSet<IArmorPiece>();
+        readonly HashSet<IArmorPiece> targeted = new HashSet<IArmorPiece>();
 
-        protected virtual void OnCollisionEnter(Collision collision)
+        void OnCollisionEnter(Collision collision)
         {
             if (!IArmorPiece.TryGet(collision.collider, out var hit)) return;
             if (targeted.TryGetValue(hit, out _)) return;
             targeted.Add(hit);
             ProcessCollision(collision, hit);
         }
-        private void OnCollisionExit(Collision collision)
+        void OnCollisionExit(Collision collision)
         {
             if (!IArmorPiece.TryGet(collision.collider, out var hit)) return;
             this.PerformWithDelay(() => targeted.Remove(hit), SecondsBetweenAttacks);
         }
 
-        private void ProcessCollision(Collision collision, IArmorPiece hit)
+        void ProcessCollision(Collision collision, IArmorPiece hit)
         {
             var statsToUse = Exceptions.Values.GetValueOrDefault(hit.BaseDamageable, Stats);
             var attack = CalculateAttackStats(collision, statsToUse);
-            hit.ProcessAttack(attack);
+            if(attack != null)
+                hit.ProcessAttack(attack.Value);
         }
     }
 
+    /// <summary>
+    /// Component describing a simple blunt weapon that attacks <see cref="IArmorPiece"/>s by colliding with them and does the same ammount of damage no matter which part of the weapon performed the hit.
+    /// </summary>
     public class BasicImpactWeapon : ImpactWeapon<BasicImpactWeapon.StatsDefinition>
     {
+        /// <summary>
+        /// Stats describing the weapon
+        /// </summary>
         [System.Serializable]
         public struct StatsDefinition
         {
+            /// <summary>
+            /// Value with which <c><see cref="Collision.impulse"/>.magnitude</c> is multiplied to get total attack damage.
+            /// </summary>
             public float DamageMultiplier;
         }
-        protected override AttackDeclaration CalculateAttackStats(Collision collision, StatsDefinition stats) => new AttackDeclaration
+        /// <inheritdoc/>
+        protected override AttackDeclaration? CalculateAttackStats(Collision collision, StatsDefinition stats) => new AttackDeclaration
         {
             Damage = collision.impulse.magnitude * stats.DamageMultiplier,
             AttackerIdentifier = this,

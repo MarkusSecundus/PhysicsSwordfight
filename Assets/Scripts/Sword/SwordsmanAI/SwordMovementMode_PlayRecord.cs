@@ -10,12 +10,23 @@ using UnityEngine.Events;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
 {
+    /// <summary>
+    /// Sword control mode that replays prerecorded moves. Used by <see cref="SwordsmanAI"/>.
+    /// </summary>
     public class SwordMovementMode_PlayRecord : SwordMovement.Module
     {
+        /// <summary>
+        /// Set of movement records to play for each usecase
+        /// </summary>
         public IDictionary<SwordRecordUsecase, SwordMovementRecord[]> Records { protected get; set; }
+        /// <summary>
+        /// Speed of replay
+        /// </summary>
         public float PlaySpeed = 1f;
 
-        private SwordRecordUsecase _currentUsecase = (SwordRecordUsecase)(-43);
+        /// <summary>
+        /// Currently active usecase - the one whose corresponding set of records is being played
+        /// </summary>
         public SwordRecordUsecase CurrentUsecase
         {
             get => _currentUsecase; set
@@ -26,15 +37,23 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
                 StartPlaying();
             }
         }
+        SwordRecordUsecase _currentUsecase = (SwordRecordUsecase)(-43);
 
 
-        private Shuffler<SwordMovementRecord> recordsRandomizer;
+        Shuffler<SwordMovementRecord> recordsRandomizer;
 
+        /// <summary>
+        /// Inits the module to <see cref="SwordRecordUsecase.Attack"/> and starts playing
+        /// </summary>
         protected override void OnStart()
         {
-            CurrentUsecase = SwordRecordUsecase.Generic;
+            CurrentUsecase = SwordRecordUsecase.Attack;
             StartPlaying();
         }
+        /// <summary>
+        /// Replays a frame of current record
+        /// </summary>
+        /// <param name="delta">Time elapsed from last <see cref="OnFixedUpdate(float)"/></param>
         public override void OnFixedUpdate(float delta)
         {
             PlayCurrentMovementSteps(delta);
@@ -43,13 +62,13 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
 
 
 
-        private System.Random rand = new System.Random();
-        private SwordMovementRecord currentlyPlaying = null;
+        System.Random rand = new System.Random();
+        SwordMovementRecord currentlyPlaying = null;
 
-        private SwordMovementRecord.Frame[] currentSegment => currentlyPlaying.Loop.Frames;
-        private int currentFrameIndex = -2;
+        SwordMovementRecord.Frame[] currentSegment => currentlyPlaying.Loop.Frames;
+        int currentFrameIndex = -2;
 
-        private void StartPlaying()
+        void StartPlaying()
         {
             if (Records[CurrentUsecase].IsNullOrEmpty()) currentlyPlaying = null;
             else currentlyPlaying = recordsRandomizer.Next();
@@ -59,7 +78,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
 
 
         double deltaLeftower = 0f;
-        private void PlayCurrentMovementSteps(double delta)
+        void PlayCurrentMovementSteps(double delta)
         {
             if (currentlyPlaying == null) return;
             delta *= PlaySpeed;

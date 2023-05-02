@@ -18,11 +18,23 @@ using UnityEngine.AI;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
 {
+    /// <summary>
+    /// Simple AI algorithm that navigates the swordsman through terrain using <see cref="NavMesh"/> and lets him attack specified target by playing prerecorded sword movements.
+    /// 
+    /// <para>
+    /// Requires <see cref="InputSimulator"/> and <see cref="SwordsmanAssembly"/> to be present in the same gameobject and <see cref="NavMeshAgent"/> corresponding to the swordsman's body somewhere in child objects.
+    /// </para>
+    /// </summary>
+    [RequireComponent(typeof(InputSimulator)), RequireComponent(typeof(SwordsmanAssembly))]
     public class SwordsmanAI : MonoBehaviour
     {
+        /// <summary>
+        /// Target to attack
+        /// </summary>
         public NavMeshObstacle Target;
-        [SerializeField] SwordsmanAssembly SwordsmanAssembly;
-        [SerializeField] InputSimulator Input;
+
+        SwordsmanAssembly SwordsmanAssembly;
+        InputSimulator Input;
         NavMeshAgent agent;
         SwordMovementMode_PlayRecord recordPlayer;
         SwordsmanMovement Swordsman => SwordsmanAssembly.Player;
@@ -30,6 +42,9 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
 
         void Start()
         {
+            SwordsmanAssembly = GetComponent<SwordsmanAssembly>();
+            Input = GetComponent<InputSimulator>();
+
             SetupNavmeshAgent();
             SetupSwordRecordPlayer();
         }
@@ -39,7 +54,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
             SetSwordsmanMoveInput();
         }
 
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             SetSwordRecord();
         }
@@ -47,15 +62,37 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
 
         #region Navigation
 
+        /// <summary>
+        /// Config for swordsman's movement through terrain
+        /// </summary>
         [System.Serializable]
         public struct NavigationConfigurator
         {
+            /// <summary>
+            /// How fast to rotate sideways
+            /// </summary>
             public float SidewaysRotationMultiplier;
+            /// <summary>
+            /// Number in interval [0;1] - how much does the <see cref="NavMeshAgent"/> get synced back into current Transform position
+            /// </summary>
+            [Range(0f,1f)]
             public float AgentSync;
+            /// <summary>
+            /// How far from the swordsman to start playing attacking sword moves. Ratio relative to the sum of <c>this</c> and <see cref="Target"/>'s radius.
+            /// </summary>
             public float MelleeReachMultiplier;
+            /// <summary>
+            /// How accurately swordsman's rotation should face the <see cref="Target"/> depending on his distance. Not totally accurate when distance is big looks better.
+            /// </summary>
             public AnimationCurve RotationAccuracyByDistance;
-            public static readonly NavigationConfigurator Default = new NavigationConfigurator { SidewaysRotationMultiplier = 1f, AgentSync = 0.9f, MelleeReachMultiplier = 1.1f };
+            /// <summary>
+            /// Default values for editor
+            /// </summary>
+            public static readonly NavigationConfigurator Default = new NavigationConfigurator { SidewaysRotationMultiplier = 1f, AgentSync = 0.9f, MelleeReachMultiplier = 1.1f, RotationAccuracyByDistance = NumericConstants.AnimationCurve01 };
         }
+        /// <summary>
+        /// Config for swordsman's movement through terrain
+        /// </summary>
         public NavigationConfigurator Navigation = NavigationConfigurator.Default;
 
         void SetupNavmeshAgent()
@@ -114,24 +151,38 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
             }
 
         }
-        private static float ClampAxis(float f) => Mathf.Clamp(f, -1f, 1f);
+        static float ClampAxis(float f) => Mathf.Clamp(f, -1f, 1f);
         #endregion
 
         #region Sword
 
 
+        /// <summary>
+        /// Config for swordsman's attacks
+        /// </summary>
         [System.Serializable]
         public class SwordConfig
         {
-            [SerializeField] public SwordRecordUsecase Usecase = SwordRecordUsecase.Idle;
+            /// <summary>
+            /// How fast the sword moves should be replayed
+            /// </summary>
             [SerializeField] public float PlaySpeed = 1f;
+            /// <summary>
+            /// Distance from <see cref="Target"/> at which swordsman plays Idle moves
+            /// </summary>
             [SerializeField] public float DistanceToIdle = 5f;
+            /// <summary>
+            /// Records (files containing JSON of <see cref="SwordMovementRecord"/>) to be played for each state.
+            /// </summary>
             [SerializeField] public SerializableDictionary<SwordRecordUsecase, TextAsset[]> Records;
         }
 
+        /// <summary>
+        /// Config for swordsman's attacks
+        /// </summary>
         public SwordConfig SwordControl = new SwordConfig();
 
-        private static readonly DefaultValDict<TextAsset, SwordMovementRecord> recordCache = new DefaultValDict<TextAsset, SwordMovementRecord>(t => JsonConvert.DeserializeObject<SwordMovementRecord>(t.text));
+        static readonly DefaultValDict<TextAsset, SwordMovementRecord> recordCache = new DefaultValDict<TextAsset, SwordMovementRecord>(t => JsonConvert.DeserializeObject<SwordMovementRecord>(t.text));
         void SetupSwordRecordPlayer()
         {
             var recordsList = new Dictionary<SwordRecordUsecase, SwordMovementRecord[]>(SwordControl.Records.Values.Select(
@@ -151,9 +202,9 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
         {
             recordPlayer.PlaySpeed = SwordControl.PlaySpeed;
             if (Swordsman.transform.position.Distance(Target.transform.position) > SwordControl.DistanceToIdle)
-                recordPlayer.CurrentUsecase = SwordControl.Usecase = SwordRecordUsecase.Idle;
+                recordPlayer.CurrentUsecase = SwordRecordUsecase.Idle;
             else
-                recordPlayer.CurrentUsecase = SwordControl.Usecase = SwordRecordUsecase.Generic;
+                recordPlayer.CurrentUsecase = SwordRecordUsecase.Attack;
         }
         #endregion
     }

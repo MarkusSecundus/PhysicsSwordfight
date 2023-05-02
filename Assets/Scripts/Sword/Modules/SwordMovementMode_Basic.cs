@@ -1,4 +1,6 @@
+using MarkusSecundus.PhysicsSwordfight.Input;
 using MarkusSecundus.PhysicsSwordfight.Input.Rays;
+using MarkusSecundus.PhysicsSwordfight.Submodules;
 using MarkusSecundus.PhysicsSwordfight.Utils.Graphics;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,12 +8,25 @@ using UnityEngine;
 
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
 {
-
+    /// <summary>
+    /// Basic sword control mode for slashing.
+    /// 
+    /// <para>
+    /// Gets control point by intersecting <see cref="ISwordInput.GetInputRay"/> obtained from its parent <see cref="IScriptSubmodule{TScript}.Script"/> by an <see cref="IRayIntersectable"/>.
+    /// <see cref="RayIntersection.InputorCenter"/> will be used as position of sword's anchor and <see cref="RayIntersection.Value"/> gives out the direction in which the sword is to be pointed.
+    /// </para>
+    /// </summary>
     [System.Serializable]
     public class SwordMovementMode_Basic : SwordMovement.Module
     {
+        /// <summary>
+        /// Geometric shape with which <see cref="ISwordInput.GetInputRay"/> gets intersected to obtain control point.
+        /// </summary>
         public IRayIntersectable InputIntersectable;
-
+        /// <summary>
+        /// Sets sword rotation according to user input.
+        /// </summary>
+        /// <param name="delta">Time elapsed from last <see cref="OnFixedUpdate(float)"/></param>
         public override void OnFixedUpdate(float delta)
         {
             base.OnFixedUpdate(delta);
@@ -21,7 +36,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
 
 
 
-        private Vector3 computeUpVector(Vector3 forward)
+        Vector3 computeUpVector(Vector3 forward)
         {
             var ret = Vector3.Cross(lastForward, forward).normalized;
             if (ret.y < 0 /* (ret.y == 0 && (ret.z < 0 || (ret.z == 0 && ret.x < 0)))*/ )
@@ -30,8 +45,8 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
         }
 
 
-        public float minLastVectorDiff = 0.3f;
-        private Vector3 lastForward = Vector3.zero;
+        const float minLastVectorDiff = 0.3f;
+        Vector3 lastForward = Vector3.zero;
         void SetSwordRotation(float delta)
         {
             var inputRay = Script.Input.GetInputRay();

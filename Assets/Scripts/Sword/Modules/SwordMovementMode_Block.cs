@@ -13,14 +13,42 @@ using MarkusSecundus.PhysicsSwordfight.Utils.Geometry;
 namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
 {
 
+    /// <summary>
+    /// Basic sword control mode for blocking enemy attacks.
+    /// 
+    /// <para>
+    /// Gets control point by intersecting <see cref="ISwordInput.GetInputRay"/> obtained from its parent <see cref="IScriptSubmodule{TScript}.Script"/> by an <see cref="IRayIntersectable"/>.
+    /// The sword will be positioned on a plane tangential to the intersected sphere in the point of intersection. It's blade pointing to direction of <see cref="SwordDirectionHint"/>.
+    /// </para>
+    /// </summary>
     [System.Serializable]
     public class SwordMovementMode_Block : SwordMovement.Module
     {
+        /// <summary>
+        /// Transform whose children transforms will be used as direction hints for the blocking mode.
+        /// <para>
+        /// The one child nearest to the control point will be chosed and used as the point to which the sword's blade should point to.
+        /// </para>
+        /// </summary>
         public Transform SwordDirectionHint;
+        /// <summary>
+        /// Geometric shape with which <see cref="ISwordInput.GetInputRay"/> gets intersected to obtain control point.
+        /// </summary>
         public IRayIntersectable InputIntersector;
-        public float HoldingForceMultiplier = 3f;
+        /// <summary>
+        /// Value with which to multiply the default force with which the sword is held
+        /// </summary>
+        public float HoldingForceMultiplier = 20f;
+
+
         SwordDescriptor Sword => Script.Sword;
-        private Transform bladeEdgeBlockPoint => Sword.SwordBlockPoint;
+        Transform bladeEdgeBlockPoint => Sword.SwordBlockPoint;
+
+
+        /// <summary>
+        /// Sets sword rotation according to user input.
+        /// </summary>
+        /// <param name="delta">Time elapsed from last <see cref="OnFixedUpdate(float)"/></param>
         public override void OnFixedUpdate(float delta)
         {
             var input = GetUserInput();
@@ -28,14 +56,14 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
                 SetBlockPosition(input);
         }
 
-        private RayIntersection GetUserInput()
+        RayIntersection GetUserInput()
         {
             var ray = Script.Input.GetInputRay();
             if (ray == null) return RayIntersection.Null;
             return InputIntersector.GetIntersection(ray.Value);
         }
 
-        private void SetBlockPosition(RayIntersection userInput)
+        void SetBlockPosition(RayIntersection userInput)
         {
             var hitPoint = userInput.Value;
 
@@ -68,7 +96,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
         }
 
 
-        private Vector3 getBestDirectionHint(Vector3 hitPoint)
+        Vector3 getBestDirectionHint(Vector3 hitPoint)
         {
             return SwordDirectionHint.OfType<Transform>().Minimal(hint => hint.position.Distance(hitPoint)).position;
         }
