@@ -22238,6 +22238,14 @@ PrefabInstance:
       propertyPath: <MaxHP>k__BackingField
       value: 3.402823e+38
       objectReference: {fileID: 0}
+    - target: {fileID: 5646721316747093273, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      propertyPath: HierarchiesToIgnore.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5646721316747093273, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      propertyPath: HierarchiesToIgnore.Array.data[1]
+      value: 
+      objectReference: {fileID: 1911362960}
     - target: {fileID: 6053144460618046872, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: m_MassScale
       value: 9
@@ -22249,6 +22257,10 @@ PrefabInstance:
     - target: {fileID: 6144496727152896554, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 6806983747615499204, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      propertyPath: Stats.DamageMultiplier
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7636414052227803292, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: ActivationRadius
@@ -28609,7 +28621,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6624123375563233653, guid: ff9f0cbc8019fba43853092e04d77143, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.17500001
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6624123375563233653, guid: ff9f0cbc8019fba43853092e04d77143, type: 3}
       propertyPath: m_LocalPosition.z
@@ -34142,7 +34154,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2808337142474496025, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.178
+      value: 1.437
       objectReference: {fileID: 0}
     - target: {fileID: 2808337142474496025, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -34184,6 +34196,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5646721316747093273, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      propertyPath: HierarchiesToIgnore.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5646721316747093273, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      propertyPath: HierarchiesToIgnore.Array.data[1]
+      value: 
+      objectReference: {fileID: 1911362960}
     - target: {fileID: 6356403476308957953, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: m_Extents.x
       value: 1.5
@@ -52164,6 +52184,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 830734662}
     m_Modifications:
+    - target: {fileID: 715969035629093927, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: HierarchiesToIgnore.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 715969035629093927, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: HierarchiesToIgnore.Array.data[0]
+      value: 
+      objectReference: {fileID: 1911362960}
     - target: {fileID: 2127793301984047549, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
       propertyPath: Floats.values.Array.data[0].value
       value: 0.1

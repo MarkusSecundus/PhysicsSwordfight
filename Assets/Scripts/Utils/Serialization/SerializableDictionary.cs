@@ -1,3 +1,4 @@
+using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
 using MarkusSecundus.Utils.Datastructs;
 using System;
 using System.Collections;
@@ -75,7 +76,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Serialization
         {
             _values.Clear();
             foreach (var entry in values)
-                dictionary.TryAdd(entry.Key, entry.Value);
+                if(entry.Key.IsNotNil()) dictionary.TryAdd(entry.Key, entry.Value);
         }
     }
 

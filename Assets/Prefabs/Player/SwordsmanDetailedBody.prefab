@@ -1128,7 +1128,7 @@ Transform:
   - {fileID: 3900322460305338472}
   - {fileID: 1727904353782339453}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &5063618787856110036
 Animator:
@@ -1386,11 +1386,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weight: 1
   m_Data:
-    target:
-      root: {fileID: 3599274899400221386}
-      tip: {fileID: 8956055131054667918}
-    sourceObject: {fileID: 1071614908106819119}
-    multiplier: 1.2
+    Target:
+      Root: {fileID: 6315428396777897752}
+      Tip: {fileID: 6117388322579390010}
+    SourceObject: {fileID: 1988345811582749845}
+    Multiplier: 1.2
 --- !u!1 &5399612722150998935
 GameObject:
   m_ObjectHideFlags: 0
@@ -1470,9 +1470,9 @@ MonoBehaviour:
     m_MaxLimit: 180
     m_AimAxis: 4
     m_UpAxis: 2
-    m_WorldUpType: 1
-    m_WorldUpObject: {fileID: 0}
-    m_WorldUpAxis: 2
+    m_WorldUpType: 3
+    m_WorldUpObject: {fileID: 5770608158812196579}
+    m_WorldUpAxis: 1
     m_MaintainOffset: 0
     m_ConstrainedAxes:
       x: 1
@@ -1997,11 +1997,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weight: 1
   m_Data:
-    target:
-      root: {fileID: 6315428396777897752}
-      tip: {fileID: 6117388322579390010}
-    sourceObject: {fileID: 1988345811582749845}
-    multiplier: 1.2
+    Target:
+      Root: {fileID: 3599274899400221386}
+      Tip: {fileID: 8956055131054667918}
+    SourceObject: {fileID: 1071614908106819119}
+    Multiplier: 1.2
 --- !u!1 &8699634729810079701
 GameObject:
   m_ObjectHideFlags: 0
@@ -2081,9 +2081,9 @@ MonoBehaviour:
     m_MaxLimit: 180
     m_AimAxis: 4
     m_UpAxis: 2
-    m_WorldUpType: 1
-    m_WorldUpObject: {fileID: 0}
-    m_WorldUpAxis: 2
+    m_WorldUpType: 3
+    m_WorldUpObject: {fileID: 5770608158812196579}
+    m_WorldUpAxis: 0
     m_MaintainOffset: 0
     m_ConstrainedAxes:
       x: 1

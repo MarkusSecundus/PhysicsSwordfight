@@ -311,7 +311,7 @@ ConfigurableJoint:
   m_Anchor: {x: 0, y: 0.5, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 0.84091467, z: -0.16820908}
+  m_ConnectedAnchor: {x: 0, y: 0.3523574, z: 0}
   serializedVersion: 3
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
@@ -400,7 +400,7 @@ ConfigurableJoint:
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
   m_MassScale: 1
-  m_ConnectedMassScale: 0.00001
+  m_ConnectedMassScale: 1
 --- !u!114 &6761502239394520571
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,7 +516,7 @@ Transform:
   - {fileID: 2808337142216687973}
   - {fileID: 6144496727152896554}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2808337142474496024
 MonoBehaviour:
@@ -852,6 +852,10 @@ PrefabInstance:
     - target: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_ConnectedAnchor.z
       value: 0.5779996
+      objectReference: {fileID: 0}
+    - target: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: m_ConnectedMassScale
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8687008718328225760, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: Exceptions.values.Array.size

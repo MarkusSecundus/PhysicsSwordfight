@@ -1852,6 +1852,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1921284290097139477}
     - target: {fileID: 8687008718328225760, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: Exceptions.values.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8687008718328225760, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: Exceptions.values.Array.data[0].key
       value: 
       objectReference: {fileID: 8294934783069165589}
