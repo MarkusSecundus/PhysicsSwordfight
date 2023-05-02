@@ -69,7 +69,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
 
         void OnDestroy()
         {
-            manager.Unregister(this);
+            manager?.Unregister(this);
         }
 
         bool IsInIgnoreList(Transform t) => t == this.transform || HierarchiesToIgnore.Any(h => t.IsDescendantOf(h));

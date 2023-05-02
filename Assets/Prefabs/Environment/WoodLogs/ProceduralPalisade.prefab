@@ -2627,10 +2627,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Color: {r: 0.8509804, g: 0.05490196, b: 0.13691449, a: 1}
+  ShouldDrawTheGizmo: 0
   MinAngle: 0
   MaxAngle: 322
   Segments: 150
-  ShouldDrawTheGizmo: 0
 --- !u!1 &3214917341253597725
 GameObject:
   m_ObjectHideFlags: 0
@@ -2682,7 +2682,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31e20b14c2856a2439b4b86cf4c5cf7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CircleDefinition: {fileID: 6247522582107785072}
+  SpawnLocation: {fileID: 6247522582107785072}
   ParentToFill: {fileID: 3214917340023234078}
   ToPlace: {fileID: 1757095094761794753}
   Seed: 468
@@ -2871,10 +2871,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Color: {r: 0.8509804, g: 0.05490196, b: 0.13691449, a: 1}
+  ShouldDrawTheGizmo: 0
   MinAngle: 16
   MaxAngle: 72
   Segments: 90
-  ShouldDrawTheGizmo: 0
 --- !u!1 &9042599794293131070
 GameObject:
   m_ObjectHideFlags: 0
@@ -2920,10 +2920,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Color: {r: 0.8509804, g: 0.05490196, b: 0.13691449, a: 1}
+  ShouldDrawTheGizmo: 0
   MinAngle: 115
   MaxAngle: 165
   Segments: 90
-  ShouldDrawTheGizmo: 0
 --- !u!1001 &29449039985964589
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3147,12 +3147,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b4859f0b640ae347bc8e351e0f56088, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ScaleMin: {x: 1.5, y: 1.5}
-  ScaleMax: {x: 1.8, y: 1.8}
-  RotationMin: {x: -2, y: 0, z: -2}
-  RotationMax: {x: 2, y: 360, z: 2}
-  PlaceOffsetMin: {x: -0.1, y: 0, z: -0.1}
-  PlaceOffsetMax: {x: 0.1, y: 0, z: 0.1}
+  Scale:
+    Min: {x: 1.5, y: 1.5}
+    Max: {x: 1.8, y: 1.8}
+  Rotation:
+    Min: {x: -2, y: 0, z: -2}
+    Max: {x: 3, y: 360, z: 3}
+  PlaceOffset:
+    Min: {x: -0.1, y: 0, z: -0.1}
+    Max: {x: 0.1, y: 0, z: 0.1}
 --- !u!4 &7409648251848474618 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7952448235805089981, guid: d29d107192f91924583c915b19924af7, type: 3}

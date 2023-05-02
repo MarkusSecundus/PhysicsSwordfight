@@ -171,7 +171,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
         {
             GetComponent<Rigidbody>().useGravity = true;
             transform.SetParent(null);
-            Destroy(joint);
+            Destroy(joint, 0.1f);
             Destroy(this);
         }
     }

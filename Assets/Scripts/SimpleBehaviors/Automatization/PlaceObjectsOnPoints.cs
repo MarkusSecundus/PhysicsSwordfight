@@ -70,7 +70,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Automatization
             foreach (var v in points)
             {
                 var obj = ToPlace.InstantiateWithTransform();
-                obj.transform.position = v + obj.transform.localPosition;
+                obj.transform.position = v + ToPlace.transform.localPosition;
                 obj.transform.SetParent(ParentToFill);
                 obj.SetActive(true);
                 foreach (var randomizer in obj.GetComponentsInChildren<IRandomizer>())

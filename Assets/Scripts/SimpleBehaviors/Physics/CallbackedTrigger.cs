@@ -17,11 +17,11 @@ namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
         /// <summary>
         /// Action to be invoked when <c>OnTriggerEnter</c> message is received
         /// </summary>
-        public UnityEvent<Collider> OnEnter;
+        public UnityEvent<Collider> OnEnter = new UnityEvent<Collider>();
         /// <summary>
         /// Action to be invoked when <c>OnTriggerExit</c> message is received
         /// </summary>
-        public UnityEvent<Collider> OnExit;
+        public UnityEvent<Collider> OnExit = new UnityEvent<Collider>();
 
         private IEnumerable<Collider> colliders;
         /// <summary>
