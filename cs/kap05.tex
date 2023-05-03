@@ -6,86 +6,212 @@ V této kapitole zběžně představíme, jak jsme celkově při implementaci po
 
 Podrobnou programátorskou dokumentaci k jednotlivým komponentám psanou v anglickém jazyce lze nalézt v příloze. Zvolili jsme pro ni standardní formát dokumentačních komentářů exportovaných do souboru XML, protože ten podporuje pohodlnou integraci s IDE (např. použití v našeptávači).
 
-\section{Implementace základních komponent}
-\begin{itemize}
-  \item \subsection{Šermíř}
-    \begin{itemize}
-      \item zákl. prvky: Rigidbody (nekinematické), SwordsmanMovement
-      \item z parenta si natáhne instanci ISwordInput - na něm se ptá na hodnoty vstupních Axis + stisknutost kláves (podle nich pak působí silama aby vyvolával pohyb hráče)
-      \item z editoru nastavitelné: mapování vstupu a násobiče pro síly, kterýma se působí (konfigurace rychlosti pohybu)
-      \item chceme aby hráč stál vzpříma, nenakláněl se na stranu - není triviální - rozebereme v \ref{playerFallingToSideSection}
-      \item jak probíhá pohyb a rotace hráče
-        \begin{itemize}
-          \item podle parametrů a hodnot Axis, co jsme pro danej směr pohybu dostali ze vstupu, stanovíme cílovou rychlost, kterou by se hráč měl pohybovat
-          \item jednoduše mu dodáme tuhle rychlost - rigidbody.AddForce(targetVelocity - rigidbody.velocity, ForceMode.VelocityChange); 
-          \item obdobně nastavíme rigidbody.angularVelocity přes rigidbody.AddTorque
-          \item doleva/doprava - rotace těla hráče (mění se co znamená 'dopředu') VS nahoru/dole - rotace kamery
-          \item uvnitř hráče je prázdný gameobject jenom s transformem - stub kamery - jeho rotaci nastavujeme, nějaká kamera ji může ale nemusí kopírovat (to se konfiguruje ve SwordsmanAssembly)
-          \item rotaci kamery nastavujeme obdobně jako rotaci rigidbody, akorát natvrdo změnou hodnoty na transformu; Axis, na které to je defaultně namapované, je MouseY (jediná věc co se určuje pohybem myši)
-          \item experimentovalo se i s umožněním drobné rotace kamery doleva/doprava pomocí MouseX (navíc k rotaci rigidbody), ale tu se nepodařilo vychytat tak, aby to autorovi dělalo dobře na žaludek - stále existuje, akorát nastavená s rychlostí 0
-          \item skok - stisknutí klávesy - hráči se jednorázově přidá síla, pokud stanovený Feet trigger collider s něčím koliduje (na to jsme museli implementovat TriggerActivityInfo - komponenta, co vede záznamy o aktuálně probíhajících kolizích)
-        \end{itemize}
-       \item Jednoduchý collider pro interakci s prostředím - kapsule 2m*0.5m -> hladký pohyb po terénu apod.
-       \item animované tělo s podrobným systémem colliderů pro kolize s mečem - viz \ref{swordsmanAnimationSubsection}
-    \end{itemize}
-  \item \textbf{Meč}
-    \begin{itemize}
-      \item zákl. prvky: Rigidbody (nekinematické), ConfigurableJoint, SwordMovement
-      \item z parenta si natáhne instanci ISwordInput - skrz něj čte vstup z myši (paprsky castovaný z kamery) a checkuje u kláves zda jsou stisknuté
-      \item \textbf{SwordMovement}..
-      \item z editoru nastavitelné: výčet jednotlivých submodulů (ty rozebereme v \ref{modesOfSwordMovementSubsection}), parametry pro interpolaci pohybu handlu meče
-      \item kdokoliv se může šťourat v rigidbody a jointu a tweakovat tam parametry
-      \item vevnitř... model meče - samostatný prefab - obsahuje mesh, collidery, spoustu drobných transformů co popisujou význačné body
-      \item pro použití ostatními entitami meč poskytuje komponentu SwordDescriptor - v té je zaznamenaný výčet transformů co odpovídají význačným bodům
-      
-      
-    \item Jak vypadají z hlediska objektováho návrhu už čtenář ví, tady jenom popíšeme implementaci modulu pro sekání a modulu pro blokování
-    \item \textbf{Abstrakce} 
-      \begin{itemize}
-        \item SwordMovement.Submodule
-          \begin{itemize}
-            \item samostatná abstraktní třída, nedědí z Unity.Object
-            \item má metody jako OnUpdate, OnActivated, OnDeactivated apod. - za jejich volání nese zodpovědnost SwordMovement
-            \item může volat metody na SwordMovementu (je do ní injectnuta instance rozrhraní ISwordMovement)
-          \end{itemize}
-        \item ISwordMovement
-          \begin{itemize}
-            \item Jednoduché rozhraní, exposuje jenom to, co submodul může potřebovat
-            \item šikovné ho mít pro účely mockování v unit testech a taky protože takhle jsme schopní mezi SwordMovement a jeho komponenty nacpat dekorátor (kterej se tváří jako jediná aktivní komponenta, původní komponenty si ukradne pro sebe, sám se stará o správu toho, která je aktivní, a místo oficiálního SwordMovementu do nich injectne sebe) - takhle se dá např. elegantně nahrávat rozkazy pro pohyb meče (využijeme v \ref{knightEnemySubsection})
-            \item věci, které exposuje: SwordDescriptor popisující meč, ISwordInput, Transform sword wieldera, metodu MoveSword()
-          \end{itemize}
-        \item Správu toho která komponenta je aktivní jsme enkapsulovali do třídy ScriptSubmodulesContainer -> dekorátor mezi SwordMovementem a jeho Submodulama se dá napsat celkem bez námahy
-        \item Konfigurace submodulů z editoru - list párů klávesa-submodul ; submodule picker má dropdown, kde můžeme vybírat ze všech typů dědících ze SwordMovement.Submodule a pro vybraný typ se pak zobrazí defaultní picker - neskonalé díky: \href{https://github.com/lordconstant/SubclassPropertyDrawer}{lordconstant}
-      \end{itemize}
-    \item \textbf{Metoda SwordMovement.MoveSword()} \label{swordMovementMoveSwordImplementationSubsection}
-      \begin{itemize}
-        \item vstupy: anchorPoint (poloha meče) + swordDirection (směr kam je namířený) + upDirection (směr nahoru - podle něj se počítá natočení kolem vlastní osy) + holdingForce (faktor síly držení)
-        \item podle směru namíření a směru nahoru se nastaví cílová rotace mečového jointu
-          \begin{itemize}
-            \item stačí podle nich spočítat cílovou rotaci a tu nastavit jako targetRotation ConfigurableJointu (spočítat jí je ale netriviální problém - viz \ref{howToSetJointsTargetRotationSection})
-          \end{itemize}
-        \item nastavení polohy meče podle vyžádané cílové polohy...
-          \begin{itemize}
-            \item ConfigurableJoint podporuje stejně jako targetRotation i targetPosition - ta se ale při testování zdála nestabilní (čas od času meč odskočil 10 metrů vedle)
-            \item ConfigurableJoint má property connectedAnchor - pozice místa kam je předmět jointem ukotvený, relativní vůči rigidbody ke kterému je joint ukotvený - jeho změnou můžeme efektivně mečem pohybovat
-            \item potřeba nastavit Joint.autoConfigureConnectedAnchor = false
-            \item chceme plynulý pohyb konzistentní rychlostí VS Joint.connectedAnchor se dá jenom natvrdo nastavit, neexistuje žádný targetConnectedAnchor 
-            \item DOTween nejde použít (cílová pozice connectedAnchoru se potenciálně mění každý snímek - DOTween je stavěný na to, že cíl je známý od začátku a nemění se)
-            \item řešení - vést si prostě target hodnotu a každý snímek connectedAnchor posunout o (target - currentConnectedAnchor)*deltaTime*speedFactor/*nastavitelný z editoru*/
-            \item celou tuhle logiku jsme enkapsulovali do třídy RetargetableInterpolator - ta běží na pozadí jako korutina a jenom nastavujeme její target hodnotu
-          \end{itemize}
-        \item faktor síly držení
-          \begin{itemize}
-            \item důvod: někdy je správně defaultní síla, jakou hráč meč drží, někdy (modul blokování) ale např. potřebujeme, aby byl meč drženej tak silně, že rána druhého meče ho nedokáže srazit dolů
-            \item na začátku si uložíme původní Joint.slerpDrive.positionSpring - nastavení faktoru síly držení znamená kolikanásobek téhle původní hodnoty se má začít používat
-            \item plynulá změna - interpolujeme stejně jako Joint.connectedAnchor
-            \item volitelný parametr - když není, bere se to jako by byla dodána hodnota 1 (-> 1-násobek původní síly)
-          \end{itemize}
-      \end{itemize}
+\subsubsection*{Závislosti}
+Naše řešení používá několik externích knihoven. S tvorbou kosmetických efektů vypomohla knihovna DOTween \cite{DoTween}. Dále Math.NET Numerics \cite{MathDotNetNumerics} poskytlo stabilní a dobře testovaný nástroj k řešení soustav lineárních rovnic. Repozitoř SubclassPropertyDrawer \cite{SubclassPropertyDrawer} umožnila pohodlnou editaci jednotlivých SwordMovement.Modules v editoru. 
 
-    \end{itemize}
+Dále je třeba poděkovat uživatelům unity fóra \cite{InvertReverseUIMask}, které pomohlo s implementací grafické reprezentace healthbaru.
+
+Největší díky však patří github uživateli \textit{mstevenson}, jehož práce \cite{ConfigurableJointExtensions} citelně pomohla s pochopením chování cílové rotace na jointech - bez kterého by implementace zásadní části této práce nebyla možná.
+
+\section{Implementace základních komponent}
+
+Základními entitami našeho systému jsou \textbf{šermíř} a jeho \textbf{meč}. Jejich objektový návrh již známe z předchozí kapitoly.
+
+
+\begin{figure}[p]\centering
+  \center
+  \includegraphics[width=145mm]{../img/Structure-diagram.png}
+  \caption{Diagram znázorňující strukturu našeho systému - zopakování}
+  \label{obr05:objectModelDiagramReprise}
+\end{figure} 
+
+\pagebreak
+
+\subsection{Šermíř}
+
+Šermíř je herní objekt, který reprezentuje hráče v herním světě. Potřebujeme od něj, aby byl schopen se pohybovat po herním světě a umožnil hráči skrze své oči nahlížet na svět. 
+
+Instrukce od hráče bude přejímat z přidělené instance ISwordInput.
+
+\subsubsection*{Pohyb}
+
+Zásadním rozhodnutím, které jsme učinili, bylo implementovat šermíře jako \textbf{nekinematické Rigidbody}, ovládané čistě skrze fyzikální systém působením sil. 
+
+\textit{Nejde o standardní postup - typicky je ve hrách pohyb postavy řešen přímo ze skriptu upravováním její polohy, postava může působit silami na okolní předměty, ale ne obráceně. Důvody jsou zřejmé - tvůrci hry takto získají větší kontrolu, která jim umožní ručně ladit pohyb postavy pro optimální hráčský zážitek; dále je často výslovně nevhodné, aby na hráčskou postavu působily silami okolní kolidující předměty - především při pohledu z 1. osoby, kdy hráč o převážně části svého těla nemá přehled - nezpozorovaná kolize, která postavu odmrští, pak může působit dojmem glitche. Unity pro tento standardní přístup poskytuje vyladěnou komponentu CharacterController.}
+
+\textit{Pohyb hráče skrze fyzikální systém jsme zvolili zkrátka proto, že se zdál jako zajímavá oblast hodná prozkoumání. Přináší netriviální výzvy v oblasti zaručení stability hráčské postavy a responsivity ovládání. Na druhou stranu má šanci nám poskytnout další element navíc k meči, který může umocnit hráčovy možnosti fyzikální interakce s okolním prostředím\footnote{Např. s jeho přítomností můžeme zadarmo implementovat jednoduché fyzikální hádanky ala vyvažovací lávka v 2.misi Half-Life 2 \cite{HalfLife2}} a s nepřátelským mečem.}
+
+Jak jsme tedy postupovali? Do herního objektu odpovídajícího hráči jsme umístili komponentu Rigidbody. Váhu jsme nastavil na 60 - cca odpovídající pro typického člověka, jinak jsme ponechali výchozí hodnoty. Pro účely kolizí s herním prostředím jsme vytvořili potomka obsahujícího jednoduchý CapsuleCollider se standardně používanými rozměry 2 x 0.5. Kapsle do sebe zhruba obsáhne šermířův model, ale nemá žádné ostré hrany, o které by se šermíř mohl zadrhávat při pohybu členitým terénem. Kolizní vrstvy jsme nastavili tak, aby tato kapsle kolidovala s terénem, ale ne s nepřáteli ani jejich zbraněmi.
+
+Takto tedy vypadá fyzikální reprezentace šermíře, nyní k jejímu ovládání. Pro to jsme již určili zodpovědnou komponentu \textbf{SwordsmanMovement}. 
+
+Konkrétní metody pohybu, které podporuje, jsou:
+\begin{itemize}
+  \item \textbf{Chůze dopředu/dozadu} - jednoduchý posun dopředu o kladnou nebo zápornou vzdálenost
+  \item \textbf{Úkrok doleva/doprava} - jenoduchý posun doprava o kladnou nebo zápornou vzdálenost
+  \item \textbf{Natočení se doleva/doprava} - rotace kolem šermířovy vertikální osy o kladný nebo záporný úhel, mění význam \textit{dopředu} a \textit{doprava}
+  \item \textbf{Skákání} - okamžité aplikování impulzu na tělo hráče, pouze pokud hráč stojí na zemi
 \end{itemize}
 
+Pro každou z těchto akcí komponenta umožňuje nakonfigurovat vstupní osu, ze které budou funkcí ISwordInput.GetAxis() čteny instrukce (čísla v intervalu [-1;1]), dále rovněž číslo udávající rychlost pohybu. Pro skok je konfigurována aktivační klávesa a vektor síly impulzu.
+
+\subsubsection*{Pohyb - Lineární pohyb}
+
+Naivním přístupem k pohybu hráče by bylo zkrátka každý FixedUpdate přečíst hodnotu na příslušné ose, tu vynásobit s rychlostí, z této finální rychlosti získat sílu (nazvěme ji \textit{targetMovement}) vynásobením s vektorem udávajícím směr (dopředu/doprava), a tu aplikovat pomocí rigidbody.AddForce(targetMovement).
+Tento přístup hráčem skutečně pohybuje ve správném směru, ne však způsobem, jaký bychom chtěli. Každá změna pohybu má pomalý rozjezd a jakmile se rozjede, dostat se z ní zpátky trvá stejně dlouho. Dlouhodobým pohybem v jednom směru šermíř stále zrychluje (hranicí je až rychlost světla). Rovněž se šermíř nijak nesnaží odolávat kolizím, které na něj působí. 
+
+Řešením je vypočítanou hodnotu \textit{targetMovement} neinterpretovat jako sílu, ale jako cílovou rychlost šermíře. Aktuální rychlost šermíře lze získat jako \textit{rigidbody.velocity}. Spočítáme tedy \textit{targetMovement}s v jednotlivých směrech a sečteme je dohromady. Takto aplikujeme sílu, která šermíře dostane na požadovanou rychlost. 
+
+\begin{lstlisting}[language=C, basicstyle=\fontsize{11}{13}\selectfont\ttfamily]
+  var velocityDelta = targetMovement - rigidbody.velocity;
+  rigidbody.AddForce(
+    velocityDelta,
+    ForceMode.VelocityChange
+  );
+\end{lstlisting}
+
+
+Takto se šermíř pohybuje responzivně (téměř okamžitě dosáhne požadované rychlosti, i při změně směru) a není mu umožněno nekontrolovaně zrychlovat. Pohyb působí plynulým dojmem díky tomu, že náš vstup - ISwordMovement.GetAxis() zaručuje\footnote{Analogicky jako UnityEngine.Input.GetAxis().} postupný plynulý náběh a změnu hodnoty.
+
+Interně bude síla šermíři aplikována v průběhu nadcházejícího kroku fyzikální simulace, v platnost tedy vstoupí snímek následující po její aplikaci. Další síly, které na objekt působí, při výpočtu nejsou brány v úvahu, ty tedy stále jsou schopny na objekt působit a z naší cílové rychlosti ho vychýlit - objekt tedy velmi důrazně vybízíme, aby přešel na danou rychlost, stále však reaguje na ostatní síly. 
+
+Celková odolnost proti jednorázovým kolizím je však (v horizontálním směru) velmi značná - ať už kolize na objekt vyvine jakoukoliv sílu, nejpozději v průběhu několika dalších snímků po ukončení jejího působení bude plně vstřebána. Pokud bychom chtěli odolnost omezit, nic nám nebrání stanovit ještě číslený parametr (\textit{maxChange}), kterým bude omezena maximální velikost síly, kterou v jednom snímku působíme - zhruba takto:
+
+\begin{lstlisting}[language=C, basicstyle=\fontsize{11}{13}\selectfont\ttfamily]
+  var velocityDelta = targetMovement - rigidbody.velocity;
+  var deltaMagnitude = Mathf.Min(
+    velocityDelta.magnitude,
+     maxChange
+  );
+  velocityDelta = velocityDelta.normalized * deltaMagnitude;
+\end{lstlisting}
+
+Takto omezíme maximální sílu, kterou může v jednom snímku šermíř vyvinout na vstřebání kolize - kolize tedy stále bude vstřebána, avšak potrvá to déle.
+
+\subsubsection*{Pohyb - Rotační pohyb}
+Rotaci šermíře kolem jeho osy implementujeme analogicky. Nejprve spočítáme \textit{targetAngularMovement} jako rotaci kolem vertikální osy šermíře o úhel získaný z ISwordInput.GetAxis() násobeno rychlost. Rotační pohyb následně vykonáme takto:
+
+\begin{lstlisting}[language=C, basicstyle=\fontsize{11}{13}\selectfont\ttfamily]
+  var angularVelocityDelta = 
+    targetAngularMovement - rigidbody.angularVelocity;
+  rigidbody.AddTorque(
+    angularVelocityDelta,
+    ForceMode.VelocityChange
+  );
+\end{lstlisting}
+
+Je zde však třeba vyřešit ještě jeden problém - \textbf{klácení postavy na stranu}. 
+
+Typicky se očekává, že šermíř stojí v dokonale vzpřímené pozici. Jakékoliv i jen velmi drobné, ale dlouhodobější vychýlení herní kamery ze svislého pohledu (jiné než kontrolovaný efekt třesení kamerou) na hráče typicky působí nežádaným zneklidňujícím až matoucím dojmem. Odchýlením vertikální osy hráče od globální osy Y se rovněž náš předchozí představený systém pro lineární pohyb dostane do neočekávaného stavu. 
+
+Při fyzikální kolizi je však vyvolání rotace napříč všemi 3 stupni volnosti typickým chováním. Jak tedy spolehlivě zařídíme, aby bylo možné rotovat šermíře pouze kolem jeho vertikální osy?
+
+Přímočarým řešením, které se nabízí, jsou flagy \textit{rigidbody.constraints}, jež nalezneme přímo na šermířově komponentě Rigidbody a hlásají, že přesně náš požadavek umožňují splnit. Jednoduše tedy zaškrtneme pole \textit{FreezeRotationX} a \textit{FreezeRotationZ}. Spustíme hru a řešení se tváří fungovat. Jak se šermíř pohybuje po členitém terénu, pozorujeme však, že se na něm stále nějaký náklon hromadí - velmi pomalu, ale znatelně.
+
+Důvod tohoto chování najdeme v oficielní dokumentaci \cite{Unity} - dle té jsou specificky rotační constraints implementovány pouze přepsáním hodnot jiné komponenty - \textit{rigidbody.inertiaTensor}. Ta zjednodušeně udává, jak obtížná je pro daný útvar rotace v jednotlivých stupních volnosti. Její nastavení je vyhodnocováno jako jeden ze vstupů pro constraint solver. Tedy i pokud nastavíme obtížnost v daném stupni volnosti na nekonečno (jako to rigidbody.constraints dělá), numerická nepřesnost constraint solveru (viz \ref{physicsIntroSimulationStabilitySubsection}) zkrátka drobným změnám umožní, aby se proplížily.
+
+Řešením, které funguje, je navíc k uzamčení os X a Z přidat ještě kus herní logiky, který každý snímek rotaci v obou osách ručně vynuluje.
+
+\subsubsection*{Pohyb - Skákání}
+
+Vykonání skoku je jednoduché - zkrátka pokud byla stisknuta příslušná klávesa a šermíř stojí na zemi, dodáme šermířovi nakonfigurovaný impuls - nějak takto:
+
+\begin{lstlisting}[language=C, basicstyle=\fontsize{11}{13}\selectfont\ttfamily]
+  rigidbody.AddForce(
+    jumpForce,
+    ForceMode.Impulse
+  );
+\end{lstlisting}
+
+Netriviální částí je rozhodnout, zda \textbf{šermíř stojí na zemi}. K tomuto účelu jsme umístili v oblasti jeho nohou podobjekt obsahující collider s flagem \textit{.isTrigger} nastaveným na true a nakonfigurovali jeho kolizní vrstvy aby kolidoval pouze s terénem. Pokud tento collider aktuálně koliduje s dalším colliderem, který není trigger, chceme šermíře považovat za uzemněného. Unity však žádnou funkci, které bychom se byli schopni jednoduše zeptat, zda collider s něčím koliduje, neposkytuje. 
+
+Implementovali jsme tedy vlastní komponentu \textit{TriggerActivityInfo}, která poslouchá klasicky na zprávy OnTriggerEnter() a OnTriggerExit() a dle nich si manuálně vede záznamy o probíhajících kolizích. Umístili jsme ji do stejného objektu\footnote{Zde je důležité, že oba jsou ve stejném herním objektu, který je oddělený od Rigidbody - jinak by TriggerActivityInfo buď nedostávalo žádné zprávy, nebo dostávalo od všech triggerů napříč šermířem - viz \ref{collidersPhysicsIntroSubsection}} jako náš triggercollider a toho se již SwordsmanMovement může civilizovaně ptát, zda je aktuálně probíhajících kolizí více než nula.
+
+\subsubsection*{Pohled}
+
+\subsubsection*{Zhodnocení}
+
+Kombinací všech těchto faktorů docházíme k mixu, který není o mnoho méně hráčsky přívětivý, než tradiční pohyb přímým přepisováním pozice. Jako bonus je šermíř stále schopen být ovlivňován kolizemi s ostatními předměty, avšak míru, do které mu to je umožněno, máme pod kontrolou.
+
+\pagebreak 
+\begin{itemize}
+  %\item zákl. prvky: Rigidbody (nekinematické), SwordsmanMovement
+  %\item z parenta si natáhne instanci ISwordInput - na něm se ptá na hodnoty vstupních Axis + stisknutost kláves (podle nich pak působí silama aby vyvolával pohyb hráče)
+  %\item z editoru nastavitelné: mapování vstupu a násobiče pro síly, kterýma se působí (konfigurace rychlosti pohybu)
+  %\item chceme aby hráč stál vzpříma, nenakláněl se na stranu - není triviální - rozebereme v \ref{playerFallingToSideSection}
+  \item jak probíhá pohyb a rotace hráče
+    \begin{itemize}
+      %\item podle parametrů a hodnot Axis, co jsme pro danej směr pohybu dostali ze vstupu, stanovíme cílovou rychlost, kterou by se hráč měl pohybovat
+      %\item jednoduše mu dodáme tuhle rychlost - rigidbody.AddForce(targetVelocity - rigidbody.velocity, ForceMode.VelocityChange); 
+      %\item obdobně nastavíme rigidbody.angularVelocity přes rigidbody.AddTorque
+      %\item doleva/doprava - rotace těla hráče (mění se co znamená 'dopředu') VS nahoru/dole - rotace kamery
+      \item uvnitř hráče je prázdný gameobject jenom s transformem - stub kamery - jeho rotaci nastavujeme, nějaká kamera ji může ale nemusí kopírovat (to se konfiguruje ve SwordsmanAssembly)
+      \item rotaci kamery nastavujeme obdobně jako rotaci rigidbody, akorát natvrdo změnou hodnoty na transformu; Axis, na které to je defaultně namapované, je MouseY (jediná věc co se určuje pohybem myši)
+      \item experimentovalo se i s umožněním drobné rotace kamery doleva/doprava pomocí MouseX (navíc k rotaci rigidbody), ale tu se nepodařilo vychytat tak, aby to autorovi dělalo dobře na žaludek - stále existuje, akorát nastavená s rychlostí 0
+      %\item skok - stisknutí klávesy - hráči se jednorázově přidá síla, pokud stanovený Feet trigger collider s něčím koliduje (na to jsme museli implementovat TriggerActivityInfo - komponenta, co vede záznamy o aktuálně probíhajících kolizích)
+    \end{itemize}
+    %\item Jednoduchý collider pro interakci s prostředím - kapsule 2m*0.5m -> hladký pohyb po terénu apod.
+    \item animované tělo s podrobným systémem colliderů pro kolize s mečem - viz \ref{swordsmanAnimationSubsection}
+\end{itemize}
+
+
+
+\subsection{Meč}
+\begin{itemize}
+  \item zákl. prvky: Rigidbody (nekinematické), ConfigurableJoint, SwordMovement
+  \item z parenta si natáhne instanci ISwordInput - skrz něj čte vstup z myši (paprsky castovaný z kamery) a checkuje u kláves zda jsou stisknuté
+  \item \textbf{SwordMovement}..
+  \item z editoru nastavitelné: výčet jednotlivých submodulů (ty rozebereme v \ref{modesOfSwordMovementSubsection}), parametry pro interpolaci pohybu handlu meče
+  \item kdokoliv se může šťourat v rigidbody a jointu a tweakovat tam parametry
+  \item vevnitř... model meče - samostatný prefab - obsahuje mesh, collidery, spoustu drobných transformů co popisujou význačné body
+  \item pro použití ostatními entitami meč poskytuje komponentu SwordDescriptor - v té je zaznamenaný výčet transformů co odpovídají význačným bodům
+  
+  
+\item Jak vypadají z hlediska objektováho návrhu už čtenář ví, tady jenom popíšeme implementaci modulu pro sekání a modulu pro blokování
+\item \textbf{Abstrakce} 
+  \begin{itemize}
+    \item SwordMovement.Submodule
+      \begin{itemize}
+        \item samostatná abstraktní třída, nedědí z Unity.Object
+        \item má metody jako OnUpdate, OnActivated, OnDeactivated apod. - za jejich volání nese zodpovědnost SwordMovement
+        \item může volat metody na SwordMovementu (je do ní injectnuta instance rozrhraní ISwordMovement)
+      \end{itemize}
+    \item ISwordMovement
+      \begin{itemize}
+        \item Jednoduché rozhraní, exposuje jenom to, co submodul může potřebovat
+        \item šikovné ho mít pro účely mockování v unit testech a taky protože takhle jsme schopní mezi SwordMovement a jeho komponenty nacpat dekorátor (kterej se tváří jako jediná aktivní komponenta, původní komponenty si ukradne pro sebe, sám se stará o správu toho, která je aktivní, a místo oficiálního SwordMovementu do nich injectne sebe) - takhle se dá např. elegantně nahrávat rozkazy pro pohyb meče (využijeme v \ref{knightEnemySubsection})
+        \item věci, které exposuje: SwordDescriptor popisující meč, ISwordInput, Transform sword wieldera, metodu MoveSword()
+      \end{itemize}
+    \item Správu toho která komponenta je aktivní jsme enkapsulovali do třídy ScriptSubmodulesContainer -> dekorátor mezi SwordMovementem a jeho Submodulama se dá napsat celkem bez námahy
+    \item Konfigurace submodulů z editoru - list párů klávesa-submodul ; submodule picker má dropdown, kde můžeme vybírat ze všech typů dědících ze SwordMovement.Submodule a pro vybraný typ se pak zobrazí defaultní picker - neskonalé díky: \href{https://github.com/lordconstant/SubclassPropertyDrawer}{lordconstant}
+  \end{itemize}
+\item \textbf{Metoda SwordMovement.MoveSword()} \label{swordMovementMoveSwordImplementationSubsection}
+  \begin{itemize}
+    \item vstupy: anchorPoint (poloha meče) + swordDirection (směr kam je namířený) + upDirection (směr nahoru - podle něj se počítá natočení kolem vlastní osy) + holdingForce (faktor síly držení)
+    \item podle směru namíření a směru nahoru se nastaví cílová rotace mečového jointu
+      \begin{itemize}
+        \item stačí podle nich spočítat cílovou rotaci a tu nastavit jako targetRotation ConfigurableJointu (spočítat jí je ale netriviální problém - viz \ref{howToSetJointsTargetRotationSection})
+      \end{itemize}
+    \item nastavení polohy meče podle vyžádané cílové polohy...
+      \begin{itemize}
+        \item ConfigurableJoint podporuje stejně jako targetRotation i targetPosition - ta se ale při testování zdála nestabilní (čas od času meč odskočil 10 metrů vedle)
+        \item ConfigurableJoint má property connectedAnchor - pozice místa kam je předmět jointem ukotvený, relativní vůči rigidbody ke kterému je joint ukotvený - jeho změnou můžeme efektivně mečem pohybovat
+        \item potřeba nastavit Joint.autoConfigureConnectedAnchor = false
+        \item chceme plynulý pohyb konzistentní rychlostí VS Joint.connectedAnchor se dá jenom natvrdo nastavit, neexistuje žádný targetConnectedAnchor 
+        \item DOTween nejde použít (cílová pozice connectedAnchoru se potenciálně mění každý snímek - DOTween je stavěný na to, že cíl je známý od začátku a nemění se)
+        \item řešení - vést si prostě target hodnotu a každý snímek connectedAnchor posunout o (target - currentConnectedAnchor) * deltaTime * speedFactor /*nastavitelný z editoru*/
+        \item celou tuhle logiku jsme enkapsulovali do třídy RetargetableInterpolator - ta běží na pozadí jako korutina a jenom nastavujeme její target hodnotu
+      \end{itemize}
+    \item faktor síly držení
+      \begin{itemize}
+        \item důvod: někdy je správně defaultní síla, jakou hráč meč drží, někdy (modul blokování) ale např. potřebujeme, aby byl meč drženej tak silně, že rána druhého meče ho nedokáže srazit dolů
+        \item na začátku si uložíme původní Joint.slerpDrive.positionSpring - nastavení faktoru síly držení znamená kolikanásobek téhle původní hodnoty se má začít používat
+        \item plynulá změna - interpolujeme stejně jako Joint.connectedAnchor
+        \item volitelný parametr - když není, bere se to jako by byla dodána hodnota 1 (-> 1-násobek původní síly)
+      \end{itemize}
+  \end{itemize}
+
+\end{itemize}
 
 \subsection{Animace šermíře} \label{swordsmanAnimationSubsection}
 \begin{itemize}

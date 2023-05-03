@@ -197,13 +197,13 @@ Veškeré hodnoty cílových pozic, rotací apod. nejsou udávány v lokálních
 
 Velkým tématem, které je u jointů třeba řešit, je \textbf{stabilita}. Ne vždy je možné zajistit, aby všechny vztahy skrze množinu jointů definované mohly být splněny najednou\footnote{Nechť například čtenář zkusí připojit objekt ke dvěma různým kinematickým tělesům a ty vzdalovat opačným směrem.}, rovněž mnoho optimalizací umožňujících dobrý výkon stabilitě nepřidává. Nestandardní situace zcela jistě nastane, proto je joint vybaven řadou parametrů, skrze které lze její průběh konfigurovat. Najdeme zde např. pole \textbf{massScale} a \textbf{connectedMassScale} - to jsou zjednodušeně násobiče pro síly, které jsou předávány z našeRigidbody na connectedBody a obráceně. Další je flag \textbf{enablePreprocessing} - ten zkrátka dokumentace doporučuje vypnout, pokud dochází k výrazné nestabilitě. Nakonec máme \textbf{ProjectionMode} - nastavíme-li na cokoliv jiného než defaultní None, naše rigidbody bude v případě nemožnosti splnit nároky jointu na svou správnou pozici přesunuto násilnou nefyzikální cestou. 
 
-\subsection{Stabilita simulace}
+\subsection{Stabilita simulace} \label{physicsIntroSimulationStabilitySubsection}
 
 Problémy se stabilitou simulace se velmi výrazně projevují u jointů, jde však o velký problém, na který není těžké narazit na mnoha dalších místech. Jeho jádro tkví přirozeně ve faktu, že primárním cílem fyzikálního systému, kterému se všechny ostatní musí podřídit, je \textbf{schopnost běhu v reálném čase}. Veškeré prováděné výpočty tedy z principu věci nutně vytvářejí jen velmi hrubou, i když pro mnoho účelů dostatečnou aproximaci reality.
 
 Jednou z příčin, kterou jsme již nastínili, je \textbf{krokovaný charakter simulace}, jež podporuje výskyt úkazů jako je tunelování. Avšak i kdyby výkon umožňoval řádově zvýšit počet kroků vykonaných na jednotku času, problém by nezmizel, pouze by se amplifikoval efekt jiného ze zdrojů nestability, kterým je \textbf{nepřesnost čísel s plovoucí desetinnou čárkou}, jež jsou k výpočtům používány. I v současných podmínkách, pokud necháme dlouho běžet jedinou scénu, není problém po několika hodinách začít pozorovat různá nedefinovaná chování způsobená hromaděním zaokrouhlovací chyby.   
 
-Dalším faktorem jsou \textbf{řešičky}, pomocí kterých jsou počítány síly potřebné k řešení kolizí a uspokojení požadavků jointů. Algoritmy v nich používané jsou v zájmu výkonu aproximativní a vykonávané s nízkým počtem iterací.
+Dalším faktorem jsou \textbf{řešičky} (tzv. constraint solvers), pomocí kterých jsou počítány síly potřebné k řešení kolizí a uspokojení požadavků jointů. Algoritmy v nich používané jsou v zájmu výkonu aproximativní a vykonávané s nízkým počtem iterací.
 
 Rovněž nepomáhá, že některé chyby \textbf{lidského faktoru} (např. při rozmisťování primitivních colliderů) mohou být špatně rozlišitelné od chyb plynoucích z nestability simulace. 
 
