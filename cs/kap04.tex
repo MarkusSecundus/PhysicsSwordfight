@@ -129,6 +129,12 @@ Také jsme vytvořili abstrakci pro uživatelský vstup (rozhraní ISwordInput) 
 Celý náš systém jsme nakonec protkali systémem zranění. Ten je dle našeho návrhu velmi jednoduchý, ale poskytuje značnou úroveň rozšířitelnosti. Není problém, aby různé části těla postavy (oblečené do různé části zbroje) vyhodnocovaly zranění různým způsobem. Zbraní pak může být naprosto jakákoliv entita schopná na části zbroje volat metodu ProcessAttack(), nejsme tedy nutně omezeni pouze na zraňování působením fyzikálních sil.
 
 
+%------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+ % xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx %
+%------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+
+
+
 \section{Schéma ovládání} 
 
 Rozhraní, skrze která budou jednotlivé komponenty herního systému komunikovat mezi sebou, již máme. Nyní se zaměřme na rozhraní, skrze které s nimi bude komunikovat uživatel.
@@ -180,7 +186,7 @@ Provedeme tedy experimentální implementaci s její pomocí, tu otestujeme, a v
 
 \pagebreak
 
-\subsection{Ovládání meče - moduly}
+\subsection{Ovládání meče - moduly} \label{interfacesSwordMovementModulesSubsection}
 
 Nyní tedy náš systém dovoluje sekat mečem podobně dobře jako \acl{DbtS}. Sekání však zdaleka není jediný typ úkonu, který s mečem má smysl vykonávat. Je tedy nějaký způsob, jak náš současný návrh zobecnit, aby podporoval i další typy pohybu?
 
