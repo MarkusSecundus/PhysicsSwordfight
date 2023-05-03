@@ -37,7 +37,7 @@ Zodpovědnou za pohyb hráče a kamery stanovíme komponentu \textbf{SwordsmanMo
 
 Jedním z dětí šermířského objektu bude \textbf{kamera}, která se otáčí za šermířovým pohledem. Avšak uzurpovat pro sebe skutečnou herní kameru není vhodné - v případě šermířovy smrti by pak kamera rovněž byla zničena a hra by se dostala do nekonzistentního stavu. Navíc nechceme, aby kameru ovládali nepřátelští šermíři. Místo skutečné kamery tedy budeme otáčet a polohovat její maketu - poslouží prázdný objekt s komponentou Transform - při inicializaci šermíře volitelně na skutečnou kameru umístíme jednoduchý skript, který bude jejich pozice synchronizovat.
 
-Dalším dítětem šermířského objektu bude šermířův detailní animovaný model. Na něm bude umístěna soustava colliderů určených ke kolizi s nepřátelskými zbraněmi. Rovněž ponese komponentu \textbf{SwordsmanBodyProceduralAnimation} zodpovědnou za procedurální animaci šermířových rukou - aby se kosmeticky tvářily držet meč\footnote{Meč reálně držený v šermířových rukou by zkomplikoval náš návrh, umocnil nestabilitu fyzikální simulace a nepřinesl by nám mnoho benefitů - viz \ref{swordMovementMoveSwordImplementationSubsection}.}.
+Dalším dítětem šermířského objektu bude šermířův detailní animovaný model. Na něm bude umístěna soustava colliderů určených ke kolizi s nepřátelskými zbraněmi. Rovněž ponese komponentu \textbf{SwordsmanBodyProceduralAnimation} zodpovědnou za procedurální animaci šermířových rukou - aby se kosmeticky tvářily držet meč\footnote{V ranném testováním jsme zjistili, že meč reálně držený v šermířových rukou by značně zkomplikoval náš návrh, umocnil nestabilitu fyzikální simulace a nepřinesl by nám mnoho benefitů.}.
 
 
 \subsection{Meč} 
