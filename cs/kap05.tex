@@ -314,20 +314,38 @@ Instrukce k pohybu na konkrétní pozici získává meč od modulů své kompone
 
 \subsection{Animace šermíře} \label{swordsmanAnimationSubsection}
 
+Šermíře jsme si již navrhli jako kapsli, jež je schopna se působením fyzikálních sil pohybovat herním prostředím a ukotvit k sobě meč. Taková reprezentace je zcela v pořádku z programátorského hlediska, pro hráčův vizuální dojem však není ideální.
 
-\begin{itemize}
-  \item detailní model šermíře.. klasický bone rig (SkinnedMeshRenderer vykresluje, vedle něj je hierarchie transformů - kosti), zahrnuje basic animaci dýchání vytvořenou v Blenderu
-  \item není problém přidat víc animací, SwordsmanMovement pak bude muset komunikovat s animatorem a říkat mu co za animaci má hrát
-  \item meč.. ovládaný fyzikálním systémem, může se hýbat dost libovolně VS ruce hráče fyzikálně simulované nejsou
-  \item potřebujeme v postprocessu zařídit, aby to vypadalo, že ruce meč drží
-  \item stanovili jsme 2 kontrolní body na meči - pozice držení pro pravou a levou ruku - uvedené ve SwordDescriptoru
-  \item posledních pár verzí Unity podporuje package \href{https://docs.unity3d.com/Packages/com.unity.animation.rigging@1.3/manual/index.html}{Animation Rigging} - s ním je cca triviální tohle zařídit
-  \item k detailnímu modelu šermíře jsme přidali procedurální Rig z tohoto package
-  \item na každé z rukou je nastavená TwoBoneIK constraint (začíná UpperArm, končí Hand) + Multi-Aim Constraint (na kosti Hand)
-  \item skript SwordsmanBodyProceduralAnimation - každý snímek nastaví target pozici IK constrainty na místo na handlu, co má držet; target Multi-Aimu dá někam do dáli aby ruka zaručeně ukazovala stejným směrem co paže 
-  \item problém... nestabilní undefined behavior když je ruka kratší než vzdálenost k handlePointu
-  \item řešení - vlastní constraint: RigToExtendSwordsmanArmsToReachTheSword - spočítá celkovou délku ruky a prodlouží ji (vynásobí lokální pozice jednotlivých kostí) tak, aby vždycky dosáhla na target pozici (s mírným přesahem, který se nastaví z editoru) - vypadá mírně creepy, ale je stabilní a dobře předává informaci pozorovateli
-\end{itemize}
+Proto jsme tedy v programu Blender \cite{Blender} vytvořili 3D model, který více připomíná humanoidního šermíře. V souladu se standardními postupy jsme mu vytvořili kostru a za její pomoci vytvořili velmi jednoduchou animaci dýchání. Následně jsme model importovali do Unity a umístili mezi potomky šermířského objektu.
+
+Po správném napolohování tohoto detailního těla uvnitř šermířského objektu náš šermíř má adekvátní grafickou reprezentaci, která se pohybuje spolu s ním a je z ní patrné, na kterou stranu je šermíř obrácený. Nyní bychom mohli i přidat animace pro chůzi apod., mezi kterými by mohl přepínat \textit{SwordsmanMovement} v závislosti na aktuálně vykonávaném pohybu - manuální tvorba velkého množství animací však není cílem této práce, omezili jsme se tedy na cyklický běh animace dýchání. 
+
+Detailní tělo dosud figuruje jako čistě kosmetický prvek, který se nijak neúčastní fyzikální simulace. Pokud bychom to takto ponechali, nepovede to k optimálnímu hernímu zážitku - hráč chce pravděpodobně protivníka zasahovat mečem do jeho těla, ne do jakési neviditelné obklopující kapsle. Na jednotlivé kosti\footnote{Rozmístěním colliderů na odpovídající kosti zaručíme, že se při animaci budou pohybovat korektně spolu s šermířovým modelem.} šermířova těla jsme tedy rozmístili komplexní systém colliderů - viz obr. \ref{obr05:swordsmanDetailedColliders}. Kolizní vrstvy jsme nakonfigurovali tak, aby tyto collidery kolidovaly pouze s meči ostatních šermířů, pro interakci s prostředím ponecháváme původní kapsli (té navíc samozřejmě vypneme kolize s meči). 
+
+\begin{figure}[ht]\centering
+  \center
+  \includegraphics[width=90mm]{../img/swordsmanBodyColliders.png}
+  \caption{3D model šermíře s collidery rozmístěnými na kostech}
+  \label{obr05:swordsmanDetailedColliders}
+\end{figure} 
+
+Jednotlivými animacemi pro pohyb se zaobírat nebudeme, co však je zajímavým tématem, je zaručit, aby šermířovy ruce držely meč - ten se může pohybovat naprosto libovolně, předpřipravené animace tedy není možné použít. 
+
+Zde nám pomůže knihovna Animation Rigging \cite{AnimationRigging}, která byla do Unity představena v nedávných letech. Ta nám poskytuje dodatečnou programovatelnou vrstvu nad vestavěným animačním systémem, skrze kterou můžeme animované objekty ovlivňovat. Najdeme zde mnoho mnoho již předpřipravených komponent, další lze vytvořit jako vlastní skripty.
+
+Těžkou část práce za nás vykonala předpřipravená komponenta \textbf{TwoBoneIKConstraint}. Ta bere na vstupu bod značící cílovou pozici a pro řetězec tří navazujících kostí vypočítá pomocí algoritmu FABRIK \cite{FabrikSolverIK} polohování, které se tváří korektně z hlediska lidské anatomie, zachovává délku kostí a poslední z kostí se při něm nalézá v cílovém bodě. V našem případě oním cílovým bodem je bod, který jsme pro danou ruku vyznačili na rukojeti meče a řetězcem kostí je rameno -> loket -> dlaň.
+
+Pro každou šermířovu ruku jsme tedy vytvořili jednu tuto constraint. Na šermířovo tělo jsme následně umístili komponentu \textit{SwordsmanBodyProceduralAnimation}, jejímž úkolem je tyto constraints updatovat dle bodů získanýmch ze \textit{SwordDescriptoru}. 
+
+Výsledek fungoval velmi dobře - šermířovy ruce skutečně meč na příslušných místech držely. Problém však nastal, pokud se meč ocitl příliš daleko mimo jejich dosah - v takovém případě nastávalo nedefinované chování. K vyřešení tohoto problému jsme tedy napsali dle instrukcí v dokumentaci vlastní constraint \textit{ExtendSwordsmanArmsToReachTheSwordConstraint}, která běží před TwoBoneIKConstraint a jednoduše kosti prodlouží, aby na cílovou pozici vždy dosáhly.
+
+
+\begin{figure}[ht]\centering
+  \center
+  \includegraphics[width=80mm]{../img/swordsmanProceduralAnimation.png}
+  \caption{Šermíř držící meč}
+  \label{obr05:swordsmanProceduralAnimation}
+\end{figure} 
 
 
 \subsection{Počítání zranění}
