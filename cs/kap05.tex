@@ -7,7 +7,7 @@ V této kapitole zběžně představíme, jak jsme celkově při implementaci po
 Podrobnou programátorskou dokumentaci k jednotlivým komponentám psanou v anglickém jazyce lze nalézt v příloze. Zvolili jsme pro ni standardní formát dokumentačních komentářů exportovaných do souboru XML, protože ten podporuje pohodlnou integraci s IDE (např. použití v našeptávači).
 
 \subsubsection*{Závislosti}
-Naše řešení používá několik externích knihoven. S tvorbou kosmetických efektů vypomohla knihovna DOTween \cite{DoTween}. Dále Math.NET Numerics \cite{MathDotNetNumerics} poskytlo stabilní a dobře testovaný nástroj k řešení soustav lineárních rovnic. Repozitoř SubclassPropertyDrawer \cite{SubclassPropertyDrawer} umožnila pohodlnou editaci jednotlivých SwordMovement.Modules v editoru. 
+Naše řešení používá několik externích knihoven. Pro procedurální animaci šermířova modelu jsme využili balíček AnimationRigging \cite{AnimationRigging}. S tvorbou dalších kosmetických efektů vypomohla knihovna DOTween \cite{DoTween}. Dále Math.NET Numerics \cite{MathDotNetNumerics} poskytlo stabilní a dobře testovaný nástroj pro řešení soustav lineárních rovnic. TextMesh Pro \cite{TextMeshPro} pomohlo při tvorbě prvků GUI. Repozitoř SubclassPropertyDrawer \cite{SubclassPropertyDrawer} umožnila pohodlnou editaci jednotlivých SwordMovement.Modules v editoru. 
 
 Dále je třeba poděkovat uživatelům unity fóra \cite{InvertReverseUIMask}, které pomohlo s implementací grafické reprezentace healthbaru.
 
@@ -348,7 +348,9 @@ Výsledek fungoval velmi dobře - šermířovy ruce skutečně meč na příslu�
 \end{figure} 
 
 
-\subsection{Počítání zranění}
+\subsection{Systém zranění}
+
+
 \begin{itemize}
   \item Cíl... být tak jednoduché jak jenom jde, ale myslet na rozšiřitelnost do budoucnosti
   \item \textbf{Damageable}
