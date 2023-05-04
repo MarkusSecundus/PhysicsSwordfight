@@ -7,7 +7,7 @@ V této kapitole nejprve čtenáři představíme objektový návrh, který bude
 
 \section{Objektový návrh}
 
-Chceme vytvořit akční hru zaměřenou na boj s mečem. Základními požadavky tedy je, aby hráč mohl chodit po herním světě, máchat svou zbraní a tím zraňovat další entity. Takovými entitami může být víceméně cokoliv - např. trénovací panák nebo nosný trám nepřátelské věže - avšak bylo by pěkné, kdybychom umožnili, aby jedním z typů nepřátel byla i počítačem řízená verze hráčské postavy.
+Chceme vytvořit akční hru zaměřenou na boj s mečem. Základními požadavky tedy je, aby hráč mohl chodit po herním světě, máchat svou zbraní a tím zraňovat další entity. Takovými entitami může být víceméně cokoliv - např. trénovací panák nebo nosný trám nepřátelské věže - avšak bylo by pěkné, kdybychom umožnili, aby jedním z typů nepřátel byl i počítačem řízený ekvivalent hráčské postavy.
 
 \begin{figure}[p]\centering
     \center
@@ -56,7 +56,7 @@ Seznam modulů lze konfigurovat z editoru. Každá instance SwordMovement definu
 
 Metoda MoveSword(), kterou řidicí komponenta modulům poskytuje, bere jako argument strukturu, která udává cílovou polohu, natočení meče a rovněž dodatečné volitelné parametry - např. jakou silou má meč být držen. Vlastní pohyb meče do tohoto stavu je plně v režii komponenty SwordMovement - ta pouze ručí za to, že pohyb bude plynule rozprostřený v průběhu času a bude se chovat standardním způsobem bez ohledu na to, s jakou četností je MoveSword() voláno (ať již každý FixedUpdate či třeba jen jednou za sekundu).
 
-\subsubsection*{Model meče}
+\subsubsection*{Model meče} \label{interfacesSwordModelSubsubsection}
 
 Rovněž je třeba stručně zmínit samotný model meče. Ten zahrnuje jak mesh, který se bude vykreslovat na obrazovce, tak fyzikální collidery. V herní logice budeme potřebovat s mečem pracovat zjednodušeně jako s množinou jeho význačných bodů (špička a pata čepele, začátek a konec rukojeti apod.).
 
@@ -169,7 +169,7 @@ Nástroj ovládání máme stanovený, jaký se tedy nabízí formalizmus pro ma
 
 \acl{DbtS} umožňuje hráči velmi dobře sekat mečem. Jakým přesným způsobem mapování vykonává, to však není možné bez přístupu ke zdrojovému kódu zjistit. Pokusme se nyní vlastní cestou dobrat k podobnému výsledku.
 
-Po krátké meditaci nad metodami, které nám pro zpracování dat z myši poskytuje Unity (viz \ref{unityInputExplanationSubsection}), jsme se rozhodli, že dobrým krokem pravděpodobně bude vystřelit z pozice kurzoru paprsek do herního světa. Tento paprsek bychom následně mohli protnout skrze nějaký jednoduchý geometrický útvar, který jsme schopni hráči dobře vizualizovat. 
+Po krátkém zamyšlení nad metodami, které nám pro zpracování dat z myši poskytuje Unity (viz \ref{unityInputExplanationSubsection}), jsme se rozhodli, že dobrým krokem pravděpodobně bude vystřelit z pozice kurzoru paprsek do herního světa. Tento paprsek bychom následně mohli protnout skrze nějaký jednoduchý geometrický útvar, který jsme schopni hráči dobře vizualizovat. 
 
 Kdybychom pro jednoduchost prohlásili, že poloha rukojeti meče je nehybná, získaný průnik můžeme interpretovat jako pozici, kam má čepel meče směřovat. Pohybem kurzoru plynule zleva doprava by pak meč měl vykonat sek - rovněž zleva doprava. Plynulost a finesa, s jakými sek bude proveden, závisí na útvaru, který protínáme. 
 
@@ -294,7 +294,7 @@ V praxi tedy místo jediného \textit{Bodu nápovědy} definujeme jejich množin
 
 \bigbreak
 
-Po těchto drobných úpravách algoritmu a ručním vyladění bodů nápovědy a průsečíkového útvaru získáváme mod, s kterým lze blokovat údery vedené z široké škály směrů. Jakmile hráč získá trochu cviku, je navíc ovládání vcelku intuitivní.
+Po těchto drobných úpravách algoritmu a ručním vyladění bodů nápovědy (a průsečíkového útvaru, který představíme vzápětí) získáváme mod, s kterým lze blokovat údery vedené z široké škály směrů. Jakmile hráč získá trochu cviku, je navíc ovládání vcelku intuitivní.
 
 \subsection{Ovládání meče - výsledek}
 
@@ -302,7 +302,7 @@ Ovládání založené na kulové ploše jsme implementovali. Jak pro mod sekán
 
 Potřebujeme tedy najít nějaké zobecnění, které zachová veškeré pěkné vlastnosti originální metody v typickém případě, ale dovolí nám podchytit veškeré nevhodné případy okrajové.
 
-Pro vyřešení tohoto problému jsme strávili dlouhé dny živelným experimentováním. Takto vypadá výsledek, ke kterému jsme se dobrali:
+Pro vyřešení tohoto problému jsme strávili dlouhý čas živelným experimentováním. Takto vypadá výsledek, ke kterému jsme se dobrali:
 
 \subsubsection*{Řešení} \label{resultSwordControlsSolutionSubsubsection}
 
@@ -316,7 +316,7 @@ Nejdůležitějším z nich je \textbf{díra}. To je odkaz na jinou RayIntersect
 
 Nakonec jsme díru zobecnili ještě více - místo striktního je/není v díře uvažujeme poměr mezi vzdáleností bodu průniku od středu díry a jejím poloměrem (tedy číslo v intervalu [0;1] pokud bod leží v díře, větší než 1 pokud v díře neleží) - tuto hodnotu použijeme jako argument pro vyhodnocení uživatelsky konfigurovatelné 1D interpolační křivky\footnote{Třída AnimationCurve vestavěná v Unity}, její výsledek následně stanovíme jako váhu průniku. Tato varianta umožňuje vše co ta předchozí (stačí dodat křivku s hodnotou 0 pro interval [0;1] a hodnotou 1 pro zbytek), avšak nově jsme schopni unvitř složité soustavy kulových ploch zajistit na hranicích mezi jednotlivými prvky plynulé přechody - váha jedné plochy pozvolna upadá zatímco váha té druhé pozvolna stoupá.
 
-Dalším volitelnám parametrem je \textbf{falešný střed} - pokud ten nastavíme, výpočet průniku se nijak neovlivní, v návratové hodnotě však místo skutečného středu kružnice bude udána poloha tohoto bodu. Střed kružnice slouží v některých modech ovládání jako dodatečný orientační bod. Díky tomuto parametru jsme schopni složit dohromady kružnice s velmi se lišícími velikostmi a zajistit, aby se všechny tvářily jako pouhá součást jednoho celkového útvaru. 
+Dalším volitelnám parametrem je \textbf{falešný střed} - pokud ten nastavíme, výpočet průniku se nijak neovlivní, v návratové hodnotě však místo skutečného středu kulové plochy bude udána poloha tohoto bodu. Střed kružnice slouží v některých modech ovládání jako dodatečný orientační bod. Díky tomuto parametru jsme schopni složit dohromady kružnice s velmi se lišícími velikostmi a zajistit, aby se všechny tvářily jako pouhá součást jednoho celkového útvaru. 
 
 
 \subsubsection*{Zhodnocení}
