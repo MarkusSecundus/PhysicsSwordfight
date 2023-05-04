@@ -301,6 +301,11 @@ Správu životního cyklu modulů jsme oddělili do samostatné třídy \textit{
 Chceme-li tedy vytvořit dekorátor, který se vtěsná mezi SwordMovement a jeho moduly, stačí, aby dědil ze SwordMovement.Module a implementoval rozhraní \textit{ISwordMovement}. Původnímu SwordMovement nahradí jeho instanci \textit{ScriptSubmoduleListManager} za novou, ve které se nachází pouze on sám jako defaultní modul, a tu původní instanci ukradne pro sebe - jejím prostřednictvím může nyní originální moduly updatovat sám, aniž by se z jejich pohledu cokoliv změnilo.
 
 
+\subsubsection*{Shrnutí}
+
+Meč je šermířův nástroj interakce s okolím. Šermíř ho drží v jednom jeho daném bodě - kolem toho může meč rotovat, jeho přesunem se přesunuje meč v prostoru. Toto je umožněno použitím komponenty \textit{ConfigurabeJoint} - především rotační pohyb je díky ní plynulý a fyzikálně realistický. 
+
+Instrukce k pohybu na konkrétní pozici získává meč od modulů své komponenty SwordMovement. Pro ty se nám podařilo umožnit, aby je mohl uživatel konfigurovat z editoru se značnou flexibilitou.
 
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
  % xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx %
@@ -308,6 +313,8 @@ Chceme-li tedy vytvořit dekorátor, který se vtěsná mezi SwordMovement a jeh
 
 
 \subsection{Animace šermíře} \label{swordsmanAnimationSubsection}
+
+
 \begin{itemize}
   \item detailní model šermíře.. klasický bone rig (SkinnedMeshRenderer vykresluje, vedle něj je hierarchie transformů - kosti), zahrnuje basic animaci dýchání vytvořenou v Blenderu
   \item není problém přidat víc animací, SwordsmanMovement pak bude muset komunikovat s animatorem a říkat mu co za animaci má hrát
