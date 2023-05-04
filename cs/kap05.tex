@@ -141,7 +141,7 @@ Implementovali jsme tedy vlastní komponentu \textit{TriggerActivityInfo}, kter�
 
 Nyní je hráč schopen se pohybovat po herním světě, stále však zbývá zajistit, aby mohl svět \textbf{vizuálně vnímat}. K tomuto účelu nám Unity poskytuje objekt \textbf{kamery} - ta zkrátka definuje bod, ze kterého se scéna vykresluje na obrazovku. Natočení jejího Transformu určuje natočení pohledu. Chtěli bychom tedy, aby se tato kamera nacházela na vhodném místě zhruba v oblasti šermířových očí. Také by bylo příhodné, aby hráč byl schopen kontrolovat její rotaci - rozhlížet se.
 
-Řešení je jednoduché - kameru jsme zkrátka umístili v objektové hierarchii mezi děti šermířova herního objektu, napolohovali jsme ji na příhodné místo u jeho očí, a nyní se při šermířově pohybu přesunuje adekvátně spolu s ním. 
+Řešení je jednoduché - kameru jsme umístili v objektové hierarchii mezi děti šermířova herního objektu, napolohovali jsme ji na příhodné místo u jeho očí, a nyní se při šermířově pohybu přesunuje adekvátně spolu s ním. 
 
 Dále chceme hráči umožnit rozhlížení se - to znamená měnit rotaci kamery v jejích osách X a Y. Obdobně jako u pohybu, zde rovněž pro každou osu rotace nabídneme uživateli, aby nakonfiguroval osu vstupu a rychlost. Následně voláním ISwordInput.GetAxis(), vynásobením výsledku s rychlostí a s Time.deltaTime\footnote{Pohyb kamery je kosmetickou záležitostí, která nijak nesouvisí s fyzikou - narozdíl od pohybu šermíře jej tedy nevykonáváme z FixedUpdate, ale z Update.} získáme úhel, který jednoduše přičteme k eulerovské reprezentaci rotace na Transformu kamery\footnote{V praxi její eulerovský úhel nečteme v každém snímku znovu - přečteme ho jednou při inicializaci a tuto jeho verzi "nakešovanou" jako 3D vektor následně považujeme za zdroj pravdy - doporučený postup dle \href{https://docs.unity3d.com/2022.2/Documentation/ScriptReference/Quaternion-eulerAngles.html}{\underline{oficielní dokumentace}} \cite{Unity}}. Aby rozhlížení nebylo příliš divoké, pro každou osu ještě přidáme uživatelsky konfigurovaný minimální a maximální úhel.
 
@@ -198,7 +198,7 @@ Najdeme zde dvě hlavní komponenty fyzikálního systému - nekinematické Rigi
 
 \textbf{Rigidbody} jsme stanovili váhu 1.5 (typická váha jedenapůlručního meče), později jsme došli k objevu, že pro optimální hráčský zážitek je třeba vypnout gravitaci a ručně nastavit těžiště a \textit{intertiaTensor} - o tom zevrubněji v \ref{swordParameterTweaksSection}.
 
-\textbf{ConfigurableJoint} meči velmi přímočaře poskytl schopnost být držen šermířem - stačí zkrátka nastavit šermířovo Rigidbody jako \textit{connectedBody} jointu. \textit{Anchor} jsme umístili doprostřed rukojeti - to je bod, ve kterém šermíř meč "drží". 
+\textbf{ConfigurableJoint} meči velmi přímočaře poskytl schopnost být držen šermířem - stačí nastavit šermířovo Rigidbody jako \textit{connectedBody} jointu. \textit{Anchor} jsme umístili doprostřed rukojeti - to je bod, ve kterém šermíř meč "drží". 
 
 Z objektového návrhu již známe komponentu \textbf{SwordMovement}, jejímž úkolem je řídit rigidbody a joint tak, aby se meč pohyboval způsobem odpovídajícím hráčskému vstupu.
 
@@ -243,7 +243,7 @@ Nejprve se podívejme odděleně na rotační složku pohybu. Tu bylo možné po
 
 Na jointu bylo pouze třeba z editoru nakonfigurovat nenulový \textit{angularDrive} a všechny rotační stupně volnosti nastavit jako \textit{Free}. Následně již skript může přepisovat pole \textit{joint.targetRotation} a meč se sám silou jointu bude plynule pohybovat na danou pozici.
 
-Této metodě nečiní problém ani fakt, že je cílová pozice každý snímek novým voláním MoveSword() přepsána - každý snímek zkrátka joint na meč aplikuje sílu posunující jej k té zrovna aktuální \textit{targetRotation}. 
+Této metodě nečiní problém ani fakt, že je cílová pozice každý snímek novým voláním MoveSword() přepsána - každý snímek joint na meč aplikuje sílu posunující jej k té zrovna aktuální \textit{targetRotation}. 
 
 Jediný větší problém, na který jsme zde narazili, je abnormální souřadnicový systém, který ConfigurableJoint pro targetRotation používá - převod z klasických světových souřadnic, které nám předala MoveSword(), je složitější záležitost a věnujeme mu celou sekci \ref{howToSetJointsTargetRotationSection}. 
 
@@ -255,29 +255,30 @@ Druhou složkou je lineární pohyb. Podívejme se nyní na ten.
 
 Zde jsme se pokusili, analogicky jako u rotace, pro jednotlivé stupně volnosti nastavit joint jako \textit{Free} a polohu meče kontrolovat pomocí položky \textit{targetPosition}. Narozdíl od rotace, zde se však joint choval nestabilně - pokud jsme cílovou pozici odchýlili příliš daleko od kotvícího bodu, meč začal být v nepředvídatelných intervalech surově vystřelován do dáli. Příčinu takto rozbitého chování se nám nepodařilo odhalit, pro lineární pohyb meče jsme tedy raději zvolili alternativní metodu. 
 
+Pomohla nám proměnná \textit{joint.connectedAnchor}. Ta udává pozici na těle šermíře, ke které je joint svým \textit{anchorem} ukotven. Defaultně je nastavená jako readonly - v editoru jí díky tomu joint může automaticky updatovat, aby souhlasila s nastavenou hodnotou \textit{anchor} a polohou ve světě, kam jsme meč umístili. Zapisovací práva získáme vypnutím\footnote{Vhodné je ho v editoru nechat zapnutý a vypnout jej až programaticky při inicializaci SwordMovement. Takto zachováme pohodlí při práci v editoru.} flagu \textit{joint.autoConfigureConnectedAnchor}. Nakonec je třeba nastavit všechny lineární stupně volnosti na \textit{Locked}.
 
+Zápisem do \textit{joint.connectedAnchor} jsme nyní schopni meč okamžitě přesunout na cílovou pozici. My však potřebujeme pohyb plynule rozložený v průběhu času. 
+
+Vyzkoušeli jsme několik řešení, která jsme následně zavrhli:
 \begin{itemize}
-  %\item ConfigurableJoint podporuje stejně jako targetRotation i targetPosition - ta se ale při testování zdála nestabilní (čas od času meč odskočil 10 metrů vedle)
-  \item ConfigurableJoint má property connectedAnchor - pozice místa kam je předmět jointem ukotvený, relativní vůči rigidbody ke kterému je joint ukotvený - jeho změnou můžeme efektivně mečem pohybovat
-  \item potřeba nastavit Joint.autoConfigureConnectedAnchor = false
-  \item chceme plynulý pohyb konzistentní rychlostí VS Joint.connectedAnchor se dá jenom natvrdo nastavit, neexistuje žádný targetConnectedAnchor 
-  \item DOTween nejde použít (cílová pozice connectedAnchoru se potenciálně mění každý snímek - DOTween je stavěný na to, že cíl je známý od začátku a nemění se)
-  \item řešení - vést si prostě target hodnotu a každý snímek connectedAnchor posunout o (target - currentConnectedAnchor) * deltaTime * speedFactor /*nastavitelný z editoru*/
-  \item celou tuhle logiku jsme enkapsulovali do třídy RetargetableInterpolator - ta běží na pozadí jako korutina a jenom nastavujeme její target hodnotu
-  \item z editoru nastavitelné: parametry pro interpolaci pohybu handlu meče
+  \item knihovnu DOTween - Ta neumožňuje změnit cílovou pozici jakmile tween začal
+  \item externí objekt pohybovaný skrze fyzikální systém, na jehož pozici jsme hodnotu connectedAnchoru namapovali - Při dosažení cílové pozice objekt vykazoval jitter, který se nepodařilo odbourat.
 \end{itemize}
+Řešení, které jsme nakonec použili, bylo jednoduše každý FixedUpdate hodnotu connectedAnchoru posunout o malý zlomek její cesty k cíli - takto: 
+\begin{lstlisting}[language=C, basicstyle=\fontsize{11}{13}\selectfont\ttfamily]
+  joint.connectedAnchor += AnchorSpeed *
+    (targetConnectedAnchor - joint.connectedAnchor) 
+\end{lstlisting}
+Parametr \textit{AnchorSpeed} je konfigurovaný z editoru. Vzhledem k tomu, že vše probíhá uvnitř FixedUpdate, pohyb je konzistentní.
+
+Jde o velmi triviální řešení, jež neodpovídá realistickému fyzikálnímu chování, avšak pohyb meče se jeví plynule a hráčský zážitek se nezdá výrazněji trpět.
+
 
 \subsubsection*{Síla držení meče}
 
-\begin{itemize}
-  \item faktor síly držení
-    \begin{itemize}
-      \item důvod: někdy je správně defaultní síla, jakou hráč meč drží, někdy (modul blokování) ale např. potřebujeme, aby byl meč drženej tak silně, že rána druhého meče ho nedokáže srazit dolů
-      \item na začátku si uložíme původní Joint.slerpDrive.positionSpring - nastavení faktoru síly držení znamená kolikanásobek téhle původní hodnoty se má začít používat
-      \item plynulá změna - interpolujeme stejně jako Joint.connectedAnchor
-      \item volitelný parametr - když není, bere se to jako by byla dodána hodnota 1 (-> 1-násobek původní síly)
-    \end{itemize}
-\end{itemize}
+Někdy je třeba kromě pozice meče mít kontrolu i nad způsobem, jak je meč držen. Např. v modu blokování potřebujeme, aby byl meč držen pevněji než při sekání, jinak by blokující meč byl tím sekajícím sražen na stranu (sekající se pohybuje a má tedy větší kinetickou sílu). 
+
+Sílu držení meče jsme tedy umožnili definovat spolu s polohou. Jde o volitelný parametr - pokud není dodán, meč se navrací na defaultní sílu držení (která byla z jointu přečtena při inicializaci). Implementace probíhá jednoduše změnou položky \textit{joint.slerpDrive.spring}, používáme k tomu stejnou triviální interpolaci jako pro pohyb \textit{connectedAnchoru} výše.
 
 \subsubsection*{Ladění parametrů}
 
