@@ -213,6 +213,40 @@ Velmi užitečným nástrojem je rovněž vestavěný \textbf{fyzikální debugg
 
 
 
+
+
+\section{Grafika v enginu Unity}
+
+Naše práce letmo zavadí rovněž o téma 3D grafiky a animace. Zde si tedy velmi stručně představíme základní potřebné koncepty. 
+
+\subsection{3D Model}
+
+Vykreslení herní scény je typicky vykonáváno specializovanými obvody uvnitř grafické karty. Ta vyžaduje, aby byl každý objekt definován jako množina trojůhelníkových stěn v prostoru, na které je volitelně namapovaný úsek textury (2D obrázku).
+
+Takový 3D model je typicky vytvářen ve specializovaném programu (např. Blender \cite{Blender}). Hotový model je exportován do souboru ve standardizovaném formátu (např. FBX \cite{FBXFormat}), který následně zkopírujeme do Unity. Jakmile je soubor součástí našeho projektu, stačí jej přetáhnout do scény - Unity automaticky vytvoří nový herní objekt obsahující veškeré komponenty nutné pro vykreslení modelu.
+
+\subsection{Kosti}
+
+Modelem můžeme ve scéně pohybovat klasicky skrze Transform jeho herního objektu, tím však lze přesunovat pouze celý model. Co když potřebujeme např. pohnout pouze rukou?
+
+K tomu slouží kosti. Jde o hierarchii bodů zjednodušeně znázorňující stavbu těla modelovaného objektu. Každá kost má přiřazenou množinu vrcholů 3D modelu - jakkákoliv její změna polohy se přenese i na tyto vrcholy.
+\begin{figure}[ht]\centering
+    \center
+    \includegraphics[width=90mm]{../img/boneAnimationDemo.png}
+    \caption{Model rytíře s kostmi - póza (nalevo) VS standardní postoj}
+    \label{obr03:animationBones}
+\end{figure} 
+K sofistikovanějšímu pohybu modelem nám tedy stačí v modelovacím programu vytvořit tyto kosti, zahrnout je do exportovaného 3D modelu a v průběhu hry měnit jejich polohy. Unity nám toto umožní přímočaře - po importu modelu do scény v něm kosti najdeme jako obyčejnou hierarchii prázdných herních objektů. Doplňovat je bude druhý podobjekt s komponentou \textit{SkinnedMeshRenderer}, která zajišťuje samotné vykreslení a ví, jak při něm model podle kostí deformovat.
+
+\subsection{Animace}
+
+V typické hře je třeba tímto způsobem vykonávat napříč velkým množstvím modelů velmi složité pohyby, které jsou předpřipravené a ručně vyladěné. Modelovací nástroje jsou typicky vybavené pokročilým editorem pro tvorbu takovýchto animací, které lze následně rovněž exportovat a použít v Unity. V Unity najdeme pokročilý systém pro jejich přehrávání. 
+
+Základem je komponenta \textit{Animator}. Tu jednoduše umístíme na objekt animovatelného 3D modelu, nakonfigurujeme ji, a ta následně nad pohybem kostí přebere plnou kontrolu. Posíláním zpráv a upravováním animačních proměnných jsme schopni vybírat, která animace se má přehrávat, a kontrolovat některé její parametry, přímou kontrolu nad polohami kostí však ztrácíme. 
+
+V mnoha případech takovéto přehrávání předpřipravených animací postačuje, některé vizuální efekty však činí problém - např. nelze otáčet hlavu postavy za pohybujícím se objektem či polohovat samopal v rukou vojáka přesně ve směru kam hráč míří. Pro řešení takovýchto situací je nutné nad částí animace mít přímou kontrolu skrze skript - v Unity nám vrstvu, která umožňuje tuto tzv. \textit{procedurální animaci}, poskytuje balíček Animation Rigging \cite{AnimationRigging}.
+
+
 \section{Shrnutí}
 
 Unity je velmi vyspělý engine, který za sebou má desetiletí vývoje a s jeho pomocí bylo vytvořeno mnoho komerčně úspěšných her. Pro svou velmi přívětivou cenovou politiku a možnost kompilovat hry pro širokou škálu platforem od konzolí po mobilní zařízení se stal \textbf{oblíbeným nástrojem začínajících vývojářů a malých týmů}. Uživateli poskytuje mnoho nástrojů a knihoven, od editoru scény po subsystém pro navigaci entit v herním světě. Libovolnou další funkcionalitu lze přidat pomocí skriptů v jazyce C\#. 
