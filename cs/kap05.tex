@@ -207,30 +207,47 @@ Z objektového návrhu již známe komponentu \textbf{SwordMovement}, jejímž �
 
 Z předchozí kapitoly bychom již měli být seznámeni se strukturou komponenty \textbf{SwordMovement}. Víme tedy, že hostuje množinu modulů - ty slouží jako zdroj high-level instrukcí udávajících cílovou polohu meče. Tyto instrukce jsou SwordMovementu předávány voláním metody MoveSword().
 
-\begin{itemize}
-  \item z editoru nastavitelné: parametry pro interpolaci pohybu handlu meče
-  \item vstupy: anchorPoint (poloha meče) + swordDirection (směr kam je namířený) + upDirection (směr nahoru - podle něj se počítá natočení kolem vlastní osy) + holdingForce (faktor síly držení)
-\end{itemize}
+Této metodě je typicky předána nová pozice, od té předchozí libovolně vzdálená, každý snímek (technicky může být volána i několikrát za jeden snímek). Na meč však máme nároky, aby se pohyboval plynule bez náhlých změn rychlosti. Samotná metoda MoveSword() tedy žádný pohyb meče nevykonává - pouze v privátním stavu komponenty komponenty poznačí cílovou pozici, ke které se meč má přibližovat. Vlastní pohyb meče je pak vykonáván pravidelně každý snímek na základě aktuálně platné cílové pozice.
+
+Pozice meče má dvě složky - lineární a rotační. Interně je reprezentujeme zkrátka jako 3D vektor udávající polohu anchoru meče, a kvaternion udávající jeho rotaci kolem anchoru. Pro veřejné rozhraní metody MoveSword() jsme se však rozhodli rotaci reprezentovat formou dvou orientačních bodů - ke kvaternionům se nám zdály jako celkově přívětivější alternativa, která je navíc kompatibilní s maticovými transformacemi.
+
+\begin{figure}[ht]\centering
+  \center
+  \includegraphics[width=140mm]{../img/diagram-swordPositioning.png}
+  \caption{Diagram znázorňující kontrolní body meče}
+  \label{obr05:swordPositioningDiagram}
+\end{figure} 
+
+Argument MoveSword() má tedy tyto složky:
+\begin{enumerate}
+    \item \textbf{Poloha rukojeti} (Vektor) - poloha kam se má posunout anchor meče ve světových souřadnicích.
+    \item \textbf{Směr meče} (Vektor) - přičtením k Poloze rukojeti dostaneme bod ve světových souřadnicích, kterým má čepel meče procházet.
+    \item \textbf{Normála na čepel meče} (Vektor) - pro určení rotace meče kolem jeho osy. Kolmý na Směr meče. Obě hrany ostří čepele se budou nalézat v rovině určené Bodem rukojeti a touto normálou.   
+    \item \textbf{Síla držení} (Číslo) - udává jak pevně má meč být držen ve své pozici.
+\end{enumerate}
+
+Polohu rukojeti jsme získali přímo, kvaternion pro rotaci vypočteme vestavěnou funkcí:
+
+\begin{lstlisting}[language=C, basicstyle=\fontsize{11}{13}\selectfont\ttfamily]
+  UnityEngine.Quaterion.LookRotation(
+    forward: SmerMece,
+    upwards: NormalaNaCepelMece
+  )
+\end{lstlisting}
+
+Obě tyto hodnoty a rovněž Sílu držení poznamenáme v privátním stavu, odkud s nimi pracují mechanismy pro vykonávání pohybu.
 
 \subsubsection*{Rotační pohyb}
 
-Nejprve se podívejme odděleně na rotační složku pohybu. Tu bylo možné nechat téměř zcela v režii ConfigurableJointu.
+Nejprve se podívejme odděleně na rotační složku pohybu. Tu bylo možné ponechat téměř zcela v režii ConfigurableJointu.
 
-Bylo pouze třeba nakonfigurovat na něm z editoru nenulový angularDrive a všechny rotační stupně volnosti nastavit jako Free. Poté již stačilo pouze přepisovat jeho pole targetRotation a meč se sám silou jointu plynule pohyboval na kýženou pozici.
+Na jointu bylo pouze třeba z editoru nakonfigurovat nenulový \textit{angularDrive} a všechny rotační stupně volnosti nastavit jako \textit{Free}. Následně již skript může přepisovat pole \textit{joint.targetRotation} a meč se sám silou jointu bude plynule pohybovat na danou pozici.
 
-Této metodě nečinil problém ani fakt, že je cílová pozice každý snímek novým voláním MoveSword() přepsána - každý snímek zkrátka na meč byla aplikována síla posunující jej k té aktuální targetRotation. 
+Této metodě nečiní problém ani fakt, že je cílová pozice každý snímek novým voláním MoveSword() přepsána - každý snímek zkrátka joint na meč aplikuje sílu posunující jej k té zrovna aktuální \textit{targetRotation}. 
 
-Jediný větší problém, na který jsme zde narazili, je abnormální souřadnicový systém, který ConfigurableJoint pro targetRotation používá - metodu, jak do něj převést rotaci v klasických světových souřadnicích, kterou nám předala MoveSword(), rozebereme později v \ref{howToSetJointsTargetRotationSection}. 
+Jediný větší problém, na který jsme zde narazili, je abnormální souřadnicový systém, který ConfigurableJoint pro targetRotation používá - převod z klasických světových souřadnic, které nám předala MoveSword(), je složitější záležitost a věnujeme mu celou sekci \ref{howToSetJointsTargetRotationSection}. 
 
-Rovněž bylo třeba vyladit parametry jak na rigidbody meče (těžiště a inertiaTensor), tak nalézt vhodný angularDrive. Následně jsem však získali meč, který je schopen velmi plynulého a celkově pěkného úhlového pohybu a nečiní mu problém ani být realisticky ovlivňován kolizemi s cizími předměty (např. být sražen pod úderem nepřátelského meče) - nad mírou této jeho schopnosti navíc máme vcelku značnou kontrolu skrze konfiguraci angularDrive (čím větší spring, tím více drží v cílové pozici).
-
-Parametry, ke kterým jsme se pro optimální hráčský zážitek experimentálně dobrali, jsou tyto: 
-\begin{itemize}
-  \item \textit{rigidbody.centerOfMass} - uprostřed rukojeti (totožné s joint.anchor)
-  \item \textit{rigidbody.inertiaTensor} - (0.05, 0.05, 0.02)
-  \item \textit{joint.rotationDriveMode} - Slerp
-  \item \textit{joint.slerpDrive} - spring: 120\footnote{Pro mod blokování spring: 2400 - jinak bylo meč pro protivníka příliš jednoduché srazit na stranu}, damper: 10
-\end{itemize}
+Rovněž bylo třeba vyladit parametry jak na rigidbody meče, tak nalézt vhodný \textit{angularDrive}. Následně jsem však získali meč, který je schopen velmi plynulého a celkově pěkného úhlového pohybu a nečiní mu problém ani být realisticky ovlivňován kolizemi s cizími předměty (např. být sražen pod úderem nepřátelského meče) - nad mírou této jeho schopnosti navíc máme vcelku značnou kontrolu skrze konfiguraci \textit{angularDrive} (čím větší \textit{spring}, tím více drží v cílové pozici).
 
 \subsubsection*{Lineární pohyb}
 
@@ -247,9 +264,10 @@ Zde jsme se pokusili, analogicky jako u rotace, pro jednotlivé stupně volnosti
   \item DOTween nejde použít (cílová pozice connectedAnchoru se potenciálně mění každý snímek - DOTween je stavěný na to, že cíl je známý od začátku a nemění se)
   \item řešení - vést si prostě target hodnotu a každý snímek connectedAnchor posunout o (target - currentConnectedAnchor) * deltaTime * speedFactor /*nastavitelný z editoru*/
   \item celou tuhle logiku jsme enkapsulovali do třídy RetargetableInterpolator - ta běží na pozadí jako korutina a jenom nastavujeme její target hodnotu
+  \item z editoru nastavitelné: parametry pro interpolaci pohybu handlu meče
 \end{itemize}
 
-\subsubsection*{Další parametry držení meče}
+\subsubsection*{Síla držení meče}
 
 \begin{itemize}
   \item faktor síly držení
@@ -260,6 +278,17 @@ Zde jsme se pokusili, analogicky jako u rotace, pro jednotlivé stupně volnosti
       \item volitelný parametr - když není, bere se to jako by byla dodána hodnota 1 (-> 1-násobek původní síly)
     \end{itemize}
 \end{itemize}
+
+\subsubsection*{Ladění parametrů}
+
+Parametry, ke kterým jsme se pro optimální hráčský zážitek experimentálně dobrali, jsou tyto: 
+\begin{itemize}
+  \item \textit{rigidbody.centerOfMass} - uprostřed rukojeti (totožné s joint.anchor)
+  \item \textit{rigidbody.inertiaTensor} - (0.05, 0.05, 0.02)
+  \item \textit{joint.rotationDriveMode} - Slerp
+  \item \textit{joint.slerpDrive} - spring: 120, damper: 10
+\end{itemize}
+
 
 \subsubsection*{Submoduly}
 
