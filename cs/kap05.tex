@@ -329,13 +329,13 @@ Detailní tělo dosud figuruje jako čistě kosmetický prvek, který se nijak n
   \label{obr05:swordsmanDetailedColliders}
 \end{figure} 
 
-Jednotlivými animacemi pro pohyb se zaobírat nebudeme, co však je zajímavým tématem, je zaručit, aby šermířovy ruce držely meč - ten se může pohybovat naprosto libovolně, předpřipravené animace tedy není možné použít. 
+Jednotlivými animacemi pro pohyb se zaobírat nebudeme, co však je zajímavým tématem, je zaručit, aby šermířovy ruce držely meč - ten se může pohybovat naprosto libovolně, není tedy možné použít předpřipravené animace. 
 
-Zde nám pomůže knihovna Animation Rigging \cite{AnimationRigging}, která byla do Unity představena v nedávných letech. Ta nám poskytuje dodatečnou programovatelnou vrstvu nad vestavěným animačním systémem, skrze kterou můžeme animované objekty ovlivňovat. Najdeme zde mnoho mnoho již předpřipravených komponent, další lze vytvořit jako vlastní skripty.
+Zde nám pomůže knihovna Animation Rigging \cite{AnimationRigging}, která byla do Unity představena v nedávných letech. Ta nám poskytuje dodatečnou programovatelnou vrstvu nad vestavěným animačním systémem, skrze kterou můžeme animované objekty ovlivňovat. Najdeme zde mnoho již předpřipravených komponent, další lze vytvořit jako vlastní skripty.
 
-Těžkou část práce za nás vykonala předpřipravená komponenta \textbf{TwoBoneIKConstraint}. Ta bere na vstupu bod značící cílovou pozici a pro řetězec tří navazujících kostí vypočítá pomocí algoritmu FABRIK \cite{FabrikSolverIK} polohování, které se tváří korektně z hlediska lidské anatomie, zachovává délku kostí a poslední z kostí se při něm nalézá v cílovém bodě. V našem případě oním cílovým bodem je bod, který jsme pro danou ruku vyznačili na rukojeti meče a řetězcem kostí je rameno -> loket -> dlaň.
+Těžkou část práce za nás vykonala předpřipravená komponenta \textbf{TwoBoneIKConstraint}. Ta bere na vstupu bod značící cílovou pozici a pro řetězec tří navazujících kostí vypočítá pomocí algoritmu FABRIK \cite{FabrikSolverIK} polohování, které se tváří korektně z hlediska lidské anatomie, zachovává délku kostí a poslední z kostí se při něm nalézá v cílovém bodě. V našem případě oním cílovým bodem je bod, který jsme pro danou ruku vyznačili na rukojeti meče a řetězcem kostí je \textit{rameno -> loket -> dlaň}.
 
-Pro každou šermířovu ruku jsme tedy vytvořili jednu tuto constraint. Na šermířovo tělo jsme následně umístili komponentu \textit{SwordsmanBodyProceduralAnimation}, jejímž úkolem je tyto constraints updatovat dle bodů získanýmch ze \textit{SwordDescriptoru}. 
+Pro každou šermířovu ruku jsme tedy vytvořili jednu tuto constraint. Na šermířovo tělo jsme následně umístili komponentu \textit{SwordsmanBodyProceduralAnimation}, jejímž úkolem je tyto constraints updatovat dle bodů získaných ze \textit{SwordDescriptoru}. 
 
 Výsledek fungoval velmi dobře - šermířovy ruce skutečně meč na příslušných místech držely. Problém však nastal, pokud se meč ocitl příliš daleko mimo jejich dosah - v takovém případě nastávalo nedefinované chování. K vyřešení tohoto problému jsme tedy napsali dle instrukcí v dokumentaci vlastní constraint \textit{ExtendSwordsmanArmsToReachTheSwordConstraint}, která běží před TwoBoneIKConstraint a jednoduše kosti prodlouží, aby na cílovou pozici vždy dosáhly.
 
