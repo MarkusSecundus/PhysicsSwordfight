@@ -273,43 +273,34 @@ Parametr \textit{AnchorSpeed} je konfigurovaný z editoru. Vzhledem k tomu, že 
 
 Jde o velmi triviální řešení, jež neodpovídá realistickému fyzikálnímu chování, avšak pohyb meče se jeví plynule a hráčský zážitek se nezdá výrazněji trpět.
 
-
 \subsubsection*{Síla držení meče}
 
 Někdy je třeba kromě pozice meče mít kontrolu i nad způsobem, jak je meč držen. Např. v modu blokování potřebujeme, aby byl meč držen pevněji než při sekání, jinak by blokující meč byl tím sekajícím sražen na stranu (sekající se pohybuje a má tedy větší kinetickou sílu). 
 
 Sílu držení meče jsme tedy umožnili definovat spolu s polohou. Jde o volitelný parametr - pokud není dodán, meč se navrací na defaultní sílu držení (která byla z jointu přečtena při inicializaci). Implementace probíhá jednoduše změnou položky \textit{joint.slerpDrive.spring}, používáme k tomu stejnou triviální interpolaci jako pro pohyb \textit{connectedAnchoru} výše.
 
-\subsubsection*{Ladění parametrů}
-
-Parametry, ke kterým jsme se pro optimální hráčský zážitek experimentálně dobrali, jsou tyto: 
-\begin{itemize}
-  \item \textit{rigidbody.centerOfMass} - uprostřed rukojeti (totožné s joint.anchor)
-  \item \textit{rigidbody.inertiaTensor} - (0.05, 0.05, 0.02)
-  \item \textit{joint.rotationDriveMode} - Slerp
-  \item \textit{joint.slerpDrive} - spring: 120, damper: 10
-\end{itemize}
-
-
 \subsubsection*{Submoduly}
 
-\begin{itemize}
-  %\item z editoru nastavitelné: výčet jednotlivých submodulů (ty jsme rozebrali v \ref{interfacesSwordMovementModulesSubsection}), 
-  %\item SwordMovement.Submodule
-  %  \begin{itemize}
-  %    %\item samostatná abstraktní třída, nedědí z Unity.Object
-  %    %\item má metody jako OnUpdate, OnActivated, OnDeactivated apod. - za jejich volání nese zodpovědnost SwordMovement
-  %    \item %může volat metody na SwordMovementu (je do ní injectnuta instance rozrhraní ISwordMovement)
-  %  \end{itemize}
-  %\item %ISwordMovement
-  %  \begin{itemize}
-  %    %\item Jednoduché rozhraní, exposuje jenom to, co submodul může potřebovat
-  %    \item %šikovné ho mít pro účely mockování v unit testech a taky protože takhle jsme schopní mezi SwordMovement a jeho komponenty nacpat dekorátor (kterej se tváří jako jediná aktivní komponenta, původní komponenty si ukradne pro sebe, sám se stará o správu toho, která je %aktivní, a místo oficiálního SwordMovementu do nich injectne sebe) - takhle se dá např. elegantně nahrávat rozkazy pro pohyb meče (využijeme v \ref{knightEnemySubsection})
-  %    %\item věci, které exposuje: SwordDescriptor popisující meč, ISwordInput, Transform sword wieldera, metodu MoveSword()
-  %  \end{itemize} -- TOTO VŠE JIŽ VÍME Z KAPITOLY NÁVRH
-  \item Správu toho která komponenta je aktivní jsme enkapsulovali do třídy ScriptSubmodulesContainer -> dekorátor mezi SwordMovementem a jeho Submodulama se dá napsat celkem bez námahy
-  \item Konfigurace submodulů z editoru - list párů klávesa-submodul ; submodule picker má dropdown, kde můžeme vybírat ze všech typů dědících ze SwordMovement.Submodule a pro vybraný typ se pak zobrazí defaultní picker - neskonalé díky: \href{https://github.com/lordconstant/SubclassPropertyDrawer}{lordconstant}
-\end{itemize}
+Již tedy máme představu, jak vnitřně probíhá pohyb meče. Nyní krátce k submodulům, které pro pohyb meče generují instrukce. 
+
+Jak jsme nastínili v \ref{interfacesSwordMovementModulesObjectModelSubsubsection}, moduly jsou zvláštní typ entity, která nedědí z UnityEngine.Object, nýbrž je potomkem SwordMovement.Module. V editoru potřebujeme být schopni nakonfigurovat jeden defaultní modul a libovolně velkou množinu dalších, indexovanou jejich aktivačními klávesami.
+
+Pro spravování indexované množiny objektů jsme implementovali třídu \textit{SerializableDictionary<TKey, TValue>} - ta obsahuje serializovatelný list key-value párů a umožňuje jeho jednoduchý převod na Dictionary. 
+
+Vyvstává však problém - pole v tomto dictionary jsme deklarovali typu SwordMovement.Module - očekáváme, že konkrétní podtřídu vybere uživatel v editoru - Unity však v editoru výběr podtřídy nepodporuje. Naštěstí existuje knihovna SubclassPropertyDrawer \cite{SubclassPropertyDrawer}, která ji je schopna přímočaře doplnit.  
+
+\begin{figure}[ht]\centering
+  \center
+  \includegraphics[width=110mm]{../img/swordMovementModulesEditor.png}
+  \caption{Editace modulů v unity editoru}
+  \label{obr05:swordModulePicker}
+\end{figure} 
+
+Správu životního cyklu modulů jsme oddělili do samostatné třídy \textit{ScriptSubmoduleListManager}. Té stačí dodat jejich indexovaný list a následně volat její updatovací callbacky jako by sama byla jediným aktivním modulem. O výběr a updatování aktivního modulu a vše s tím spojené se následně postará sama. 
+
+Chceme-li tedy vytvořit dekorátor, který se vtěsná mezi SwordMovement a jeho moduly, stačí, aby dědil ze SwordMovement.Module a implementoval rozhraní \textit{ISwordMovement}. Původnímu SwordMovement nahradí jeho instanci \textit{ScriptSubmoduleListManager} za novou, ve které se nachází pouze on sám jako defaultní modul, a tu původní instanci ukradne pro sebe - jejím prostřednictvím může nyní originální moduly updatovat sám, aniž by se z jejich pohledu cokoliv změnilo.
+
+
 
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
  % xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx %
@@ -398,6 +389,15 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
       \item aby se všechno nezbláznilo když např. hráč přijde blízko ke stěne a začne dávat vstupy, podle kterých by handle měl být uvnitř té stěny
       \item aby šermíř při blokování držel meč dostatečnou silou, že meč nebude sražen na stranu a opravdu ten úder vyblokuje 
     \end{itemize}
+
+  \item Meč - Parametry, ke kterým jsme se pro optimální hráčský zážitek experimentálně dobrali, jsou tyto: 
+    \begin{itemize}
+      \item \textit{rigidbody.centerOfMass} - uprostřed rukojeti (totožné s joint.anchor)
+      \item \textit{rigidbody.inertiaTensor} - (0.05, 0.05, 0.02)
+      \item \textit{joint.rotationDriveMode} - Slerp
+      \item \textit{joint.slerpDrive} - spring: 120, damper: 10
+    \end{itemize}
+    
   \item meči i šermíři jsme nastavili realistickou hmotnost (šermíř 60kg, meč 1.5kg)
   \item \textbf{Svižnost sekání...}
     \begin{itemize}
@@ -425,17 +425,6 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
       \item řešení... při blokování upravit parametry jointu aby blok nešlo prolomit
       \item ukázalo se, že fajn je drive 100krát zvýšit a damper snižit na polovinu (tedy drive=12000, damper=5) (čím větší drive, tím větší síla držení; čím větší damper, tím snadnější blok prolomit; při zvýšení obojího 100krát se to chovalo dost podobně jako v defaultu; jenom snížit damper na setinu původní hodnoty a drive nechat by ale nefungovalo páč pak by se meč strašně třásl atd.)
     \end{itemize}
-\end{itemize}
-
-\subsection{Klácení hráčské postavy na stranu} \label{playerFallingToSideSection}
-\begin{itemize}
-  \item chceme aby hráč stál vzpříma, nenakláněl se na stranu
-        \begin{itemize}
-          \item na rigidbody nastavit FreezeRotation v X a Z
-          \item to ale samo o sobě nestačí (viz \href{https://docs.unity3d.com/ScriptReference/Rigidbody-constraints.html}{docs} - FreezeRotation dělá jenom to, že v těch směrech nastaví inertiaTensor na 0) - pořád probublává drobná změna kvůli nepřesnosti simulace - hromadí se celkem rychle
-          \item řešení: nechat FreezeRotation X+Z, ale navíc ještě každý FixedUpdate ručně vynulovat X a Z v rigidbody.rotation
-          \item \textbf{Zamyšlení: je lepší nechat tuhle věc tady, nebo jí přestěhovat někam do \ref{simulationStabilitySection}?}
-        \end{itemize}
 \end{itemize}
 
 \subsection{Kolize mečů} \label{swordCollisionsSection}
