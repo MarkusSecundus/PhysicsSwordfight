@@ -350,43 +350,41 @@ Výsledek fungoval velmi dobře - šermířovy ruce skutečně meč na příslu�
 
 \subsection{Systém zranění}
 
-
+Systém zranění je protkán napříč celým naším návrhem, jeho fungování by již čtenáři mělo být zřejmé z předchozí kapitoly - stručně: 
 \begin{itemize}
-  \item Cíl... být tak jednoduché jak jenom jde, ale myslet na rozšiřitelnost do budoucnosti
-  \item \textbf{Damageable}
-    \begin{itemize}
-      \item float HP /*currentHP*/, MaxHP;
-      \item poskytuje UnityEventy OnSpawn, OnUpdated, OnDamaged, OnHealed, OnDeath.
-      \item metoda ChangeHP(float deltaHP) - řeší damageování i healování
-      \item volitelně může celý gameobject automaticky zničit když zemře
-    \end{itemize} 
-  \item \textbf{AttackDeclaration}
-      \begin{itemize}
-        \item univerzální deskriptor co popisuje vykonaný útok
-        \item zatím velmi jednoduchá, v případě potřeby možné do ní přidat další informace
-        \item float Damage, informace (místo+normála) o bodu kde došlo ke zranění
-      \end{itemize} 
-  \item \textbf{IArmorPiece}
-      \begin{itemize}
-        \item rozhraní pro jakýkoliv hmotný objekt (obsahující collider), na který může být zaútočeno
-        \item z collideru se kanonicky získává jako collider.GetComponentInParent<IArmorPiece>() - může být jeden obecný pro všechny collidery a ten overridovat potomci čistě jenom pro svoje vlastní collidery
-        \item nese odkaz na damageable ke kterému patří
-        \item metoda ProcessAttack(AttackDeclaration) - vyhodnoť provedený útok!, uber HP na svém Damageable
-        \item poskytuje UnityEvent OnAttack
-        \item \textbf{BasicArmorPiece} - konkrétní implementace - má DamageMultiplier a MinDamage (dmg pod hranicí je ignorováno), celkově se chová jak by člověk čekal
-      \end{itemize} 
-  \item \textbf{BasicImpactWeapon}
-      \begin{itemize}
-        \item jednoduchá zbraň, co útočí na jiný předmět tak, že s ním zkoliduje 
-        \item parametry: DamageMultiplier, SecondsBetweenAttacks
-        \item při kolizi (OnCollisionEnter) se podívá jestli druhý collider u sebe nemá IArmorPiece - když jo, tak na něm zavolá ProcessAttack()
-        \item dmg počítá jako collision.impulse.magnitude*DamageMultiplier, bod zranění je podle collision.GetContact(0)
-        \item metoda pro výpočet AttackDeclaration.. virtuální - možné nahradit sofistikovanější implementací
-      \end{itemize} 
-  
+  \item \textbf{Damageable} definuje entitu, která může být zraňována a zemřít.
+  \item \textbf{IArmorPiece} sídlí v podobjektu Damageable, spravuje konkrétní množinu colliderů a zpracovává útok učiněný na tyto collidery .
+  \item \textbf{Zbraň} je cokoliv, co umí najít odkaz na IArmorPiece a zavolat na něm metodu ProcessAttack().
+\end{itemize}
+Zde velmi stručně projdeme implementaci jednoduché zbraně a zbroje, které náš systém používá.
+
+\subsubsection*{BasicArmorPiece}
+
+Odkaz na své Damageable najde prohledáváním hierarchie směrem nahoru. Definuje dva parametry:
+\begin{itemize}
+  \item \textit{Násobič zranění} - číslo kterým vynásobí dmg útoku  
+  \item \textit{Minimální zranění} - pokud je výsledné dmg pod touto hranicí, útok bude ignorován
 \end{itemize}
 
+Jeho metoda ProcessAttack() spočte výsledné dmg a pokud je nad minimální hranicí, ubere toto množství HP svému Damageable voláním ChangeHP().
 
+Šermířovi jsme umístili jednu instanci do kořenu jeho detailního těla - ta definuje základní chování pro všechny jeho collidery - do kostí jeho rukou jsme umístili dvě doplňující instance s menším násobičem. Ruce budou veškeré zásahy defaultně zpracovat těmito v hierarchii bližšími instancemi, čímž se kompenzuje jejich jinak nadprůměrná zranitelnost. Podobně by se dal vyladit i zbytek šermířova těla.
+
+\subsubsection*{BasicImpactWeapon}
+
+Jednoduchá na fyzice založená zbraň. Definuje tyto parametry:
+\begin{itemize}
+  \item \textit{Násobič zranění} - číslo kterým vynásobí dmg útoku 
+  \item \textit{Čas mezi útoky} - minimální interval mezi dvěma útoky na stejnou entitu
+\end{itemize}
+
+Poslouchá na zprávy OnCollisionEnter. Při každé kolizi se pokusí na zasaženém collideru najít komponentu IArmorPiece prohledáváním hierarchie nahoru - pokud nějakou najde a její Damageable není v jeho interním seznamu\footnote{Pro každé Damageable si interně vede timestamp posledního zásahu. Na pozadí běží korutina, která pravidelně záznamy s prošlou platností maže, aby nedocházelo k memory leakům.} entit zasažených v posledních \textit{ČasMeziÚtoky} sekundách, vykoná útok voláním ProcessAttack(). Dmg je vypočteno z argumentu kolizního callbacku jednoduše jako síla kolize (\textit{collision.impact.magnitude}) násobená s \textit{Násobičem} nastaveným z editoru, jako bod útoku je hlášen 1. bod kolize (\textit{collision.GetContact(0)}). 
+
+Vzhledem k tomu, že je komponentou poslouchající na OnCollision zprávy, musí se nacházet v kořenovém objektu zbraně spolu s Rigidbody (viz \ref{collidersPhysicsIntroSubsection}) a není možné ji omezit pouze na specifickou množinu colliderů. Meč tedy nutně způsobuje stejné zranění při zásahu čepelí i při zásahu záštitou či rukojetí. Rovněž tato implementace nerozlišuje, zda byl zásah vykonán plochou či ostrou stranou čepele - chová se efektivně jako kyj či podobná tupá zbraň. 
+
+Pro účely této práce se však současný systém jeví jako dostačující. Implementaci realističtějšího výpočtu zranění, který umožní rozlišení mezi ostrou a plochou stranou čepele, záštitou a rukojetí, ponecháme pro navazující práce. 
+
+\pagebreak
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
  % xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx %
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
