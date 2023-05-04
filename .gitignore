@@ -16,3 +16,5 @@
 *.run.xml
 prace.pdf
 abstrakt.pdf
+
+/img/throwaway/**
