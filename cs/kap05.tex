@@ -499,33 +499,23 @@ Záchranou by mohla být druhá metoda - \textbf{spojitá spekulativní} detekce
 Překvapivě však po její aktivaci tunelování nastávalo téměř stejně často jako při diskrétní detekci. Krokováním hry po snímcích s fyzikálním debuggerem jsme odhalili, že kolize jsou skutečně detekovány, síla použitá na jejich rozřešení však meče pošle přesně opačným směrem než by měla - místo aby jejich protunelování zabránila, naopak mu pomůže. Toto stejné chování jsme zpětně odhalili i v mnoha případech tunelování při diskrétní detekci kolizí.
 
 
+\subsubsection*{Možnosti řešení}
 
-\subsubsection*{Úvaha - možnosti jak řešit}
+Metody detekce kolizí, které Unity poskytuje, jsou tedy očividně stavěné pro velmi specifické způsoby použití, v atypické situaci našich mečů mnoho nepomohou. Musíme tedy najít vlastní cestu, jak korektní chování při kolizích zaručit. Po krátkém zamyšlení jsme navrhli tyto možnosti:
 \begin{itemize}
-\item v každém framu pro všechny meče checkovat jestli třeba náhodou neprošly skrz a když jo, tak zařídit aby se vrátily
-  \begin{itemize}
-    \item když uděláme chytře, dalo by se naimplementovat efektivněji než jak to zní (checkovat jenom s mečema v okolí - co jsou uvnitř trigger collideru apod.)
-    \item jak chceme tu kolizi ručně rozřešit, aby se meče chovaly pěkně realisticky a nerozbila se celková stabilita simulace? - jenom vrátit rigidbody.position na poslední pozici před kolizí se nebude chovat pěkně
-  \end{itemize}
-\item drobný skript co poslouchá na kolize a vrací meče na správnou stranu
-  \begin{itemize}
-    \item pozorování - ve skutečnosti se zpravidla neděje to, že by meče vzájemně protunelovaly úplně bez kolize - kolize je zaznamenána, ale je rozřešena špatně - tak, že meče pošle skrz (to nejspíš i bude důvod proč tuneluje continuous speculative)
-    \item myšlenka: když na meči zaznamenáme kolizi, podívat se jakou silou byla rozřešena, a když poslala meče skrz, zvrátit to
-    \item problém - callback parametr co dostaneme reportuje o trochu jinou sílu než kterou ve skutečnosti fyzikální systém aplikoval
-    \item porovnáním směru kolizní normály a resolvovací síly se dá většinou vydedukovat že procházíme skrz
-    \item máme víc informací pro korektní rozřešení kolize než v předchozí možnosti
-    \item ALE I TAK - jakou sílu máme zapůsobit aby se pohyb meče zvrátil? - prostě odečíst 2*collision.impact nefunguje - o dost jiná síla než co byla meči dodána kolizí - i kdyby mečům zabránilo projít skrz, budou se pak při kolizích divně klepat apod.
-    \item když bychom např. při takové kolizi vraceli transform.position meče na poslední pozici, co měl před kolizí, bude to fyzikálně nerealistické chování, ohrozíme stabilitu simulace apod.
-    \item nemusí podchytit všechno tunelování, celkově to není robustní řešení
-  \end{itemize}
-\item přidat velký neviditelný collider co meči zabrání projít skrz
-  \begin{itemize}
-    \item detekci kolize i vypočítání síly pro její rozřešení za nás zvládne udělat fyzikální subsystém
-    \item jediné, co musíme udělat, je zařídit, aby ten collider vždycky směřoval správně proti druhému meči
-    \item taky potřeba zařídit, aby ten collider nekolidoval s ničím s čím nemá
-  \end{itemize}
+  \item \textbf{Každý snímek ručně testovat, zda meče prošly skrz, a manuálně je vracet}\linebreak
+    Detekovat, zda meče prošly skrz, není těžký problém\footnote{Meče zjednodušíme na dvě úsečky v prostoru.}. Velmi obtížně uchopitelný úkol však je určit správně síly, které by ke korektnímu rozřešení této kolize bylo třeba aplikovat.
+  \item \textbf{Poslouchat na kolize a manuálně meče vracet}\linebreak
+    Jak jsme si nastínili výše, spojitá spekulativní metoda kolize většinou detektuje, pouze je rozřeší opačně než by měla. Mohli bychom tedy poslouchat na kolizi a v případě, že má být rozřešena špatně, zkrátka na meče aplikovat opačnou sílu a tím tunelování zvrátit.
+  \item \textbf{Přidat velký neviditelný collider, který meči zabrání projít skrz}\linebreak 
+    Takto bychom úkol detekce kolize i aplikování správné síly pro její rozřešení přenesli zpět na fyzikální systém. Bylo by však třeba tento collider polohovat, aby meči stál v cestě správným způsobem, a zařídit, aby nekolidoval s ničím dalším.  
 \end{itemize}
-\textbf{po troše experimentování a delší úvaze jsme se rozhodli pro možnost s dodatečným neviditelným colliderem}
+
+Letmo jsme vyzkoušeli druhou metodu, ukázalo se však, že síly, které jsou v OnCollision callbacku pro kolizi hlášeny, se silám, kterými byla reálně rozřešena, blíží jen velmi vzdáleně. Nebyli jsme tedy schopni dosáhnout jakkoliv stabilního a realisticky se tvářícího chování. Navíc příležitostně stále docházelo k tunelování, které žádnou kolizi nedetekovalo.
+
+\bigbreak
+
+Po krátké úvaze jsme se rozhodli pro metodu dodatečného collideru.
 
 
 \subsubsection*{Implementace}
