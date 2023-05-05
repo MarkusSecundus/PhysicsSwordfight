@@ -470,7 +470,7 @@ Pro řešení tohoto specifického problému moderní fyzikální systémy typic
 
 \subsubsection*{Náš problém}
 
-Podobně jako střely ve střílečce, naše meče jsou rovněž relativně malými objekty, které se pohybují vcelku rychle. Používáme-li diskrétní detekci kolizí, není překvapením, že při srážce dvou mečů často k tunelování dojde. Tím přirozeně velmi trpí možnost blokovat nepřátelské údery a celkově nejde o dobrý stav, který by napomáhal hráčské imerzi.
+Podobně jako projektily ve střílečce, naše meče jsou rovněž relativně malými objekty, které se pohybují vcelku rychle. Používáme-li diskrétní detekci kolizí, není překvapením, že při srážce dvou mečů často k tunelování dojde. Tím přirozeně velmi trpí možnost blokovat nepřátelské údery a celkově nejde o dobrý stav, který by napomáhal hráčské imerzi.
 
 \bigbreak
 
@@ -501,11 +501,11 @@ Pro jednoduchost zatím předpokládejme, že ve hře figurují právě dva meč
     Takto bychom úkol detekce kolize i aplikování správné síly pro její rozřešení přenesli zpět na fyzikální systém. Bylo by však třeba tento collider polohovat, aby meči stál v cestě správným způsobem, a zařídit, aby nekolidoval s ničím dalším.  
 \end{itemize}
 
-Letmo jsme vyzkoušeli druhou metodu, ukázalo se však, že síly, které jsou v OnCollision callbacku pro kolizi hlášeny, se silám, kterými byla reálně rozřešena, blíží jen velmi vzdáleně. Nebyli jsme tedy schopni dosáhnout jakkoliv stabilního a realisticky se tvářícího chování. Navíc příležitostně stále docházelo k tunelování, které žádnou kolizi nedetekovalo.
+Letmo jsme vyzkoušeli druhou metodu, ukázalo se však, že síly, které jsou v OnCollision callbacku pro kolizi hlášeny, se silám, kterými byla kolize reálně rozřešena, blíží jen velmi vzdáleně. Nebyli jsme tedy schopni dosáhnout jakkoliv stabilního a realisticky se tvářícího chování. Navíc příležitostně stále docházelo k tunelování, které žádnou kolizi nedetekovalo.
 
 \bigbreak
 
-Po krátké úvaze jsme se rozhodli pro metodu dodatečného collideru.
+Po krátké úvaze jsme se rozhodli pokračovat metodou dodatečného collideru.
 
 %>---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------<%
 
@@ -549,7 +549,7 @@ fixer.rotation =
   Quaternion.AngleAxis(45, hostitel.direction)
   * Quaternion.LookRotation(forward: směr, up: hostitel.direction);
 \end{code}
-Při pohledu z ptačí perspektivy by výsledek odpovídal obr. \ref{obr05:fixerBirdseye}. 
+Při pohledu na meč z ptačí perspektivy by výsledek odpovídal obr. \ref{obr05:fixerBirdseye}. 
 
 \bigbreak
 
@@ -596,19 +596,50 @@ Nyní známe hodnotu \textit{t2}. Tu osekáme do intervalu [0;1]\footnote{Předp
 
 Implementovali jsme herní komponentu \textit{ContrarianCollider}, která pro stanovený pár mečů vytvoří fixer a každý FixedUpdate nastavuje jeho pozici způsobem, který jsme si ukázali.
 
-\pagebreak
 
 \subsubsection*{Implementace - neočekávané problémy}
-\begin{itemize}
-  \item (jako výše) takhle tu pozici collideru updatujeme každej FixedUpdate
-  \item 
-  \item \textbf{problém} - když meče během 1 snímku protunelujou, collider okamžitě přeskočí na druhou stranu a ničemu nepomůže
-  \item řešení: pamatujeme si jeho poslední offset proti středu meče - pokud se mezi 2 snímkama ostře změní (offset.Dot(lastOffset) < 0), tak nově spočítanej offset znegujeme
-  \item existujou okrajové případy, co to rozbijou (např. úplně první volání FixedUpdate) - řešení: tuhle negaci provádíme jenom pokud je nejkratší spojnice obou mečů dostatečně krátká (limit konfigurovaný uživatelem, 0.4 metru funguje rozumně)
-  \item \textbf{Další problém} - občas se stane, že meč protuneluje na druhou stranu meče a jakoby se skřípne mezi mečem a jeho fixerem - řešení: přidat collideru přesah - velikost navíc se kterou ale jeho pozicovač nekalkuluje (-> místo jenom do středu meče sahá fixer trochu dál)
-\end{itemize}
+
+Při testování jsme narazili na několik problémů. Prvním bylo, že fixer proti tunelování nijak nechránil. Jakmile Cílový meč protuneloval na opačnou stranu Hosta, fixer se rovněž okamžitě přetočil na opačnou stranu - dle předpisu, aby Cíli byl naproti - čímž mu přestal stát v cestě. Řešení naštěstí bylo jednoduché - v polohovacím skriptu jsme si zapamatovali spojnici mečů z předchozího snímku. Pokud se mezi snímky ostře změnila - skalární součin současného a minulého směru byl záporný - tak jsme směr té současné obrátili a dále pracovali s tím.
+\begin{code}
+  if(minuláSpojnice.direction.DotProduct(spojnice.direction))
+    spojnice = nová Úsečka(spojnice.origin, -spojnice.direction);
+  minuláSpojnice = spojnice;
+\end{code}
+Následně již fixer Cílovému meči v tunelování korektně bránil. Příležitostně však nastávaly situace, kdy tato podmínka byla vyhodnocena jako \textit{true}, aniž by šlo o tunelování. Např. okamžitě po inicializaci, v prvních několika snímcích hry, se celá hra zdá chovat celkově nestabilně a k tomuto jevu docházelo. Poloha fixeru se v takovém případě přepnula do stavu, kdy nastavoval směrem k Cílovému meči celý masiv svého těla - viz obr. \ref{obr05:fixerOverturned} - a docházelo tedy k pro hráče velmi matoucím kolizím s neznámým neviditelným objektem. 
+
+\begin{figure}[ht]\centering
+  \center
+  \includegraphics[height=90mm]{../img/fixerOverturned.png}
+  \caption{Fixer s převráceným směrem}
+  \label{obr05:fixerOverturned}
+\end{figure} 
+
+Přidali jsme tedy číselný parametr: \textit{Maximální vzdálenost detekce tunelování} - pokud byla délka spojnice obou mečů větší než tento parametr, převracení jejího směru jsme nevykonávali. Pokud by i tak k převrácení směru fixeru někdy došlo, stačí nyní od Cílového meče odstoupit na tuto vzdálenost a vše se srovná do standardního stavu. 
+
+\bigbreak
+
+Dalším problémem, na který jsme narazili, bylo, že příležitostně Cílový meč protuneloval na druhou stranu Hosta a "skřípl" se mezi něj a fixer - viz obr. \ref{obr05:fixerSqueak}. Řešením bylo fixeru přidat \textit{přesah} - dodatečnou velikost, kterou collider fyzicky má, avšak není brána v úvahu při geometrických výpočtech. Hrana fixeru takto tedy neprochází přesně středovou osou meče, ale přesahuje dál - viz obr. \ref{obr05:fixerOverreach} - čímž se prostor pro skřípnutí druhého meče drasticky zmenšuje. 
+
+\begin{figure}[ht]\centering
+  \center
+  \includegraphics[width=140mm]{../img/fixerOverreach.png}
+  \caption{Fixer s aktivovaným přesahem}
+  \label{obr05:fixerOverreach}
+\end{figure} 
+
+\begin{figure}[ht]\centering
+  \center
+  \includegraphics[width=140mm]{../img/fixerSqueak.png}
+  \caption{Meč skřípnutý mezi druhý meč a jeho fixer}
+  \label{obr05:fixerSqueak}
+\end{figure} 
+
+
 
 \subsubsection*{Implementace - přiřazení collideru meči}
+
+
+
 \begin{itemize}
   \item \textbf{Collider umístíme přímo do rigidbody meče jako jedno z jeho dětí}
   \item -> všechny kolize s fixerem povedou k působení síly přímo na rigidbody meče (a síla bude přesně ta co je realistická)
@@ -618,6 +649,8 @@ Implementovali jsme herní komponentu \textit{ContrarianCollider}, která pro st
   \item první řešení, co člověka napadne - dát je na Layer, co nemá nastavené kolize vůbec s ničím, a selektivně zavolat Physics.IgnoreCollision(fixer, targetSword, false) - to ale vůbec nic nedělá, kolize pořád nevznikají
   \item \textbf{řešení:} separátní Layery: CollisionFix, Sword - Sword koliduje s hodně věcma, CollisionFix jenom se Sword -> musíme přidat velký trigger collider - ten včas disabluje kolize se všema mečema co nejsou ten cílový, které se nachomýtnou poblíž
 \end{itemize}
+
+\pagebreak
 
 
 \subsubsection*{Výsledek}
