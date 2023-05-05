@@ -638,17 +638,24 @@ Dalším problémem, na který jsme narazili, bylo, že příležitostně Cílov
 
 \subsubsection*{Implementace - přiřazení collideru meči}
 
+Polohování fixeru tedy je vyřešené, zbývá rozhodnout, jak jej spárujeme s Hostitelem, aby mu byla korektně předávána kolizní síla, a také jak zařídíme, aby náš fixer nekolidoval s jinými objekty než je Cílový meč.
 
+Řešení prvního úkolu je jednoduché - fixer zkrátka umístíme jako dítě přímo do herního objektu Hostitele. Takto budou veškeré síly vzešlé z kolizí fixeru automaticky působit na celé Rigidbody meče. Síly takto aplikuje přímo fyzikální systém, měly by tedy být realistické. 
 
-\begin{itemize}
-  \item \textbf{Collider umístíme přímo do rigidbody meče jako jedno z jeho dětí}
-  \item -> všechny kolize s fixerem povedou k působení síly přímo na rigidbody meče (a síla bude přesně ta co je realistická)
-  \item \textbf{problém:} dodatečnej collider, co se ještě pořád chaoticky otáčí, totálně rozhodí balance meče - řešení: \textbf{potřeba mít nastavený custom centerOfMass a inertiaTensor aby se nepřepočítávaly podle fixeru!} 
-  \item 
-  \item \textbf{Jak zařídíme, aby collisionFixer kolidoval jenom se správným mečem a s ničím jiným?}
-  \item první řešení, co člověka napadne - dát je na Layer, co nemá nastavené kolize vůbec s ničím, a selektivně zavolat Physics.IgnoreCollision(fixer, targetSword, false) - to ale vůbec nic nedělá, kolize pořád nevznikají
-  \item \textbf{řešení:} separátní Layery: CollisionFix, Sword - Sword koliduje s hodně věcma, CollisionFix jenom se Sword -> musíme přidat velký trigger collider - ten včas disabluje kolize se všema mečema co nejsou ten cílový, které se nachomýtnou poblíž
-\end{itemize}
+Narazili jsme na jediný problém - přidání velkého neforemného collideru meči, zdá se, naruší balanc a nutí ho se naklánět k místu, kam je fixer zrovna natočený, svižnost pohybu meče trpí. Řešení je naštěstí jednoduché - nastavit na rigidbody Hostitele ručně hodnoty \textit{centerOfMass} a \textit{inertiaTensor} (na hodnoty ke kterým jsme se dobrali v \ref{swordParameterTweaksSection}) - ty následně fyzikální systém při vytvoření a pohybu fixeru nebude automaticky přepočítávat a balanc meče, který je ve skutečnosti definován pouze těmito dvěma hodnotami, se neodchýlí z našeho pečlivě vyladěného stavu. 
+
+\bigbreak
+
+Zařídit, aby fixer nekolidoval s veškerými dalšími objekty, je nepatrně těžší úkol. Elegantním řešením by bylo umístit fixer na kolizní vrstvu, která nekoliduje s ničím, a selektivně pro něj zapnout kolize pouze s collidery Cíle - zhruba takto:
+\begin{code}
+ UnityEngine.Physics.IgnoreCollision(fixer, Cíl, false);
+\end{code}
+Ačkoliv by se však z formulace v oficielní dokumentaci mohlo zdát, že toto řešení bude fungovat, opak je pravdou - tato statická funkce slouží pouze jako opt-out mechanizmus pro kolize napříč vrstvami, které jsou globálně nastavené jako vzájemně kolidující.
+
+Bylo tedy třeba sofistikovanějšího řešení. Pro fixery jsme vytvořili oddělenou kolizní vrstvu, která koliduje pouze s vrstvou pro meče. Následně jsme ke každému fixeru přidali druhý trigger collider - ten má velikost dostatečnou na to, aby zdetekoval kterýkoliv meč v okolí dříve, než by mělo dojít k jeho kolizi s fixerem. Jeho úkol je zkrátka pro každý collider, který ho aktivuje a který není podobjektem Cílového meče, zavolat 
+\begin{code}
+ UnityEngine.Physics.IgnoreCollision(fixer, collider, true);
+\end{code}
 
 \pagebreak
 
