@@ -93,7 +93,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
             public Vector3 GravityWhenGrounded = new Vector3(0, -9.81f, 0);
         }
 
-        private static class Constants
+        static class Constants
         {
             public const ForceMode GravityMode = ForceMode.Acceleration;
             public const ForceMode JumpMode = ForceMode.VelocityChange;
@@ -156,15 +156,17 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
             Input = Input.IfNil(ISwordInput.Get(this.gameObject));
             rigidbody = GetComponent<Rigidbody>();
             rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationY;
+            InitLooking();
         }
 
-        private void Update()
+        void Update()
         {
             DoHandleInputs(Time.deltaTime);
+            HandleLooking(Time.deltaTime);
         }
         void FixedUpdate()
         {
-            DoMoveStep(Time.fixedDeltaTime);
+            DoFixedMoveStep(Time.fixedDeltaTime);
         }
         bool IsGrounded => Feet.ActiveNormalCollidersCount > 0;
 
@@ -179,11 +181,10 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
             HandleLookingInputs(delta);
             HandleJumpingInputs(delta);
         }
-        void DoMoveStep(float delta)
+        void DoFixedMoveStep(float delta)
         {
             HandleWalking(delta);
             HandleRotating(delta);
-            HandleLooking(delta);
             HandleJumping(delta);
             HandleGravity(delta);
         }
@@ -216,6 +217,11 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
 
 
 
+        Vector3 cameraRotation;
+        void InitLooking()
+        {
+            cameraRotation = CameraToUse.transform.rotation.eulerAngles;
+        }
         void HandleLookingInputs(float delta) { }
         void HandleLooking(float delta)
         {
@@ -225,12 +231,12 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
             float lookUpDown = Input.GetAxis(Mapping.LookUpDown) * Tweaks.LookUpDown * delta;
 
 
-            var currentCameraRotation = CameraToUse.localRotation.eulerAngles;
-            var xRotation = currentCameraRotation.x - lookUpDown;   //for some reason needs to use substraction to not be inverted
-            var yRotation = currentCameraRotation.y + lookLeftRight; //no need to clamp this to the reasonable <0;180°> interval - that is taken care of just by forcing the z rotation to 0° (if the player managed to force y outside of this range, that changes z to upside-down a.k.a 180° - reseting that back to 0° by lucky coincidence resets the camera exactly to the reasonable position that one would want in such scenario)
-            var rotationToSet = new Vector3(xRotation, yRotation, 0f).ClampEuler(Tweaks.LookConstraints);
+            
+            var xRotation = cameraRotation.x - lookUpDown;   //for some reason needs to use substraction to not be inverted
+            var yRotation = cameraRotation.y + lookLeftRight; //no need to clamp this to the reasonable <0;180°> interval - that is taken care of just by forcing the z rotation to 0° (if the player managed to force y outside of this range, that changes z to upside-down a.k.a 180° - reseting that back to 0° by lucky coincidence resets the camera exactly to the reasonable position that one would want in such scenario)
+            cameraRotation = new Vector3(xRotation, yRotation, 0f).ClampEuler(Tweaks.LookConstraints);
             if (CameraToUse != null)
-                CameraToUse.localRotation = Quaternion.Euler(rotationToSet);
+                CameraToUse.localRotation = Quaternion.Euler(cameraRotation);
         }
 
 
