@@ -565,7 +565,7 @@ Nejkratší spojnici mečů nalezneme následujícím způsobem:
 
 Nejprve vypočteme její směr. Protože to je jejich nejkratší spojnice, musí být na přímky obou mečů kolmá:
 \begin{code}
- spojnice.direction = Hostitel.direction.CrossProduct(Cíl.direction);
+ Spojnice.direction = Hostitel.direction.CrossProduct(Cíl.direction);
 \end{code}
 
 Nejkratší spojnice prochází oběma přímkami. Víme tedy, že pro nějaké parametry \textit{t1}, \textit{t2} leží oba body
@@ -584,39 +584,24 @@ A takto rovnici můžeme rozepsat
 \end{code}
 Všechny parametry \textit{.origin} a \textit{.direction} jsou nám známé 3D vektory, rozepsáním pro jednotlivé složky \textit{x}, \textit{y}, \textit{z}, tedy získáváme soustavu tří lineárních rovnic o 3 neznámých \textit{t1}, \textit{t2}, \textit{t3}. Tu řešíme klasicky použitím Gaussovy eliminace. Její vyladěnou a numericky stabilní implementaci nám poskytla knihovna Math.NET Numerics \cite{MathDotNetNumerics}.
 
+Nyní známe hodnotu \textit{t2}. Tu osekáme do intervalu [0;1]\footnote{Předpokládáme, že pole \textit{.direction} jsou definována jako (\textit{end - origin}), bez normalizace.}, abychom místo nejkratší spojnice přímek získali nejkratší spojnici úseček, kterými meče jsou, a následně dosazením do rovnice pro bod \textit{c} získáme bod, který poslouží jako reprezentant Cílového meče. Výsledné chování fixeru lze vidět na obr. \ref{obr05:fixerPositioning}.
+
+
+\begin{figure}[ht]\centering
+  \center
+  \includegraphics[height=90mm]{../img/collisionFix-show1.png}
+  \caption{Výsledné polohování fixeru (barevně konce nejkratší spojnice)}
+  \label{obr05:fixerPositioning}
+\end{figure} 
+
+Implementovali jsme herní komponentu \textit{ContrarianCollider}, která pro stanovený pár mečů vytvoří fixer a každý FixedUpdate nastavuje jeho pozici způsobem, který jsme si ukázali.
+
 \pagebreak
-
-\begin{itemize}
-  \item 
-  \item %jak definujeme 'na opačné straně'?  
-    \begin{itemize}
-      %\item meče - libovolně mimoběžné úsečky v prostoru
-      %\item vzít nějakej jeden pevnej bod (např. střed čepele) a ten brát jako reprezentanta, kterému chceme být naproti - nefunguje (spusta případů, kdy to neodpovídá - např. kolize špiček dvou mečů)
-      %\item co funguje: najít nejkratší spojnici obou mečů - na ní ležej ty 2 body, ve kterých by oba meče potenciálně mohly kolidovat
-      \item výpočet:
-        \begin{itemize}
-          \item meče M, N
-          \item X..nejkratší spojnice M,N musí být na oba kolmá - tedy X.direction = M.direction.CrossProduct(N.direction)
-          \item nyní stačí řešit soustavu 3 rovnic o 3 neznámých: M.origin + M.t * M.direction + X.direction*X.t = N.origin + N.t * N.direction // kde M.t, X.t, N.t jsou neznámé
-          \item tu strčíme do matice a předhodíme gaussovce - knihovna MathNet.Numerics
-          \item chceme úsečky -> M.t, N.t sesekáma do intervalu <0,1> - podle nich vypočítáme oba konce výsledné spojnice
-        \end{itemize}
-    \end{itemize}
-  %\item pozici kam umístit střed collideru (offset relativní vůči středu meče) získáme takto: 
-  %  \begin{itemize}
-  %    \item let O = nejbližší bod protějšího meče
-  %    \item let P = new Plocha(bod: střed meče, normála:směr meče)
-  %    \item let H = hloubka collideru (parametr od uživatele - vzdálenost od hrany do středu)
-  %    \item return (P.projekce(O).normalized * (-H)) //pro globální pozici přičíst střed meče
-  %  \end{itemize}
-  %\item rotaci získáme jako Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(offsetCollideruOdStředuMeče, bladeDirection)
-  \item takhle tu pozici collideru updatujeme každej FixedUpdate
-  
-\end{itemize}
-
 
 \subsubsection*{Implementace - neočekávané problémy}
 \begin{itemize}
+  \item (jako výše) takhle tu pozici collideru updatujeme každej FixedUpdate
+  \item 
   \item \textbf{problém} - když meče během 1 snímku protunelujou, collider okamžitě přeskočí na druhou stranu a ničemu nepomůže
   \item řešení: pamatujeme si jeho poslední offset proti středu meče - pokud se mezi 2 snímkama ostře změní (offset.Dot(lastOffset) < 0), tak nově spočítanej offset znegujeme
   \item existujou okrajové případy, co to rozbijou (např. úplně první volání FixedUpdate) - řešení: tuhle negaci provádíme jenom pokud je nejkratší spojnice obou mečů dostatečně krátká (limit konfigurovaný uživatelem, 0.4 metru funguje rozumně)
