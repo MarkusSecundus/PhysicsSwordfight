@@ -237,7 +237,7 @@ Polohu rukojeti jsme získali přímo, kvaternion pro rotaci vypočteme vestavě
 
 Obě tyto hodnoty a rovněž Sílu držení poznamenáme v privátním stavu, odkud s nimi pracují mechanismy pro vykonávání pohybu.
 
-\subsubsection*{Rotační pohyb}
+\subsubsection*{Rotační pohyb} \label{implementationSwordAngularMovementSubsubsection}
 
 Nejprve se podívejme odděleně na rotační složku pohybu. Tu bylo možné ponechat téměř zcela v režii ConfigurableJointu.
 
@@ -396,6 +396,12 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
 
 
 \subsection{Jak nastavit cílovou rotaci jointu} \label{howToSetJointsTargetRotationSection}
+
+V \ref{implementationSwordAngularMovementSubsubsection} jsme zmínili, že ConfigurableJoint používá pro svůj parametr \textit{targetRotation} velmi nestandardní souřadnicový systém
+
+
+
+\pagebreak
 \begin{itemize}
   \item cílová rotace configurable jointu se udává v souřadnicovém systému, co se dost kryptickým způsobem vypočítává podle vícera parametrů, co se na jointu nastavují
   \item když víme kýženou rotaci v globálních souřadnicích, není triviální vypočítat na jejím základě rotaci, co se musí nastavit jako joint.targetRotation
@@ -452,104 +458,125 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
     \end{itemize}
 \end{itemize}
 
+
+
+%------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+ % xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx %
+%------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
+
+
+
 \subsection{Kolize mečů} \label{swordCollisionsSection}
+
+Jednou z největších výzev, které bylo v průběhu práce třeba překonat, je zajištění korektního chování kolizí při srážce dvou mečů.
+
+
+\subsubsection*{Problematika detekce kolizí}
+
+V \ref{collidersPhysicsIntroSubsection} jsme již velmi letmo nastínili typicky používanou metodu diskrétní detekce kolizí a problém tunelování, který je jejím důsledkem. Pro zopakování jde o jev, kdy malý či rychle se pohybující objekt projde skrze překážku, která mu stojí v cestě, aniž by byla detekována jejich kolize.
+
+Typickým herním žánrem, kde na tento problém narážíme velmi často, jsou \acs{FPS} hry. Vystřelené projektily jsou obvykle malé a zároveň se pohybují velmi rychle - v kompetitivní střílečce by bylo velmi nežádoucí, kdyby nepředvídatelně některé střely byly schopné trefovat hráče skrz zeď, či naopak jimi projít aniž by je zranily.  
+
+Pro řešení tohoto specifického problému moderní fyzikální systémy typicky nabízejí alternativní metody detekce kolizí - tzv. spojité - které lze zapnout pro konkrétní herní objekty, které je potřebují. Vestavěný fyzikální systém v Unity v tomto ohledu není výjimkou.
+
+
+\subsubsection*{Náš problém}
+
+Podobně jako střely ve střílečce, naše meče jsou rovněž relativně malými objekty, které se pohybují vcelku rychle. Používáme-li diskrétní detekci kolizí, není překvapením, že při srážce dvou mečů často k tunelování dojde. Tím přirozeně velmi trpí možnost blokovat nepřátelské údery a celkově nejde o dobrý stav, který by napomáhal hráčské imerzi.
+
+\bigbreak
+
+Zkusili jsme tedy pro meče aktivovat spojitou detekci kolizí - pro tu Unity nabízí dvě různé metody. První, kterou jsme zkusili, je \textbf{spojitá dynamická}.
+
+Ta však náš problém nevyřešila. Výskytů tunelování citelně ubylo, stále se však příležitostně objevily. I v případě, že kolize byla zdetekována, se však meč nechoval dle očekávání - místo aby se od sebe meče odrazily, nastal efekt jakéhosi jejich zamrznutí na místě. Zkrátka síly aplikované na oba meče k rozřešení kolize nebyly korektní.
+
+Důvod tohoto chování najdeme v oficielní dokumentaci. Tam se dočteme, že spojitá dynamická detekce kolizí bere v úvahu pouze lineární pohyb objektů, rotační složku zcela ignoruje. To nečiní problém v typické situaci letícího projektilu, v případě našich mečů je to však silně nežádoucí.  
+
+\bigbreak
+
+Záchranou by mohla být druhá metoda - \textbf{spojitá spekulativní} detekce kolizí. Ta dle dokumentace bere v úvahu lineární i úhlový pohyb, měla by také být rychlejší a jediné negativum je, že příležitostně mohou být detekovány dodatečné neexistující kolize. 
+
+Překvapivě však po její aktivaci tunelování nastávalo téměř stejně často jako při diskrétní detekci. Krokováním hry po snímcích s fyzikálním debuggerem jsme odhalili, že kolize jsou skutečně detekovány, síla použitá na jejich rozřešení však meče pošle přesně opačným směrem než by měla - místo aby jejich protunelování zabránila, naopak mu pomůže. Toto stejné chování jsme zpětně odhalili i v mnoha případech tunelování při diskrétní detekci kolizí.
+
+
+
+\subsubsection*{Úvaha - možnosti jak řešit}
 \begin{itemize}
-  \item \textbf{nejprve uvést do problematiky}
+\item v každém framu pro všechny meče checkovat jestli třeba náhodou neprošly skrz a když jo, tak zařídit aby se vrátily
   \begin{itemize}
-    \item fyzikální update běží ve fixně dlouhých krocích
-    \item diskrétní detekce kolizí - každý update se jenom koukne jestli collidery vzájemně prochází skrz sebe - když jo, nahlásí kolizi a aplikuje síly aby kolizi vyřešila (podle rychlostí co maj kolidující objekty v daném kroku)
-    \item problém - tunelování - tzn. když objekt A letí směrem k objektu B - buď A se pohybuje hodně rychle NEBO B je hodně malý -> stane se, že v 1 snímku ja A na jedné straně objektu B a v druhém už je na druhé straně objektu B - projde skrz, žádná kolize není zdetekována
-    \item herní obor kterému tohle nejvíc vadí - \acs{FPS} - potřebují aby letící kulky netunelovaly skrz zdi nebo skrz člověka kterého mají trefit
-    \item řešení - spojitá detekce kolizí (continuous collision detection) - podle složitejch fyzikálních vzorečků počítá dráhu objektu v průběhu času mezi snímkama (-> pomalejší než diskrétní, ale kulky s ní netunelujou)
-    \item Unity physics spojitou detekci kolizí podporují
+    \item když uděláme chytře, dalo by se naimplementovat efektivněji než jak to zní (checkovat jenom s mečema v okolí - co jsou uvnitř trigger collideru apod.)
+    \item jak chceme tu kolizi ručně rozřešit, aby se meče chovaly pěkně realisticky a nerozbila se celková stabilita simulace? - jenom vrátit rigidbody.position na poslední pozici před kolizí se nebude chovat pěkně
   \end{itemize}
-  \item \textbf{vysvětlit problém}
+\item drobný skript co poslouchá na kolize a vrací meče na správnou stranu
   \begin{itemize}
-    \item meče... relativně dost malé objekty, pohybují se celkem rychle
-    \item -> při diskrétní detekci kolizí často tunelují
-    \item řešení: použít spojitou detekci kolizí - \textbf{NEFUNGUJE!}
-    \item problém: podle Unity docs... continuous dynamic collision detection bere v úvahu jenom lineární rychlost, \textbf{úhlovou ignoruje} X náš meč se pohybuje především rotačně (je vidět že vážně je koncipovaná především pro letící střely v \acs{FPS} hrách a k ničemu moc dalšímu)
-    \item chování spojité detekce v praxi... zdetekuje kolizi celkem dost často v porovnání s tou diskrétní, ale i tak se tunelování děje. taky i když kolizi zdetekuje korektně, většinou nezdetekuje korektně síly - meče často při kolizi tak jako podivně zamrznou 
-    \item poslední možná záchrana... \textbf{continuous speculative collision detection} - poslední možnost, kterou Unity nabízí; podle dokumentace by měla brát v úvahu i úhlovou rychlost, jenom tam údajně můžou vznikat ghost kolize
-    \item v praxi se ale continuous speculative zdá trpět na tunelování ne o moc líp než diskrétní 
+    \item pozorování - ve skutečnosti se zpravidla neděje to, že by meče vzájemně protunelovaly úplně bez kolize - kolize je zaznamenána, ale je rozřešena špatně - tak, že meče pošle skrz (to nejspíš i bude důvod proč tuneluje continuous speculative)
+    \item myšlenka: když na meči zaznamenáme kolizi, podívat se jakou silou byla rozřešena, a když poslala meče skrz, zvrátit to
+    \item problém - callback parametr co dostaneme reportuje o trochu jinou sílu než kterou ve skutečnosti fyzikální systém aplikoval
+    \item porovnáním směru kolizní normály a resolvovací síly se dá většinou vydedukovat že procházíme skrz
+    \item máme víc informací pro korektní rozřešení kolize než v předchozí možnosti
+    \item ALE I TAK - jakou sílu máme zapůsobit aby se pohyb meče zvrátil? - prostě odečíst 2*collision.impact nefunguje - o dost jiná síla než co byla meči dodána kolizí - i kdyby mečům zabránilo projít skrz, budou se pak při kolizích divně klepat apod.
+    \item když bychom např. při takové kolizi vraceli transform.position meče na poslední pozici, co měl před kolizí, bude to fyzikálně nerealistické chování, ohrozíme stabilitu simulace apod.
+    \item nemusí podchytit všechno tunelování, celkově to není robustní řešení
   \end{itemize}
-  
-  \item \textbf{úvaha - možnosti jak řešit:}
+\item přidat velký neviditelný collider co meči zabrání projít skrz
   \begin{itemize}
-    \item v každém framu pro všechny meče checkovat jestli třeba náhodou neprošly skrz a když jo, tak zařídit aby se vrátily
-      \begin{itemize}
-        \item když uděláme chytře, dalo by se naimplementovat efektivněji než jak to zní (checkovat jenom s mečema v okolí - co jsou uvnitř trigger collideru apod.)
-        \item jak chceme tu kolizi ručně rozřešit, aby se meče chovaly pěkně realisticky a nerozbila se celková stabilita simulace? - jenom vrátit rigidbody.position na poslední pozici před kolizí se nebude chovat pěkně
-      \end{itemize}
-    \item drobný skript co poslouchá na kolize a vrací meče na správnou stranu
-      \begin{itemize}
-        \item pozorování - ve skutečnosti se zpravidla neděje to, že by meče vzájemně protunelovaly úplně bez kolize - kolize je zaznamenána, ale je rozřešena špatně - tak, že meče pošle skrz (to nejspíš i bude důvod proč tuneluje continuous speculative)
-        \item myšlenka: když na meči zaznamenáme kolizi, podívat se jakou silou byla rozřešena, a když poslala meče skrz, zvrátit to
-        \item problém - callback parametr co dostaneme reportuje o trochu jinou sílu než kterou ve skutečnosti fyzikální systém aplikoval
-        \item porovnáním směru kolizní normály a resolvovací síly se dá většinou vydedukovat že procházíme skrz
-        \item máme víc informací pro korektní rozřešení kolize než v předchozí možnosti
-        \item ALE I TAK - jakou sílu máme zapůsobit aby se pohyb meče zvrátil? - prostě odečíst 2*collision.impact nefunguje - o dost jiná síla než co byla meči dodána kolizí - i kdyby mečům zabránilo projít skrz, budou se pak při kolizích divně klepat apod.
-        \item když bychom např. při takové kolizi vraceli transform.position meče na poslední pozici, co měl před kolizí, bude to fyzikálně nerealistické chování, ohrozíme stabilitu simulace apod.
-        \item nemusí podchytit všechno tunelování, celkově to není robustní řešení
-      \end{itemize}
-    \item přidat velký neviditelný collider co meči zabrání projít skrz
-      \begin{itemize}
-        \item detekci kolize i vypočítání síly pro její rozřešení za nás zvládne udělat fyzikální subsystém
-        \item jediné, co musíme udělat, je zařídit, aby ten collider vždycky směřoval správně proti druhému meči
-        \item taky potřeba zařídit, aby ten collider nekolidoval s ničím s čím nemá
-      \end{itemize}
+    \item detekci kolize i vypočítání síly pro její rozřešení za nás zvládne udělat fyzikální subsystém
+    \item jediné, co musíme udělat, je zařídit, aby ten collider vždycky směřoval správně proti druhému meči
+    \item taky potřeba zařídit, aby ten collider nekolidoval s ničím s čím nemá
   \end{itemize}
-  \textbf{po troše experimentování a delší úvaze jsme se rozhodli pro možnost s dodatečným neviditelným colliderem}
-  \item \textbf{průběh implementace:}
-  \begin{itemize}
-    \item jak chceme aby to vypadalo: pro každý pár mečů - na jednom z nich velkej collider, co se v reálném čase natáčí tak, aby tomu druhému bráníl v protunelování 
-    \item který tvar z primitive colliderů? - vybíráme box collider - jedna jeho hrana bude procházet vlastní osou meče; zbytek collideru je vždycky přesně na opačné straně od osy meče než meč protivníka
-    \item pro potřeby zbytku sekce budeme meč považovat za úsečku odpovídající jeho středové ose - spojnici pataČepele<->špička (získaná ze SwordDescriptoru)
-    \item dále nechť collider s kterým pracujeme, se nazývá "fixovací collider" či krátce "fixer"
-    \item jak definujeme 'na opačné straně'?  
-      \begin{itemize}
-        \item meče - libovolně mimoběžné úsečky v prostoru
-        \item vzít nějakej jeden pevnej bod (např. střed čepele) a ten brát jako reprezentanta, kterému chceme být naproti - nefunguje (spusta případů, kdy to neodpovídá - např. kolize špiček dvou mečů)
-        \item co funguje: najít nejkratší spojnici obou mečů - na ní ležej ty 2 body, ve kterých by oba meče potenciálně mohly kolidovat
-        \item výpočet:
-          \begin{itemize}
-            \item meče M, N
-            \item X..nejkratší spojnice M,N musí být na oba kolmá - tedy X.direction = M.direction.CrossProduct(N.direction)
-            \item nyní stačí řešit soustavu 3 rovnic o 3 neznámých: M.origin + M.t * M.direction + X.direction*X.t = N.origin + N.t * N.direction // kde M.t, X.t, N.t jsou neznámé
-            \item tu strčíme do matice a předhodíme gaussovce - knihovna MathNet.Numerics
-            \item chceme úsečky -> M.t, N.t sesekáma do intervalu <0,1> - podle nich vypočítáme oba konce výsledné spojnice
-          \end{itemize}
-      \end{itemize}
-    \item pozici kam umístit střed collideru (offset relativní vůči středu meče) získáme takto: 
-      \begin{itemize}
-        \item let O = nejbližší bod protějšího meče
-        \item let P = new Plocha(bod: střed meče, normála:směr meče)
-        \item let H = hloubka collideru (parametr od uživatele - vzdálenost od hrany do středu)
-        \item return (P.projekce(O).normalized * (-H)) //pro globální pozici přičíst střed meče
-      \end{itemize}
-    \item rotaci získáme jako Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(offsetCollideruOdStředuMeče, bladeDirection)
-    \item takhle tu pozici collideru updatujeme každej FixedUpdate
-    \item \textbf{problém} - když meče během 1 snímku protunelujou, collider okamžitě přeskočí na druhou stranu a ničemu nepomůže
-    \item řešení: pamatujeme si jeho poslední offset proti středu meče - pokud se mezi 2 snímkama ostře změní (offset.Dot(lastOffset) < 0), tak nově spočítanej offset znegujeme
-    \item existujou okrajové případy, co to rozbijou (např. úplně první volání FixedUpdate) - řešení: tuhle negaci provádíme jenom pokud je nejkratší spojnice obou mečů dostatečně krátká (limit konfigurovaný uživatelem, 0.4 metru funguje rozumně)
-    \item \textbf{Další problém} - občas se stane, že meč protuneluje na druhou stranu meče a jakoby se skřípne mezi mečem a jeho fixerem - řešení: přidat collideru přesah - velikost navíc se kterou ale jeho pozicovač nekalkuluje (-> místo jenom do středu meče sahá fixer trochu dál)
-    \item \textbf{Jak zařídíme, aby collisionFixer kolidoval jenom se správným mečem a s ničím jiným?}
-      \begin{itemize}
-        \item první řešení, co člověka napadne - dát je na Layer, co nemá nastavené kolize vůbec s ničím, a selektivně zavolat Physics.IgnoreCollision(fixer, targetSword, false) - to ale vůbec nic nedělá, kolize pořád nevznikají
-        \item \textbf{řešení:} separátní Layery: CollisionFix, Sword - Sword koliduje s hodně věcma, CollisionFix jenom se Sword -> musíme přidat velký trigger collider - ten včas disabluje kolize se všema mečema co nejsou ten cílový, které se nachomýtnou poblíž
-      \end{itemize}
-    \item \textbf{fixovací collider umístíme přímo do meče jako jeho podobjekt}
-      \begin{itemize}
-        \item -> všechny kolize s fixerem povedou k působení síly přímo na rigidbody meče (a síla bude přesně ta co je realistická)
-        \item \textbf{problém:} dodatečnej collider, co se ještě pořád chaoticky otáčí, totálně rozhodí balance meče - řešení: \textbf{potřeba mít nastavený custom centerOfMass a inertiaTensor aby se nepřepočítávaly podle fixeru!} 
-      \end{itemize}
-    \item \textbf{Jak se tedy výsedek používá z pohledu uživatele?}
-      \begin{itemize}
-        \item Na meč stačí přidat komponentu CollisionFix - ta automaticky zařídí, aby se vytvořil fixer pro každej další meč, co se nachomítne poblíž (fixer je umístěnej do jednoho z těch dvou mečů - náhodně vybráno který)
-        \item v případě že je meč zničený, všechny fixery co na něj cílily, se automaticky zničej taky
-        \item CollisionFix by měl v defaultu být nakonfigurovanej funkčně, ale uživatel na něm může ladit parametry pro fixer (hloubku, přesah apod.), radius ve kterém se fixery vytvářejí ; taky může přidat list objektů co se z fixu mají vynechat
-      \end{itemize}
-  \end{itemize}
+\end{itemize}
+\textbf{po troše experimentování a delší úvaze jsme se rozhodli pro možnost s dodatečným neviditelným colliderem}
+
+
+\subsubsection*{Implementace}
+\begin{itemize}
+  \item jak chceme aby to vypadalo: pro každý pár mečů - na jednom z nich velkej collider, co se v reálném čase natáčí tak, aby tomu druhému bráníl v protunelování 
+  \item který tvar z primitive colliderů? - vybíráme box collider - jedna jeho hrana bude procházet vlastní osou meče; zbytek collideru je vždycky přesně na opačné straně od osy meče než meč protivníka
+  \item pro potřeby zbytku sekce budeme meč považovat za úsečku odpovídající jeho středové ose - spojnici pataČepele<->špička (získaná ze SwordDescriptoru)
+  \item dále nechť collider s kterým pracujeme, se nazývá "fixovací collider" či krátce "fixer"
+  \item jak definujeme 'na opačné straně'?  
+    \begin{itemize}
+      \item meče - libovolně mimoběžné úsečky v prostoru
+      \item vzít nějakej jeden pevnej bod (např. střed čepele) a ten brát jako reprezentanta, kterému chceme být naproti - nefunguje (spusta případů, kdy to neodpovídá - např. kolize špiček dvou mečů)
+      \item co funguje: najít nejkratší spojnici obou mečů - na ní ležej ty 2 body, ve kterých by oba meče potenciálně mohly kolidovat
+      \item výpočet:
+        \begin{itemize}
+          \item meče M, N
+          \item X..nejkratší spojnice M,N musí být na oba kolmá - tedy X.direction = M.direction.CrossProduct(N.direction)
+          \item nyní stačí řešit soustavu 3 rovnic o 3 neznámých: M.origin + M.t * M.direction + X.direction*X.t = N.origin + N.t * N.direction // kde M.t, X.t, N.t jsou neznámé
+          \item tu strčíme do matice a předhodíme gaussovce - knihovna MathNet.Numerics
+          \item chceme úsečky -> M.t, N.t sesekáma do intervalu <0,1> - podle nich vypočítáme oba konce výsledné spojnice
+        \end{itemize}
+    \end{itemize}
+  \item pozici kam umístit střed collideru (offset relativní vůči středu meče) získáme takto: 
+    \begin{itemize}
+      \item let O = nejbližší bod protějšího meče
+      \item let P = new Plocha(bod: střed meče, normála:směr meče)
+      \item let H = hloubka collideru (parametr od uživatele - vzdálenost od hrany do středu)
+      \item return (P.projekce(O).normalized * (-H)) //pro globální pozici přičíst střed meče
+    \end{itemize}
+  \item rotaci získáme jako Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(offsetCollideruOdStředuMeče, bladeDirection)
+  \item takhle tu pozici collideru updatujeme každej FixedUpdate
+  \item \textbf{problém} - když meče během 1 snímku protunelujou, collider okamžitě přeskočí na druhou stranu a ničemu nepomůže
+  \item řešení: pamatujeme si jeho poslední offset proti středu meče - pokud se mezi 2 snímkama ostře změní (offset.Dot(lastOffset) < 0), tak nově spočítanej offset znegujeme
+  \item existujou okrajové případy, co to rozbijou (např. úplně první volání FixedUpdate) - řešení: tuhle negaci provádíme jenom pokud je nejkratší spojnice obou mečů dostatečně krátká (limit konfigurovaný uživatelem, 0.4 metru funguje rozumně)
+  \item \textbf{Další problém} - občas se stane, že meč protuneluje na druhou stranu meče a jakoby se skřípne mezi mečem a jeho fixerem - řešení: přidat collideru přesah - velikost navíc se kterou ale jeho pozicovač nekalkuluje (-> místo jenom do středu meče sahá fixer trochu dál)
+  \item \textbf{Jak zařídíme, aby collisionFixer kolidoval jenom se správným mečem a s ničím jiným?}
+    \begin{itemize}
+      \item první řešení, co člověka napadne - dát je na Layer, co nemá nastavené kolize vůbec s ničím, a selektivně zavolat Physics.IgnoreCollision(fixer, targetSword, false) - to ale vůbec nic nedělá, kolize pořád nevznikají
+      \item \textbf{řešení:} separátní Layery: CollisionFix, Sword - Sword koliduje s hodně věcma, CollisionFix jenom se Sword -> musíme přidat velký trigger collider - ten včas disabluje kolize se všema mečema co nejsou ten cílový, které se nachomýtnou poblíž
+    \end{itemize}
+  \item \textbf{fixovací collider umístíme přímo do meče jako jeho podobjekt}
+    \begin{itemize}
+      \item -> všechny kolize s fixerem povedou k působení síly přímo na rigidbody meče (a síla bude přesně ta co je realistická)
+      \item \textbf{problém:} dodatečnej collider, co se ještě pořád chaoticky otáčí, totálně rozhodí balance meče - řešení: \textbf{potřeba mít nastavený custom centerOfMass a inertiaTensor aby se nepřepočítávaly podle fixeru!} 
+    \end{itemize}
+  \item \textbf{Jak se tedy výsedek používá z pohledu uživatele?}
+    \begin{itemize}
+      \item Na meč stačí přidat komponentu CollisionFix - ta automaticky zařídí, aby se vytvořil fixer pro každej další meč, co se nachomítne poblíž (fixer je umístěnej do jednoho z těch dvou mečů - náhodně vybráno který)
+      \item v případě že je meč zničený, všechny fixery co na něj cílily, se automaticky zničej taky
+      \item CollisionFix by měl v defaultu být nakonfigurovanej funkčně, ale uživatel na něm může ladit parametry pro fixer (hloubku, přesah apod.), radius ve kterém se fixery vytvářejí ; taky může přidat list objektů co se z fixu mají vynechat
+    \end{itemize}
 \end{itemize}
 
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
