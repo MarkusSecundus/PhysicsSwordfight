@@ -131,7 +131,7 @@ Nyní je hráč schopen se pohybovat po herním světě, stále však zbývá za
 
 Řešení je jednoduché - kameru jsme umístili v objektové hierarchii mezi děti šermířova herního objektu, napolohovali jsme ji na příhodné místo u jeho očí, a nyní se při šermířově pohybu přesunuje adekvátně spolu s ním. 
 
-Dále chceme hráči umožnit rozhlížení se - to znamená měnit rotaci kamery v jejích osách X a Y. Obdobně jako u pohybu, zde rovněž pro každou osu rotace nabídneme uživateli, aby nakonfiguroval osu vstupu a rychlost. Následně voláním ISwordInput.GetAxis(), vynásobením výsledku s rychlostí a s Time.deltaTime\footnote{Pohyb kamery je kosmetickou záležitostí, která nijak nesouvisí s fyzikou - narozdíl od pohybu šermíře jej tedy nevykonáváme z FixedUpdate, ale z Update.} získáme úhel, který jednoduše přičteme k eulerovské reprezentaci rotace na Transformu kamery\footnote{V praxi její eulerovský úhel nečteme v každém snímku znovu - přečteme ho jednou při inicializaci a tuto jeho verzi "nakešovanou" jako 3D vektor následně považujeme za zdroj pravdy - doporučený postup dle \href{https://docs.unity3d.com/2022.2/Documentation/ScriptReference/Quaternion-eulerAngles.html}{\underline{oficielní dokumentace}} \cite{Unity}}. Aby rozhlížení nebylo příliš divoké, pro každou osu ještě přidáme uživatelsky konfigurovaný minimální a maximální úhel.
+Dále chceme hráči umožnit rozhlížení se - to znamená měnit rotaci kamery v jejích osách X a Y. Obdobně jako u pohybu, zde rovněž pro každou osu rotace nabídneme uživateli, aby nakonfiguroval osu vstupu a rychlost. Následně voláním ISwordInput.GetAxis(), vynásobením výsledku s rychlostí a s Time.deltaTime\footnote{Pohyb kamery je kosmetickou záležitostí, která nijak nesouvisí s fyzikou - narozdíl od pohybu šermíře jej tedy nevykonáváme z FixedUpdate, ale z Update.} získáme úhel, který jednoduše přičteme k eulerovské reprezentaci rotace na Transformu kamery\footnote{V praxi její eulerovský úhel nečteme v každém snímku znovu - přečteme ho jednou při inicializaci a tuto jeho verzi ''nakešovanou'' jako 3D vektor následně považujeme za zdroj pravdy - doporučený postup dle \href{https://docs.unity3d.com/2022.2/Documentation/ScriptReference/Quaternion-eulerAngles.html}{\underline{oficielní dokumentace}} \cite{Unity}}. Aby rozhlížení nebylo příliš divoké, pro každou osu ještě přidáme uživatelsky konfigurovaný minimální a maximální úhel.
 
 \textit{Na horzizontální a vertikální osu rozhlížení jsme přiřadili vstup z horizontální a vertikální osy pohybu myši. Po herním testování jsme však došli k závěru, že rozhlížení do stran je velmi matoucí a znepřijemňuje ovládání meče. V praxi je tedy rychlost horizontálního rozhlížení nastavena na 0. Rozhlížení nahoru/dolů pomocí vertikální osy myši jsme ponechali - zdá se být použitelné bez větších problémů.}
 
@@ -186,7 +186,7 @@ Najdeme zde dvě hlavní komponenty fyzikálního systému - nekinematické Rigi
 
 \textbf{Rigidbody} jsme stanovili váhu 1.5 (typická váha jedenapůlručního meče), později jsme došli k objevu, že pro optimální hráčský zážitek je třeba vypnout gravitaci a ručně nastavit těžiště a \textit{intertiaTensor} - o tom zevrubněji v \ref{swordParameterTweaksSection}.
 
-\textbf{ConfigurableJoint} meči velmi přímočaře poskytl schopnost být držen šermířem - stačí nastavit šermířovo Rigidbody jako \textit{connectedBody} jointu. \textit{Anchor} jsme umístili doprostřed rukojeti - to je bod, ve kterém šermíř meč "drží". 
+\textbf{ConfigurableJoint} meči velmi přímočaře poskytl schopnost být držen šermířem - stačí nastavit šermířovo Rigidbody jako \textit{connectedBody} jointu. \textit{Anchor} jsme umístili doprostřed rukojeti - to je bod, ve kterém šermíř meč ''drží''. 
 
 Z objektového návrhu již známe komponentu \textbf{SwordMovement}, jejímž úkolem je řídit rigidbody a joint tak, aby se meč pohyboval způsobem odpovídajícím hráčskému vstupu.
 
@@ -535,7 +535,7 @@ Z tvarů, které nám nabízejí primitivní collidery, se pro tento účel jev�
   \label{obr05:fixerDefinitions}
 \end{figure} 
 
-Myšlenku tedy máme, jak však pro dvě obecné úsečky v prostoru definujeme "na opačné straně"?
+Myšlenku tedy máme, jak však pro dvě obecné úsečky v prostoru definujeme ''na opačné straně''?
 
 \bigbreak
 
@@ -618,7 +618,7 @@ Přidali jsme tedy číselný parametr: \textit{Maximální vzdálenost detekce 
 
 \bigbreak
 
-Dalším problémem, na který jsme narazili, bylo, že příležitostně Cílový meč protuneloval na druhou stranu Hosta a "skřípl" se mezi něj a fixer - viz obr. \ref{obr05:fixerSqueak}. Řešením bylo fixeru přidat \textit{přesah} - dodatečnou velikost, kterou collider fyzicky má, avšak není brána v úvahu při geometrických výpočtech. Hrana fixeru takto tedy neprochází přesně středovou osou meče, ale přesahuje dál - viz obr. \ref{obr05:fixerOverreach} - čímž se prostor pro skřípnutí druhého meče drasticky zmenšuje. 
+Dalším problémem, na který jsme narazili, bylo, že příležitostně Cílový meč protuneloval na druhou stranu Hosta a ''skřípl'' se mezi něj a fixer - viz obr. \ref{obr05:fixerSqueak}. Řešením bylo fixeru přidat \textit{přesah} - dodatečnou velikost, kterou collider fyzicky má, avšak není brána v úvahu při geometrických výpočtech. Hrana fixeru takto tedy neprochází přesně středovou osou meče, ale přesahuje dál - viz obr. \ref{obr05:fixerOverreach} - čímž se prostor pro skřípnutí druhého meče drasticky zmenšuje. 
 
 \begin{figure}[ht]\centering
   \center
@@ -678,55 +678,96 @@ Vzhledem k tomu, že počet fixerů ve scéně roste v nejhorším případě kv
 
 Pro demonstraci funkčnosti našeho systému jsme vytvořili drobnou akční hru, její spustitelné sestavení pro platformy Windows a Linux nalezne čtenář v příloze.
 
-\begin{itemize}
-  \item Pro testování a demonstraci funkčnosti našeho konceptu jsme vytvořili ukázkovou hru
-  \item herní svět - aréna + okolní les
-  \item PC - šermíř, může chodit po světě a používat libovolně meč
-  \item v aréně lze bojovat s jednoduchými NPC nepřáteli
-  \item všechny modely a textury byly vytvořené autorem této práce a vztahuje se na ně MIT licence jako na všechno ostatní
-\end{itemize}
+Hráčem ovládaný šermíř s mečem, kterého jsme navrhli a implementovali v předchozí části této práce, se zde může pohybovat po středověkem inspirovaném fantasy světě sestávajícím z arény obklopené lesem. V aréně může zápasit s jednoduchými počítačem řízenými protivníky.  
+
+Než přistoupíme k bližšímu představení jednotlivých částí hry, zmiňme, že veškeré grafické assety (3D modely a textury), které jsme použili, byly vytvořeny autorem této práce a vztahuje se na ně stejná opensource licence jako na zbytek práce.
+
 
 \subsection{Herní svět}
-\begin{itemize}
-  \item les jsou jenom pěkné kulisy
-  \item V aréně jsou sloupy s čudlíkama - po jejich stisknutí mečem se uvnitř arény spawne nepřítel
-  \item několik druhů nepřátel: trénovací panák, mečotoč, rytíř (podrobně rozebereme v jejich vlastních sekcích)
-\end{itemize}
+
+Ústředním bodem herního světa je aréna - v té se odehrává veškerý gameplay. Okolní kopcovitá krajina s rozmístěnými stromy pak slouží jako kulisy.
+
+K vytvoření krajiny jsme použili vestavěný editor terénu, který nabízí Unity. Jeho pomocí jsme i rozmístili stromy - těm jsme v zájmu výkonu nepřidělili collidery, jsou čistě vizuální. Záměrem bylo pouze pro arénu vytvořit tématické a nerozptylující okolí.
+
+Aréna je ohraničena kolem dokola palisádou. Najdeme v ní kruhové bojiště, ve kterém se spawnují nepřátelé a mají povoleno se po něm pohybovat, a malé prostranství s tlačítky, jež může šermíř stisknout svým mečem, aby spawn nepřátel inicioval - viz obr. \ref{obr05:demogameArenaLayout} 
+\begin{figure}[ht]\centering
+  \center
+  \includegraphics[width=140mm]{../img/demogameArenaLayout.png}
+  \caption{Aréna - bojiště (červeně), prostranství s tlačítky (modře)}
+  \label{obr05:demogameArenaLayout}
+\end{figure} 
+
+Tlačítka jsou implementována jako \textit{Damageable} s nekonečným množstvím \acs{HP}, jejichž OnDamaged event spustí kosmetický efekt probliknutí a na náhodném místě arény vykoná spawn jejich přiřazené nepřátelské entity - viz obr. \ref{obr05:demogameActivateButton}. 
+\begin{figure}[h!]\centering
+  \center
+  \includegraphics[width=140mm]{../img/demogameActivateButton.png}
+  \caption{Tlačítko stisknuté mečem a nově spawnutý nepřátelský šermíř}
+  \label{obr05:demogameActivateButton}
+\end{figure} 
+
+Pro hráčovu orientaci jsme vedle každého tlačítka postavili jako ''maskota'' jednu instanci entity, kterou spawnuje - upravenou, aby stála na místě a nemohla hráče nijak zranit ani hráč ji.
+
+Typy nepřátel jsou tři - nepřátelský šermíř, trénovací panák, třetího jsme pracovně nazvali ''mečotoč'' - podrobně je rozebereme v jejich vlastních sekcích.
+
 
 \subsection{GUI}
-\begin{itemize}
-  \item všechno pomocí klasického gameobjectového UI
-  \item PauseMenu.. naprostá klasika - root čeká na zmáčknutí Esc - pak nastaví Time.timeScale = 0 a enabluje svoje potomky
-  \item DieScreen.. taky nic zajímavého - při spuštění tweenem přes obrazovku zobrazí hardcoded bloodstains sprite a "Press F to Restart" (reloadne scénu)
-  \item HUD.. healthbar + bloodstains.. dvě drobné komponenty, nad nima kontroler - poskytuje callback, co se musí přidat do OnUpdate na nějakém Damageable
-\end{itemize}
 
+Grafické uživatelské rozhraní jsme vytvořili pomocí vestavěného systému Unity UI, který nám umožnil jednotlivé prvky definovat skrze obyčejné objekty v hierarchii herní scény. S textovými prvky pomohl dodatečný balíček TextMesh Pro \cite{TextMeshPro}.
+\bigbreak
+
+Klávesou Escape aktivované \textbf{menu} nabízí obvyklé základní položky: restart hry, konec hry a přehled mapování kláves.
+Pozastavení hry, když je hráč v menu, jsme implementovali nastavením \textit{UnityEngine.Time.timeScale = 0}.
+\bigbreak
+
+Dále zde najdeme překryvné rozhraní, jehož úkolem je hráčovi komunikovat \textbf{stav jeho postavy}. 
+
+V levého spodním rohu najdeme healthbar - ten ukazuje jaká část z maximálního hráčova zdraví ještě zbývá. Informaci získává posloucháním OnUpdate eventu na hráčově Damageable, který zaregistruje hráčova \textit{SwordAssembly}. Stejným způsobem na hráčovi poslouchá i druhá pomocná komponenta - jejím úkolem je na několik sekund přes obrazovku zobrazit obrázek krvavých skvrn, pokud bylo hráčovi uštědřeno obzvláště těžké zranění. Pokud hráč zemře, zobrazí se krvavé skvrny trvale spolu s výzvou, aby stiskl 'R' pro restart hry.
+
+Pro komunikaci zdraví nepřátel nepoužíváme překryvné GUI. Původní myšlenka byla nad základní texturou nepřítele postupně odkrývat druhou vrstvu s krvavými skvrnami, nakonec jsme se omezili na postupné obarvování celého nepřítele na červeno (skrze \textit{Renderer.material.color}) dle jeho zbývajících HP. Abychom ke zraněním poskytli okamžitou zpětnou vazbu, rovněž jsme zapojili vestavěný Particle systém enginu Unity, s jehož pomocí v místě zásahu emitujeme několik částic ''stříkající krve'' - viz obr. \ref{obr05:demogameEnemyBloodied}
+
+\begin{figure}[!h]\centering
+  \center
+  \includegraphics[width=140mm]{../img/demogameFightEnemyBloodied.png}
+  \caption{Boj s mírně zraněným protivníkem}
+  \label{obr05:demogameEnemyBloodied}
+\end{figure} 
 
 \subsection{Statičtí nepřátelé}
-\begin{itemize}
-  \item Nemohou se hýbat, stojí tam, kde byli spawnutí
-  \item \textbf{Trénovací panák}
-    \begin{itemize}
-      \item Jenom stojí a bere damage dokud není zničený
-    \end{itemize}
-  \item \textbf{Mečotoč}
-    \begin{itemize}
-      \item Koule, co rotuje dokola na tyči (uchycené configurable jointem, který má nastavenou targetVelocity a angularDrive)
-      \item Ke kouli je jointama připojených 1 nebo víc mečů - ty způsobují dmg úplně stejně jako šermířův meč
-      \item Na jointu meče - vysoká connectedMassScale -> hráč může zachytit meč mečotoče o ten svůj a celý pohyb mečotoče tím zastavit, příp. tlačit proti směru rotace
-      \item Při spawnu randomizován počet mečů, odkud kam se koule posunuje po tyči, a jakou má volnost rotace (- SwordmillRandomizer)
-    \end{itemize}
-  \item \textbf{IRandomizable}
-  \begin{itemize}
-    \item Libovolný skript, myšlenka je, že by měl při spawnu randomizovat parametry svého gameobjectu
-    \item Spawnovací skript na entitě ihned po spawnu (tedy před zavoláním Start()) iteruje přes všechny IRandomizable ve všech potomcích a volá na nich metodu Randomize()
-    \item Implementován např. pro randomizaci transformu (rotace, velikost trénovacího panáka, apod.), randomizaci HP, randomizaci mečotoče
-    \item Ten samý systém je použitý i pro náhodou generaci palisády, co ohraničuje arénu
-  \end{itemize}
-\end{itemize}
+
+Do hry jsme implementovali dva jednodušší typy nepřátel, kteří se nemohou pohybovat po aréně a mají velmi jednoduché chování, mohou však hráči být nápomocni k testování některých herních konceptů nebo k ozvláštnění boje s nepřátelským šermířem.
+
+\begin{figure}[h!]\centering
+  \center
+  \includegraphics[width=110mm]{../img/demogameStaticEnemies.png}
+  \caption{Statičtí nepřátelé - panák (vlevo) a mečotoč (vpravo)}
+  \label{obr05:demogameStaticEnemies}
+\end{figure} 
+
+
+\subsubsection*{Trénovací panák}
+
+Stojí na místě dokud není zničen, hráče nemůže nijak zranit. Poskytuje bezpečné prostředí, kde si hráč může vyzkoušet základní ovládání meče. 
+Viz obr. \ref{obr05:demogameStaticEnemies} - vlevo.
+
+\subsubsection*{Mečotoč}
+
+Koule rotující na tyči zapíchnuté v zemi, ke které je připevněných několik (1 až 6) mečů. Meče mohou zraňovat ostatní entity a proti hráči\footnote{Proti nepřátelským šermířům není třeba, vypnuli jsme ji tedy pro dosažení lepšího výkonu.} mají aktivovanou korekci kolizí (viz \ref{swordCollisionsSection}). Hráči může posloužit ke cviku blokování a podobných pokročilejších technik. Mečotoč, kterému byl při spawnu vylosován větší počet mečů a agresivní pattern pohybu, může sám znamenat zajímavou herní výzvu srovnatelně obtížnou jako nepřátelský šermíř. 
+
+Koule je ke středové tyči připojena pomocí \textit{ConfigurableJointu} a rotována nastavením nenulové položky \textit{joint.targetAngularVelocity}. Vytvoření, rozmístění a připojení stanoveného počtu mečů jointem ke kouli vykonává při spawnu komponenta \textit{SwordmillAssembly}. Nakonec jsme pro ozváštnění přidali i schopnost koule posunovat se po tyči nahoru a dolů podle náhodně definovaného patternu - to je starostí komponenty \textit{SwordmillBehavior}.
+
+\subsubsection*{Randomizace}
+
+Pro randomizaci nepřátel jsme stanovili rozhraní \textit{IRandomizer} - to má jedinou metodu \textit{Randomize()}, která bere jako parametr instanci \textit{System.Random}. Spawnovací mechanismus na každé entitě při spawnu projde všechny komponenty v její hierarchii, které toto rozhraní implementují, a metodu \textit{Randomize()} na nich zavolá.
+
+Na mečotoči i na trénovacím panákovi např. používáme \textit{TransformRandomizer} - ten podle stanovených parametrů náhodně pozmění polohu, rotaci a velikost objektu.
+
+Pro mečotoč největší pozornost zasluhuje \textit{SwordmillRandomizer} - ten randomizuje počet mečů, cestu koule nahoru/dolů po tyči a rovněž sílu, s kterou jsou meče koulí drženy.
 
 
 \subsection{Rytíř} \label{knightEnemySubsection}
+
+Nejsofistikovanějším typem nepřítele je počítačem řízený šermíř.
+
 \begin{itemize}
   \item vychází z prefabu pro hráče - jenom nahrazuje ovládání klávesnicí a myší za počítačový algoritmus
   \item taky nemá žádnou vazbu na hráčovo GUIčko (healthbar, bloodstains, death screen apod.) a není k němu spárovaná žádná kamera
@@ -762,8 +803,8 @@ Pro demonstraci funkčnosti našeho systému jsme vytvořili drobnou akční hru
 
 \section{Shrnutí}
 
-Dokončili jsme implementaci naší práce. Meč i šermíř jsou plnohodnotnými prvky fyzikální simulace se všemi výhodami, které toto přináší např. pro možnosti interakce s okolním prostředím. Pro meč jsme implementovali dva základní submoduly ovládání - sekání a blokování. Pro tělo šermíře jsme vytvořili za použití standardního balíčku Animation Rigging procedurální animaci, která zajišťuje, aby kosmeticky "držel" meč. Rovněž jsme načrtli systém životů a výpočtu zranění.
+Dokončili jsme implementaci naší práce. Meč i šermíř jsou plnohodnotnými prvky fyzikální simulace se všemi výhodami, které toto přináší např. pro možnosti interakce s okolním prostředím. Pro meč jsme implementovali dva základní submoduly ovládání - sekání a blokování. Pro tělo šermíře jsme vytvořili za použití standardního balíčku Animation Rigging procedurální animaci, která zajišťuje, aby kosmeticky ''držel'' meč. Rovněž jsme načrtli systém životů a výpočtu zranění.
 
-Velkou výzvou bylo zajistit realistické \textbf{chování mečů při kolizích}. Žádná z metod detekce kolizí, které Unity nabízí, nebyla schopna zcela zabránit tunelování. Řešením bylo pro každý pár mečů vytvořit dodatečný "velký" collider, který se nacházel na jednom z mečů a natáčel se dle polohy toho druhého. Dalším netriviálním úkolem bylo vyladit fyzikální parametry, aby bylo dosaženo plynulého pocitu při švihu mečem. 
+Velkou výzvou bylo zajistit realistické \textbf{chování mečů při kolizích}. Žádná z metod detekce kolizí, které Unity nabízí, nebyla schopna zcela zabránit tunelování. Řešením bylo pro každý pár mečů vytvořit dodatečný ''velký'' collider, který se nacházel na jednom z mečů a natáčel se dle polohy toho druhého. Dalším netriviálním úkolem bylo vyladit fyzikální parametry, aby bylo dosaženo plynulého pocitu při švihu mečem. 
 
 Pro praktickou demonstraci možností našeho systému jsme následně vytvořili ukázkovou hru. Hráč zde může v prostředí fantasy arény zápasit s jednoduchými počítačem řízenými protivníky, kteří používají standardní NavMesh pro orientaci v terénu a útočí přehráváním přednahraných pohybů meče. 
