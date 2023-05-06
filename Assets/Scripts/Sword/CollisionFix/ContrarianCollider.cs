@@ -2,6 +2,7 @@ using DG.Tweening;
 using MarkusSecundus.PhysicsSwordfight.PhysicsUtils;
 using MarkusSecundus.PhysicsSwordfight.Utils.Extensions;
 using MarkusSecundus.PhysicsSwordfight.Utils.Geometry;
+using MarkusSecundus.PhysicsSwordfight.Utils.Graphics;
 using MarkusSecundus.PhysicsSwordfight.Utils.Primitives;
 using System.Collections;
 using System.Collections.Generic;
@@ -59,7 +60,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
             /// <summary>
             /// Max distance of the blades at which tunneling is prevented. 
             /// </summary>
-            public float Tolerance;
+            public float MaxTunnelingDetectionDistance;
             /// <summary>
             /// Added diameter to the collider that is ignored in it's positioning computation. Used for preventing a sword getting stuck between other sword and its collider.
             /// </summary>
@@ -68,7 +69,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
             /// <summary>
             /// Default value for the editor
             /// </summary>
-            public static Configuration Default => new Configuration { ColliderDepth = 1f, Tolerance = 0.3f, Overreach = 0.1f };
+            public static Configuration Default => new Configuration { ColliderDepth = 1f, MaxTunnelingDetectionDistance = 0.3f, Overreach = 0.1f };
         }
 
         /// <summary>
@@ -161,7 +162,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
 
             var direction = (bladeCenter - planeToContainCollider.ClosestPointOnPlane(opposite)).normalized;
             if (direction == Vector3.zero) return;
-            if (direction.Dot(lastDirection) < 0 && directionRay.length < Config.Tolerance)
+            if (directionRay.length < Config.MaxTunnelingDetectionDistance && direction.Dot(lastDirection) < 0)
             {
                 direction = -direction;
             }
@@ -172,6 +173,11 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
             collider.transform.position = position;
             collider.transform.rotation = Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(direction, bladeDirection);
 
+            debugCircle(directionRay.origin, Color.red);
+            debugCircle(directionRay.end, Color.blue);
+            Debug.DrawLine(directionRay.origin, directionRay.end, Color.magenta);
+
+            void debugCircle(Vector3 v, Color c) => DrawHelpers.DrawWireSphere(v, 0.02f, (a, b) => Debug.DrawLine(a, b, c), 5, 40);
         }
 
         static ScaledRay AccountForCurrentMotion(ScaledRay position, Rigidbody rb, float delta)

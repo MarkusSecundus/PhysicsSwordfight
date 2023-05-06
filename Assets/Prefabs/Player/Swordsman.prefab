@@ -408,11 +408,11 @@ MonoBehaviour:
     WalkForwardBackward: 5
     StrafeLeftRight: 3
     RotateLeftRight: 222
-    LookUpDown: 50
+    LookUpDown: 30
     LookLeftRight: 0
     LookConstraints:
-      Min: {x: -180, y: 0, z: 0}
-      Max: {x: 180, y: 0, z: 0}
+      Min: {x: -90, y: 0, z: 0}
+      Max: {x: 90, y: 0, z: 0}
     Jump: {x: 0, y: 7, z: 0}
     Gravity: {x: 0, y: -20, z: 0}
     GravityWhenGrounded: {x: 0, y: -20, z: 0}

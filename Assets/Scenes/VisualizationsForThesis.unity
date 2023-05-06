@@ -1031,7 +1031,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 505039324281563531, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 914446132941591640, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Name
@@ -1039,7 +1039,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4545717032499961662, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540179020747397437, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: ColliderConfig.Overreach
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540179020747397437, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: ColliderConfig.ColliderDepth
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540179020747397437, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: ColliderConfig.MaxTunnelingDetectionDistance
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 8339704402682697230, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_RootOrder
@@ -1088,8 +1100,6 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 7037720150090839414, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
     - {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
-    - {fileID: 505039324281563531, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
-    - {fileID: 4545717032499961662, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2800,7 +2810,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1425476897
 Transform:
   m_ObjectHideFlags: 0
@@ -2928,7 +2938,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1533332240}
   m_Layer: 0
-  m_Name: JointRotation (1)
+  m_Name: CollisionFix
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3925,7 +3935,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 505039324281563531, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 914446132941591640, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Name
@@ -3933,7 +3943,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4545717032499961662, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540179020747397437, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: ColliderConfig.Overreach
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540179020747397437, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: ColliderConfig.ColliderDepth
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7540179020747397437, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
+      propertyPath: ColliderConfig.MaxTunnelingDetectionDistance
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 8339704402682697230, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_RootOrder
@@ -3982,8 +4004,6 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 7037720150090839414, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
     - {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
-    - {fileID: 505039324281563531, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
-    - {fileID: 4545717032499961662, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
