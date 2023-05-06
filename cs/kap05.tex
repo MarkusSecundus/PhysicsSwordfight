@@ -636,7 +636,7 @@ Dalším problémem, na který jsme narazili, bylo, že příležitostně Cílov
 
 
 
-\subsubsection*{Implementace - přiřazení collideru meči}
+\subsubsection*{Implementace - fixer v herní scéně}
 
 Polohování fixeru tedy je vyřešené, zbývá rozhodnout, jak jej spárujeme s Hostitelem, aby mu byla korektně předávána kolizní síla, a také jak zařídíme, aby náš fixer nekolidoval s jinými objekty než je Cílový meč.
 
@@ -652,21 +652,21 @@ Zařídit, aby fixer nekolidoval s veškerými dalšími objekty, je nepatrně t
 \end{code}
 Ačkoliv by se však z formulace v oficielní dokumentaci mohlo zdát, že toto řešení bude fungovat, opak je pravdou - tato statická funkce slouží pouze jako opt-out mechanizmus pro kolize napříč vrstvami, které jsou globálně nastavené jako vzájemně kolidující.
 
-Bylo tedy třeba sofistikovanějšího řešení. Pro fixery jsme vytvořili oddělenou kolizní vrstvu, která koliduje pouze s vrstvou pro meče. Následně jsme ke každému fixeru přidali druhý trigger collider - ten má velikost dostatečnou na to, aby zdetekoval kterýkoliv meč v okolí dříve, než by mělo dojít k jeho kolizi s fixerem. Jeho úkol je zkrátka pro každý collider, který ho aktivuje a který není podobjektem Cílového meče, zavolat 
+Bylo tedy třeba sofistikovanějšího řešení. Pro fixery jsme vytvořili oddělenou kolizní vrstvu, která koliduje pouze s vrstvou pro meče. Následně jsme ke každému fixeru přidali druhý trigger collider - tomu jsme dali velikost dostatečnou na to, aby zdetekoval kterýkoliv meč v okolí dříve, než by mělo dojít k jeho kolizi s fixerem. V jeho OnTrigger callbacku zkrátka pro každý collider, který ho aktivuje a který nepatří do Cílového meče, zavoláme 
 \begin{code}
  UnityEngine.Physics.IgnoreCollision(fixer, collider, true);
 \end{code}
 
-\pagebreak
+Nyní tedy ve scéně můžeme mít najednou větší množství mečů i fixerů. Každý fixer bude kolidovat pouze se svým Cílovým mečem a ostatní objekty nebude nijak ovlivňovat.
 
 
 \subsubsection*{Výsledek}
-\begin{itemize}
-  \item Na meč stačí přidat komponentu CollisionFix - ta automaticky zařídí, aby se vytvořil fixer pro každej další meč, co se nachomítne poblíž (fixer je umístěnej do jednoho z těch dvou mečů - náhodně vybráno který)
-  \item v případě že je meč zničený, všechny fixery co na něj cílily, se automaticky zničej taky
-  \item CollisionFix by měl v defaultu být nakonfigurovanej funkčně, ale uživatel na něm může ladit parametry pro fixer (hloubku, přesah apod.), radius ve kterém se fixery vytvářejí ; taky může přidat list objektů co se z fixu mají vynechat
-\end{itemize}
 
+Nad plody naší práce jsme pro uživatele postavili pohodlnou fasádu - komponentu \textbf{CollisionFix}. Tu stačí přidat do herního objektu meče a zařídit, aby tam spolu s ní byla komponenta \textit{SwordDescriptor}. \textit{CollisionFix} se následně postará, aby pro jakýkoliv meč, který se objeví poblíž (to detekuje pomocí velkého trigger collideru), byl vytvořen příslušný fixer. Pro každý pár mečů je vytvořen pouze jeden fixer - který z mečů bude figurovat jako jeho Hostitel a který jako Cíl se rozhodne hodem mincí. V případě zničení komponenty \textit{CollisionFix} jsou všechny fixery, pro které figuruje jako Cíl či Hostitel, rovněž korektně zničeny.
+
+Na komponentě \textit{CollisionFix} je možné konfigurovat parametry, jež budou pro její fixery použity - hloubku, přesah, maximální vzdálenost detekce tunelování apod. - defaultní hodnoty by však měly poskytovat dobrou funkčnost. 
+
+Vzhledem k tomu, že počet fixerů ve scéně roste v nejhorším případě kvadraticky s počtem mečů, poskytli jsme uživateli prostředky k regulaci jejich vytváření - lze upravit maximální vzdálenost od meče, ve které fixery budou vytvářeny, a specifikovat objektové hierarchie, jejichž meče má \textit{CollisionFix} zcela ignorovat (např. spolubojovníci typicky nepotřebují mít vzájemné kolize ošetřené).
 
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
  % xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx %
