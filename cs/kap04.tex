@@ -179,7 +179,7 @@ Provedeme tedy experimentální implementaci s její pomocí, tu otestujeme, a v
 
 \begin{figure}[ht]\centering
     \center
-    \includegraphics[width=140mm]{../img/IntersectableSphere.png}
+    \includegraphics[height=90mm]{../img/IntersectableSphere.png}
     \caption{Vizualizace - Ovládání meče průnikem paprsku s kulovou plochou}
     \label{obr04:sphereVisualization}
 \end{figure} 
@@ -270,27 +270,55 @@ Dále pevné body, které vyznačíme na meči:
 Naším záměrem je napolohovat meč tak, aby optimálně vyblokoval úder vedený na \textit{Bod průniku}. Tedy aby \textit{Bod průniku} se shodoval s \textit{Blokovacím bodem} a čepel byla natočená tak, že \textit{Blokovací bod} směřuje ven od šermířova těla, odkud je pravděpodobně veden útočníkův úder. Pozic, které toto splňují, existuje nekonečně mnoho - volíme tu jednu, kde špička čepele směřuje směrem k \textit{Bodu nápovědy}.
 
 Algoritmus, který jsme zvolili, vypadá následovně:
-\begin{enumerate}
-    \addtocounter{enumi}{-1}
-    \item Pokud nebyl dodán validní vstup (žádný průnik), algoritmus skončí a meči ponechá jeho dosavadní cílovou pozici. Jinak pokračuje.
-    \bigbreak
-    \item OsaMeče := nová Přímka(bod1: BodRukojeti, bod2: ŠpičkaČepele)
-    \item BlokovacíBodNaOse := OsaMeče::Projekce(BlokovacíBod)
-    \item VzdálenostBlokovacíhoBoduOdRukojeti := BlokovacíBodNaOse::Vzdálenost(BodRukojeti)
-    \bigbreak
-    \item TečnáRovina := nová Rovina(bod: BodPrůniku, normála: (BodPrůniku - StředOvladacíKružnice) )
-    \item BodKamSměřujeČepel := TečnáRovina::Projekce(BodNápovědy)
-    \bigbreak
-    \item Výstup.SměrMeče := BodKamSměřujeČepel - BodPrůniku
-    \item Výstup.PolohaRukojeti := BodPrůniku - Výstup.SměrMeče::Normalizovaný() * VzdálenostBlokovacíhoBoduOdRukojeti
-    \item Výstup.NormálaNaČepelMeče := TečnáRovina.Normála::VektorovýSoučin(Výstup.SměrMeče)
-\end{enumerate}
+\begin{code}
+ if(Vstup == None) return; //žádný průnik
+
+ OsaMeče := nová Přímka(BodRukojeti, ŠpičkaČepele);
+
+ BlokovacíBodNaOse := OsaMeče::Projekce(BlokovacíBod);
+
+ VzdálenostBlokovacíhoBoduOdRukojeti := 
+    BlokovacíBodNaOse::Vzdálenost(BodRukojeti);
+
+
+ TečnáRovina := nová Rovina(
+    bod: BodPrůniku, 
+    normála: (BodPrůniku - StředOvladacíKružnice) 
+ );
+ BodKamSměřujeČepel := TečnáRovina::Projekce(BodNápovědy);
+
+
+ Výstup.SměrMeče := BodKamSměřujeČepel - BodPrůniku;
+
+ Výstup.PolohaRukojeti :=
+   BodPrůniku - Výstup.SměrMeče::Normalizovaný()
+   * VzdálenostBlokovacíhoBoduOdRukojeti;
+  
+ Výstup.NormálaNaČepelMeče := 
+   TečnáRovina.Normála::VektorovýSoučin(Výstup.SměrMeče);
+\end{code}
+
 
 \textit{Abychom zachovali předsevzetí, že \textit{Blokovací bod} leží přesně v \textit{Bodu průniku}, měli bychom ještě \textit{Polohu rukojeti} posunout o \textit{TečnáPlocha.Normála * BlokovacíBod::Vzdálenost(BlokovacíBodNaOse)}. V praxi je to však velmi drobný detail, který opomíjíme.}
 
-Vhodným umístěním pro \textit{Bod nápovědy} je např. několik metrů před šermířem, ve výšce mírně nad jeho hlavou - při blokování v horní polovině šermířova těla pak meč má náklon tak akorát, aby se pohodlně blokovaly údery vedené šikmo, seshora i z boku - viz obr. TODO. Spodní polovina těla tím však trpí - meč je téměř zcela vertikální a šermíř ho drží velmi nepřirozeně vypadajícím způsobem - viz obr. TODO2. 
+Vhodným umístěním pro \textit{Bod nápovědy} je např. několik metrů před šermířem, ve výšce mírně nad jeho hlavou - při blokování v horní polovině šermířova těla pak meč má náklon tak akorát, aby se pohodlně blokovaly údery vedené šikmo, seshora i z boku - viz obr. \ref{obr04:blockingGood}. Spodní polovina těla tím však trpí - meč je téměř zcela vertikální a šermíř ho drží velmi nepřirozeně vypadajícím způsobem - viz obr. \ref{obr04:blockingBad}. 
  
 V praxi tedy místo jediného \textit{Bodu nápovědy} definujeme jejich množinu - použije se ten s nejmenší vzdáleností k \textit{Bodu průniku}. Prvky množiny může být např. onen bod před šermířem mírně nad hlavou a druhý analogický bod před šermířem v úrovni jeho nohou.  
+
+\begin{figure}[ht]\centering
+    \center
+    \includegraphics[height=60mm]{../img/blocking-good.png}
+    \caption{Blokování v horní části těla}
+    \label{obr04:blockingGood}
+\end{figure} 
+
+\begin{figure}[ht]\centering
+    \center
+    \includegraphics[height=60mm]{../img/blocking-bad.png}
+    \caption{Rozbité blokování ve spodní části těla}
+    \label{obr04:blockingBad}
+\end{figure} 
+
 
 \bigbreak
 
