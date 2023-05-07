@@ -696,7 +696,15 @@ Nad plody naší práce jsme pro uživatele postavili pohodlnou fasádu - kompon
 
 Na komponentě \textit{CollisionFix} je možné konfigurovat parametry, jež budou pro její fixery použity - hloubku, přesah, maximální vzdálenost detekce tunelování apod. - defaultní hodnoty by však měly poskytovat dobrou funkčnost. 
 
-Vzhledem k tomu, že počet fixerů ve scéně roste v nejhorším případě kvadraticky s počtem mečů, poskytli jsme uživateli prostředky k regulaci jejich vytváření - lze upravit maximální vzdálenost od meče, ve které fixery budou vytvářeny, a specifikovat objektové hierarchie, jejichž meče má \textit{CollisionFix} zcela ignorovat (např. spolubojovníci typicky nepotřebují mít vzájemné kolize ošetřené).
+Vzhledem k tomu, že počet fixerů ve scéně roste v nejhorším případě kvadraticky s počtem mečů (viz obr. \ref{obr05:collisionFixGroup}), poskytli jsme uživateli prostředky k regulaci jejich vytváření - lze upravit maximální vzdálenost od meče, ve které fixery budou vytvářeny, a specifikovat objektové hierarchie, jejichž meče má \textit{CollisionFix} zcela ignorovat (např. spolubojovníci typicky nepotřebují mít vzájemné kolize ošetřené).
+
+\begin{figure}[ht]\centering
+  \center
+  \includegraphics[width=140mm]{../img/collisionFix-group.png}
+  \caption{Čtveřice šermířů s plnou vzájemnou korekcí kolizí mečů}
+  \label{obr05:collisionFixGroup}
+\end{figure} 
+
 
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
  % xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx %
@@ -717,12 +725,12 @@ Než přistoupíme k bližšímu představení jednotlivých částí hry, zmiň
 
 Ústředním bodem herního světa je aréna - v té se odehrává veškerý gameplay. Okolní kopcovitá krajina s rozmístěnými stromy pak slouží jako kulisy.
 
-K vytvoření krajiny jsme použili vestavěný editor terénu, který nabízí Unity. Jeho pomocí jsme i rozmístili stromy - těm jsme v zájmu výkonu nepřidělili collidery, jsou čistě vizuální. Záměrem bylo pouze pro arénu vytvořit tématické a nerozptylující okolí.
+K vytvoření krajiny jsme použili vestavěný editor terénu, který engine Unity nabízí. Jeho pomocí jsme i rozmístili stromy - těm jsme v zájmu výkonu nepřidělili collidery, jsou čistě vizuální. Záměrem bylo pouze pro arénu vytvořit tématické a nerozptylující okolí.
 
 Aréna je ohraničena kolem dokola palisádou. Najdeme v ní kruhové bojiště, ve kterém se spawnují nepřátelé a mají povoleno se po něm pohybovat, a malé prostranství s tlačítky, jež může šermíř stisknout svým mečem, aby spawn nepřátel inicioval - viz obr. \ref{obr05:demogameArenaLayout} 
 \begin{figure}[ht]\centering
   \center
-  \includegraphics[width=140mm]{../img/demogameArenaLayout.png}
+  \includegraphics[width=145mm]{../img/demogameArenaLayout.png}
   \caption{Aréna - bojiště (červeně), prostranství s tlačítky (modře)}
   \label{obr05:demogameArenaLayout}
 \end{figure} 
@@ -751,7 +759,7 @@ Pozastavení hry, když je hráč v menu, jsme implementovali nastavením \texti
 
 Dále zde najdeme překryvné rozhraní, jehož úkolem je hráčovi komunikovat \textbf{stav jeho postavy}. 
 
-V levého spodním rohu najdeme healthbar - ten ukazuje jaká část z maximálního hráčova zdraví ještě zbývá. Informaci získává posloucháním OnUpdate eventu na hráčově Damageable, který zaregistruje hráčova \textit{SwordAssembly}. Stejným způsobem na hráčovi poslouchá i druhá pomocná komponenta - jejím úkolem je na několik sekund přes obrazovku zobrazit obrázek krvavých skvrn, pokud bylo hráčovi uštědřeno obzvláště těžké zranění. Pokud hráč zemře, zobrazí se krvavé skvrny trvale spolu s výzvou, aby stiskl 'R' pro restart hry.
+V levého spodním rohu najdeme healthbar - ten ukazuje jaká část z maximálního hráčova zdraví ještě zbývá. Informaci získává posloucháním OnUpdate eventu na hráčově \textit{Damageable}, který zaregistruje hráčova \textit{SwordAssembly}. Stejným způsobem na hráčovi poslouchá i druhá pomocná komponenta - jejím úkolem je na několik sekund přes obrazovku zobrazit obrázek krvavých skvrn, pokud bylo hráčovi uštědřeno obzvláště těžké zranění. Pokud hráč zemře, zobrazí se krvavé skvrny trvale spolu s výzvou, aby ''stiskl 'R' pro restart hry''.
 
 Pro komunikaci zdraví nepřátel nepoužíváme překryvné GUI. Původní myšlenka byla nad základní texturou nepřítele postupně odkrývat druhou vrstvu s krvavými skvrnami, nakonec jsme se omezili na postupné obarvování celého nepřítele na červeno (skrze \textit{Renderer.material.color}) dle jeho zbývajících HP. Abychom ke zraněním poskytli okamžitou zpětnou vazbu, rovněž jsme zapojili \href{https://docs.unity3d.com/2022.2/Documentation/Manual/Built-inParticleSystem.html}{vestavěný Particle systém enginu Unity}, s jehož pomocí v místě zásahu emitujeme několik částic ''stříkající krve'' - viz obr. \ref{obr05:demogameEnemyBloodied}
 
@@ -777,11 +785,12 @@ Do hry jsme implementovali dva jednodušší typy nepřátel, kteří se nemohou
 \subsubsection*{Trénovací panák}
 
 Stojí na místě dokud není zničen, hráče nemůže nijak zranit. Poskytuje bezpečné prostředí, kde si hráč může vyzkoušet základní ovládání meče. 
+
 Viz obr. \ref{obr05:demogameStaticEnemies} - vlevo.
 
 \subsubsection*{Mečotoč}
 
-Koule rotující na tyči zapíchnuté v zemi, ke které je připevněných několik (1 až 6) mečů. Meče mohou zraňovat ostatní entity a proti hráči\footnote{Proti nepřátelským šermířům není třeba, vypnuli jsme ji tedy pro dosažení lepšího výkonu.} mají aktivovanou korekci kolizí (viz \ref{swordCollisionsSection}). Hráči může posloužit ke cviku blokování a podobných pokročilejších technik. Mečotoč, kterému byl při spawnu vylosován větší počet mečů a agresivní pattern pohybu, může sám znamenat zajímavou herní výzvu srovnatelně obtížnou jako nepřátelský šermíř. 
+Koule rotující na tyči zapíchnuté v zemi, ke které je připevněných několik (1 až 6) mečů. Meče mohou zraňovat ostatní entity a proti hráči\footnote{Proti ostatním mečotočům a nepřátelským šermířům jsme ji v zájmu výkonu vypnuli.} mají aktivovanou korekci kolizí (viz \ref{swordCollisionsSection}). Hráči může posloužit ke cviku blokování a podobných pokročilejších technik. Mečotoč, kterému byl při spawnu vylosován větší počet mečů a agresivní pattern pohybu, může sám znamenat zajímavou herní výzvu srovnatelně obtížnou jako nepřátelský šermíř. 
 
 Koule je ke středové tyči připojena pomocí \textit{ConfigurableJointu} a rotována nastavením nenulové položky \textit{joint.targetAngularVelocity}. Vytvoření, rozmístění a připojení stanoveného počtu mečů jointem ke kouli vykonává při spawnu komponenta \textit{SwordmillAssembly}. Nakonec jsme pro ozváštnění přidali i schopnost koule posunovat se po tyči nahoru a dolů podle náhodně definovaného patternu - to je starostí komponenty \textit{SwordmillBehavior}.
 
@@ -834,7 +843,7 @@ Nyní je šermíř schopen se pohybovat po aréně, pronásledovat hráče a př
 
 \begin{figure}[h!]\centering
   \center
-  \includegraphics[width=110mm]{../img/demogameAiNavigation.png}
+  \includegraphics[width=120mm]{../img/demogameAiNavigation.png}
   \caption{Skupina šermířů koordinovaně pronásledující hráče (zelený válec značí interní NavMeshAgent polohu)}
   \label{obr05:demogameAiNavigation}
 \end{figure} 
@@ -848,7 +857,7 @@ Pro tvorbu nahrávek pohybů meče jsme měli dvě možnosti:
   \item Nahrávat volání \textit{SwordMovement.MoveSword()}
 \end{itemize}
 
-Zvolili jsme druhou možnost, protože takto pořízené nahrávky mohou fungovat spolehlivě nezávisle na aktuální konfiguraci \textit{SwordMovement.Modules}, které na šermířském prefabu chceme v budoucnu dále ladit a měnit. Rovněž se systémem, který k takovémuto účelu vytvoříme, by později nemělo být obtížné např. zavést přehrávání nahrávek i jako dodatečný mod ovládání pro hráčského šermíře, podobně jako to umožňuje \acl{DbtS}.
+Zvolili jsme druhou možnost, protože takto pořízené nahrávky mohou fungovat spolehlivě nezávisle na aktuální konfiguraci \textit{SwordMovement.Modules}, které na šermířském prefabu chceme v budoucnu dále ladit a měnit. Rovněž se systémem, který k takovémuto účelu vytvoříme, by později nemělo být obtížné např. zavést přehrávání nahrávek i jako dodatečný mod ovládání pro hráčského šermíře, podobně jako to umožňuje hra \acl{DbtS} (viz \ref{dieByTheSwordDescriptionSubsection}).
 
 \bigbreak
 
@@ -866,15 +875,15 @@ Podařilo se nám vytvořit nepřítele, který je schopen po aréně pronásled
 
 \begin{figure}[h!]\centering
   \center
-  \includegraphics[width=110mm]{../img/demogameFight.png}
+  \includegraphics[width=140mm]{../img/demogameFight.png}
   \caption{Šermíř útočící na hráče}
   \label{obr05:demogameFight}
 \end{figure} 
 
 \section{Shrnutí}
 
-Dokončili jsme implementaci naší práce. Meč i šermíř jsou plnohodnotnými prvky fyzikální simulace se všemi výhodami, které toto přináší např. pro možnosti interakce s okolním prostředím. Pro meč jsme implementovali dva základní submoduly ovládání - sekání a blokování. Pro tělo šermíře jsme vytvořili za použití standardního balíčku Animation Rigging procedurální animaci, která zajišťuje, aby kosmeticky ''držel'' meč. Rovněž jsme načrtli systém životů a výpočtu zranění.
+Dokončili jsme implementaci naší práce. Meč i šermíř jsou plnohodnotnými prvky fyzikální simulace se všemi výhodami, které toto přináší např. pro možnosti interakce s okolním prostředím. Pro meč jsme implementovali dva základní submoduly ovládání - sekání a blokování. Pro tělo šermíře jsme vytvořili za použití standardního balíčku Animation Rigging \cite{AnimationRigging} procedurální animaci, která zajišťuje, že kosmeticky ''drží'' meč. Rovněž jsme načrtli systém životů a výpočtu zranění.
 
 Velkou výzvou bylo zajistit realistické \textbf{chování mečů při kolizích}. Žádná z metod detekce kolizí, které Unity nabízí, nebyla schopna zcela zabránit tunelování. Řešením bylo pro každý pár mečů vytvořit dodatečný ''velký'' collider, který se nacházel na jednom z mečů a natáčel se dle polohy toho druhého. Dalším netriviálním úkolem bylo vyladit fyzikální parametry, aby bylo dosaženo plynulého pocitu při švihu mečem. 
 
-Pro praktickou demonstraci možností našeho systému jsme následně vytvořili ukázkovou hru. Hráč zde může v prostředí fantasy arény zápasit s jednoduchými počítačem řízenými protivníky, kteří používají standardní NavMesh pro orientaci v terénu a útočí přehráváním přednahraných pohybů meče. 
+Pro praktickou demonstraci možností našeho systému jsme následně vytvořili ukázkovou hru. Hráč zde může v prostředí fantasy arény zápasit s jednoduchými počítačem řízenými protivníky, kteří používají standardní systém NavMesh pro orientaci v terénu a útočí přehráváním přednahraných pohybů meče. 
