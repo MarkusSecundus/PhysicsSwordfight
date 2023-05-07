@@ -261,7 +261,7 @@ Parametr \textit{AnchorSpeed} je konfigurovaný z editoru. Vzhledem k tomu, že 
 
 Jde o velmi triviální řešení, jež neodpovídá realistickému fyzikálnímu chování, avšak pohyb meče se jeví plynule a hráčský zážitek se nezdá výrazněji trpět.
 
-\subsubsection*{Síla držení meče}
+\subsubsection*{Síla držení meče} \label{implementationSwordHoldingForceSubsubsection}
 
 Někdy je třeba kromě pozice meče mít kontrolu i nad způsobem, jak je meč držen. Např. v modu blokování potřebujeme, aby byl meč držen pevněji než při sekání, jinak by blokující meč byl tím sekajícím sražen na stranu (sekající se pohybuje a má tedy větší kinetickou sílu). 
 
@@ -382,7 +382,6 @@ Pro účely této práce se však současný systém jeví jako dostačující. 
 
 Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování našeho systému. V této sekci se do detailu zaměříme na nečekané překážky, které nám v průběhu implementace postavil do cesty fyzikální subsystém, a vysvětlíme, jakým způsobem byly překonány.
 
-
 \subsection{Jak nastavit cílovou rotaci jointu} \label{howToSetJointsTargetRotationSection}
 
 V \ref{implementationSwordAngularMovementSubsubsection} jsme zmínili, že ConfigurableJoint používá pro svůj parametr \textit{targetRotation} velmi nestandardní souřadnicový systém. Jeho analýzu za nás naštěstí již vykonal \cite{ConfigurableJointExtensions} uživatel portálu github jménem mstevenson. Protože však jeho algoritmus pro nastavení rotace udávané v klasických světových či lokálních souřadnicích existuje pouze ve formě webové stránky, zde ho pro archivní účely také ukážeme: 
@@ -426,65 +425,63 @@ void SetTargetRotation(
 
 Zda smíme používat světové, nebo lokální souřadnice, záleží na hodnotě flagu \textit{joint.configuredInWorldSpace}. Argument \textit{startRotation} je (buď globální, nebo lokální) rotace, kterou jsme přečetli z \textit{joint.transform} na začátku hry ve zprávě Start().
 
-V případě našeho meče používáme lokální souřadnice. Tedy \textit{joint.configuredInWorldSpace} musí být false a do \textit{startRotation} posíláme \textit{joint.transform.localRotation}.
+V případě našeho meče používáme lokální souřadnice. Tedy \textit{joint.configuredInWorldSpace} musí být false a jako parametr \textit{startRotation} posíláme \textit{joint.transform.localRotation}.
 
 V naší práci jsme tuto logiku zapouzdřili do třídy \textit{JointRotationHelper}, kterou je třeba inicializovat odkazem na joint při spuštění hry. Následně pro nastavení cílové rotace stačí volat její metodu \textit{SetTargetRotation} s jediným argumentem udávajícím cílovou rotaci.
 
 
 \subsection{Ladění parametrů} \label{swordParameterTweaksSection}
-\begin{itemize}
-  \item snaha dosáhnout dobrý game feel
-    \begin{itemize}
-      \item aby meč svižně sekal ze strany na stranu (ne se klátil jako když mácháme s 80kg ledničkou)
-      \item aby meč netáhl šermíře pryč z místa kde stojí
-      \item aby se všechno nezbláznilo když např. hráč přijde blízko ke stěne a začne dávat vstupy, podle kterých by handle měl být uvnitř té stěny
-      \item aby šermíř při blokování držel meč dostatečnou silou, že meč nebude sražen na stranu a opravdu ten úder vyblokuje 
-    \end{itemize}
 
-  \item Meč - Parametry, ke kterým jsme se pro optimální hráčský zážitek experimentálně dobrali, jsou tyto: 
-    \begin{itemize}
-      \item \textit{rigidbody.centerOfMass} - uprostřed rukojeti (totožné s joint.anchor)
-      \item \textit{rigidbody.inertiaTensor} - (0.05, 0.05, 0.02)
-      \item \textit{joint.rotationDriveMode} - Slerp
-      \item \textit{joint.slerpDrive} - spring: 120, damper: 10
-    \end{itemize}
-    
-  \item meči i šermíři jsme nastavili realistickou hmotnost (šermíř 60kg, meč 1.5kg)
-  \item \textbf{Svižnost sekání...}
-    \begin{itemize}
-      \item joint.rotationDriveMode = Slerp - plynulý pohyb, vždy nejkratší cesta mezi dvěma rotacemi
-      \item potřeba nenulový joint.angularSlerpDrive.damper (jinak by se meč třásl a nikdy nestabilizoval) ale musí být o dost menší než joint.angularSlerpDrive.spring (když jsou blízko, tak se meč pohybuje strašně líně)
-      \item experimentálně binárním vyhledávání jsme našli hodnoty drive=120, damper=10 - ty se chovají pěkně pro normální sekání
-      \item další extrémně důležitá věc - vyhrát si s ručním nastavením rigidbody.centerOfMass a rigidbody.inertiaTensor 
-        \begin{itemize}
-          \item je nezbytně nutné aby se nepřepočítávaly podle toho jak se meči přidávají a odebírají collidery (nezbytně nutné kvůli \ref{swordCollisionsSection} a taky se prostě věci dají jednodušeji ladit když mi v tom automatika nedělá bordel)
-          \item pěkně vychází rigidbody.centerOfMass = (0,0,0) a rigidbody.inertiaTensor = nějaké hodně malé číslo - např. (0.05, 0.05, 0.02) (ale všude nenulové protože nula = nekonečno)
-        \end{itemize}
-    \end{itemize}
-  \item \textbf{Aby meč šermíře netahal dopředu apod. ...}
-    \begin{itemize}
-      \item nastavíme nízkou joint.connectedMassScale - tím pádem se síly, co působí na meč, budou přenášet na šermířovo rigidbody dostatečně redukovaně aby tyhle efekty nebyly pozorovatelné
-    \end{itemize}
-  \item \textbf{Aby se celkově neděly divné nepřidvídatelnosti...}
-      \begin{itemize}
-        \item nastavit joint.projectionMode (když by meč měl být na nesplnitelném místě, takhle se místo toho přesune blízko ke hráčovi; fyzikálně nerealistické, ale chová se dost pěkně)
-        \item nastavit joint.enablePreprocessing = false (extrémně pomáhá - viz dokumentace (v té prostě říkají, že s ním zapnutým se můžou dít divný věci))
-      \end{itemize}
-  \item \textbf{Síla blokování...}
-    \begin{itemize}
-      \item pozorování... při blokování se konzistentně dělo to, že útočící meč blok prolomil (měl stejnej angularDrivem, ale jak byl zrovna uprostřed švihu, tak měl celkově větší energii nebo tak něco)
-      \item řešení... při blokování upravit parametry jointu aby blok nešlo prolomit
-      \item ukázalo se, že fajn je drive 100krát zvýšit a damper snižit na polovinu (tedy drive=12000, damper=5) (čím větší drive, tím větší síla držení; čím větší damper, tím snadnější blok prolomit; při zvýšení obojího 100krát se to chovalo dost podobně jako v defaultu; jenom snížit damper na setinu původní hodnoty a drive nechat by ale nefungovalo páč pak by se meč strašně třásl atd.)
-    \end{itemize}
+Fyzikální objekty poskytují mnoho parametrů, které ovlivňují jejich chování. K dosažení dobrého výsledku bylo nutné strávit dlouhý čas jejich laděním. Pro mnoho z těchto parametrů je jejich přesný význam v oficielní dokumentaci nastíněn jen mlhavě, např. použitá jednotka často není vůbec udána. V kombinací s inherentní nepřesností fyzikální simulace tedy nebylo možné pouze přepsat do hry obraz reality - k nalezení vhodných parametrů často neexistovala lepší cesta než binární vyhledávání či podobné heuristiky. Vzhledem k tomu, že funkcí posuzující kvalitu chování byl pouze subjektivní dojem, a že rovněž parametry často ovlivňují jeden druhý, zcela jistě jsme nenašli jejich optimální ohodnocení. Přesto jsme se však dobrali k výsledku, který se zdá plynout v přijetelný herní zážitek. Ten si nyní představíme.
+
+\bigbreak
+Nejprve bylo třeba meči a šermířovi stanovit váhu. Její jednotka je v oficielní dokumentaci udána jako kg, mohli jsme ji tedy nastavit zhruba realisticky - pro šermíře \textit{60}, pro meč \textit{1.5}.
+
+\subsubsection*{Svižnost sekání}
+
+Pro dosažení svižného pohybu meče bylo třeba poladit parametry jak na \textit{Rigidbody} meče, tak na jeho \textit{ConfigurableJointu}:
+\begin{itemize}
+  \item \textit{joint.rotationDriveMode = Slerp} - takto se meč do cílové pozici přesunuje vždy nejkratší cestou
+  \item \textit{joint.slerpDrive = {spring: 120, damper: 10}} - hodnoty pro mod sekání. Spring musí být cca o jeden až několik řádů větší než damper, aby se meč pohyboval svižně a pevně držel pozici, příliš malý damper způsobí ošklivý třas.
+  \item \textit{rigidbody.centerOfMass = joint.anchor} - těžiště by mělo být poblíž bodu ve kterém šermíř meč drží.
+  \item \textit{rigidbody.inertiaTensor = (0.05, 0.05, 0.02)} - velmi malé ale nenulové\footnote{Dle \href{https://docs.unity3d.com/ScriptReference/Rigidbody-inertiaTensor.html}{oficielní dokumentace} 0 je zde ekvivalentní nekonečnu.} hodnoty. Určuje lehkost, s jakou meč rotuje v jednotlivých osách.
+  \item \textit{rigibody.centerOfMass, rigidbody.inertiaTensor} - nutně musí být nastavené manuálně z editoru. Jinak je balanc zcela rozbit\footnote{Defaultně fyzikální systém tyto dvě hodnoty automaticky přepočítává podle rozmístění colliderů. Collidery přidané korekcí kolizí jsou velmi neforemné.} při použití korekce kolizí (viz \ref{swordCollisionsSection}).
+  \item \textit{joint.massScale = 9} - zvýšilo subjektivní svižnost a pádnost meče.
+\end{itemize}
+
+\subsubsection*{Přenos sil mezi mečem a šermířem}
+
+Dále bylo nutné zařídit, aby síly, které na meč působily, nebyly příliš moc přenášeny na šermíře. Samotná síla, kterou vynakládal joint ke švihání meče, jinak stačila na to, aby byl šermíř citelnou rychlostí neustále ''tahán'' dopředu.
+
+Problém jsme vyřešili nastavením malé \textit{joint.connectedMassScale} - konkrétně jsme použili hodnotu \textit{0.01}.
+
+\subsubsection*{Stabilita simulace}
+
+Případy obecně podivného chování jsme zredukovali nastavením těchto parametrů:
+\begin{itemize}
+  \item \textit{joint.enablePreprocessing = false} - celkově zlepšilo stabilitu.
+  \item \textit{joint.projectionMode = PositionAndRotation} - když je poloha, kde se meč má vyskytovat, nesplnitelná, takto se místo nevyzpytatelného chování přesune na místo poblíž šermíře - fyzikálně nerealisticky, leč úhledně.
 \end{itemize}
 
 
+\subsubsection*{Síla držení meče}
 
+Při použití stejného \textit{joint.slerpDrive} pro mod sekání i mod blokování byl blok blokujícího meče tím sekajícím konzistentě prorážen. Bylo tedy třeba nějak zvýšit ''sílu, kterou je blokující meč držen''. 
+
+Po testování jsme došli k závěru, že pro blokovací mod fungují adekvátně tyto parametry:
+\begin{itemize}
+  \item \textit{joint.slerpDrive.spring: 2400}
+  \item \textit{joint.slerpDrive.damper: 5}
+\end{itemize}
+
+Při přepínání mezi mody ovládání pro tyto parametry vykonáváme plynulý přechod - viz \ref{implementationSwordHoldingForceSubsubsection}. Blokování je takto proti sekajícímu meči účinné, jinak si meč stále zachovává své klasické chování.
+
+
+\pagebreak
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
  % xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx %
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
 
-\pagebreak
 
 \subsection{Kolize mečů} \label{swordCollisionsSection}
 
