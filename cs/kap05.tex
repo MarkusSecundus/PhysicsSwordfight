@@ -7,7 +7,7 @@ V této kapitole zběžně představíme, jak jsme celkově při implementaci po
 Podrobnou programátorskou dokumentaci k jednotlivým komponentám psanou v anglickém jazyce lze nalézt v příloze. Zvolili jsme pro ni standardní formát dokumentačních komentářů exportovaných do souboru XML, protože ten podporuje pohodlnou integraci s IDE (např. použití v našeptávači).
 
 \subsubsection*{Závislosti}
-Naše řešení používá několik externích knihoven. Pro procedurální animaci šermířova modelu jsme využili balíček AnimationRigging \cite{AnimationRigging}. S tvorbou dalších kosmetických efektů vypomohla knihovna DOTween \cite{DoTween}. Dále Math.NET Numerics \cite{MathDotNetNumerics} poskytlo stabilní a dobře testovaný nástroj pro řešení soustav lineárních rovnic. TextMesh Pro \cite{TextMeshPro} pomohlo při tvorbě prvků GUI. Repozitoř SubclassPropertyDrawer \cite{SubclassPropertyDrawer} umožnila pohodlnou editaci jednotlivých SwordMovement.Modules v editoru. 
+Naše řešení používá několik externích knihoven. Pro procedurální animaci šermířova modelu jsme využili balíček AnimationRigging \cite{AnimationRigging}. S tvorbou dalších kosmetických efektů vypomohla knihovna DOTween \cite{DoTween}. Dále Math.NET Numerics \cite{MathDotNetNumerics} poskytlo stabilní a dobře testovaný nástroj pro řešení soustav lineárních rovnic. Newtonsoft.Json \cite{NewtonsoftJson} jsme použili k serializaci JSON souborů. TextMesh Pro \cite{TextMeshPro} pomohlo při tvorbě prvků GUI. Repozitoř SubclassPropertyDrawer \cite{SubclassPropertyDrawer} umožnila pohodlnou editaci jednotlivých SwordMovement.Modules v editoru. 
 
 Dále je třeba poděkovat uživatelům unity fóra \cite{InvertReverseUIMask}, které pomohlo s implementací grafické reprezentace healthbaru.
 
@@ -267,7 +267,7 @@ Někdy je třeba kromě pozice meče mít kontrolu i nad způsobem, jak je meč 
 
 Sílu držení meče jsme tedy umožnili definovat spolu s polohou. Jde o volitelný parametr - pokud není dodán, meč se navrací na defaultní sílu držení (která byla z jointu přečtena při inicializaci). Implementace probíhá jednoduše změnou položky \textit{joint.slerpDrive.spring}, používáme k tomu stejnou triviální interpolaci jako pro pohyb \textit{connectedAnchoru} výše.
 
-\subsubsection*{Submoduly}
+\subsubsection*{Submoduly} \label{implementationSwordSubmodulesSubsubsection}
 
 Již tedy máme představu, jak vnitřně probíhá pohyb meče. Nyní krátce k submodulům, které pro pohyb meče generují instrukce. 
 
@@ -723,7 +723,7 @@ Dále zde najdeme překryvné rozhraní, jehož úkolem je hráčovi komunikovat
 
 V levého spodním rohu najdeme healthbar - ten ukazuje jaká část z maximálního hráčova zdraví ještě zbývá. Informaci získává posloucháním OnUpdate eventu na hráčově Damageable, který zaregistruje hráčova \textit{SwordAssembly}. Stejným způsobem na hráčovi poslouchá i druhá pomocná komponenta - jejím úkolem je na několik sekund přes obrazovku zobrazit obrázek krvavých skvrn, pokud bylo hráčovi uštědřeno obzvláště těžké zranění. Pokud hráč zemře, zobrazí se krvavé skvrny trvale spolu s výzvou, aby stiskl 'R' pro restart hry.
 
-Pro komunikaci zdraví nepřátel nepoužíváme překryvné GUI. Původní myšlenka byla nad základní texturou nepřítele postupně odkrývat druhou vrstvu s krvavými skvrnami, nakonec jsme se omezili na postupné obarvování celého nepřítele na červeno (skrze \textit{Renderer.material.color}) dle jeho zbývajících HP. Abychom ke zraněním poskytli okamžitou zpětnou vazbu, rovněž jsme zapojili vestavěný Particle systém enginu Unity, s jehož pomocí v místě zásahu emitujeme několik částic ''stříkající krve'' - viz obr. \ref{obr05:demogameEnemyBloodied}
+Pro komunikaci zdraví nepřátel nepoužíváme překryvné GUI. Původní myšlenka byla nad základní texturou nepřítele postupně odkrývat druhou vrstvu s krvavými skvrnami, nakonec jsme se omezili na postupné obarvování celého nepřítele na červeno (skrze \textit{Renderer.material.color}) dle jeho zbývajících HP. Abychom ke zraněním poskytli okamžitou zpětnou vazbu, rovněž jsme zapojili \href{https://docs.unity3d.com/2022.2/Documentation/Manual/Built-inParticleSystem.html}{vestavěný Particle systém enginu Unity}, s jehož pomocí v místě zásahu emitujeme několik částic ''stříkající krve'' - viz obr. \ref{obr05:demogameEnemyBloodied}
 
 \begin{figure}[!h]\centering
   \center
@@ -768,45 +768,78 @@ Pro mečotoč největší pozornost zasluhuje \textit{SwordmillRandomizer} - ten
 
 Při tvorbě nepřátelského šermíře jsme se snažili využít co nejvíce již existujících komponent vyvinutých pro hráčského šermíře. Výsledek tomu odpovídá - k původnímu prefabu hráčského šermíře nám stačilo až na několik detailů pouze přidat algoritmus strojové inteligence a vyměnit zdroj vstupu za simulovaný, který má algoritmus pod kontrolou. Rovněž bylo samozřejmě třeba zpřetrhat veškeré vazby na herní kameru a GUI - objekty, které náleží pouze hráči.
 
-Algoritmus umělé inteligence implementuje komponenta \textit{SwordsmanAI} - tu jsme přidali do kořenového objektu spolu s komponentou \textit{InputSimulator}, kterou jsme nahradili za původní \textit{BasicSwordInput}.
+Algoritmus umělé inteligence implementuje komponenta \textit{SwordsmanAI} - tu jsme přidali do kořenového objektu spolu s komponentou \textit{InputSimulator}, kterou jsme nahradili za původní \textit{BasicSwordInput}. Do jeho pole Cíl jsme v editoru přetáhli hráčského šermíře.
 
 
 \subsubsection*{Pohyb po terénu}
+
+Nejprve se zaměřme na šermířův pohyb po aréně. Především chceme, aby šermíř pronásledoval hráče, ale bylo by příhodné, kdyby se při tom dokázal vyhýbat ostatním šermířům a statickým nepřátelům, kteří jsou po aréně rozmístění. Přesně to je úkol, který řeší standardní knihovna \textbf{NavMesh} (více se o ní čtenář dozví v \href{https://docs.unity3d.com/2022.2/Documentation/Manual/Navigation.html}{oficielní dokumentaci} \cite{Unity}).
+
+Uvnitř arény jsme tedy vytvořili \textit{NavMeshSurface} (objekt definující terén po kterém je možné se pohybovat) a statickým nepřátelům jsme přidali komponentu \textit{NavMeshObstacle}. Zbývá pouze šermířovi přidat komponentu \textit{NavMeshAgent}.
+
+\textit{NavMeshAgent} si pro účely navigace vede vlastní reprezentaci postavy, která se pohybuje nezávisle od jejího fyzického těla. Defaultně po každém updatu updatuje i transform postavy, aby interní reprezentaci odpovídal, my však chceme postavou pohybovat ručně manipulací jejího \textit{ISwordInput}. K tomu bylo třeba vypnout flagy \textit{agent.updatePosition}, \textit{agent.updateRotation} a \textit{agent.updateUpAxis}. 
+
+Každý snímek na agentovi zavoláme metodu \textit{agent.SetDestination()}, které předáme aktuální pozici hráčského šermíře, a následně našeho šermíře pohneme směrem k interní pozici agenta:
+\begin{code}
+ agent.SetDestination(TargetSwordsman.transform.position);
+
+ var direction = agent.nextPosition - this.transform.position;
+ var forward = direction.DotProduct(this.transform.forward); 
+ var right = direction.DotProduct(this.transform.right);
+ 
+ inputSimulator.SetAxis(InputMapping.Forward, forward * ForwardSpeed);
+ inputSimulator.SetAxis(InputMapping.Sideways, right * SidewaysSpeed);
+\end{code}
+Pro horizontální rotaci šermíře se osvědčilo použít stejnou hodnotu jako pro pohyb bokem:
+\begin{code}
+ inputSimulator.SetAxis(InputMapping.RotateHorizontal, 
+                        right * RotateHorizontalSpeed)
+\end{code}
+Aby se nehromadil rozpor mezi pozicí agenta a skutečnou pozicí šermíře, je třeba nakonec agenta k šermířovi přiblížit zpátky - oficielní dokumentace doporučuje takto:
+\begin{code}
+ agent.nextPosition = this.transform.position + 0.9 * direction;
+\end{code} 
+
+Nyní je šermíř schopen se pohybovat po aréně, pronásledovat hráče a při tom se vyhýbat překážkám i dalším šermířům - viz obr.\ref{obr05:demogameAiNavigation}.
+
+\begin{figure}[h!]\centering
+  \center
+  \includegraphics[width=110mm]{../img/demogameAiNavigation.png}
+  \caption{Skupina šermířů koordinovaně pronásledující hráče (zelený válec značí interní NavMeshAgent polohu)}
+  \label{obr05:demogameAiNavigation}
+\end{figure} 
+
+
+\subsubsection*{Ovládání meče}
+
+Pro tvorbu nahrávek pohybů meče jsme měli dvě možnosti:
 \begin{itemize}
-  \item používá standardní Uniťácký NavMesh - aby mohlo najednou být spawnutých víc rytířů najednou - co se vyhýbají jeden druhému a okolním překážkám
-  \item uvnitř arény jsme umístili NavMeshSurface, hráčovi a statickým nepřátelům jsme přidělili NavMeshObstacle -> rytíři jsou schopní se navigovat po aréně a vyhýbat se veškerým překážkám
-  \item NavMeshAgent... agent.updatePosition = agent.updateRotation = agent.updateUpAxis = false
-  \item Agent nijak nemodifikuje transform rytíře - místo toho řidicí skript kouká na jeho vyžádanou pozici a podle ní určuje hodnotu co nastaví do InputSimulatoru, ze kterého rytířův SwordsmanMovement bere vstup ; obdobně jako v \href{https://docs.unity3d.com/Manual/nav-CouplingAnimationAndNavigation.html}{tomhle manuálu} 
-  \item má nastavený nějaký transform jako cíl - Agentovi nastavuje aby se k němu snažil přiblížit
-  \item když je k cíli dostatečně blízko, tak agenta ignoruje a místo toho jenom stojí a dává pozor aby byl otočenej směrem na cíl
+  \item Nahrávat uživatelský vstup
+  \item Nahrávat volání \textit{SwordMovement.MoveSword()}
 \end{itemize}
 
-\subsubsection*{Ovládání meče - zamyšlení}
-\begin{itemize}
-  \item Mohli bychom pořizovat nahrávky paprsků z uživatelského vstupu - pak by s pohybem i s mečem komunikovalo AI dohromady stejnou cestou
-  \item Když však budeme nahrávat přímo SwordMovement.MoveSword() instrukce a necháme aby je přehrával specielní SwordMovement.Module...
-    \begin{itemize}
-      \item takový záznam je pro nás transparentnější, můžeme nad instrukcemi např. provádět maticové transformace apod. a libovolně pohyb meče měnit
-      \item takovej mechanismus pro přehrávání nahrávek bychom pak mohli zadarmo použít i jako dodatečnej mod pro hráčského šermíře - jako to dělá DbtS 
-    \end{itemize}
-\end{itemize}
+Zvolili jsme druhou možnost, protože takto pořízené nahrávky mohou fungovat spolehlivě nezávisle na aktuální konfiguraci \textit{SwordMovement.Modules}, které na šermířském prefabu chceme v budoucnu dále ladit a měnit. Rovněž se systémem, který k takovémuto účelu vytvoříme, by později nemělo být obtížné např. zavést přehrávání nahrávek i jako dodatečný mod ovládání pro hráčského šermíře, podobně jako to umožňuje \acl{DbtS}.
 
-\subsubsection*{Ovládání meče - pořízení nahrávek}
-\begin{itemize}
-  \item komponenta co se vecpe mezi SwordMovement a jeho submoduly - odchytává veškerá volání MoveSword() a reportuje jejich parametry do UnityEventu
-  \item parametry čte druhá komponenta - každý jednotlivý struct s argumentama převede do souřadnic relativních vůči transformu šermíře, přidá timestamp, a celou nahrávku ukládá jako pole do JSON texťáku (přes Newtonsoft.Json)
-\end{itemize}
+\bigbreak
 
-\subsubsection*{Ovládání meče - přehrávání nahrávek}
-\begin{itemize}
-  \item ve SwordsmanAI se v editoru nastaví pole nahrávek, co se mají přehrávat jako TextAssety
-  \item SwordsmanAI nejdřív deserializuje všechny nahrávky
-  \item potom násilně ve SwordMovementu vyhází původní Submoduly a vymění je za jediný defaultní SwordMovementMode\_PlayRecord
-  \item tomuhle submodulu předá seznam nahrávek co má přehrávat - submodul si pokaždé jednu náhodně vybere a tu přehrává
-  \item přehrávání nahrávek - submodul se řídí podle timestampů, hodnoty co jsou v záznamu převádí zpátky do globálních souřadnic podle transformu rytíře
-\end{itemize}
+Nejprve bylo tedy třeba \textbf{pořídit nahrávky}. K tomuto účelu jsme vytvořili komponentu \textit{SwordMovementRecorder} - ta při vytvoření vměstná mezi SwordMovement a jeho moduly dekorátor (jako jsme si nastínili v \ref{implementationSwordSubmodulesSubsubsection}), který zachytává volání \textit{MoveSword()} a reportuje je callbackem nahrávací komponentě. Komponenta následně reportované instrukce pro pohyb meče převede do souřadnic relativních vůči Transformu šermíře a opatří timestampem. Sekvence takových instrukcí je nakonec uložena na disk jako textový soubor ve formátu JSON (k tomu jsme použili knihovnu Newtonsoft.Json \cite{NewtonsoftJson}).
 
--máme tedy \acs{NPC} rytíře, co je schopný samostatně chodit po terénu a nebezpečně mávat mečem, drtivou většinu vnitřní logiky sdílí s \acs{PC}
+\bigbreak
+
+Výsledný list souborů s nahrávkami následně v editoru přiřadíme do příslušného pole komponenty \textit{SwordsmanAI}. Ta je při své inicializaci deserializuje a následně v komponentě \textit{SwordMovement} násilně vymění list modulů za vlastní - s jediným defaultním modulem \textit{PlayRecord}. Ten jednotlivé snímky nahrávky postupně předává metodě \textit{MoveSword()}. Orientuje se při tom podle timestampů a herního času, bylo tedy jednoduché přidat násobič, kterým lze přehrávání zrychlit či zpomalit.
+
+Nahrávky jsme rozdělili do dvou skupin - útok a idle - útok se zapne, když je šermíř nablízko svému cíli, jinak se přehrává idle. Přehrává se jedna náhodně vybraná nahrávka z aktivní skupiny.
+
+\subsubsection*{Shrnutí}
+
+Podařilo se nám vytvořit nepřítele, který je schopen po aréně pronásledovat hráče a útočit na něj přehráváním předpřipravených útoků. Drtivou většinu herní logiky jeho implementace sdílí s hráčskou postavou.
+
+\begin{figure}[h!]\centering
+  \center
+  \includegraphics[width=110mm]{../img/demogameFight.png}
+  \caption{Šermíř útočící na hráče}
+  \label{obr05:demogameFight}
+\end{figure} 
 
 \section{Shrnutí}
 
