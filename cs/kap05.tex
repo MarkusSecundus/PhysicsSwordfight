@@ -385,19 +385,51 @@ Nyní by čtenář měl mít hrubý přehled o celkovém vnitřním fungování 
 
 \subsection{Jak nastavit cílovou rotaci jointu} \label{howToSetJointsTargetRotationSection}
 
-V \ref{implementationSwordAngularMovementSubsubsection} jsme zmínili, že ConfigurableJoint používá pro svůj parametr \textit{targetRotation} velmi nestandardní souřadnicový systém
+V \ref{implementationSwordAngularMovementSubsubsection} jsme zmínili, že ConfigurableJoint používá pro svůj parametr \textit{targetRotation} velmi nestandardní souřadnicový systém. Jeho analýzu za nás naštěstí již vykonal \cite{ConfigurableJointExtensions} uživatel portálu github jménem mstevenson. Protože však jeho algoritmus pro nastavení rotace udávané v klasických světových či lokálních souřadnicích existuje pouze ve formě webové stránky, zde ho pro archivní účely také ukážeme: 
 
+\begin{code}
+void SetTargetRotation(
+ ConfigurableJoint joint, //joint na kterém nastavujeme rotaci 
+ Quaternion targetRotation, //rotace kterou chceme nastavit
+ Quaternion startRotation, //rotace se kterou byl joint vytvořen
+ Space space //lokální nebo globální souřadnice
+)
+{
+ // Nejprve vypočteme báze interního souřadnicového systému
+ var right = joint.axis;
+ var forward = joint.axis.CrossProduct(joint.secondaryAxis).normalized;
+ var up = forward.CrossProduct(right).normalized;
+ var ordinaryToJointSpace = Quaternion.LookRotation(forward, up);
+ 
+ //Rotace se v jointových souřadnicích chová inverzně
+ targetRotation = targetRotation.inverse;
 
+ //Transformace ze souřadnic jointu do klasických
+ var resultRotation = ordinaryToJointSpace.inverse;
 
-\pagebreak
-\begin{itemize}
-  \item cílová rotace configurable jointu se udává v souřadnicovém systému, co se dost kryptickým způsobem vypočítává podle vícera parametrů, co se na jointu nastavují
-  \item když víme kýženou rotaci v globálních souřadnicích, není triviální vypočítat na jejím základě rotaci, co se musí nastavit jako joint.targetRotation
-  \item give credits to \href{https://gist.github.com/mstevenson/4958837}{mstevenson}
-  \item (insert algorithm here)
-  \item (popsat jak přesně algoritmus funguje)
-  \item v našem případě jsme potřebovali joint.configuredInWorldSpace=false (= joint konfigurovaný v lokálním prostoru) - jinak se všechno rozbilo když se šermíř otočil 
-\end{itemize}
+ //Aplikujeme počáteční rotaci a cílovou rotaci
+ switch(space){
+  case Space.World:
+    resultRotation *= startRotation * targetRotation;
+    break;
+  case Space.Local:
+    resultRotation *= targetRotation * startRotation;
+    break;
+ }
+ //Návrat zpět do souřadnic jointu
+ resultRotation *= ordinaryToJointSpace;
+ 
+ //Nastavíme rotaci
+ joint.targetRotation = resultRotation;
+ }
+\end{code}
+
+Zda smíme používat světové, nebo lokální souřadnice, záleží na hodnotě flagu \textit{joint.configuredInWorldSpace}. Argument \textit{startRotation} je (buď globální, nebo lokální) rotace, kterou jsme přečetli z \textit{joint.transform} na začátku hry ve zprávě Start().
+
+V případě našeho meče používáme lokální souřadnice. Tedy \textit{joint.configuredInWorldSpace} musí být false a do \textit{startRotation} posíláme \textit{joint.transform.localRotation}.
+
+V naší práci jsme tuto logiku zapouzdřili do třídy \textit{JointRotationHelper}, kterou je třeba inicializovat odkazem na joint při spuštění hry. Následně pro nastavení cílové rotace stačí volat její metodu \textit{SetTargetRotation} s jediným argumentem udávajícím cílovou rotaci.
+
 
 \subsection{Ladění parametrů} \label{swordParameterTweaksSection}
 \begin{itemize}
