@@ -65,9 +65,9 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
                 Script.MoveSword(hitDirectionVector, anchorPoint: handlePoint, upDirection: up);
 #if false //visualize
                 var swordRay = Script.Sword.SwordBladeAsRay();
-                Debug.DrawRay(inputRay.Value.origin-inputRay.Value.direction/2, inputRay.Value.direction, Color.red);
+                Debug.DrawRay(inputRay.Value.origin-inputRay.Value.direction/1.5f, inputRay.Value.direction, Color.red);
                 Debug.DrawRay(swordRay.origin, swordRay.direction, Color.cyan);
-                DrawHelpers.DrawWireSphere(hitPoint, 0.05f, (a, b) => Debug.DrawLine(a, b, Color.blue));
+                DrawHelpers.DrawWireSphere(hitPoint, 0.02f, (a, b) => Debug.DrawLine(a, b, Color.blue), circles:50);
 #endif
             }
         }

@@ -76,6 +76,10 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
         /// Color to be used when drawing the gizmo
         /// </summary>
         public Color GizmoColor = Color.cyan;
+        /// <summary>
+        /// Camera to be used as source of rays for drawing the gizmo.
+        /// </summary>
+        public Camera GizmoRenderCamera;
 
         /// <summary>
         /// Doesn't affect computation of the intersection. If set, <c>position</c> of this will replace the original <see cref="RayIntersection.InputorCenter"/> in the return value of <see cref="GetIntersection(Ray)"/>.
@@ -134,7 +138,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
         {
             if (!ShouldDrawGizmo) return;
             Gizmos.color = GizmoColor;
-            this.Visualize(Camera.main, Gizmos.DrawLine, GizmoSegments, GizmoOvershoot);
+            this.Visualize(GizmoRenderCamera??Camera.main, Gizmos.DrawLine, GizmoSegments, GizmoOvershoot);
         }
     }
 

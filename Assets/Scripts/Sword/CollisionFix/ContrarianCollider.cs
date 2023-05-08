@@ -173,11 +173,13 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
             collider.transform.position = position;
             collider.transform.rotation = Quaternion.AngleAxis(45f, bladeDirection) * Quaternion.LookRotation(direction, bladeDirection);
 
+#if false
             debugCircle(directionRay.origin, Color.red);
             debugCircle(directionRay.end, Color.blue);
             Debug.DrawLine(directionRay.origin, directionRay.end, Color.magenta);
 
             void debugCircle(Vector3 v, Color c) => DrawHelpers.DrawWireSphere(v, 0.02f, (a, b) => Debug.DrawLine(a, b, c), 5, 40);
+#endif
         }
 
         static ScaledRay AccountForCurrentMotion(ScaledRay position, Rigidbody rb, float delta)
