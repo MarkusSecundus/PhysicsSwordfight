@@ -43,16 +43,16 @@ Narozdíl od nás, Mount\&Blade je zaměřené čistě na boj s \textbf{humanoid
 
 Jednou z ústředních mechanik Mount\&Blade je \textbf{velení podřízeným bojovníkům}. Jde o mechaniku ortogonální k ovládání meče - v našem systému by ji šlo implementovat rovněž, jeho současná implementace by takovým snahám nepostavila do cesty žádné překážky, ani by je nijak nepodpořila.
 
-Pro umožnění hromadných bojů by však bylo třeba provést další optimalizace našeho systému korekce kolizí, které by zredukovaly jeho overhead na subkvadratický vůči počtu mečů ve scéně. 
+Pro umožnění hromadných bojů by však bylo třeba provést další optimalizace naší metody korekce kolizí, které by zredukovaly její overhead na subkvadratický vůči počtu mečů ve scéně. 
 
 
 
 
-\subsection{Kingdom Come: Deliverance}
+\subsection{Kingdom Come: Deliverance} \label{finalComparisonWithKCD}
 
 Zde platí mnoho stejných pozorování jako u Mount\&Blade - rovněž tu najdeme větší množství zbraní, které se neúčastní celkové fyzikální simulace a lze s nimi vykonávat pouze konečné množství typů akcí. Vše je striktně šité na míru boji proti humanoidům a možnosti interakce s okolním prostředím jsou nulové.
 
-Blokování je zde samostatná akce založená na \textbf{prvcích časování}. Náš systém naproti tomu klasické časovací mechaniky nepodporuje.
+Blokování je zde samostatná akce založená na \textbf{prvcích časování}. Náš systém naproti tomu klasické časovací mechaniky z principu věci nepodporuje.
 
 \textbf{Ovládání kamery} je v \acl{KCD} vyřešené velmi dobře. Mohlo by být zajímavé se zde inspirovat a zkusit zakomponovat uzamčení kamery na protivníka i do našeho systému.
 
@@ -65,16 +65,23 @@ Velmi silnou stránkou \acl{KCD} je rovněž \textbf{vizuální prezentace}. Dí
 
 \section{Zhodnocení}
 
+Naše práce ověřila, že za použití moderního fyzikálního systému, jakým je ten vestavěný v enginu Unity, je velmi dobře možné implementovat akční hru s mečem, která hráči poskytne nad zbraní jemnou kontrolu ve všech šesti stupních volnosti. Jádro takové hry jsme implementovali a může posloužit jako základ pro plnohodnotnou komerční hru či jako výchozí bod pro další výzkum v této oblasti.
+
+
+TODO: dopsat zbytek sekce!
+%Naše implementace zahrnuje hráčem ovladatelného šermíře, který je schopen se pohybovat po terénu. Třímá meč, se kterým je schopen volně pohybovat a používat ho k interakci s dalšími fyzikálně simulovanými objekty - např. nepřáteli.
+
 \section{Možnosti rozšíření}
 
 \begin{itemize}
-    \item \textbf{Audio}
-    \item \textbf{Grafika}
-    \item \textbf{Další mody ovládání}
-    \item \textbf{Podpora ovladače Wii Remote}
-    \item \textbf{Přepracování IRayIntersectable}
-    \item \textbf{Méně výpočetně náročná korekce kolizí}
-    \item \textbf{Sofistikovanější nepřátelská AI}
-    \item \textbf{Kombinace s dalšími herními mechanikami} - výdrž, RPG progrese
-    \item \textbf{Rozšíření na hru plné velikosti}
+    \item \textbf{Audio} - v současném stavu hra neobsahuje žádnou zvukovou složku. Je třeba zkomponovat hudební podkres a přidat zvuky vydávané herními entitami. Generování fyzikálně realistických zvuků meče by mohlo být zajímavou oblastí pro další výzkum. 
+    \item \textbf{Grafika} - vizuální stránka hry vyžaduje další práci. Bylo by vhodné pro šermíře vytvořit animace pohybu, pro všechny nepřátele pak dokončit efekt krvavých skvrn reflektujících stav jejich \acs{HP}.
+    \item \textbf{Další mody ovládání} - poskytnout výchozí bod pro navazující výzkum v oblasti ovládání meče byl jeden z primárních cílů této práce. Mody, které hra současně podporuje, již nabízejí vcelku flexibilní možnosti ovládání, stále však najdeme očividné směry, které vybízejí k dalšímu rozšiřování - např. bodání s mečem. 
+    \item \textbf{Podpora ovladače Wii Remote} - ovladač, který by nám umožnil přímou kontrolu nad pohybem meče ve všech šesti stupních volnosti, by mohl posloužit jako cenný kontrolní bod pro navazující experimenty v oblasti ovládání meče tradičními periferiemi. Ovladač Wii Remote konkrétně je možností spolehlivou, finančně dostupnou a použitelnou v enginu Unity (viz \ref{wiiRemoteSubsection}).
+    \item \textbf{Přepracování IRayIntersectable} - v procesu mapování uživatelského vstupu na pohyb meče je nejprve třeba z paprsku vystřeleného z polohy hráčova kurzoru získat kontrolní bod. Toho dosahujeme průnikem paprsku s geometrickým útvarem. Současný systém (viz \ref{rayIntersectablesDefinitionSubsection}) umožňuje definovat tyto útvary vcelku flexibilně, ale nese neduhy v podobě špatných možností vizualizace a značné míry ručního ladění potřebné k dosažení dobrého výsledku. Rovněž chybí editor, s jehož pomocí by tyto útvary mohl editovat hráč uvnitř hry.
+    \item \textbf{Lepší ovládání pohybu postavy} - jak se zdá, precizní ovládání meče vyžaduje, aby byla myš vyhrazena plně pro něj. Ovládání pohybu postavy tedy musí vystačit s klávesnicí - přímočaré ovladací schéma, jaké naše práce použila, nevede ke zcela optimálnímu hráčskému zážitku. Stejně jako v oblasti ovládání meče je zde třeba další výzkum.
+    \item \textbf{Méně výpočetně náročná korekce kolizí} - metoda (viz \ref{swordCollisionsSection}), kterou jsme použili, abychom zabránili tunelování a celkově nekorektnímu chování mečů při vzájemných kolizích, nese overhead, který roste v nejhorším případě kvadraticky s počtem mečů ve scéně. Pro umožnění hromadných bitev je třeba nalézt preciznější heuristiky, s jejichž pomocí by pomocné collidery byly poolovány a umisťovány pouze tam, kde jsou skutečně třeba.
+    \item \textbf{Sofistikovanější nepřátelská AI} - algoritmus, který jsme použili pro ovládání nepřátelských šermířů, je velmi jednoduchý a pro hráče neposkytuje značnou výzvu. Vytvořit umělou inteligenci schopnou využít plně možností, jež jí jemná kontrola nad mečem poskytuje, by mohlo být zajímavým úkolem pro další výzkum - nabízí se např. zapojení evolučních algoritmů.    
+    \item \textbf{Kombinace s dalšími herními mechanikami} - mnoho her přidává svému bojovému systému dodatečnou hloubku kombinací s dalšími mechanikami jako je systém výdrže, magie či \acs{RPG} progrese.
+    \item \textbf{Rozšíření na hru plné velikosti} - jádro, které jsme vytvořili, je třeba doplnit dalšími ortogonálními mechanikami, přidat zajímavé nepřátele, narativ a level design, aby bylo dosaženo hry, která naplní standardy komerčního herního trhu. 
 \end{itemize}

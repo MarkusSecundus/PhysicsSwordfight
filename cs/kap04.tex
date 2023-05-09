@@ -324,7 +324,7 @@ V praxi tedy místo jediného \textit{Bodu nápovědy} definujeme jejich množin
 
 Po těchto drobných úpravách algoritmu a ručním vyladění bodů nápovědy (a průsečíkového útvaru, který představíme vzápětí) získáváme mod, s kterým lze blokovat údery vedené z široké škály směrů. Jakmile hráč získá trochu cviku, je navíc ovládání vcelku intuitivní.
 
-\subsection{Ovládání meče - výsledek}
+\subsection{Ovládání meče - výsledek} \label{rayIntersectablesDefinitionSubsection}
 
 Ovládání založené na kulové ploše jsme implementovali. Jak pro mod sekání, tak pro mod blokování vedlo v typickém případě k plynulému a intuitivnímu dojmu z ovládání. Narazili jsme však na některé nežádané situace v okrajových případech. Na okrajích hráčova zorného pole, kde se bod průniku nalézal v zadní polokouli kulové plochy, bylo např. velmi jednoduché, aby hráč probodl mečem sám sebe. Dalším problémem byly situace, kdy pro paprsek a kulovou plochu žádný průnik neexistoval - v takovém případě jsme neměli jako meči rozkázat změnu polohy - hráč tedy při takových polohách kurzoru nedostal od hry žádnou zpětnou vazbu, čímž utrpěl jeho pocit kontroly a ponoření do hry.
 
