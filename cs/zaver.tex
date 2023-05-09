@@ -10,47 +10,48 @@ V \ref{swordfightingIntroChapter}. kapitole jsme analyzovali několik her, kter�
 
 Tato hra je našemu systému nejbližší, v mnoha ohledech by se dala považovat za jeho nadmnožinu. Meč je zde rovněž fyzikálně simulovaným objektem, který se interně může pohybovat libovolně ve všech 6 stupních volnosti. 
 
-\acl{DbtS} má mnohem propracovanější systémy umělé inteligence nepřátel a procedurální animace, díky kterým je umožněno např. \textbf{odsekávání končetin nepřátel}, kteří na svůj nový stav adekvátně reagují. Jádro našeho systému budoucí implementaci takové mechaniky nijak značně nebrání, avšak i tak by vyžadovala mnoho práce a některé části herní logiky by musely být změněny. 
+\acl{DbtS} má mnohem propracovanější systémy umělé inteligence nepřátel a procedurální animace, díky kterým je umožněno např. \textbf{odsekávání končetin nepřátel}, kteří na svůj nový stav adekvátně reagují. Jádro našeho systému budoucí implementaci takové mechaniky nijak citelně nebrání, avšak i tak by vyžadovala mnoho práce a některé části herní logiky by musely být změněny. 
 
 \acl{DbtS} zahrnuje větší \textbf{množství nepřátel} - každého se značně odlišnou tělesnou stavbou a používajícího zbraň jiným způsobem. Naše ukázková hra mnoho nepřátel nezahrnuje, v budoucnu by však nemělo být obtížné je přidat. Jádro našeho systému tomu nijak nebrání - stačí pouze implementovat daného nepřítele, hráče ani ostatní \acs{NPC}s není třeba upravovat, aby s novým nepřítelem byli schopni zápasit.  
 
-Použití meče v obou hrách poskytuje srovnatelně velké možnosti \textbf{emergentního gameplaye}. Naše hra představením konceptu přepínatelných \textit{modů ovládání} poskytuje větší prostor pro tvorbu sofistikovaných technik použití meče, \acl{DbtS} to však vynahrazuje kombinací s dalšími mechanikami, jakými je např. výše zmíněné odsekávání nepřátelských končetin. 
+Použití meče v obou hrách nabízí srovnatelně velké možnosti \textbf{emergentního gameplaye}. Naše hra představením konceptu přepínatelných \textit{modů ovládání} poskytuje větší prostor pro tvorbu sofistikovaných technik použití meče, \acl{DbtS} to však vynahrazuje kombinací s dalšími mechanikami, jakými je např. výše zmíněné odsekávání nepřátelských končetin. 
 
-Volnost ovládání meče rovněž v obou hrách poskytuje srovnatelné, velmi značné možnosti interakce s okolním prostředím. Level design \acl{DbtS} však tohoto valně nevyužívá - ani základní aktivace tlačítek není vykonávána pomocí meče, ale jako specielní akce.  
+Volnost ovládání meče rovněž v obou hrách poskytuje srovnatelné, velmi značné možnosti \textbf{interakce s okolním prostředím}. Level design \acl{DbtS} však tohoto valně nevyužívá - ani základní aktivace tlačítek není vykonávána pomocí meče, ale jako specielní akce.
+
+\textbf{Ovládání pohybu postavy} je v obou hrách řešeno prakticky stejně (WASD pro pohyb dopředu a do stran, horizontální rotace pomocí dalších tlačítek). Není zcela ideální a vyžaduje čas, aby si na něj hráč zvykl.
+
+\textbf{Ovládání meče} je oblast, kde lze naší hru považovat za nadmnožinu \acl{DbtS} - kromě sekání podporujeme navíc mod blokování a jednoduše lze doimplementovat další. \acl{DbtS} sice narozdíl od nás podporuje přehrávání nahrávek, avšak ty v praxi nejsou zcela použitelné, do naší hry by navíc nebylo obtížné je rovněž přidat. \texttt{IRayIntersectable}s v naší hře nabízejí další vrstvu logiky ovládání meče, která je bohatě konfigurovatelná. Aby jí však typický hráč mohl využívat, bylo by třeba implementovat uživatelsky přívětivý in-game editor.  
+
+Po \textbf{technické stránce} má \acl{DbtS} výhodu, že používá vlastní fyzikální engine plně šitý na míru jeho požadavkům. Detekce kolizí mečů tedy funguje korektně ve výchozím stavu a její overhead neroste kvadraticky s počtem mečů ve scéně jako u nás. 
 
 
-
-\pagebreak
-
-\begin{itemize}
-    %\item obojí volný, fyzikálně simulovaný meč
-    %\item v mnoha ohledech nadmnožina naší hry
-    %\item má víc advanced procedurální animaci 
-    %\item možnost sekání nepřátelských končetin
-    %\item má mnoho nepřátel, kterým kreativním způsobem umožnili ovládat meč - náš systém by taky měl umožňovat, ale bude s tím dost práce
-    %\item emergentní gameplay - obě hry umožňují cca stejně, ale level design dbts ho moc nepodporoval
-    \item interakce s prostředím - obě hry umožňují cca stejně, ale level design v dbts jí celkem ignoruje
-    \item 
-    \item ovládání postavy - skoro stejné jako my (akorát QE není rotace ale úkroky)
-    \item ovládání meče - podmnožina naší hry, máme lepší možnosti customizace (ale je potřeba k nim vytvořit GUI přístupné pro hráče)
-    \item detekce kolizí na meči funguje a nemá kvadratickou náročnost k počtu mečů 
-    \item 
-\end{itemize}
 
 \subsection{Mount\&Blade}
 
-\begin{itemize}
-    \item mnoho různých zbraní, ale pouze konečný počet akcí co s nimi dělat
-    \item velení dalším bojovníkům - ortogonální mechanika k použití meče, do našeho systému by se dalo přidat (náš systém to nijak neusnadní ani nestíží)
-    \item části zbroje - dá se i u nás
-    \item 
-    \item ovládání kamery - obě hry jím trpí, ta naše víc
-    \item emergentní gameplay - naše hra ho umožňuje řádově víc
-    \item interakce s prostředím - m\&b neumožňuje vůbec
-    \item náš systém je mnohem víc flexibilní (ale zase neumožňuje tak precizní fine-tuning (jeho hloubka je omezená tím co dám dovolí customizovat fyzikální systém))
-\end{itemize}
+V této hře najdeme větší množství zbraní než pouze meč (palcáty, kopí, hole,...), ty se však neúčastní plnohodnotně fyzikální simulace a možnosti jejich ovládání jsou omezené na vcelku malou, konečnou množinu akcí. 
+
+Najdeme zde \textbf{systém dílů zbroje}, které poskytují různou ochranu různým částem těla. Náš systém obsahuje základní stavební bloky pro implementaci podobné mechaniky.
+
+\textbf{Ovládání rotace kamery} činí problém pro obě hry. V našem systému má však na hratelnost citelnější dopad (výběr útokové zóny nevyžaduje takovou preciznost jako přímé udávání směru meče).
+
+Pohyb mečem je v Mount\&Blade umožněn pouze v několika předem určených směrech - nad mečem hráči není poskytnuta dostatečně volná kontrola, aby vznikl potenciál pro \textbf{emergentní gameplay}. Zdroje emergentního gameplaye však najdeme v dalších mechanikách - především v koordinaci podřízených vojáků. 
+
+Pro \textbf{interakci s objekty okolního prostředí} zbraň poskytuje mizivý potenciál. Level design hry se ho nepokouší využít.
+
+Narozdíl od nás, Mount\&Blade je zaměřené čistě na boj s \textbf{humanoidními protivníky} - přidání entity s jakkoliv exotičtější stavbou těla by vyžadovalo překopání všech ostatních entit, aby proti té nové byly schopny účinně bojovat.
+
+\bigbreak
+
+Jednou z ústředních mechanik Mount\&Blade je \textbf{velení podřízeným bojovníkům}. Jde o mechaniku ortogonální k ovládání meče - v našem systému by ji šlo implementovat rovněž, jeho současná implementace by takovým snahám nepostavila do cesty žádné překážky, ani by je nijak nepodpořila.
+
+Pro umožnění hromadných bojů by však bylo třeba provést další optimalizace našeho systému korekce kolizí, které by zredukovaly jeho overhead na subkvadratický vůči počtu mečů ve scéně. 
+
+
+
 
 \subsection{Kingdom Come: Deliverance}
+
+
 
 \begin{itemize}
     \item taky konečný počet akcí co lze dělat
