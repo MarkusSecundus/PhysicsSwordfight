@@ -4,7 +4,7 @@ Implementaci máme za sebou, prozkoumali jsme málo probádanou oblast akčních
 
 \section{Srovnání s dalšími hrami}
 
-V \ref{swordfightingIntroChapter}. kapitole jsme analyzovali několik her, které se podobně jako my pokusily poskytnout hráči přímou kontrolu (nejen) nad mečem. S těmi nyní náš výsledek srovnáme.
+V \ref{swordfightingIntroChapter}. kapitole jsme analyzovali několik her, které se, podobně jako my, pokusily poskytnout hráči přímou kontrolu (nejen) nad mečem. S těmi nyní náš výsledek srovnáme.
 
 \subsection{Die by the Sword}
 
@@ -18,9 +18,9 @@ Použití meče v obou hrách nabízí srovnatelně velké možnosti \textbf{eme
 
 Volnost ovládání meče rovněž v obou hrách poskytuje srovnatelné, velmi značné možnosti \textbf{interakce s okolním prostředím}. Level design \acl{DbtS} však tohoto valně nevyužívá - ani základní aktivace tlačítek není vykonávána pomocí meče, ale jako specielní akce.
 
-\textbf{Ovládání pohybu postavy} je v obou hrách řešeno prakticky stejně (WASD pro pohyb dopředu a do stran, horizontální rotace pomocí dalších tlačítek). Není zcela ideální a vyžaduje čas, aby si na něj hráč zvykl.
+\textbf{Ovládání pohybu postavy} je v obou hrách řešeno prakticky stejně. Není zcela ideální a vyžaduje čas, aby si na něj hráč zvykl.
 
-\textbf{Ovládání meče} je oblast, kde lze naší hru považovat za nadmnožinu \acl{DbtS} - kromě sekání podporujeme navíc mod blokování a jednoduše lze doimplementovat další. \acl{DbtS} sice narozdíl od nás podporuje přehrávání nahrávek, avšak ty v praxi nejsou zcela použitelné, do naší hry by navíc nebylo obtížné je rovněž přidat. \texttt{IRayIntersectable}s v naší hře nabízejí další vrstvu logiky ovládání meče, která je bohatě konfigurovatelná. Aby jí však typický hráč mohl využívat, bylo by třeba implementovat uživatelsky přívětivý in-game editor.  
+\textbf{Ovládání meče} je oblast, kde lze naší hru považovat za nadmnožinu \acl{DbtS} - kromě sekání podporujeme navíc mod blokování a jednoduše lze doimplementovat další. \acl{DbtS} sice narozdíl od nás podporuje přehrávání nahrávek, avšak to v praxi není valně použitelná metoda ovládání, do naší hry by navíc nebylo obtížné je rovněž přidat. \texttt{IRayIntersectable}s v naší hře nabízejí další vrstvu logiky ovládání meče, která je bohatě konfigurovatelná. Aby jí však typický hráč mohl využívat, bylo by třeba implementovat uživatelsky přívětivý in-game editor.  
 
 Po \textbf{technické stránce} má \acl{DbtS} výhodu, že používá vlastní fyzikální engine plně šitý na míru jeho požadavkům. Detekce kolizí mečů tedy funguje korektně ve výchozím stavu a její overhead neroste kvadraticky s počtem mečů ve scéně jako u nás. 
 
@@ -28,15 +28,15 @@ Po \textbf{technické stránce} má \acl{DbtS} výhodu, že používá vlastní 
 
 \subsection{Mount\&Blade}
 
-V této hře najdeme větší množství zbraní než pouze meč (palcáty, kopí, hole,...), ty se však neúčastní plnohodnotně fyzikální simulace a možnosti jejich ovládání jsou omezené na vcelku malou, konečnou množinu akcí. 
+V této hře najdeme větší množství zbraní než pouze meč (palcáty, kopí, hole,...), ty se však neúčastní plnohodnotně fyzikální simulace a možnosti jejich ovládání jsou omezené na vcelku malou, konečnou množinu akcí. Některé zbraně umožňují bodat, jinak jsou však proveditelné akce podmnožinou toho, co umožňuje náš systém.
 
 Najdeme zde \textbf{systém dílů zbroje}, které poskytují různou ochranu různým částem těla. Náš systém obsahuje základní stavební bloky pro implementaci podobné mechaniky.
 
-\textbf{Ovládání rotace kamery} činí problém pro obě hry. V našem systému má však na hratelnost citelnější dopad (výběr útokové zóny nevyžaduje takovou preciznost jako přímé udávání směru meče).
+\textbf{Ovládání rotace kamery} činí problém pro obě hry. V našem systému má však na hratelnost citelnější dopad (výběr útokové zóny nevyžaduje takovou preciznost ovládání jako přímé udávání směru meče).
 
 Pohyb mečem je v Mount\&Blade umožněn pouze v několika předem určených směrech - nad mečem hráči není poskytnuta dostatečně volná kontrola, aby vznikl potenciál pro \textbf{emergentní gameplay}. Zdroje emergentního gameplaye však najdeme v dalších mechanikách - především v koordinaci podřízených vojáků. 
 
-Pro \textbf{interakci s objekty okolního prostředí} zbraň poskytuje mizivý potenciál. Level design hry se ho nepokouší využít.
+Pro \textbf{interakci s objekty okolního prostředí} zbraň poskytuje mizivý potenciál. Hra ani žádné objekty okolního prostředí, se kterými by bylo možné jakkoliv netriviálně interagovat, neobsahuje.
 
 Narozdíl od nás, Mount\&Blade je zaměřené čistě na boj s \textbf{humanoidními protivníky} - přidání entity s jakkoliv exotičtější stavbou těla by vyžadovalo překopání všech ostatních entit, aby proti té nové byly schopny účinně bojovat.
 
@@ -50,18 +50,18 @@ Pro umožnění hromadných bojů by však bylo třeba provést další optimali
 
 \subsection{Kingdom Come: Deliverance}
 
+Zde platí mnoho stejných pozorování jako u Mount\&Blade - rovněž tu najdeme větší množství zbraní, které se neúčastní celkové fyzikální simulace a lze s nimi vykonávat pouze konečné množství typů akcí. Vše je striktně šité na míru boji proti humanoidům a možnosti interakce s okolním prostředím jsou nulové.
 
+Blokování je zde samostatná akce založená na \textbf{prvcích časování}. Náš systém naproti tomu klasické časovací mechaniky nepodporuje.
 
-\begin{itemize}
-    \item taky konečný počet akcí co lze dělat
-    \item systém výdrže - bylo by velmi zajímavé zakomponovat u nás, ale bude to těžké (jak chceme determinovat výdrž k ubrání za vykonání útoku?)
-    \item 
-    \item časovací eventy - náš systém neumožňuje
-    \item RPG progrese - velká část by se dala implementovat i u nás (úpravou parametrů aby meč sekal míň/víc elegantně, odemykáním nových modů ovládání), ale komba úplně nepůjdou
-    \item ovládání kamery - mohlo by být zajímavé zkusit lock-on u nás
-    \item interakce s prostředím - vůbec
-    \item emergentní gameplay (?) 
-\end{itemize}
+\textbf{Ovládání kamery} je v \acl{KCD} vyřešené velmi dobře. Mohlo by být zajímavé se zde inspirovat a zkusit zakomponovat uzamčení kamery na protivníka i do našeho systému.
+
+Velmi výrazným prvkem, který boji dodává značnou hloubku, je v \acl{KCD} \textbf{systém výdrže}. Přidání podobné mechaniky by mohlo značně obohatit i náš bojový systém, implementace by však nebyla zcela přímočará (např. by byl netrivální problém stanovit kolik výdrže se hráči má odečíst za vykonaný útok).
+
+Dalším prvkem, kterým je bojový systém v \acl{KCD} význačný, je jeho spjatost se systémem \textbf{\acs{RPG} progrese} - postava, která drží meč poprvé v životě, s ním zachází nemotorně, kdežto mistr šermíř zasazuje elegantní údery. Tato stránka věci by v našem systému mohla být na implementaci překvapivě snadná - stačilo by pro každý stupeň dovednosti najít adekvátní fyzikální parametry (viz \ref{swordParameterTweaksSection}). V \acl{KCD} však jsou s progresí rovněž spjata komba\footnote{specifické sekvence úderů, které na konci vyvolají specielní akci} - ty náš systém z podstaty věci není schopen umožnit.  
+
+Velmi silnou stránkou \acl{KCD} je rovněž \textbf{vizuální prezentace}. Díky tomu, že akcí, které lze vykonat, je pouze pevně dané konečné množství, bylo možné pro každou z nich do detailu ručně vypilovat řetězec animací, ze kterých jsou poskládané. V našem systému, který z velké části vyžaduje procedurální animaci, z principu věci nelze srovnatelné umělecké preciznosti dosáhnout. 
+
 
 \section{Zhodnocení}
 
