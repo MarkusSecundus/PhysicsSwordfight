@@ -47,9 +47,9 @@ Zásadním rozhodnutím, které jsme učinili, bylo implementovat šermíře jak
 
 \textit{Nejde o standardní postup - typicky je ve hrách pohyb postavy řešen přímo ze skriptu upravováním její polohy, postava může působit silami na okolní předměty, ale ne obráceně. Důvody jsou zřejmé - tvůrci hry takto získají větší kontrolu, která jim umožní ručně ladit pohyb postavy pro optimální hráčský zážitek; dále je často výslovně nevhodné, aby na hráčskou postavu působily silami okolní kolidující předměty - především při pohledu z 1. osoby, kdy hráč o převážně části svého těla nemá přehled (nezpozorovaná kolize, která postavu odmrští, pak může působit dojmem glitche). Unity pro tento standardní přístup poskytuje vyladěnou komponentu \texttt{CharacterController}.}
 
-\textit{Pohyb hráče skrze fyzikální systém jsme zvolili zkrátka proto, že se zdál jako zajímavá oblast hodná prozkoumání. Přináší netriviální výzvy v oblasti zaručení stability hráčské postavy a responzivity ovládání. Na druhou stranu má šanci nám poskytnout další element navíc k meči, který může umocnit hráčovy možnosti fyzikální interakce s okolním prostředím\footnote{Např. s jeho přítomností můžeme zadarmo implementovat jednoduché fyzikální hádanky ala vyvažovací lávka v 2.misi Half-Life 2 \cite{HalfLife2}} a s nepřátelským mečem.}
+\textit{Pohyb hráče skrze fyzikální systém jsme zvolili zkrátka proto, že se zdál jako zajímavá oblast hodná prozkoumání. Přináší netriviální výzvy v oblasti zaručení stability hráčské postavy a responzivity ovládání. Na druhou stranu má šanci nám poskytnout další element navíc k meči, který může umocnit hráčovy možnosti fyzikální interakce s okolním prostředím\footnote{Např. s jeho přítomností můžeme zadarmo implementovat jednoduché fyzikální hádanky ala \href{https://youtu.be/DL_up_sIiTI?t=2528}{vyvažovací lávka v 2.misi Half-Life 2} \cite{HalfLife2}} a s nepřátelským mečem.}
 
-Jak jsme tedy postupovali? Do herního objektu odpovídajícího hráči jsme umístili komponentu \texttt{Rigidbody}. Váhu jsme nastavil na \texttt{60} - cca odpovídající pro typického člověka, jinak jsme ponechali výchozí hodnoty. Pro účely kolizí s herním prostředím jsme do potomka umístili jednoduchý \texttt{CapsuleCollider} se standardně používanými rozměry \texttt{2 x 0.5}. Kapsle do sebe zhruba obsáhne šermířův model, ale nemá žádné ostré hrany, o které by se šermíř mohl zadrhávat při pohybu členitým terénem. Kolizní vrstvy jsme nastavili tak, aby tato kapsle kolidovala s terénem, ale ne s nepřáteli ani jejich zbraněmi.
+Jak jsme tedy postupovali? Do herního objektu odpovídajícího hráči jsme umístili komponentu \texttt{Rigidbody}. Váhu jsme nastavil na \texttt{60} - cca odpovídající pro typického člověka, jinak jsme ponechali výchozí hodnoty. Pro účely kolizí s herním prostředím jsme do potomka umístili jednoduchý \texttt{CapsuleCollider} se standardně používanými rozměry \texttt{výška x průměr: 2 x 0.5}. Kapsle do sebe zhruba obsáhne šermířův model, ale nemá žádné ostré hrany, o které by se šermíř mohl zadrhávat při pohybu členitým terénem. Kolizní vrstvy jsme nastavili tak, aby tato kapsle kolidovala s terénem, ale ne s nepřáteli ani jejich zbraněmi.
 
 Takto tedy vypadá fyzikální reprezentace šermíře, nyní k jejímu ovládání. Pro to jsme již určili zodpovědnou komponentu \textbf{\texttt{SwordsmanMovement}}. 
 
@@ -80,7 +80,7 @@ Takto se šermíř pohybuje responzivně (téměř okamžitě dosáhne požadova
 
 Interně bude síla šermíři aplikována v průběhu nadcházejícího kroku fyzikální simulace, v platnost tedy vstoupí snímek následující po její aplikaci. Další síly, které na objekt působí, při výpočtu nejsou brány v úvahu, ty tedy stále jsou schopny na objekt působit a z naší cílové rychlosti ho vychýlit - objekt tedy velmi důrazně vybízíme, aby přešel na danou rychlost, stále však reaguje na ostatní síly. 
 
-Celková odolnost proti jednorázovým kolizím je však (v horizontálním směru) velmi značná - ať už kolize na objekt vyvine jakoukoliv sílu, nejpozději v průběhu několika dalších snímků po ukončení jejího působení bude plně vstřebána. Pokud bychom chtěli odolnost omezit, nic nám nebrání stanovit ještě číslený parametr (\texttt{maxChange}), kterým bude omezena maximální velikost síly, kterou v jednom snímku působíme - zhruba takto:
+Celková odolnost proti jednorázovým kolizím je však (v horizontálním směru) velmi značná - ať už kolize na objekt vyvine jakoukoliv sílu, nejpozději v průběhu několika dalších snímků po ukončení jejího působení bude plně vstřebána. Pokud bychom chtěli odolnost omezit, nic nám nebrání stanovit ještě číselný parametr (\texttt{maxChange}), kterým bude omezena maximální velikost síly, kterou v jednom snímku působíme - zhruba takto:
 
 \begin{code}
  var velocityDelta = targetMovement - rigidbody.velocity;
@@ -502,7 +502,7 @@ Pro řešení tohoto specifického problému moderní fyzikální systémy typic
 
 \subsubsection*{Náš problém}
 
-Podobně jako projektily ve střílečce, naše meče jsou rovněž relativně malými objekty, které se pohybují vcelku rychle. Používáme-li diskrétní detekci kolizí, není překvapením, že při srážce dvou mečů často k tunelování dojde. Tím přirozeně velmi trpí možnost blokovat nepřátelské údery a celkově nejde o dobrý stav, který by napomáhal hráčské imerzi.
+Podobně jako projektily ve střílečce, naše meče jsou rovněž (ve dvou ze tří svých rozměrů) relativně malými objekty, které se pohybují vcelku rychle. Používáme-li diskrétní detekci kolizí, není překvapením, že při srážce dvou mečů často k tunelování dojde. Tím přirozeně velmi trpí možnost blokovat nepřátelské údery a celkově nejde o dobrý stav, který by napomáhal hráčské imerzi.
 
 \bigbreak
 
