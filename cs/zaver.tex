@@ -1,2 +1,80 @@
-\chapter*{Závěr}
-\addcontentsline{toc}{chapter}{Závěr}
+\chapter{Závěr}
+
+Implementaci máme za sebou, prozkoumali jsme málo probádanou oblast akčních her s fyzikálně simulovaným, jemně ovladatelným mečem. V této sekci výsledek naší práce srovnáme s dalšími podobnými hrami, celkově ho zhodnotíme a nastínime možnosti jeho dalšího vývoje. 
+
+\section{Srovnání s dalšími hrami}
+
+V \ref{swordfightingIntroChapter}. kapitole jsme analyzovali několik her, které se podobně jako my pokusily poskytnout hráči přímou kontrolu (nejen) nad mečem. S těmi nyní náš výsledek srovnáme.
+
+\subsection{Die by the Sword}
+
+Tato hra je našemu systému nejbližší, v mnoha ohledech by se dala považovat za jeho nadmnožinu. Meč je zde rovněž fyzikálně simulovaným objektem, který se interně může pohybovat libovolně ve všech 6 stupních volnosti. 
+
+\acl{DbtS} má mnohem propracovanější systémy umělé inteligence nepřátel a procedurální animace, díky kterým je umožněno např. \textbf{odsekávání končetin nepřátel}, kteří na svůj nový stav adekvátně reagují. Jádro našeho systému budoucí implementaci takové mechaniky nijak značně nebrání, avšak i tak by vyžadovala mnoho práce a některé části herní logiky by musely být změněny. 
+
+\acl{DbtS} zahrnuje větší \textbf{množství nepřátel} - každého se značně odlišnou tělesnou stavbou a používajícího zbraň jiným způsobem. Naše ukázková hra mnoho nepřátel nezahrnuje, v budoucnu by však nemělo být obtížné je přidat. Jádro našeho systému tomu nijak nebrání - stačí pouze implementovat daného nepřítele, hráče ani ostatní \acs{NPC}s není třeba upravovat, aby s novým nepřítelem byli schopni zápasit.  
+
+Použití meče v obou hrách poskytuje srovnatelně velké možnosti \textbf{emergentního gameplaye}. Naše hra představením konceptu přepínatelných \textit{modů ovládání} poskytuje větší prostor pro tvorbu sofistikovaných technik použití meče, \acl{DbtS} to však vynahrazuje kombinací s dalšími mechanikami, jakými je např. výše zmíněné odsekávání nepřátelských končetin. 
+
+Volnost ovládání meče rovněž v obou hrách poskytuje srovnatelné, velmi značné možnosti interakce s okolním prostředím. Level design \acl{DbtS} však tohoto valně nevyužívá - ani základní aktivace tlačítek není vykonávána pomocí meče, ale jako specielní akce.  
+
+
+
+\pagebreak
+
+\begin{itemize}
+    %\item obojí volný, fyzikálně simulovaný meč
+    %\item v mnoha ohledech nadmnožina naší hry
+    %\item má víc advanced procedurální animaci 
+    %\item možnost sekání nepřátelských končetin
+    %\item má mnoho nepřátel, kterým kreativním způsobem umožnili ovládat meč - náš systém by taky měl umožňovat, ale bude s tím dost práce
+    %\item emergentní gameplay - obě hry umožňují cca stejně, ale level design dbts ho moc nepodporoval
+    \item interakce s prostředím - obě hry umožňují cca stejně, ale level design v dbts jí celkem ignoruje
+    \item 
+    \item ovládání postavy - skoro stejné jako my (akorát QE není rotace ale úkroky)
+    \item ovládání meče - podmnožina naší hry, máme lepší možnosti customizace (ale je potřeba k nim vytvořit GUI přístupné pro hráče)
+    \item detekce kolizí na meči funguje a nemá kvadratickou náročnost k počtu mečů 
+    \item 
+\end{itemize}
+
+\subsection{Mount\&Blade}
+
+\begin{itemize}
+    \item mnoho různých zbraní, ale pouze konečný počet akcí co s nimi dělat
+    \item velení dalším bojovníkům - ortogonální mechanika k použití meče, do našeho systému by se dalo přidat (náš systém to nijak neusnadní ani nestíží)
+    \item části zbroje - dá se i u nás
+    \item 
+    \item ovládání kamery - obě hry jím trpí, ta naše víc
+    \item emergentní gameplay - naše hra ho umožňuje řádově víc
+    \item interakce s prostředím - m\&b neumožňuje vůbec
+    \item náš systém je mnohem víc flexibilní (ale zase neumožňuje tak precizní fine-tuning (jeho hloubka je omezená tím co dám dovolí customizovat fyzikální systém))
+\end{itemize}
+
+\subsection{Kingdom Come: Deliverance}
+
+\begin{itemize}
+    \item taky konečný počet akcí co lze dělat
+    \item systém výdrže - bylo by velmi zajímavé zakomponovat u nás, ale bude to těžké (jak chceme determinovat výdrž k ubrání za vykonání útoku?)
+    \item 
+    \item časovací eventy - náš systém neumožňuje
+    \item RPG progrese - velká část by se dala implementovat i u nás (úpravou parametrů aby meč sekal míň/víc elegantně, odemykáním nových modů ovládání), ale komba úplně nepůjdou
+    \item ovládání kamery - mohlo by být zajímavé zkusit lock-on u nás
+    \item interakce s prostředím - vůbec
+    \item emergentní gameplay (?) 
+\end{itemize}
+
+\section{Zhodnocení}
+
+\section{Možnosti rozšíření}
+
+\begin{itemize}
+    \item \textbf{Audio}
+    \item \textbf{Grafika}
+    \item \textbf{Další mody ovládání}
+    \item \textbf{Podpora ovladače Wii Remote}
+    \item \textbf{Přepracování IRayIntersectable}
+    \item \textbf{Méně výpočetně náročná korekce kolizí}
+    \item \textbf{Sofistikovanější nepřátelská AI}
+    \item \textbf{Kombinace s dalšími herními mechanikami} - výdrž, RPG progrese
+    \item \textbf{Rozšíření na hru plné velikosti}
+\end{itemize}

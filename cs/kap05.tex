@@ -423,6 +423,8 @@ void SetTargetRotation(
  }
 \end{code}
 
+Algoritmus jsme důkladně otestovali a zdá se fungovat.
+
 Zda smíme používat světové, nebo lokální souřadnice, záleží na hodnotě flagu \textit{joint.configuredInWorldSpace}. Argument \textit{startRotation} je (buď globální, nebo lokální) rotace, kterou jsme přečetli z \textit{joint.transform} na začátku hry ve zprávě Start().
 
 V případě našeho meče používáme lokální souřadnice. Tedy \textit{joint.configuredInWorldSpace} musí být false a jako parametr \textit{startRotation} posíláme \textit{joint.transform.localRotation}.
