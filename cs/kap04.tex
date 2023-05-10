@@ -7,7 +7,17 @@ V této kapitole nejprve čtenáři představíme objektový návrh, který bude
 
 \section{Objektový návrh}
 
-Chceme vytvořit akční hru zaměřenou na boj s mečem. Základními požadavky tedy je, aby hráč mohl chodit po herním světě, máchat svou zbraní a tím zraňovat další entity. Takovými entitami může být víceméně cokoliv - např. trénovací panák nebo nosný trám nepřátelské věže - avšak bylo by pěkné, kdybychom umožnili, aby jedním z typů nepřátel byl i počítačem řízený ekvivalent hráčské postavy.
+Chceme vytvořit akční hru zaměřenou na boj s mečem. Základními požadavky tedy je, aby hráč mohl chodit po herním světě, máchat svou zbraní a tím zraňovat další entity. 
+
+Jádro systému si rozdělíme na dva hlavní objekty:
+\begin{itemize}
+    \item \textbf{Šermíř} - samotná hráčská postava, může se pohybovat po světě a být zraňována
+    \item \textbf{Meč} - zbraň kterou šermíř drží, pohybuje se kolem šermíře a při tom zraňuje další entity, její systém ovládání by měl nabízet co nejvyšší modularitu
+\end{itemize}
+
+Obě z těchto entit by měly existovat jako samostatné prefaby, které volitelně lze spojit dohromady a získat šermíře třímajícího meč. Spojit je dohromady nemusí být zcela triviální, vytvoříme tedy ještě třetí zastřešující abstraktní entitu, která za jejich vzájemné pospojování a rovněž za jejich pospojování s objekty okolního světa (uživatelský vstup, GUI apod.) bude zodpovídat.
+
+Celý tento návrh následně protkáme systémem životů a zranění - od toho především chceme, aby umožnil šermířovi figurovat jako zranitelná entita a meči jako zdroj zranění, avšak pokusíme se ho navrhnout obecně, aby bylo možné mečem zraňovat i jiné entity než jen ostatní šermíře.
 
 \begin{figure}[p]\centering
     \center
@@ -20,7 +30,7 @@ Chceme vytvořit akční hru zaměřenou na boj s mečem. Základními požadavk
 
 Než se pustíme do modelování herních entit, bude vhodné nejprve vytvořit abstrakci nad zdrojem uživatelského vstupu. Jak jsme čtenáři představili v \ref{unityInputExplanationSubsection}, vstup je tradičně získáván pomocí statických metod třídy \texttt{UnityEngine.Input}. To je metoda velmi rigidní - implikuje jediný globální zdroj vstupu pro všechny objekty, nad jehož obsahem navíc nemáme žádnou kontrolu. 
 
-Co bychom chtěli je možnost konfigurovat různé zdroje vstupu pro různé objekty - např. hráčská postava může být ovládána pomocí hodnot získaných z \texttt{UnityEngine.Input}, počítačem řízení protivníci by o nich však neměli mít ponětí. Při vhodném návrhu by mělo stačit naprogramovat a otestovat hráčského šermíře a nepřátelského z něj následně vytvořit pouhou výměnou zdroje vstupu za vstup simulovaný algoritmem umělé inteligence.
+Co bychom chtěli, je možnost konfigurovat různé zdroje vstupu pro různé objekty - např. hráčská postava může být ovládána pomocí hodnot získaných z \texttt{UnityEngine.Input}, počítačem řízení protivníci by o nich však neměli mít ponětí. Při vhodném návrhu by mělo stačit naprogramovat a otestovat hráčského šermíře a nepřátelského z něj následně vytvořit pouhou výměnou zdroje vstupu za vstup simulovaný algoritmem umělé inteligence.
 
 Ustanovíme tedy rozhraní \textbf{\texttt{ISwordInput}}. Jeho metody budou pro jednoduchost rámcově odpovídat vybraným základním metodám z \texttt{UnityEngine.Input}. Jeho základní implementace - komponenta \textbf{\texttt{BasicSwordInput}} bude jednoduše volat odpovídající metody \texttt{UnityEngine.Input}, avšak nic nám nebrání vytvořit libovolně mnoho variant s jinou vnitřní logikou. 
 
@@ -42,7 +52,7 @@ Dalším dítětem šermířského objektu bude šermířův detailní animovan�
 
 \subsection{Meč} 
 
-Nejdůležitějším herním objektem našeho systému je meč. Jak jsme si stanovili v kapitole \ref{goalSettingChapter}, chceme, aby byl modulárně schopen přijímat různé metody ovládání a aby rozhraní, skrze které s ním ovládací moduly komunikují, umožnilo volný pohyb ve všech 6 stupních volnosti.
+Nejdůležitějším herním objektem našeho systému je meč. Do něj umístíme veškerou herní logiku jeho vlastního pohybu a ovládání. Jak jsme si stanovili v kapitole \ref{goalSettingChapter}, chceme, aby byl modulárně schopen přijímat různé metody ovládání a aby rozhraní, skrze které s ním ovládací moduly komunikují, umožnilo volný pohyb ve všech 6 stupních volnosti.
 
 \subsubsection*{Moduly} \label{interfacesSwordMovementModulesObjectModelSubsubsection}
 
@@ -67,11 +77,11 @@ Model a collidery vytvoříme pomocí standardních komponent. Význačné body 
 
 Šermíř a meč dohromady tvoří jednu celistvou, hráčem ovladatelnou entitu. Potřebujeme tedy jeden objekt, který je bude oba zaštiťovat jako kořen prefabu a zaručí, že jsou vzájemně korektně pospojované. Obě tyto komponenty rovněž potřebují komunikovat s objekty vnějšího světa - číst uživatelský vstup, polohovat kameru, updatovat healthbar,... - bylo by tedy vhodné, aby tento kořen hierarchie posloužil i jako spojník s vnějším světem. 
 
-Za úspěch budeme považovat, pokud veškeré změny, jenž musí proběhnout k přetvoření hráčského šermíře na počítačem řízeného protivníka, omezeníme výhradně na obsah tohoto objektu.
+Za úspěch budeme považovat, pokud veškeré změny, jenž musí proběhnout k přetvoření hráčského šermíře na počítačem řízeného protivníka, omezíme výhradně na obsah tohoto objektu.
 
 \subsubsection*{Vstup}
 
-Kořen hierarchie přirozeně bude místem, kde definujeme instanci \textbf{\texttt{ISwordInput}}. Šermíř i meč ji zde - ve svém předkovi - automaticky najdou aniž bychom museli vynakládat větší úsilí.
+Kořen hierarchie přirozeně bude místem, kde definujeme instanci \textbf{\texttt{ISwordInput}}. Šermíř i meč ji zde - ve svém předkovi - automaticky najdou, aniž bychom museli vynakládat větší úsilí.
 
 \subsubsection*{SwordsmanAssembly}
 
@@ -92,7 +102,7 @@ Zde najdeme 3 podstatné druhy komponent - \textbf{zbraň}, která udílí zran�
 
 \subsubsection*{Damageable}
 
-Komponenta v kořenu postavy, která definuje její body HP - v našem případě tedy šermíř. Nabízí eventy pro situace, kdy je zraněna či léčena (aby bylo updatováno GUI apod.), v případě že HP klesnou na 0 buď může svůj herní objekt okamžitě zničit, či zavolat event, který provede zničení sofistikovaněji (např. hráče respawne). 
+Komponenta v kořenu postavy, která definuje její body HP - v našem případě tedy šermíř. Nabízí eventy pro situace, kdy je zraněna či léčena (aby bylo updatováno GUI apod.), v případě, že HP klesnou na \texttt{0}, buď může svůj herní objekt okamžitě zničit, či zavolat event, který provede zničení sofistikovaněji (např. hráče respawne). 
 
 Změna HP se provádí voláním funkce \texttt{ChangeHP(float)} - předáváme-li kladný argument, je chápáno že jde o léčení, záporný argument znamená zranění.
 
@@ -108,13 +118,12 @@ Zbraň je jakýkoliv objekt, který je na \texttt{IArmorPiece} schopen volat \te
 
 Konkrétní implementací, kterou použijeme, je \textbf{\texttt{BasicImpactWeapon}}. Její náplň práce je zkrátka při každé zprávě \texttt{OnCollisionEnter} prozkoumat zasažený collider, zda někde v jeho předkovi není \texttt{IArmorPiece} - pokud je, vytvoří pro něj deklaraci útoku na základě bodu zásahu a síly kolize, jež mu byly nahlášeny fyzikálním systémem. 
 
-Tuto komponentu v našem případě umístíme do kořenového objektu meče\footnote{Bylo by pěkné moci ji umístit přímo do čepele, jak jsme však zmínili v \ref{collidersPhysicsIntroSubsection}, komponenta poslouchající na \texttt{OnCollision} se musí nalézat ve stejném objektu jako \texttt{Rigidbody}.}.
 
 
 
 \subsection{Zhodnocení návrhu} 
 
-Skutečnou míru kvality našeho návrhu poznáme až po dlouhých letech jeho neodvratného živelného vývoje v praktickém nasazení, nyní můžeme nanejvýše prohlásit, že náš návrh se zdá být v souladu s principy \texttt{SOLID} \cite{CleanArchitectureSOLID}. 
+Skutečnou míru kvality našeho návrhu poznáme až po letech jeho neodvratného živelného vývoje v praktickém nasazení, nyní můžeme nanejvýše prohlásit, že náš návrh se zdá být v souladu s principy \texttt{SOLID} \cite{CleanArchitectureSOLID}. 
 
 Herní systém jsme dekomponovali do soustavy herních objektů s komponentami - základem jsou šermíř a meč, které uzavíráme do společného předka majícího úkol pospojovat je navzájem a s vnějším světěm. 
 
@@ -126,7 +135,7 @@ Veškeré spojení s objekty vnějšího herního světa (např. GUI) jsme soust
 
 Také jsme vytvořili abstrakci pro uživatelský vstup (rozhraní \texttt{ISwordInput}) - výměnou použité implementace by neměl být problém později hráčského šermíře např. změnit na počítačem řízeného nepřítele. Jeho instanci rovněž vnitřní objekty naleznou v kořenovém objektu. 
 
-Celý náš systém jsme nakonec protkali systémem zranění. Ten je dle našeho návrhu velmi jednoduchý, ale poskytuje značnou úroveň rozšířitelnosti. Není problém, aby různé části těla postavy (oblečené do různé části zbroje) vyhodnocovaly zranění různým způsobem. Zbraní pak může být naprosto jakákoliv entita schopná na části zbroje volat metodu \texttt{ProcessAttack()}, nejsme tedy nutně omezeni pouze na zraňování působením fyzikálních sil.
+Celý náš systém jsme nakonec protkali systémem zranění. Ten je dle našeho návrhu velmi jednoduchý, ale poskytuje značnou úroveň rozšířitelnosti. Není problém, aby různé části těla postavy (oblečené do různého typu zbroje) vyhodnocovaly zranění různým způsobem. Zbraní pak může být naprosto jakákoliv entita schopná na části zbroje volat metodu \texttt{ProcessAttack()}, nejsme tedy nutně omezeni pouze na zraňování působením fyzikálních sil.
 
 
 %------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------%
@@ -152,14 +161,16 @@ Jak jsme již na mnoha místech nastínili, ovládání meče je v naší situac
 Víme, že plnou kontrolu ve všech šesti stupních volnosti hráči poskytnout nemůžeme. Nezbývá nám než z této celkové množiny stavů vybrat nějakou podmnožinu, na kterou jsme schopni vstup z myši a klávesnice namapovat.
 
 Mapování musí především pro hráče být jednoduše myšlenkově uchopitelné. Zároveň ho nechceme omezit na konečnou množinu stavů. Potřebujeme tedy nalézt vhodný matematický formalizmus pro jeho popis - ideálně nějaký, který se bude chovat spojitě\footnote{Spojitost neformálně definujme např. takto: Pro každé dvě polohy kurzoru \texttt{A}, \texttt{B} a mapování \texttt{f}, pokud \texttt{C} je poloha kurzoru nacházející se na cestě z \texttt{A} do \texttt{B}, pak poloha meče \texttt{f(C)} je stejným způsobem mezistav pro \texttt{f(A)}, \texttt{f(B)}.} a budeme schopni ho pro hráče přehledně vizualizovat. 
+
 \bigbreak
+
 Hra \textbf{\acl{DbtS}} (viz \ref{dieByTheSwordDescriptionSubsection}) řešila velmi podobný problém jako my. Podívejme se tedy nejprve na metody, které svým hráčům poskytla:
 \begin{itemize}
-    \item \textbf{Numerická klávesnice} - Existovala pouze pro zajištění přístupnosti v době, kdy myš nebyla rozšířená. Umožňovala malou podmnožinu toho co myš a nijak při tom nezvyšovala uživatelskou přívětivost.
+    \item \textbf{Numerická klávesnice} - Existovala pouze pro zajištění přístupnosti v době, kdy myš nebyla rozšířená. Umožňovala malou podmnožinu toho, co myš, a nijak při tom nezvyšovala uživatelskou přívětivost.
     \item \textbf{Myš} - Jediný z ovladačů, který poskytl spojité mapování. Vyžadovala cvik, ale umožnila kreativní a flexibilní reakce v neočekávané situaci.
     \item \textbf{Nahrávky} - Technicky s mečem umožnily vykonávat libovolné pohyby, těchto pohybů však v libovolném okamžiku muselo být definováno malé konečné množství. Hráč tedy nebyl schopen flexibilně reagovat na specifickou situaci. 
 \end{itemize}
-Z tohoto náhledu je zřejmé, že všechny metody kromě myši z podstaty věci smrsknou množinu stavů na konečné množství a neumožní rychlé flexibilní reakce. Dále se tedy zaměříme primárně na použití myši. Klávesnice může zastávat konečné množství doplňujících funkcí, které se na myš nevešly. Nahrávky bude rovněž vhodné interně implementovat, aby byly v případě potřeby k dispozici pro počítačem řízeného nepřítele (v jeho případě je předvídatelnost a nízká flexibilita výhodou).
+Z tohoto náhledu je zřejmé, že všechny metody kromě myši z podstaty věci smrsknou množinu stavů na konečné množství a neumožní rychlé flexibilní reakce. Dále se tedy zaměřme primárně na použití myši. Klávesnice může zastávat konečné množství doplňujících funkcí, které se na myš nevešly. Nahrávky bude rovněž vhodné interně implementovat, aby byly v případě potřeby k dispozici pro počítačem řízeného nepřítele (v jeho případě je předvídatelnost a nízká flexibilita výhodou).
 \bigbreak
 \textit{Není možné vyloučit, že existují neznámé alternatní způsoby využití myši a klávesnice, které se vymykají závěrům tohoto našeho zamyšlení. Jejich prozkoumání však ponecháme případným navazujícím pracím. Pro ty zde vytvoříme jednoduše myšlenkově uchopitelný kontrolní bod, proti kterému budou moci své výsledky experimentálně srovnávat.}
 
@@ -192,15 +203,18 @@ Nyní tedy náš systém dovoluje sekat mečem podobně dobře jako \acl{DbtS}. 
 
 Jedním možným řešením je představit další mody ovládání, specializované na specifické činnosti, podobně jako ten náš současný je na sekání. Přepínání mezi nimi nebude jakkoliv záviset na poloze kurzoru - tím by možnosti každého jednotlivého modu utrpěly. Naopak, zde přichází ke slovu klávesnice. Hráči zkrátka dáme možnost ke každému modu přiřadit jednu klávesu - dokud ji hráč drží, tak je daný mod aktivní, jinak se používá ten, který hráč nastavil jako výchozí.
 
-Mapování jednotlivých poloh meče pomocí průniku paprsku a kulové plochy ponecháme jak je, pouze přidáme vrstvu abstrakce - výsledný průnik zkrátka poskytneme aktuálně aktivnímu modu ovládání jako vstup, na základě kterého má polohu meče určit. Zda ho interpretuje jako bod, do kterého směřuje čepel meče ukotveného v pevném bodě či jakkoliv jinak, je plně v jeho režii.
+Mapování jednotlivých poloh meče pomocí průniku paprsku a kulové plochy ponecháme jak je, pouze přidáme vrstvu abstrakce - výsledný průnik zkrátka poskytneme aktuálně aktivnímu modu ovládání jako vstup, na základě kterého má polohu meče určit. Zda ho interpretuje jako bod, do kterého směřuje čepel meče ukotveného v pevném bodě, či jakkoliv jinak, je plně v jeho režii.
 
-Pro účely naší práce jsme takové mody implementovali dva - pro sekání (který jsme nastínili výše) a pro blokování. Ty si nyní blíže popíšeme.
+Pro účely naší práce jsme takové mody implementovali dva - pro sekání (který jsme nastínili výše) a pro blokování. Nyní si je blíže popíšeme.
 
 \subsubsection*{Formát příkazů pro meč}
 
 Než přistoupíme k popisu, nejprve stručně nastíníme formát, jímž je poloha meče udávána. Důvody, proč byl zvolen, ponecháme sekci \ref{swordMovementMoveSwordImplementationSubsection} v implementační kapitole.
 
 Polohu meče definujeme těmito třemi vektory:
+
+\pagebreak
+
 \begin{enumerate}
     \item \texttt{Poloha rukojeti} - Meč je šermířem držen v jediném bodě, jenž se nachází uprostřed jeho rukojeti. Zde poskytnutý bod udává polohu relativní vůči šermíři, kde se tento střed rukojeti má nalézat.
     \item \texttt{Směr meče} - Směr udávající natočení meče v prostoru kolem středu jeho rukojeti. Pokud přičteme vektor Směru natočení k Poloze rukojeti, dostaneme bod, kterým by čepel meče měla procházet.
@@ -243,13 +257,13 @@ Algoritmus probíhá takto:
     \label{obr04:swordSlashingMode2D}
 \end{figure} 
  
-Výsledkem je meč, který šermíř drží v jednom bodě\footnote{To není problém - nic nám nebrání umístit bod, ve kterém ho šermíř drží, např. do volného prostoru pod mečem, čímž dosáhneme vizuálního dojmu, že šermíř mečem mává plnohodnotně.} bodě a hráč má plnou svobodu jak s ním máchat. Čepel meče se natáčí automaticky tak, aby mířila ostrou hranou tam, kam šermíř seká.
+Výsledkem je meč, který šermíř drží v jednom bodě\footnote{To není problém - nic nám nebrání umístit bod, ve kterém ho šermíř drží, např. do volného prostoru pod mečem, čímž dosáhneme vizuálního dojmu, že šermíř mečem mává plnohodnotně.} a hráč má plnou svobodu jak s ním máchat. Čepel meče se natáčí automaticky tak, aby mířila ostrou hranou tam, kam šermíř seká.
 
 \subsubsection*{Mod pro blokování} \label{interfacesSwordMovementBlockingModuleSubsubsection}
 
 Mod pro blokování je o poznání složitější.
 
-Pro jeho pochopení si nejprve zmiňme, jak blokování probíhá v reálném světě. Základní myšlenkou šermíře, na kterého je veden úder, je postavit protivníkově zbrani do cesty tu jeho tak, aby úder zastavila a nebyla náporem sražena na stranu. To znamená, že zbraň chce trefit ostrou hranou vlastní čepele\footnote{Plochá strana není praktická z mnoha důvodů - šermíř by musel zdlouhavě přehmatávat, aby meč o 90° zrotoval a měl v úchopu sílu. Meč by i tak bylo jednodušší srazit na stranu, protože plochá strana nesoustředí sílu srovantelně dobře jako tenká hrana. Dále by se tím znehodnotila ochrana rukou, kterou šermířovi poskytuje záštita.}. Bod, ve kterém nepřítelovu zbraň trefí, by rovněž měl být co nejblíže rukojeti - čím dále od ní, tím větší páka nepříteli pomáhá meč srazit na stranu.
+Pro jeho pochopení si nejprve zmiňme, jak blokování probíhá v reálném světě. Základní myšlenkou šermíře, na kterého je veden úder, je postavit protivníkově zbrani do cesty tu jeho tak, aby úder zastavila a nebyla náporem sražena na stranu. To znamená, že zbraň chce trefit ostrou hranou vlastní čepele\footnote{Plochá strana není praktická z mnoha důvodů - šermíř by musel zdlouhavě přehmatávat, aby meč o 90° zrotoval a měl v úchopu sílu. Meč by i tak bylo jednodušší srazit na stranu, protože plochá strana nesoustředí sílu srovnatelně dobře jako tenká hrana. Dále by se tím znehodnotila ochrana rukou, kterou šermířovi poskytuje záštita.}. Bod, ve kterém nepřítelovu zbraň trefí, by rovněž měl být co nejblíže rukojeti - čím dále od ní, tím větší páka nepříteli pomáhá meč srazit na stranu.
 
 \pagebreak
 
@@ -267,7 +281,7 @@ Dále pevné body, které vyznačíme na meči:
     \item \texttt{Blokovací bod} - Bod na čepeli meče blízko u rukojeti - ten, do kterého chceme trefit nepřátelský zásah 
 \end{enumerate}
 
-Naším záměrem je napolohovat meč tak, aby optimálně vyblokoval úder vedený na \textit{Bod průniku}. Tedy aby \textit{Bod průniku} se shodoval s \textit{Blokovacím bodem} a čepel byla natočená tak, že \textit{Blokovací bod} směřuje ven od šermířova těla, odkud je pravděpodobně veden útočníkův úder. Pozic, které toto splňují, existuje nekonečně mnoho - volíme tu jednu, kde špička čepele směřuje směrem k \textit{Bodu nápovědy}.
+Naším záměrem je napolohovat meč tak, aby optimálně vyblokoval úder vedený na \texttt{Bod průniku}. Tedy aby \texttt{Bod průniku} se shodoval s \texttt{Blokovacím bodem} a čepel byla natočená tak, že \texttt{Blokovací bod} směřuje ven od šermířova těla, odkud je pravděpodobně veden útočníkův úder. Pozic, které toto splňují, existuje nekonečně mnoho - volíme tu jednu, kde špička čepele směřuje směrem k \texttt{Bodu nápovědy}.
 
 Algoritmus, který jsme zvolili, vypadá následovně:
 \begin{code}
@@ -328,7 +342,7 @@ Po těchto drobných úpravách algoritmu a ručním vyladění bodů nápovědy
 
 Ovládání založené na kulové ploše jsme implementovali. Jak pro mod sekání, tak pro mod blokování vedlo v typickém případě k plynulému a intuitivnímu dojmu z ovládání. Narazili jsme však na některé nežádané situace v okrajových případech. Na okrajích hráčova zorného pole, kde se bod průniku nalézal v zadní polokouli kulové plochy, bylo např. velmi jednoduché, aby hráč probodl mečem sám sebe. Dalším problémem byly situace, kdy pro paprsek a kulovou plochu žádný průnik neexistoval - v takovém případě jsme neměli jako meči rozkázat změnu polohy - hráč tedy při takových polohách kurzoru nedostal od hry žádnou zpětnou vazbu, čímž utrpěl jeho pocit kontroly a ponoření do hry.
 
-Potřebujeme tedy najít nějaké zobecnění, které zachová veškeré pěkné vlastnosti originální metody v typickém případě, ale dovolí nám podchytit veškeré nevhodné případy okrajové.
+Potřebujeme tedy najít nějaké zobecnění, které zachová veškeré pěkné vlastnosti originální metody v typickém případě, ale dovolí nám podchytit nevhodné případy okrajové.
 
 Pro vyřešení tohoto problému jsme strávili dlouhý čas živelným experimentováním. Takto vypadá výsledek, ke kterému jsme se dobrali:
 
@@ -342,9 +356,9 @@ Nyní můžeme přistoupit k \textbf{\texttt{RayIntersectableSphere}}. To je na�
 
 Nejdůležitějším z nich je \textbf{\texttt{díra}}. To je odkaz na jinou \texttt{RayIntersectableSphere}, ze které použijeme její střed a poloměr. Uvažujeme kouli jejich prostřednictvím definovanou. Myšlenka je pro každý bod průniku, který by naše koule poskytnula, se nejprve podívat na jeho vzdálenost od středu díry - pokud je průnik uvnitř díry (vzdálenost je menší než poloměr díry), průnik zahodíme, jako by k němu vůbec nedošlo. Pomocí tohoto hacku jsme schopni z konkrétní kulové plochy odebrat kus, který nám překáží - např. zadní polokouli - a zajistit tím předvídatelnější výsledek interpolace.
 
-Nakonec jsme díru zobecnili ještě více - místo striktního je/není v díře uvažujeme poměr mezi vzdáleností bodu průniku od středu díry a jejím poloměrem (tedy číslo v intervalu \texttt{[0;1]} pokud bod leží v díře, větší než \texttt{1} pokud v díře neleží) - tuto hodnotu použijeme jako argument pro vyhodnocení uživatelsky konfigurovatelné 1D interpolační křivky\footnote{Třída \texttt{AnimationCurve} vestavěná v Unity}, její výsledek následně stanovíme jako váhu průniku. Tato varianta umožňuje vše co ta předchozí (stačí dodat křivku s hodnotou \texttt{0} v intervalu \texttt{[0;1]} a hodnotou \texttt{1} pro zbytek), avšak nově jsme schopni unvitř složité soustavy kulových ploch zajistit na hranicích mezi jednotlivými prvky plynulé přechody - váha jedné plochy pozvolna upadá zatímco váha té druhé pozvolna stoupá.
+Nakonec jsme díru zobecnili ještě více - místo striktního je/není v díře uvažujeme poměr mezi vzdáleností bodu průniku od středu díry a jejím poloměrem (tedy číslo v intervalu \texttt{[0;1]} pokud bod leží v díře, větší než \texttt{1} pokud v díře neleží) - tuto hodnotu použijeme jako argument pro vyhodnocení uživatelsky konfigurovatelné 1D interpolační křivky\footnote{Třída \texttt{AnimationCurve} vestavěná v Unity}, její výsledek následně stanovíme jako váhu průniku. Tato varianta umožňuje vše co ta předchozí (stačí dodat křivku s hodnotou \texttt{0} v intervalu \texttt{[0;1]} a hodnotou \texttt{1} pro zbytek), avšak nově jsme schopni unvitř složité soustavy kulových ploch zajistit na hranicích mezi jednotlivými prvky plynulé přechody - váha jedné kulové plochy pozvolna upadá zatímco váha té druhé pozvolna stoupá.
 
-Dalším volitelnám parametrem je \textbf{\texttt{falešný střed}} - pokud ten nastavíme, výpočet průniku se nijak neovlivní, v návratové hodnotě však místo skutečného středu kulové plochy bude udána poloha tohoto bodu. Střed kružnice slouží v některých modech ovládání jako dodatečný orientační bod. Díky tomuto parametru jsme schopni složit dohromady kružnice s velmi se lišícími velikostmi a zajistit, aby se všechny tvářily jako pouhá součást jednoho celkového útvaru. 
+Dalším volitelným parametrem je \textbf{\texttt{falešný střed}} - pokud ten nastavíme, výpočet průniku se nijak neovlivní, v návratové hodnotě však místo skutečného středu kulové plochy bude udána poloha tohoto bodu. Střed kružnice slouží v některých modech ovládání jako dodatečný orientační bod. Díky tomuto parametru jsme schopni složit dohromady kružnice s velmi se lišícími velikostmi a zajistit, aby se všechny tvářily jako pouhá součást jednoho celkového útvaru. 
 
 
 \subsubsection*{Zhodnocení}
@@ -364,7 +378,7 @@ Přesto je však nutné zdůraznit, že tato konkrétní metoda vznikla jako pro
     \includegraphics[width=135mm]{../img/IRayIntersectable-spheres.png}
     \includegraphics[width=135mm]{../img/IRayIntersectable-result.png}
     \includegraphics[width=135mm]{../img/IRayIntersectable-both.png}
-    \caption{Vizualizace - složený IRayIntersectable útvar (červená koule je díra, ostatní barvy jsou dílčí prvky)}
+    \caption{Vizualizace - složený \texttt{IRayIntersectable} útvar (červená koule je díra, ostatní barvy jsou dílčí prvky)}
     \label{obr04:IRayIntersectableVisualization}
 \end{figure} 
 
@@ -374,13 +388,13 @@ Přesto je však nutné zdůraznit, že tato konkrétní metoda vznikla jako pro
 
 Ovládání meče tedy máme vyřešené, nyní zbývá navrhnout ovládání pohybu postavy po herním světě - ideálně takové, aby jeho zapojením ovládání meče nijak neutrpělo. 
 
-Jako základ jsme použili klasické, všeobecně známé schéma kláves \textbf{WASD} pro chůzi dopředu, dozadu a úkroky do stran. Ovládání meče z takového rozhodnutí nijak netrpí, naopak se tím levá ruka dostává do oblasti klávesnice, kde se nalézá mnoho kláves (Shift, Ctrl,...) přirozeně se nabízejících pro přepínání mezi jednotlivými mody ovládání meče.
+Jako základ jsme použili klasické, všeobecně známé schéma kláves \textbf{WASD} pro chůzi dopředu, dozadu a úkroky do stran. Ovládání meče z takového rozhodnutí nijak netrpí, naopak se tím levá ruka dostává do oblasti klávesnice, kde se nalézá mnoho kláves (\texttt{Shift}, \texttt{Ctrl},...) přirozeně se nabízejících pro přepínání mezi jednotlivými mody ovládání meče.
 
 Problémem je však \textbf{rozhlížení} hráčské postavy - to bývá tradičně ovládáno pohybem myši, v naší hře je však myš plně využita pro ovládání meče - koncept, jež je k rozhlížení postavy ortogonální. 
 
 Rozhlížení nahoru/dolů je čistě kosmetická záležitost implementovaná natáčením kamery. Po testování jsme došli k závěru, že jeho ovládání pomocí myši nemá na hráčský zážitek natolik negativní vliv, aby bylo neakceptovatelné. 
 
-Problémem je však rozhlížení do stran - při testování vyšlo najevo, že jeho namapováním na pohyb myši vedlo k velmi matoucímu hernímu zážitku. Zvolili jsme tedy jednoduché náhradní řešení namapovat jej na klávesy QE. Toto řešení není zcela intuitivní a vyžaduje čas, aby si na něj hráč zvykl, avšak poté se zdá být použitelné poměrně dobře.
+Problémem je však rozhlížení do stran - při testování vyšlo najevo, že jeho namapování na pohyb myši vedlo k velmi matoucímu hernímu zážitku. Zvolili jsme tedy jednoduché náhradní řešení namapovat jej na klávesy QE. Toto řešení není zcela intuitivní a vyžaduje čas, aby si na něj hráč zvykl, avšak poté se zdá být použitelné poměrně dobře.
 
 \bigbreak
 Celkově jsme tedy pro ovládání postavy použili klasické schéma WASD udávající pohyb dopředu a do stran doplněné klávesami QE pro natáčení postavy do stran, myš slouží k rozhlížení pouze nahoru/dolů. Toto řešení se zdá být pro zaručení ovladatelnosti a dobrého hráčského zážitku dostatečné. Nalezení ještě lepší alternativy ponecháme jako téma pro navazující práce.
@@ -389,15 +403,15 @@ Celkově jsme tedy pro ovládání postavy použili klasické schéma WASD udáv
 
 V první části kapitoly jsme stanovili objektový návrh hlavních prvků našeho systému - šermíře a jeho meče. 
 
-\textbf{Šermíř} je typickou herní postavou, která čte vstupy od uživatele a v závislosti na nich se pohybuje po herním světě (komponenta SwordsmanMovement). Je vybaven jednoduchým colliderem pro kolize s herním světem a detailním modelem, který koliduje s nepřátelskými meči a je procedurálně animován, aby se vizuálně tvářil držet vlastní meč (komponenta SwordsmanBodyProceduralAnimation). 
+\textbf{Šermíř} je typickou herní postavou, která čte vstupy od uživatele a v závislosti na nich se pohybuje po herním světě (komponenta \texttt{SwordsmanMovement}). Je vybaven jednoduchým colliderem pro kolize s herním světem a detailním modelem, který koliduje s nepřátelskými meči a je procedurálně animován, aby se vizuálně tvářil držet vlastní meč (komponenta \texttt{SwordsmanBodyProceduralAnimation}). 
 
-\textbf{Meč} je samostatným objektem v hierarchii. Drží si referenci na šermíře, jímž je držen, a při určování svého pohybu bere v úvahu jeho pozici. Celkově však probíhá pohyb meče plně v jeho vlastní režii - zodpovědnou komponentou je SwordMovement. Ta operuje jako stavový automat. Tvůrce hry v editoru nakonfiguruje seznam stavů (potomci třídy SwordMovement.Module) a jejich mapování na stisknuté klávesy, SwordMovement pak dle vstupu od uživatele vybírá, který stav je aktivní - na tom jediném volá metodu OnFixedUpdate. V této metodě submodul provádí libovolnou vnitřní logiku (konkrétní příklady - modul pro sekání a pro blokování - jsme navrhli v 2. polovině kapitoly) a nakonec na instanci SwordMovement zavolá metodu MoveSword(), které jako argument předá žádanou pozici meče. SwordMovement se následně postará o jeho plynulý přesun. 
+\textbf{Meč} je samostatným objektem v hierarchii. Drží si referenci na šermíře, jímž je držen, a při určování svého pohybu bere v úvahu jeho pozici. Celkově však probíhá pohyb meče plně v jeho vlastní režii - zodpovědnou komponentou je \texttt{SwordMovement}. Ta operuje jako stavový automat. Tvůrce hry v editoru nakonfiguruje seznam stavů (potomci třídy \texttt{SwordMovement.Module}) a jejich mapování na stisknuté klávesy, \texttt{SwordMovement} pak dle vstupu od uživatele vybírá, který stav je aktivní - na tom jediném volá metodu \texttt{OnFixedUpdate}. V této metodě submodul provádí libovolnou vnitřní logiku (konkrétní příklady - modul pro sekání a pro blokování - jsme navrhli v 2. polovině kapitoly) a nakonec na instanci \texttt{SwordMovement} zavolá metodu \texttt{MoveSword()}, které jako argument předá žádanou pozici meče. \texttt{SwordMovement} se následně postará o jeho plynulý přesun. 
 
-Meč i šermíř jsou dětmi společného \textbf{kořenového objektu} - jeho starostí je, aby byly meč a šermíř řádně pospojované jeden s druhým a s objekty vnějšího světa. Konfigurujeme zde např. zdroj uživatelského vstupu (komponenta dědící z \textbf{ISwordInput}) či reference na kameru a prvky GUI (healthbar apod.).
+Meč i šermíř jsou dětmi společného \textbf{kořenového objektu} - jeho starostí je, aby byly meč a šermíř řádně pospojované jeden s druhým a s objekty vnějšího světa. Konfigurujeme zde např. zdroj uživatelského vstupu (komponenta dědící z \textbf{\texttt{ISwordInput}}) či reference na kameru a prvky GUI (healthbar apod.).
 
-Celkově by tento návrh měl poskytovat dobrou rozšiřitelnost logiky pro ovládání meče (stačí přidat nový SwordMovement.Module), implementace počítačem řízených šermířů by tomuto návrhu rovněž neměla činit problém (stačí vyměnit zdroj vstupu a odebrat reference na GUI).
+Celkově by tento návrh měl poskytovat dobrou rozšiřitelnost logiky pro ovládání meče (stačí přidat nový \texttt{SwordMovement.Module}), implementace počítačem řízených šermířů by tomuto návrhu rovněž neměla činit problém (stačí vyměnit zdroj vstupu a odebrat reference na GUI).
 
-Tímto návrhem jsme následně protkali \textbf{systém životů a poškození} - šermíř definuje komponentu \textbf{Damageable}, jednotlivé collidery v jeho detailním těle jsou doplněny komponentami implementujícími \textbf{IArmorPiece}, schopnost je zranit je dodána meči komponentou \textbf{BasicImpactWeapon}. Systém poškození jsme navrhli velmi jednoduchý, ale rovněž značně flexibilní - není problém definovat různě se chovající zbroj pro různé části šermířova těla; zbraní je cokoliv, co je na instanci IArmorPiece schopné volat metodu ProcessAttack() - jsou tedy umožněny i typy zbraní nezaložené na fyzice.
+Tímto návrhem jsme následně protkali \textbf{systém životů a poškození} - šermíř obsahuje komponentu \textbf{\texttt{Damageable}}, jednotlivé collidery v jeho detailním těle jsou doplněny komponentami implementujícími \textbf{\texttt{IArmorPiece}}, schopnost je zranit je dodána meči komponentou \textbf{\texttt{BasicImpactWeapon}}. Systém poškození jsme navrhli velmi jednoduchý, ale rovněž značně flexibilní - není problém definovat různě se chovající zbroj pro různé části šermířova těla; zbraní je cokoliv, co je na instanci \texttt{IArmorPiece} schopné volat metodu \texttt{ProcessAttack()} - jsou tedy umožněny i typy zbraní nezaložené na fyzice.
 
 \bigbreak
 
