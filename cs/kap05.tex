@@ -195,7 +195,7 @@ Z objektového návrhu již známe komponentu \textbf{\texttt{SwordMovement}}, j
 
 Z předchozí kapitoly bychom již měli být seznámeni se strukturou komponenty \textbf{\texttt{SwordMovement}}. Víme tedy, že hostuje množinu modulů - ty slouží jako zdroj high-level instrukcí udávajících cílovou polohu meče. Tyto instrukce jsou \texttt{SwordMovement}u předávány voláním metody \texttt{MoveSword()}.
 
-Této metodě je typicky předána nová pozice, od té předchozí libovolně vzdálená, každý snímek (technicky může být volána i několikrát za jeden snímek). Na meč však máme nároky, aby se pohyboval plynule bez náhlých změn rychlosti. Samotná metoda \texttt{MoveSword()} tedy žádný pohyb meče nevykonává - pouze v privátním stavu komponenty komponenty poznačí cílovou pozici, ke které se meč má přibližovat. Vlastní pohyb meče je pak vykonáván pravidelně každý snímek na základě aktuálně platné cílové pozice.
+Této metodě je typicky předána nová pozice, od té předchozí libovolně vzdálená, každý snímek (technicky může být volána i několikrát za jeden snímek). Na meč však máme nároky, aby se pohyboval plynule bez náhlých změn rychlosti. Samotná metoda \texttt{MoveSword()} tedy žádný pohyb meče nevykonává - pouze v privátním stavu komponenty poznačí cílovou pozici, ke které se meč má přibližovat. Vlastní pohyb meče je pak vykonáván pravidelně každý snímek na základě aktuálně platné cílové pozice.
 
 Pozice meče má dvě složky - lineární a rotační. Interně je reprezentujeme zkrátka jako 3D vektor udávající polohu \texttt{anchor}u meče, a kvaternion udávající jeho rotaci kolem \texttt{anchor}u. Pro veřejné rozhraní metody \texttt{MoveSword()} jsme se však rozhodli rotaci reprezentovat formou dvou orientačních bodů - ke kvaternionům se nám zdály jako celkově přívětivější alternativa, která je navíc kompatibilní s maticovými transformacemi.
 
@@ -243,7 +243,7 @@ Druhou složkou je lineární pohyb. Podívejme se nyní na ten.
 
 Zde jsme se pokusili, analogicky jako u rotace, pro jednotlivé stupně volnosti nastavit joint jako \texttt{Free} a polohu meče kontrolovat pomocí položky \texttt{targetPosition}. Narozdíl od rotace, zde se však joint choval nestabilně - pokud jsme cílovou pozici odchýlili příliš daleko od kotvícího bodu, meč začal být v nepředvídatelných intervalech surově vystřelován do dáli. Příčinu takto rozbitého chování se nám nepodařilo odhalit, pro lineární pohyb meče jsme tedy raději zvolili alternativní metodu. 
 
-Pomohla nám proměnná \texttt{joint.connectedAnchor}. Ta udává pozici na těle šermíře, ke které je joint svým \texttt{anchor}em ukotven. Defaultně je nastavená jako readonly - v editoru jí díky tomu joint může automaticky updatovat, aby souhlasila s nastavenou hodnotou \texttt{anchor} a polohou ve světě, kam jsme meč umístili. Zapisovací práva získáme vypnutím\footnote{Vhodné je ho v editoru nechat zapnutý a vypnout jej až programaticky při inicializaci SwordMovement. Takto zachováme pohodlí při práci v editoru.} flagu \texttt{joint.autoConfigureConnectedAnchor}. Nakonec je třeba nastavit všechny lineární stupně volnosti na \texttt{Locked}.
+Pomohla nám proměnná \texttt{joint.connectedAnchor}. Ta udává pozici na těle šermíře, ke které je joint svým \texttt{anchor}em ukotven. Defaultně je nastavená jako readonly - v editoru jí díky tomu joint může automaticky updatovat, aby souhlasila s nastavenou hodnotou \texttt{anchor} a polohou ve světě, kam jsme meč umístili. Zapisovací práva získáme vypnutím\footnote{Vhodné je ho v editoru nechat zapnutý a vypnout jej až programaticky při inicializaci \texttt{SwordMovement}. Takto zachováme pohodlí při práci v editoru.} flagu \texttt{joint.autoConfigureConnectedAnchor}. Nakonec je třeba nastavit všechny lineární stupně volnosti na \texttt{Locked}.
 
 Zápisem do \texttt{joint.connectedAnchor} jsme nyní schopni meč okamžitě přesunout na cílovou pozici. My však potřebujeme pohyb plynule rozložený v průběhu času. 
 
@@ -263,7 +263,7 @@ Jde o velmi triviální řešení, jež neodpovídá realistickému fyzikálním
 
 \subsubsection*{Síla držení meče} \label{implementationSwordHoldingForceSubsubsection}
 
-Někdy je třeba kromě pozice meče mít kontrolu i nad způsobem, jak je meč držen. Např. v modu blokování potřebujeme, aby byl meč držen pevněji než při sekání, jinak by blokující meč byl tím sekajícím sražen na stranu (sekající se pohybuje a má tedy větší kinetickou sílu). 
+Někdy je třeba kromě pozice meče mít kontrolu i nad způsobem, jak je meč držen. Např. v modu blokování potřebujeme, aby byl meč držen pevněji než při sekání, jinak by blokující meč byl tím sekajícím sražen na stranu (sekající se pohybuje a má proto větší kinetickou sílu). 
 
 Sílu držení meče jsme tedy umožnili definovat spolu s polohou. Jde o volitelný parametr - pokud není dodán, meč se navrací na defaultní sílu držení (která byla z jointu přečtena při inicializaci). Implementace probíhá jednoduše změnou položky \texttt{joint.slerpDrive.spring}, používáme k tomu stejnou triviální interpolaci jako pro pohyb \texttt{connectedAnchoru} výše.
 
@@ -275,7 +275,7 @@ Jak jsme nastínili v \ref{interfacesSwordMovementModulesObjectModelSubsubsectio
 
 Pro spravování indexované množiny objektů jsme implementovali třídu \texttt{SerializableDictionary<TKey, TValue>} - ta obsahuje serializovatelný list key-value párů a umožňuje jeho jednoduchý převod na \texttt{Dictionary}. 
 
-Vyvstává však problém - pole v tomto dictionary jsme deklarovali typu \texttt{SwordMovement.Module} - očekáváme, že konkrétní podtřídu vybere uživatel v editoru - Unity však v editoru výběr podtřídy nepodporuje. Naštěstí existuje knihovna \texttt{SubclassPropertyDrawer} \cite{SubclassPropertyDrawer}, která ji je schopna přímočaře doplnit.  
+Vyvstává však problém - pole v tomto dictionary jsme deklarovali typu \texttt{SwordMovement.Module} - očekáváme, že konkrétní podtřídu vybere uživatel v editoru - Unity však v editoru výběr podtřídy nepodporuje. Naštěstí existuje knihovna \texttt{SubclassPropertyDrawer} \cite{SubclassPropertyDrawer}, která jej je schopna přímočaře doplnit.  
 
 \begin{figure}[ht]\centering
   \center
@@ -348,13 +348,13 @@ Zde velmi stručně projdeme implementaci jednoduché zbraně a zbroje, které n
 
 \subsubsection*{BasicArmorPiece}
 
-Odkaz na své Damageable najde prohledáváním hierarchie směrem nahoru. Definuje dva parametry:
+Odkaz na své \texttt{Damageable} najde prohledáváním hierarchie směrem nahoru. Definuje dva parametry:
 \begin{itemize}
   \item \texttt{Násobič zranění} - číslo kterým vynásobí dmg útoku  
   \item \texttt{Minimální zranění} - pokud je výsledné dmg pod touto hranicí, útok bude ignorován
 \end{itemize}
 
-Jeho metoda \texttt{ProcessAttack()} spočte výsledné dmg a pokud je nad minimální hranicí, ubere toto množství HP svému Damageable voláním \texttt{ChangeHP()}.
+Jeho metoda \texttt{ProcessAttack()} spočte výsledné dmg a pokud je nad minimální hranicí, ubere toto množství HP svému \texttt{Damageable} voláním \texttt{ChangeHP()}.
 
 Šermířovi jsme umístili jednu instanci do kořenu jeho detailního těla - ta definuje základní chování pro všechny jeho collidery - do kostí jeho rukou jsme umístili dvě doplňující instance s menším násobičem. Ruce budou veškeré zásahy defaultně zpracovávat těmito v hierarchii bližšími instancemi, čímž se kompenzuje jejich jinak nadprůměrná zranitelnost. Podobně by se dal vyladit i zbytek šermířova těla.
 
@@ -425,9 +425,9 @@ void SetTargetRotation(
 
 Algoritmus jsme důkladně otestovali a zdá se spolehlivě fungovat.
 
-Zda smíme používat světové, nebo lokální souřadnice, záleží na hodnotě flagu \texttt{joint.configuredInWorldSpace}. Argument \texttt{startRotation} je (buď globální, nebo lokální) rotace, kterou jsme přečetli z \texttt{joint.transform} na začátku hry ve zprávě Start().
+Zda smíme používat světové, nebo lokální souřadnice, záleží na hodnotě flagu \texttt{joint.configuredInWorldSpace}. Argument \texttt{startRotation} je (buď globální, nebo lokální) rotace, kterou jsme přečetli z \texttt{joint.transform} na začátku hry ve zprávě \texttt{Start()}.
 
-V případě našeho meče používáme lokální souřadnice. Tedy \texttt{joint.configuredInWorldSpace} musí být false a jako parametr \texttt{startRotation} posíláme \texttt{joint.transform.localRotation}.
+V případě našeho meče používáme lokální souřadnice. Tedy \texttt{joint.configuredInWorldSpace} musí být \texttt{false} a jako parametr \texttt{startRotation} posíláme \texttt{joint.transform.localRotation}.
 
 V naší práci jsme tuto logiku zapouzdřili do třídy \texttt{JointRotationHelper}, kterou je třeba inicializovat odkazem na joint při spuštění hry. Následně pro nastavení cílové rotace stačí volat její metodu \texttt{SetTargetRotation} s jediným argumentem udávajícím cílovou rotaci.
 
@@ -556,7 +556,7 @@ Náším cílem je fixer umísťovat tak, aby došlo k jeho kolizi s Cílem tehd
 \begin{figure}[ht]\centering
   \center
   \includegraphics[height=30mm]{../img/fixerBirdseye.png}
-  \caption{Z ptačí perspektivy - Hostitel (zeleně), Cíl (červeně), Fixer (modře)}
+  \caption{Z ptačí perspektivy - Hostitel (kruh), Cíl (křížek), Fixer (čtverec)}
   \label{obr05:fixerBirdseye}
 \end{figure} 
 Z tvarů, které nám nabízejí primitivní collidery, se pro tento účel jeví nejvhodnějším \texttt{BoxCollider}. Jeho výšku stanovíme shodnou s délkou meče - jedna z jeho vertikálních hran se bude s osou Hostitelského meče shodovat - podstavu necháme pro jednoduchost čtvercovou a délku hrany necháme uživatelsky parametrizovatelnou - my budeme dále pracovat s pojmem \textbf{Hloubka}... vzdálenost jednoho z vrcholů podstavy od jejího středu - tedy polovina úhlopříčky podstavy.
@@ -637,7 +637,7 @@ Při testování jsme narazili na několik problémů. Prvním bylo, že fixer p
     spojnice = nová Úsečka(spojnice.origin, -spojnice.direction);
   minuláSpojnice = spojnice;
 \end{code}
-Následně již fixer Cílovému meči v tunelování korektně bránil. Příležitostně však nastávaly situace, kdy tato podmínka byla vyhodnocena jako \texttt{true}, aniž by šlo o tunelování. Např. okamžitě po inicializaci, v prvních několika snímcích hry, se celá hra zdá chovat celkově nestabilně a k tomuto jevu docházelo. Poloha fixeru se v takovém případě přepnula do stavu, kdy nastavoval směrem k Cílovému meči celý masiv svého těla - viz obr. \ref{obr05:fixerOverturned} - a docházelo tedy k pro hráče velmi matoucím kolizím s neznámým neviditelným objektem. 
+Následně již fixer Cílovému meči v tunelování korektně bránil. Příležitostně však nastávaly situace, kdy tato podmínka byla vyhodnocena jako \texttt{true}, aniž by šlo o tunelování. Např. okamžitě po inicializaci, v prvních několika snímcích hry, se hra zdá chovat celkově nestabilně a k tomuto jevu docházelo. Poloha fixeru se v takovém případě přepnula do stavu, kdy nastavoval směrem k Cílovému meči celý masiv svého těla - viz obr. \ref{obr05:fixerOverturned} - a docházelo tedy k pro hráče velmi matoucím kolizím s neznámým neviditelným objektem. 
 
 \begin{figure}[ht]\centering
   \center
@@ -702,7 +702,7 @@ Vzhledem k tomu, že počet fixerů ve scéně roste v nejhorším případě kv
 
 \begin{figure}[ht]\centering
   \center
-  \includegraphics[width=140mm]{../img/collisionFix-group.png}
+  \includegraphics[height=81mm]{../img/collisionFix-group.png}
   \caption{Čtveřice šermířů s plnou vzájemnou korekcí kolizí mečů}
   \label{obr05:collisionFixGroup}
 \end{figure} 
@@ -733,7 +733,7 @@ Aréna je ohraničena kolem dokola palisádou. Najdeme v ní kruhové bojiště,
 \begin{figure}[ht]\centering
   \center
   \includegraphics[width=145mm]{../img/demogameArenaLayout.png}
-  \caption{Aréna - bojiště (červeně), prostranství s tlačítky (modře)}
+  \caption{Aréna - bojiště (šrafovaně), prostranství s tlačítky}
   \label{obr05:demogameArenaLayout}
 \end{figure} 
 
@@ -761,7 +761,7 @@ Pozastavení hry, když je hráč v menu, jsme implementovali nastavením \textt
 
 Dále zde najdeme překryvné rozhraní, jehož úkolem je hráčovi komunikovat \textbf{stav jeho postavy}. 
 
-V levého spodním rohu najdeme healthbar - ten ukazuje jaká část z maximálního hráčova zdraví ještě zbývá. Informaci získává posloucháním OnUpdate eventu na hráčově \texttt{Damageable}, který zaregistruje hráčova \texttt{SwordAssembly}. Stejným způsobem na hráčovi poslouchá i druhá pomocná komponenta - jejím úkolem je na několik sekund přes obrazovku zobrazit obrázek krvavých skvrn, pokud bylo hráčovi uštědřeno obzvláště těžké zranění. Pokud hráč zemře, zobrazí se krvavé skvrny trvale spolu s výzvou, aby ''stiskl 'R' pro restart hry''.
+V levého spodním rohu najdeme healthbar - ten ukazuje jaká část z maximálního hráčova zdraví ještě zbývá. Informaci získává posloucháním \texttt{OnUpdate} eventu na hráčově \texttt{Damageable}, který zaregistruje hráčova \texttt{SwordAssembly}. Stejným způsobem na hráčovi poslouchá i druhá pomocná komponenta - jejím úkolem je na několik sekund přes obrazovku zobrazit obrázek krvavých skvrn, pokud bylo hráčovi uštědřeno obzvláště těžké zranění. Pokud hráč zemře, zobrazí se krvavé skvrny trvale spolu s výzvou, aby ''stiskl 'R' pro restart hry''.
 
 Pro komunikaci zdraví nepřátel nepoužíváme překryvné GUI. Původní myšlenka byla nad základní texturou nepřítele postupně odkrývat druhou vrstvu s krvavými skvrnami, nakonec jsme se omezili na postupné obarvování celého nepřítele na červeno (skrze \texttt{Renderer.material.color}) dle jeho zbývajících HP. Abychom ke zraněním poskytli okamžitou zpětnou vazbu, rovněž jsme zapojili \href{https://docs.unity3d.com/2022.2/Documentation/Manual/Built-inParticleSystem.html}{vestavěný Particle systém enginu Unity}, s jehož pomocí v místě zásahu emitujeme několik částic ''stříkající krve'' - viz obr. \ref{obr05:demogameEnemyBloodied}
 
@@ -841,12 +841,12 @@ Aby se nehromadil rozpor mezi pozicí agenta a skutečnou pozicí šermíře, je
  agent.nextPosition = this.transform.position + 0.9 * direction;
 \end{code} 
 
-Nyní je šermíř schopen se pohybovat po aréně, pronásledovat hráče a při tom se vyhýbat překážkám i dalším šermířům - viz obr.\ref{obr05:demogameAiNavigation}.
+Nyní je šermíř schopen se pohybovat po aréně, pronásledovat hráče a při tom se vyhýbat překážkám i dalším šermířům - viz obr. \ref{obr05:demogameAiNavigation}.
 
 \begin{figure}[h!]\centering
   \center
   \includegraphics[width=120mm]{../img/demogameAiNavigation.png}
-  \caption{Skupina šermířů koordinovaně pronásledující hráče (zelený válec značí interní \texttt{NavMeshAgent} polohu)}
+  \caption{Skupina šermířů koordinovaně pronásledující hráče (čárovaný válec značí interní \texttt{NavMeshAgent} polohu)}
   \label{obr05:demogameAiNavigation}
 \end{figure} 
 
