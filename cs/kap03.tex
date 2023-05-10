@@ -21,7 +21,7 @@ V této kapitole si představíme základní principy použití enginu v rozsahu
 Základním prvkem je \textbf{scéna} - ta odpovídá jedné oblasti ve hře. Scéna může být aktivní vždy jen jedna, hráč mezi nimi přechází.
 
 \subsubsection*{Herní objekt}
-Scéna je popsána hierarchií \textbf{herních objektů} (třída \texttt{UnityEngine.GameObject}). Každý herní objekt je definován svou pozicí v hierarchii (svým otcem), transformační maticí (udává pozici v herním světě) a jménem\footnote{Jméno slouží pro dokumentační a debugovací účely.} a najdeme v něm (volitelně prázdný) list dodatečných komponent - ty tvoří veškeré jeho chování, z herního objektu nevytváříme podtřídy ani nic podobného.
+Scéna je popsána hierarchií \textbf{herních objektů} (třída \texttt{UnityEngine.GameObject}). Každý herní objekt je definován svou pozicí v hierarchii (svým otcovským objektem), transformační maticí (ta udává pozici v herním světě) a jménem\footnote{Jméno slouží pro dokumentační a debugovací účely.} a najdeme v něm (volitelně prázdný) list dodatečných komponent - ty tvoří veškeré jeho chování, z herního objektu nevytváříme podtřídy ani nic podobného.
 
 \subsubsection*{Komponenty}
 Komponenty jsou základními modulárními stavebními prvky, ze kterých skládáme herní logiku. Herní engine nám poskytuje velké množství již hotových - např. jednu, skrze kterou lze definovat grafickou reprezentaci objektu (\texttt{MeshFilter}), další, jež nese zodpovědnost za vykreslení této reprezentace (\texttt{MeshRenderer}) - takto by bylo možné pokračovat velmi dlouho. Uživatel může vytvořit vlastní typ komponenty tak, že ve skriptu definuje třídu dědící z \texttt{UnityEngine.MonoBehavior}. Následně mu již nic nebrání vybrat si v editoru herní objekt a novou instanci komponenty (její jméno odpovídá jménu třídy) do něj přidat.
@@ -30,7 +30,7 @@ Každá komponenta může nést data a herní logiku, ty jsou definovány jednod
 
 \subsubsection*{Transform}
 
-Speciální komponentou je \texttt{UnityEngine.Transform}. Tu nalezneme na každém herním objektu, reprezentuje jeho \textbf{transformační matici} a \textbf{pozici v objektové hierarchii}. Každý objekt má vlastní matici, která definuje jeho polohu, rotaci a škálování - lokálně vůči otcovskému objektu. Celková transformace objektu je určena vynásobením této matice se součinem matic všech předků.
+Speciální komponentou je \texttt{UnityEngine.Transform}. Tu nalezneme na každém herním objektu, reprezentuje jeho \textbf{transformační matici} a \textbf{pozici v objektové hierarchii}. Každý objekt má vlastní matici, která definuje jeho polohu, rotaci a škálování - lokálně vůči otcovskému objektu. Celková transformace objektu je určena rekurzivně jako součin této matice s celkovou transformací předka.
 
 Mnohdy potřebujeme na složitějším herním objektu vyznačit specifické body (např. v \ref{interfacesSwordModelSubsubsection}) - toho bývá často dosaženo rozmístěním prázdných potomků obsahujících právě samotnou komponentou \texttt{Transform}.
 
@@ -43,7 +43,7 @@ Jakoukoliv proměnnou, která je deklarovaná jako public či anotovaná atribut
     \item Primitivní a vestavěné typy zpravidla nečiní problém.
     \item Pro typy dědící z \texttt{UnityEngine.Object} je poskytnuto pole, do kterého je možné přetáhnout jakýkoliv objekt ze scény či prefab.
     \item Uživatelsky definované třídy musí být anotovány jako \texttt{[System.Serializable]} - jejich editor pak sestává rekurzivně z políček odpovídajících jejich proměnným, instance je vytvořena automaticky skrze výchozí konstruktor.
-    \item Proměnná nesmí být typu rozhranní, až do nedávna nebyly podporovány ani typy s generickým parametrem.
+    \item Proměnná nesmí být typu rozhraní, až do nedávna nebyly podporovány ani typy s generickým parametrem.
     \item Z datových struktur jsou podporovány pouze obyčejné pole a \texttt{System.Collections.Generic.List<T>}.
 \end{itemize}
 Dalším omezením je, že musí jít vždy o proměnné - properties podporovány nejsou.
@@ -73,12 +73,12 @@ V mnoha případech potřebujeme s instancí jiné komponenty komunikovat přím
 
 Nejjednodušší možností je na naší komponentě zavést serializovatelnou proměnnou, do které odkaz na druhou komponentu doplníme v editoru. 
 
-Pokud tato možnost nepřipadá v úvahu, či je komponent mnoho a přetahovat všechny by bylo přespříliš úmorné, Unity nabízí mnoho cest, jak scénu prohledávat. Mezi základní patří:
+Pokud tato možnost nepřipadá v úvahu, či je komponent mnoho a přetahovat všechny by bylo přespříliš úmorné, Unity nabízí mnoho cest, jak scénu prohledávat za běhu. Mezi základní patří:
 
 \begin{itemize}
     \item \textbf{\texttt{gameObject.GetComponent<TComponent>()}} - Voláme na konkrétní instanci herního objektu. Vrátí první komponentu typu \texttt{TComponent}, jež se v objektu nachází, popř. \texttt{null}. \texttt{TComponent} může být konkrétní typ komponenty, rovněž to však může být rozhraní. Existuje také varianta \texttt{GetComponent\underline{s}<TComponent>()}, která iteruje všechny takové komponenty, pokud jich je více. Také \texttt{GetComponent}(\texttt{s})\texttt{InParent()} a \texttt{GetComponent}(\texttt{s})\texttt{InChildren()}, které prohledávají celou objektovou hierarchii směrem od objektu nahoru/dolu.
     \item \textbf{\texttt{UnityEngine.Object.FindFirstObjectByType<TObject>()}} - Statická metoda. Podobné chování jako \texttt{GetComponent}, avšak prohledává celou aktivní scénu. 
-    \item \textbf{\texttt{UnityEngine.GameObject.FindByTag()}} - Rovněž prohledává celou scénu. Pro každý herní objekt je možné v editoru nastavit specielní poznávací symbol - tag - podle něj zde vyhledáváme. Vrací odkaz na herní objekt, na něm typicky ještě bude nutné zavolat \texttt{GetComponent}. Toto je obecně doporučovaný způsob, jak získávat odkaz na singletony.
+    \item \textbf{\texttt{UnityEngine.GameObject.FindByTag()}} - Rovněž prohledává celou scénu. Pro každý herní objekt je možné v editoru nastavit specielní poznávací symbol - \texttt{tag} - podle něj zde vyhledáváme. Vrací odkaz na herní objekt, na něm typicky ještě bude nutné zavolat \texttt{GetComponent}. Toto je obecně doporučovaný způsob, jak získávat odkaz na singletony.
 \end{itemize}
 
 Je však třeba podotknout, že všechny tyto možnosti zpravidla vykonávají nějakou formu lineárního hledání a nejsou tedy zcela efektivní. Velmi doporučované je provádět hledání pokud možno jen jednou při aktivaci naší komponenty, a jeho výsledek si ''nakešovat'' do proměnné.
@@ -93,13 +93,14 @@ Typickými takovými zprávami jsou:
 \begin{itemize}
     \item \textbf{\texttt{Update()}} - Volána jednou za každý snímek. Zde by měla být updatována herní logika. Čas uplynulý od minulého snímku není předáván jako argument, nýbrž ho lze vyčíst ze statické proměnné \texttt{UnityEngine.Time.deltaTime}.
     \item \textbf{\texttt{Start()}} - Volána jednou za život objektu, těsně před tím, než je zavolán jeho první \texttt{Update()}. Zde by typicky mělo probíhat hledání dalších komponent a podobné inicializační operace.
-    \item \textbf{\texttt{Awake()}} - Volána okamžitě po vytvoření objektu, tedy dříve než \texttt{Start()}. Některé další zprávy mají okrajové případy, ve kterých rovněž mohou být zavolány dříve než \texttt{Start()} - pokud to hrozí, je třeba provést inicializaci zde.
+    \item \textbf{\texttt{Awake()}} - Volána okamžitě po vytvoření objektu, tedy dříve než \texttt{Start()}. Některé další zprávy\footnote{např. \texttt{OnCollision} - viz \ref{collidersPhysicsIntroSubsection}} mají okrajové případy, ve kterých rovněž mohou být zavolány dříve než \texttt{Start()} - pokud to hrozí, je třeba provést inicializaci zde.
     \item \textbf{\texttt{OnDestroy()}} - Volána při zničení komponenty. Zde může uvolnit držené zdroje.
 \end{itemize}
-Zajímavou vlastností je, že komponenta může být nastavena jako \textbf{neaktivní} - v takovém případě nedostává zprávy Update a volání \texttt{Start()} je odloženo. \texttt{Awake()} a \texttt{OnDestroy()} však stále volány jsou.
+Zajímavou vlastností je, že komponenta může být nastavena jako \textbf{neaktivní} - v takovém případě nedostává zprávy \texttt{Update()} a volání \texttt{Start()} je odloženo. \texttt{Awake()} a \texttt{OnDestroy()} však stále volány jsou.
 
 Rovněž je užitečné vědět, že veškeré zprávy herní smyčky jsou volány \textbf{sekvenčně na hlavním vlákně}. Multithreading v Unity nalezneme pouze na specifických místech, a na těch si tvůrci dali záležet, aby byl uživatel velmi důrazně varován.
 
+\pagebreak
 
 \subsection{Vstup} \label{unityInputExplanationSubsection}
 
@@ -109,7 +110,7 @@ Jde o velmi starou část enginu, která je vázána potřebou zpětné kompatib
 
 Základními službami, které poskytuje, jsou:
 \begin{itemize}
-    \item \textbf{\texttt{UnityEngine.Input.GetKey()}} - Této funkci předáme jako argument klávesu (jeden z prvků enumu - zahrnuje specielní klávesy jako \texttt{Esc} nebo \texttt{Shift}) a z návratové hodnoty zjistíme, zda klávesa je či není aktuálně stisknutá. Rovněž nalezneme varianty \texttt{GetKeyDown}/\texttt{GetKeyUp}, které vrací true pouze ve snímku, kdy stisk začal/skončil.
+    \item \textbf{\texttt{UnityEngine.Input.GetKey()}} - Této funkci předáme jako argument klávesu (jeden z prvků enumu - zahrnuje i specielní klávesy jako \texttt{Esc} nebo \texttt{Shift}) a z návratové hodnoty zjistíme, zda klávesa je či není aktuálně stisknutá. Rovněž nalezneme varianty \texttt{GetKeyDown}/\texttt{GetKeyUp}, které vrací \texttt{true} pouze ve snímku, kdy stisk začal/skončil.
     \item \textbf{\texttt{UnityEngine.Input.GetAxis()}} - V nastavení projektu je možné konfigurovat pojmenované ''osy vstupu'', které mohou odpovídat pohybu myši, joysticku nebo dvojici kláves. Tato funkce nám pro osu daného jména vrátí příslušnou hodnotu v intervalu \texttt{[-1; 1]} (jak silně doleva/doprava).
     \item \textbf{\texttt{UnityEngine.Input.mousePosition}} - Souřadnice pixelu obrazovky, kde se nalézá kurzor myši. Máme-li k dispozici kameru, která odpovídá obrazovce (typicky \texttt{UnityEngine.Camera.main}), takto získáme paprsek v herním světě: \texttt{camera.ScreenPointToRay(UnityEngine.Input.mousePosition)}.  
 \end{itemize}
@@ -140,7 +141,7 @@ Subsystém si vede vlastní interní reprezentaci celé scény. Nad tou vykonáv
 
 \subsection{Rigidbody}
 
-Základní komponentou je \texttt{Rigidbody}. Jeho přidáním získá herní objekt schopnost být ovlivňován silami a působit silami na ostatní objekty.
+Základní komponentou je \texttt{UnityEngine.Rigidbody}. Jeho přidáním získá herní objekt schopnost být ovlivňován silami a působit silami na ostatní objekty.
 
 Přímo na této komponentě můžeme nastavit jeho základní parametry jako je váha, poloha těžiště, zda na něj má působit gravitace či zda je \textbf{kinematické}.
 
@@ -148,7 +149,7 @@ Přímo na této komponentě můžeme nastavit jeho základní parametry jako je
 
 \textbf{Kinematické} oproti tomu může působit (kolizními) silami na ostatní objekty, avšak samo fyzikálním systémem ovládané není - jeho pohyb je plně v režii programátora, který ho může vykonávat klasicky updatováním komponenty \texttt{Transform}.
 
-Mezi těmito dvěma stavy \textbf{lze přepínat} jednoduše úpravou flagu (\texttt{rigidbody.isKinematic}). Nečiní tedy problém mít např. meč, který je plně fyzikálně simulovaný, ale při sesílání kouzla se přepne a přehraje předpřipravenou animaci, či naopak postavu, která je ovládána animacemi, ale v okamžiku smrti se změní ve fyzikálně simulované realisticky se hroutící tělo (tzv. ragdoll).
+Mezi těmito dvěma stavy \textbf{lze přepínat} jednoduše úpravou flagu \texttt{rigidbody.isKinematic}. Nečiní tedy problém mít např. meč, který je plně fyzikálně simulovaný, ale při sesílání kouzla se přepne a přehraje předpřipravenou animaci, či naopak postavu, která je ovládána animacemi, ale v okamžiku smrti se změní ve fyzikálně simulované realisticky se hroutící tělo (tzv. ragdoll).
 
 \subsection{Collider} \label{collidersPhysicsIntroSubsection}
 
@@ -160,34 +161,34 @@ Jedním z prostředků, které pomáhají toho dosáhnout, je použití \textbf{
 
 \textbf{Tvar rigidbody} stanovíme tak, že umístíme libovolné množství colliderů do objektu, kde je komponenta rigidbody definována, či libovolně do jeho potomků. Všechny tyto collidery jsou následně považovány dohromady za jeden kompozit, který popisuje celkový tvar rigidbody. 
 
-\textbf{Statickým} colliderem nazveme takový, který není součástí hierarchie žádného rigidbody. Takový collider je schopen kolidovat s rigidbodies a sloužit pro ně jako překážka. Je považován za pevnou součást scény a jeho transform by měl po celé trvání hry zůstat stejný (pohyb může ústit v nedefinované chování). Chceme-li collider s chováním statického, kterým však můžeme bez obav pohybovat, umístíme jej do kinematického rigidbody. Statické a kinematické collidery přirozeně vzájemně nekolidují.
+\textbf{Statickým} colliderem nazveme takový, který není součástí hierarchie žádného rigidbody. Takový collider je schopen kolidovat s rigidbodies a sloužit pro ně jako překážka. Je považován za pevnou součást scény a jeho transform by měl po celé trvání hry zůstat stejný (pohyb může ústit v nedefinované chování). Chceme-li collider s chováním statického, kterým však můžeme bez obav pohybovat, umístíme jej do kinematického rigidbody. Přirozeně statické a kinematické collidery vzájemně nekolidují.
 
-Jemnější kontrolu nad tím, \textbf{co s čím může kolidovat}, nám poskytují tzv. \texttt{Layers}. Jde o pojmenované skupiny, kterých může být definováno nanejvýš 32 a nastavují se jako vlastnost herního objektu (\texttt{gameObject.layer}). V globálním nastavení herního projektu lze následně pro konkrétní páry vrstev kolize zakázat - takové dva objekty následně projdou bez reakce skrze sebe, kolize nebude ani detekována. Pro jemnější kontrolu je každý collider vybaven whitelistem a blacklistem vrstev, pomocí kterého lze globální nastavení přepsat. Ještě jemnější kontroly pak je možné dosáhnout ze skriptu - pomocí statické metody \texttt{UnityEngine.Physics.IgnoreCollision()} lze zakázat kolize pro konkrétní pár colliderů\footnote{Takto je však možné pouze kolize selektivně zakázat, nikoliv povolit. \texttt{IgnoreCollision(a, b, false)} pro \texttt{a}, \texttt{b} na vrstvách, které se ignorují, stále zanechá tento pár neschopný kolize.}.
+Jemnější kontrolu nad tím, \textbf{co s čím může kolidovat}, nám poskytují tzv. \texttt{Layers}. Jde o pojmenované skupiny, kterých může být definováno nanejvýš 32 a nastavují se jako vlastnost herního objektu (\texttt{gameObject.layer}). V globálním nastavení herního projektu lze pro konkrétní páry vrstev kolize zakázat - takové dva objekty následně projdou bez reakce skrze sebe, kolize nebude ani detekována. Pro jemnější kontrolu je každý collider vybaven whitelistem a blacklistem vrstev, pomocí kterého lze globální nastavení přepsat. Ještě jemnější kontroly pak je možné dosáhnout ze skriptu - pomocí statické metody \texttt{UnityEngine.Physics.IgnoreCollision()} lze zakázat kolize pro konkrétní pár colliderů\footnote{Takto je však možné pouze kolize selektivně zakázat, nikoliv povolit. \texttt{IgnoreCollision(a, b, false)} pro \texttt{a}, \texttt{b} na vrstvách, které se ignorují, stále zanechá tento pár neschopný kolize.}.
 
 Často potřebujeme pouze detekovat, že ke kolizi dvou objektů došlo, aniž bychom z toho vyvozovali nějaké fyzikální implikace - např. pokud fotbalový míč vstoupí do vnitřní části branky, chceme započítat gól, avšak rozhodně nechceme, aby vnitřek branky sám míči jakkoliv bránil ve vstupu. Pro tyto účely slouží flag \texttt{collider.isTrigger}. Po jeho zaškrtnutí collider přestane na kolidující objekty působit silami bránícími v průniku, stále však budou kolize detekovány.
 
-Každá probíhající kolize je kolidujícímu hernímu objektu komunikována \textbf{posíláním zpráv} \texttt{OnCollisionEnter}, \texttt{OnCollisionStay} a \texttt{OnCollisionExit}. V případě trigger collideru jsou posílány obdobné zprávy začínající na \texttt{OnTrigger} - rozdíl mezi nimi je ten, že argument \texttt{OnCollision} obsahuje podrobné informace o bodech dotyku a silách použitých k rozřešení, \texttt{OnTrigger} poskytne pouze druhý collider. 
+Každá probíhající kolize je kolidujícímu hernímu objektu komunikována \textbf{posíláním zpráv} \texttt{OnCollisionEnter}, \texttt{OnCollisionStay} a \texttt{OnCollisionExit}. V případě trigger collideru jsou posílány obdobné zprávy začínající na \texttt{OnTrigger} - rozdíl mezi nimi je ten, že argument předaný \texttt{OnCollision} obsahuje podrobné informace o bodech dotyku a silách použitých k rozřešení, \texttt{OnTrigger} poskytne pouze druhý collider. 
 
-Velmi důležitým aspektem tohoto chování, který oficielní dokumentace zcela zamlčuje, je, že v případě \texttt{Rigidbody} jsou \texttt{OnCollision} zprávy poslány pouze do kořenového herního objektu - i v případě, že konkrétní kolidující collider se nachází v jednom z jeho potomků. \texttt{OnTrigger} zprávy jsou pak poslány vždy jak do kořenu, tak do konkrétního triggerovaného objektu. Do žádného z dalších objektů v hierarchii však stále ne. Toto má velký význam v kontextu toho, že ani \texttt{OnCollision}, ani \texttt{OnTrigger} svým argumentem neposkytují odkaz na konkrétní collider, jehož prostřednictví naše rigidbody zkolidovalo (pouze na ten, který zkolidoval s námi) - dozvědět se spolehlivě\footnote{Nespolehlivou cestou je např. \texttt{collision.GetContact(0).thisCollider}. Dle dokumentace máme mít zaručeno, že \texttt{collision} vždy bude obsahovat alespoň jeden kontakt. To však platí s výjimkou \texttt{OnCollisionExit} a ve skutečnosti se tak často neděje ani v ostatních zprávách.}, který to byl, je tedy, především pro zprávu \texttt{OnCollision}, velmi netriviální problém, který může mít dalekosáhlé následky pro některé aspekty architektury našeho systému.
+Velmi důležitým aspektem tohoto chování, který oficielní dokumentace zcela zamlčuje, je, že v případě \texttt{Rigidbody} jsou \texttt{OnCollision} zprávy poslány pouze do kořenového herního objektu - i v případě, že konkrétní kolidující collider se nachází v jednom z jeho potomků. \texttt{OnTrigger} zprávy jsou pak poslány vždy jak do kořenu, tak do konkrétního triggerovaného objektu. Do žádného z dalších objektů v hierarchii však stále ne. Toto má velký význam v kontextu toho, že ani \texttt{OnCollision}, ani \texttt{OnTrigger} svým argumentem neposkytují odkaz na konkrétní collider, jehož prostřednictví naše rigidbody zkolidovalo (pouze na collider, který zkolidoval s námi) - dozvědět se spolehlivě\footnote{Nespolehlivou cestou je např. \texttt{collision.GetContact(0).thisCollider}. Dle dokumentace máme mít zaručeno, že \texttt{collision} vždy bude obsahovat alespoň jeden kontakt. To však platí s výjimkou \texttt{OnCollisionExit} a ve skutečnosti se tak často neděje ani v ostatních zprávách.}, který to byl, je tedy, především pro zprávu \texttt{OnCollision}, velmi netriviální problém, který může mít dalekosáhlé následky pro některé aspekty architektury našeho systému.
 
 Poslední důležitou problematikou, kterou letmo zmíníme, jsou metody \textbf{detekce kolizí}. Výchozí je detekce diskrétní - ta zkrátka každý krok simulace projde celou scénu a provede testy, zda aktuálně nějaké objekty mají neprázdný průnik. To je rychlé a v mnoha případech funguje dostatečně dobře. Problém však činí rychle letící či malé objekty - klasickým případem je projektil vystřelený z palné zbraně. U toho se může stát, že v jednom snímku je na jedné straně stěny, ve snímku následujícím již zcela na straně druhé, aniž by jakákoliv kolize byla detekována - projektil tzv. \textbf{protuneloval} (viz obr. \ref{obr03:tunneling}). Řešení tohoto problému nabízí \textbf{spojitá detekce kolizí} - ta propočítává celkovou dráhu objektu v průběhu času mezi snímky a ústí tedy v horší výkon. Konkrétní implementace, které Unity nabízí, budou velmi relevantní pro \ref{swordCollisionsSection} a podrobně je tedy představíme tam.
 
 \begin{figure}[ht]\centering
     \center
-    \includegraphics[width=90mm]{../img/diagram-tunneling.png}
+    \includegraphics[height=48mm]{../img/diagram-tunneling.png}
     \caption{Diagram zachycující protunelování malého objektu skrze překážku}
     \label{obr03:tunneling}
 \end{figure} 
 
 \subsection{Joint}
 
-Jointy jsou nástrojem, který umožňuje definovat \textbf{složitější vztahy mezi několika rigidbodies}. Najdeme zde například \texttt{FixedJoint}, který pevně spojí dvě oddělená tělesa dohromady, \texttt{HingeJoint}, který umožní otáčet jedním kolem druhého jako dveřmi v pantech, či \texttt{SpringJoint}, který vytvoří flexibilní spojení napodobující pružinu. Zapojením většího množství rigidbodies pospojovaných skrze \texttt{CharacterJointy} pak není obtížné vytvořit například kovový řetěz jehož jednotlivé články se realisticky pohybují.
+Jointy jsou nástrojem, který umožňuje definovat \textbf{složitější vztahy mezi několika rigidbodies}. Najdeme zde například \texttt{FixedJoint}, který pevně spojí dvě oddělená tělesa dohromady, \texttt{HingeJoint}, který umožní otáčet jedním kolem druhého jako dveřmi v pantech, či \texttt{SpringJoint}, který vytvoří flexibilní spojení napodobující pružinu. Zapojením většího množství rigidbodies pospojovaných skrze \texttt{CharacterJointy} pak není obtížné vytvořit například kovový řetěz, jehož jednotlivé články se realisticky pohybují.
 
-Typů Jointů najdeme v Unity nemalé množství, všechny jsou však pouze fasádou nad univerzálním \textbf{\texttt{ConfigurabeJointem}}, který si nyní blíže představíme.
+Typů Jointů najdeme v Unity nemalé množství, všechny jsou však pouze fasádou nad univerzálním \textbf{\texttt{ConfigurabeJoint}}em, který si nyní blíže představíme.
 
 Vytvoříme ho jednoduše přidáním komponenty \texttt{ConfigurableJoint} na objekt obsahující nekinematické \texttt{Rigidbody}. Nyní můžeme hru zapnout a joint bude fungovat, neuvidíme však žádný pozorovatelný efekt. Musíme tedy několik věcí nakonfigurovat.
 
-První věcí je přirozeně těleso, ke kterému chceme to naše připojit. Jednoduše ho přetáhneme do políčka \texttt{connectedBody}. Pomocí políčka \texttt{anchor} nyní můžeme nakonfigurovat bod, který bude sloužit jako centrum jointu (tzn. kolem kterého probíhá rotace a směřuje do něj pohyb). \texttt{Anchor} je udáván v souřadnicích relativních vůči našemu tělesu. Jak ho zadáváme, vidíme, že se automaticky přepočítává druhá položka - \texttt{connectedAnchor} - ta udává polohu anchoru relativně vůči \texttt{connectedBody} - v průběhu hry, jakkoliv se bude měnit poloha odpovídající \texttt{connectedAnchor}u v reálném světě (např. při pohybu \texttt{connectedBody}), tak se bude posunovat náš objekt, aby jeho \texttt{anchor} stále odpovídal \texttt{connectedAnchoru} - vzniká tedy jakýsi parent->child vztah od \texttt{connectedBody} k našemu \texttt{rigidbody}. 
+První věcí je přirozeně těleso, ke kterému chceme to naše připojit. Jednoduše ho přetáhneme do políčka \texttt{connectedBody}. Pomocí políčka \texttt{anchor} nyní můžeme nakonfigurovat bod, který bude sloužit jako centrum jointu (tzn. kolem kterého probíhá rotace a směřuje do něj pohyb). \texttt{Anchor} je udáván v souřadnicích relativních vůči našemu tělesu. Jak ho zadáváme, vidíme, že se automaticky přepočítává druhá položka - \texttt{connectedAnchor} - ta udává polohu \texttt{anchor}u relativně vůči \texttt{connectedBody} - v průběhu hry, jakkoliv se bude měnit poloha odpovídající \texttt{connectedAnchor}u v reálném světě (např. při pohybu \texttt{connectedBody}), tak se bude posunovat náš objekt, aby jeho \texttt{anchor} stále odpovídal \texttt{connectedAnchor}u - vzniká tedy jakýsi parent->child vztah od \texttt{connectedBody} k našemu \texttt{rigidbody}. 
 
 Nyní hru znovu zapneme a uvidíme, že chování se nezměnilo. \texttt{ConnectedBody} nebyl náš problém - nemít ho definované je ve skutečnosti perfektně v pořádku - joint pak spojuje naše rigidbody se samotným herním světem a \texttt{connectedAnchor} je chápán jako hodnota v globálních souřadnicích. Stejně tak nečiní problém, aby \texttt{connectedBody} bylo kinematické.
 
@@ -246,8 +247,9 @@ V typické hře je třeba tímto způsobem vykonávat napříč velkým množstv
 
 Základem je komponenta \texttt{Animator}. Tu jednoduše umístíme na objekt animovatelného 3D modelu, nakonfigurujeme ji, a ta následně nad pohybem kostí přebere plnou kontrolu. Posíláním zpráv a upravováním animačních proměnných jsme schopni vybírat, která animace se má přehrávat, a kontrolovat některé její parametry, přímou kontrolu nad polohami kostí však ztrácíme. 
 
-V mnoha případech takovéto přehrávání předpřipravených animací postačuje, některé vizuální efekty však činí problém - např. nelze otáčet hlavu postavy za pohybujícím se objektem či polohovat samopal v rukou vojáka přesně ve směru kam hráč míří. Pro řešení takovýchto situací je nutné nad částí animace mít přímou kontrolu skrze skript - v Unity nám nadstavbu, která umožňuje tuto tzv. \textit{procedurální animaci}, poskytuje balíček \texttt{Animation Rigging} \cite{AnimationRigging}.
+V mnoha případech takovéto přehrávání předpřipravených animací postačuje, některé vizuální efekty však činí problém - např. nelze otáčet hlavu postavy za pohybujícím se objektem či polohovat samopal v rukou vojáka přesně ve směru kam hráč míří. Pro řešení takovýchto situací je nutné nad částí animace mít přímou kontrolu skrze skript - v Unity nám nadstavbu, která umožňuje tuto tzv. \textit{procedurální animaci}, poskytuje balíček \texttt{Animation Rigging} \cite{AnimationRigging}, jehož použití si ukážeme v \ref{swordsmanAnimationSubsection}.
 
+\pagebreak
 
 \section{Shrnutí}
 
@@ -255,7 +257,7 @@ Unity je velmi vyspělý engine, který za sebou má desetiletí vývoje a s jeh
 
 Herní scéna je hierarchií objektů - každý z nich je definován svým předkem, jménem, transformační maticí a listem komponent. Komponenty jsou základním stavebním prvkem, kterým dodáváme objektům jejich vlastnosti - např. schopnost mít vizuální reprezentaci, schopnost kolidovat s okolními objekty. Unity poskytuje mnoho předpřipravených komponent, uživatel může definovat vlastní jako skripty dědící z třídy \texttt{MonoBehavior}.
 
-Jednou ze zajímavých skupin komponent jsou ty poskytnuté vestavěným \textbf{fyzikálním sybsystémem}. Jejich prostřednictvím je uživateli poskytnuto rozhraní odpovídající velké podmnožině systému Nvidia PhysX \cite{PhysX}. 
+Jednou ze zajímavých skupin komponent jsou ty náležící vestavěnému \textbf{fyzikálnímu sybsystému}. Jejich prostřednictvím je uživateli poskytnuto rozhraní odpovídající velké podmnožině systému Nvidia PhysX \cite{PhysX}. 
 
 Základem je komponenta \texttt{Rigidbody} - jejím přidáním se z objektu stává fyzikální entita, na kterou lze působit silami. Chceme-li fyzikálnímu objektu umožnit kolidovat s dalšími objekty, přidáme mu jednu nebo více komponent typu \texttt{Collider}. Pro vytváření složitějších vztahů a závislostí mezi jednotlivými fyzikálními tělesy slouží \texttt{Joint}y - s jejich pomocí můžeme vytvořit například dveře otevíratelné v pantech či realisticky se chovající kovový řetěz.
 
