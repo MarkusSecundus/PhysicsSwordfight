@@ -205,7 +205,6 @@ MonoBehaviour:
       type: {class: SwordMovementMode_Basic, ns: MarkusSecundus.PhysicsSwordfight.Sword.Modules, asm: Assembly-CSharp}
       data:
         InputIntersectable: {fileID: 0}
-        minLastVectorDiff: 0.3
 --- !u!114 &7540179020747397437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,11 +218,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ColliderConfig:
-    mode: 1
     ColliderDepth: 1
-    Tolerance: 0.3
+    MaxTunnelingDetectionDistance: 0.3
     Overreach: 0.1
-    ForceMultiplierForStandaloneMode: -1
   ActivationRadius: 3
   HierarchiesToIgnore: []
 --- !u!114 &4760108548882869451
@@ -246,7 +243,6 @@ MonoBehaviour:
   upHandTarget: {fileID: 0}
   downHandTarget: {fileID: 0}
   bottom: {fileID: 0}
-  edges: []
 --- !u!114 &8687008718328225760
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,7 +257,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SecondsBetweenAttacks: 0.4
   Stats:
-    DamageMultiplier: 4
+    DamageMultiplier: 6
   Exceptions:
     values: []
 --- !u!1001 &2781085022633151353

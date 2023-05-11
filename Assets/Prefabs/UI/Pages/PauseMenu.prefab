@@ -924,9 +924,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Movement............  WASD
 
-    Look Vertical........  QE
+    Look Horizontal....  QE
 
-    Look Horizontal.... 
+    Look Vertical........ 
     Mouse
 
     Jump....................  Space

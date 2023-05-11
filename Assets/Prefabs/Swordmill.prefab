@@ -843,19 +843,19 @@ PrefabInstance:
       objectReference: {fileID: 2808337140929654818}
     - target: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_ConnectedAnchor.x
-      value: 0.0000012367964
+      value: 0.0000018988062
       objectReference: {fileID: 0}
     - target: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_ConnectedAnchor.y
-      value: 0.408
+      value: 0.080703326
       objectReference: {fileID: 0}
     - target: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_ConnectedAnchor.z
-      value: 0.5779996
+      value: 1.703272
       objectReference: {fileID: 0}
     - target: {fileID: 8385823712147452785, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: m_ConnectedMassScale
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8687008718328225760, guid: d71ce917b3e9fce4a8024c42a77f2fae, type: 3}
       propertyPath: Exceptions.values.Array.size

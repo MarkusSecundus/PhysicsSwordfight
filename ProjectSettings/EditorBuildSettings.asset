@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Arena.unity
     guid: a7d0269a91eb9aa4dacbb8b6295cea6d
+  - enabled: 0
+    path: Assets/Scenes/VisualizationsForThesis.unity
+    guid: 594c58f5334ac1a42aed7d810e70fdc0
   m_configObjects: {}

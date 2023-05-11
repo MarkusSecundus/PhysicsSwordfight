@@ -3619,6 +3619,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 1284014608}
   Hole: {fileID: 1985237692}
   HoleWeight:
@@ -8952,6 +8953,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 0}
   HoleWeight:
@@ -11330,6 +11332,7 @@ MonoBehaviour:
   GizmoSegments: 40
   GizmoOvershoot: 3.27
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 0}
   HoleWeight:
@@ -26685,6 +26688,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 709763181}
   Hole: {fileID: 1034826755}
   HoleWeight:
@@ -29118,6 +29122,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7249322551648854904, guid: ff9f0cbc8019fba43853092e04d77143, type: 3}
+      propertyPath: DamageMultiplier
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 655627323451179520, guid: ff9f0cbc8019fba43853092e04d77143, type: 3}
     m_RemovedGameObjects: []
@@ -29178,7 +29186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Hp:
     Min: 40
-    Max: 250
+    Max: 200
 --- !u!1 &1124039513
 GameObject:
   m_ObjectHideFlags: 0
@@ -33413,6 +33421,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 0}
   HoleWeight:
@@ -33673,6 +33682,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 0}
   HoleWeight:
@@ -34664,6 +34674,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4933922005377982787, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      propertyPath: <MaxHP>k__BackingField
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 5646721316747093273, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: HierarchiesToIgnore.Array.size
       value: 2
@@ -34683,6 +34697,10 @@ PrefabInstance:
     - target: {fileID: 6356403476308957953, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: m_Extents.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6806983747615499204, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
+      propertyPath: Stats.DamageMultiplier
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7473588216747227809, guid: 3df7353640701fb4c81653ddb19a750c, type: 3}
       propertyPath: Movements.Array.size
@@ -34806,7 +34824,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SwordsCount:
     Min: 1
-    Max: 3
+    Max: 4
   Damper:
     Min: 2
     Max: 10
@@ -38344,6 +38362,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 0}
   HoleWeight:
@@ -48520,6 +48539,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 1284014607}
   HoleWeight:
@@ -51885,8 +51905,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2116216859}
-  m_LocalRotation: {x: 0.08555846, y: -0.8192356, z: 0.12682438, w: 0.5526738}
-  m_LocalPosition: {x: 46.27, y: 2.29, z: 41.41}
+  m_LocalRotation: {x: 0.085558414, y: -0.8192357, z: 0.12682438, w: 0.55267376}
+  m_LocalPosition: {x: 50.067734, y: 2.034, z: 44.184467}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -52126,6 +52146,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 709763181}
   Hole: {fileID: 1284014607}
   HoleWeight:
@@ -52938,6 +52959,10 @@ PrefabInstance:
       propertyPath: Target
       value: 
       objectReference: {fileID: 2905784261347549568}
+    - target: {fileID: 5108294732148821299, guid: 279bac6b605edfd41aae0f5e196808b9, type: 3}
+      propertyPath: SwordControl.PlaySpeed
+      value: 0.7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -53614,10 +53639,6 @@ PrefabInstance:
       propertyPath: Components.values.Array.data[2].value
       value: 
       objectReference: {fileID: 1833221620}
-    - target: {fileID: 5591428024946358039, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
-      propertyPath: m_MassScale
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6364660659263254800, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: Modes.values.Array.size
       value: 1
@@ -53648,7 +53669,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7253778412543305276, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 30.95
+      value: 50.23
       objectReference: {fileID: 0}
     - target: {fileID: 7253778412543305276, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.y
@@ -53656,7 +53677,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7253778412543305276, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 25.67
+      value: 44.25
       objectReference: {fileID: 0}
     - target: {fileID: 7253778412543305276, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_LocalRotation.w

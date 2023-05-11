@@ -115,6 +115,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 0}
   HoleWeight:
@@ -204,6 +205,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 0}
   HoleWeight:
@@ -455,7 +457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6059301b4c8bd8f499e6da82de751ae5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <MaxHP>k__BackingField: 100
+  <MaxHP>k__BackingField: 200
   DestroySelfOnDeath: 0
   OnSpawn:
     m_PersistentCalls:
@@ -613,6 +615,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 2573515945541810746}
   Hole: {fileID: 9014540905625638249}
   HoleWeight:
@@ -819,6 +822,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 0}
   HoleWeight:
@@ -1071,6 +1075,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 2573515945541810746}
   Hole: {fileID: 4764072138342505847}
   HoleWeight:
@@ -1157,6 +1162,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 6408965179152077200}
   Hole: {fileID: 9073905919154298705}
   HoleWeight:
@@ -1310,6 +1316,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 9014540905625638249}
   HoleWeight:
@@ -1398,6 +1405,7 @@ MonoBehaviour:
   GizmoSegments: 40
   GizmoOvershoot: 3.27
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 0}
   HoleWeight:
@@ -1486,6 +1494,7 @@ MonoBehaviour:
   GizmoSegments: 24
   GizmoOvershoot: 1
   GizmoColor: {r: 0, g: 1, b: 1, a: 1}
+  GizmoRenderCamera: {fileID: 0}
   CenterOverride: {fileID: 0}
   Hole: {fileID: 0}
   HoleWeight:
@@ -1899,6 +1908,31 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4311527045545079246}
     m_Modifications:
+    - target: {fileID: 787205202525848309, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 787205202525848309, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1577988557933285987}
+    - target: {fileID: 787205202525848309, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 787205202525848309, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: EmitDamage
+      objectReference: {fileID: 0}
+    - target: {fileID: 787205202525848309, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MarkusSecundus.PhysicsSwordfight.Sword.Damage.DamageParticleEmitHelper,
+        Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 787205202525848309, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3768689973301008722, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
       propertyPath: m_Name
       value: SwordsmanDetailedBody
@@ -1951,6 +1985,31 @@ PrefabInstance:
       propertyPath: Sword
       value: 
       objectReference: {fileID: 8932781648214845613}
+    - target: {fileID: 7026958443733666054, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7026958443733666054, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1577988557933285987}
+    - target: {fileID: 7026958443733666054, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7026958443733666054, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: EmitDamage
+      objectReference: {fileID: 0}
+    - target: {fileID: 7026958443733666054, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MarkusSecundus.PhysicsSwordfight.Sword.Damage.DamageParticleEmitHelper,
+        Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7026958443733666054, guid: 1f3c43ea0663ada40bee3dc2b52e0f62, type: 3}
+      propertyPath: OnAttacked.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

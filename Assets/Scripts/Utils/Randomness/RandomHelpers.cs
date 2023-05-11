@@ -28,7 +28,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Randomness
         /// Generate random <see cref="System.Int32"/>
         /// </summary>
         /// <param name="self">Source of randomness</param>
-        /// <param name="i">Range of the results, exclusive</param>
+        /// <param name="i">Range of the results, inclusive</param>
         /// <returns>Random value</returns>
         public static int Next(this System.Random self, Interval<int> i) => self.Next(i.Min, i.Max + 1);
         /// <summary>
@@ -52,7 +52,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Utils.Randomness
         /// <param name="self">Source of randomness</param>
         /// <param name="i">Range of the results, inclusive</param>
         /// <returns>Random value</returns>
-        public static bool Next(this System.Random self, Interval<bool> i) => i.Min == i.Max ? i.Min : (self.Next() & 1) == 0;
+        public static bool Next(this System.Random self, Interval<bool> i) => i.Min == i.Max ? i.Min : self.NextBool();
 
         /// <summary>
         /// Randomly shuffle contents of provided span.

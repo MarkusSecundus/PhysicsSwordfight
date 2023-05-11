@@ -892,6 +892,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2133934842861438067}
+  - component: {fileID: 787205202525848309}
   m_Layer: 12
   m_Name: LowerArm.L
   m_TagString: Untagged
@@ -916,6 +917,23 @@ Transform:
   m_Father: {fileID: 6315428396777897752}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &787205202525848309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3287307995098802582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnAttacked:
+    m_PersistentCalls:
+      m_Calls: []
+  MinDamage: 2
+  DamageMultiplier: 0.6
 --- !u!1 &3493828423136592816
 GameObject:
   m_ObjectHideFlags: 0
@@ -1552,6 +1570,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1964316297926750038}
+  - component: {fileID: 7026958443733666054}
   m_Layer: 12
   m_Name: LowerArm.R
   m_TagString: Untagged
@@ -1576,6 +1595,23 @@ Transform:
   m_Father: {fileID: 3599274899400221386}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7026958443733666054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5691809725992214897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ca8dc5cb7530a242a46ddbece526870, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnAttacked:
+    m_PersistentCalls:
+      m_Calls: []
+  MinDamage: 2
+  DamageMultiplier: 0.6
 --- !u!1 &6316714329783218109
 GameObject:
   m_ObjectHideFlags: 0
