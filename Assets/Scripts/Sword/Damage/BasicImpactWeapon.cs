@@ -17,16 +17,19 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
         /// <summary>
         /// Minimal interval between two attacks on the same <see cref="IDamageable"/> entity being registered
         /// </summary>
+        [Tooltip("Minimal interval between two attacks on the same IDamageable entity being registered")]
         public float SecondsBetweenAttacks = 0.2f;
 
         /// <summary>
         /// Stats describing the weapon
         /// </summary>
+        [Tooltip("Stats describing the weapon")]
         public TStats Stats;
 
         /// <summary>
         /// List of specific <see cref="IDamageable"/>s  agains which special stats should be used
         /// </summary>
+        [Tooltip("List of specific IDamageables agains which special stats should be used")]
         public ExceptionsList Exceptions;
 
         /// <summary>
@@ -81,6 +84,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
             /// <summary>
             /// Value with which <c><see cref="Collision.impulse"/>.magnitude</c> is multiplied to get total attack damage.
             /// </summary>
+            [Tooltip("Value with which Collision.impulse.magnitude is multiplied to get total attack damage")]
             public float DamageMultiplier;
         }
         /// <inheritdoc/>

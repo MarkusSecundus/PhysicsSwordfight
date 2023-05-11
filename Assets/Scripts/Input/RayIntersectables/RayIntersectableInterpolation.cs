@@ -20,16 +20,19 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
             /// <summary>
             /// The intersectable object
             /// </summary>
+            [Tooltip("The intersectable object")]
             public IRayIntersectable Value;
             /// <summary>
             /// Weight assigned to the intersectable object. Will be multiplied with <see cref="RayIntersection.Weight"/> to obtain definitive weight.
             /// </summary>
+            [Tooltip("Weight assigned to the intersectable object. Will be multiplied with RayIntersection.Weight to obtain definitive weight")]
             public float Weight;
         }
 
         /// <summary>
         /// Segments of the interpolated object
         /// </summary>
+        [Tooltip("Segments of the interpolated object")]
         public Entry[] entries;
 
         /// <inheritdoc/>

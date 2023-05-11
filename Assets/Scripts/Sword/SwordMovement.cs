@@ -21,6 +21,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
     /// 
     /// Requires components <see cref="Rigidbody"/>, <see cref="ConfigurableJoint"/> and <see cref="SwordDescriptor"/>.
     /// </summary>
+    [Tooltip("Component responsible for controlling the sword")]
     [RequireComponent(typeof(ConfigurableJoint)), RequireComponent(typeof(SwordDescriptor))]
     public class SwordMovement : MonoBehaviour, ISwordMovement
     {
@@ -32,6 +33,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
         /// <summary>
         /// Descriptor of the sword that's being controlled
         /// </summary>
+        [Tooltip("Descriptor of the sword that's being controlled")]
         public SwordDescriptor Sword { get; private set; }
         /// <summary>
         /// Source of user input.
@@ -41,6 +43,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
         /// <summary>
         /// Joint that connects the sword with the wielder
         /// </summary>
+        [Tooltip("Joint that connects the sword with the wielder")]
         private ConfigurableJoint joint;
 
         /// <summary>

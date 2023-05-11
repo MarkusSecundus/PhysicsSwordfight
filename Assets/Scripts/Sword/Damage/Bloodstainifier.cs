@@ -15,14 +15,17 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
         /// <summary>
         /// All renderer components to be affected by the effect
         /// </summary>
+        [Tooltip("All renderer components to be affected by the effect")]
         [SerializeField] Renderer[] Renderers;
         /// <summary>
         /// Color that is being added as HP decreases
         /// </summary>
+        [Tooltip("Color that is being added as HP decreases")]
         [SerializeField] Color ColorOfBlood = new Color(0.7f, 0f, 0f);
         /// <summary>
         /// How long the update effect takes each time the component gets damaged
         /// </summary>
+        [Tooltip("How long the update effect takes each time the component gets damaged")]
         [SerializeField] float TransitionDuration = 0.3f;
 
         DefaultValDict<Material, Color> originalColors = new DefaultValDict<Material, Color>(m => m.color);

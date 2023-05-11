@@ -72,14 +72,17 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Animation
             /// <summary>
             /// Bones of the arm
             /// </summary>
+            [Tooltip("Bones of the arm")]
             public TransformChain Target;
             /// <summary>
             /// Point in worldspace that should be made reachable for the arm
             /// </summary>
+            [Tooltip("Point in worldspace that should be made reachable for the arm")]
             [SyncSceneToStream] public Transform SourceObject;
             /// <summary>
             /// How much this constraint should overshoot - <c>1f</c> will be just reachable (which is still not totally stable for IK constraints).
             /// </summary>
+            [Tooltip("How much this constraint should overshoot - 1f will be just reachable (which is still not totally stable for IK constraints)")]
             public float Multiplier;
 
             public bool IsValid() => Target.IsValid() && SourceObject.IsNotNil();

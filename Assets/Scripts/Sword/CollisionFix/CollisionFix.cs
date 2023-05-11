@@ -21,25 +21,30 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
     /// For details see <see cref="ContrarianColliderBase"/>.
     /// </para>
     /// </summary>
+    [Tooltip("Component that solves the issue of sword blades tunneling through one-another")]
     [RequireComponent(typeof(SwordDescriptor)), RequireComponent(typeof(Rigidbody))]
     public partial class CollisionFix : MonoBehaviour 
     {
         /// <summary>
         /// <see cref="ColliderLayer"/> in which all collision-fix colliders should operate.
         /// </summary>
+        [Tooltip("Layer in which all collision-fix colliders should operate")]
         public static int TargetLayer => ColliderLayer.CollisionFix;
 
         /// <summary>
         /// Config to be used by all created <see cref="Fixer"/> instances
         /// </summary>
         [SerializeField]
+        [Tooltip("Config to be used by all created Fixer instances")]
         ContrarianCollider.Configuration ColliderConfig = ContrarianCollider.Configuration.Default;
 
+        [Tooltip("Distance from the sword in which fixer colliders would get created")]
         [SerializeField] private float ActivationRadius = 3f;
 
         /// <summary>
         /// Hierarchies whose member-objects should be ignored when creating fixer colliders
         /// </summary>
+        [Tooltip("Hierarchies whose member-objects should be ignored when creating fixer colliders")]
         [SerializeField] Transform[] HierarchiesToIgnore;
 
         /// <summary>
@@ -100,10 +105,12 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
             /// <summary>
             /// Sword where this fixer collider is placed
             /// </summary>
+            [Tooltip("Sword where this fixer collider is placed")]
             public CollisionFix Host;
             /// <summary>
             /// The other sword whose tunneling should be prevented
             /// </summary>
+            [Tooltip("The other sword whose tunneling should be prevented")]
             public CollisionFix Target;
 
             /// <inheritdoc/>

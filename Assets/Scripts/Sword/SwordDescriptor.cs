@@ -10,12 +10,13 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
     /// <summary>
     /// List of points of interest that describe a sword.
     /// </summary>
+    [Tooltip("List of points of interest that describe a sword")]
     public class SwordDescriptor : MonoBehaviour
     {
         /// <summary>
         /// Point in which the sword is held by the swordsman.
         /// </summary>
-        public Transform SwordAnchor => anchor = anchor.IfNil(target?.SwordAnchor);
+        [Tooltip("")]public Transform SwordAnchor => anchor = anchor.IfNil(target?.SwordAnchor);
         /// <summary>
         /// Sword's centre of mass.
         /// </summary>
@@ -42,8 +43,22 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
         /// </summary>
         public Transform SwordBottom => bottom = bottom.IfNil(target?.SwordBottom);
 
+        [Tooltip("SwordDescriptor whose values will be used for fields that are not directly provided")]
         [SerializeField] private SwordDescriptor target = null;
-        [SerializeField] private Transform anchor = null, centerOfWeight = null, tipPoint = null, blockPoint = null, upHandTarget = null, downHandTarget = null, bottom = null;
+        [Tooltip("Point in which the sword is held by the swordsman")]
+        [SerializeField] private Transform anchor = null;
+        [Tooltip("Sword's centre of mass")]
+        [SerializeField] private Transform centerOfWeight = null;
+        [Tooltip("Tip of the blade - upmost point of the sword")]
+        [SerializeField] private Transform tipPoint = null;
+        [Tooltip("Point on the blade's edge near the handle, which the swordsman will try to position to catch incoming strikes")]
+        [SerializeField] private Transform blockPoint = null;
+        [Tooltip("Point in the upper part of the handle where the swordsman should hold the sword (with his dominant hand)")]
+        [SerializeField] private Transform upHandTarget = null;
+        [Tooltip("Point in the lower part of the handle where the swordsman should hold the sword (with his non-dominant hand)")]
+        [SerializeField] private Transform downHandTarget = null;
+        [Tooltip("Bottom of the sword's handle - downmost point of the sword")]
+        [SerializeField] private Transform bottom = null;
     }
 
     /// <summary>

@@ -21,27 +21,33 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
             /// <summary>
             /// Just report <see cref="RayIntersection.Null"/>. Default behavior
             /// </summary>
-            DoNothing, 
+            [Tooltip("Just report RayIntersection.Null. Default behavior")]
+            DoNothing,
             /// <summary>
             /// Return point on the ray with least distance from the sphere's center
             /// </summary>
-            TakeLeastDistance, 
+            [Tooltip("Return point on the ray with least distance from the sphere's center")]
+            TakeLeastDistance,
             /// <summary>
             /// Take point on the ray with least distance from the sphere's center and project it on the sphere.
             /// </summary>
+            [Tooltip("Take point on the ray with least distance from the sphere's center and project it on the sphere")]
             Project
         }
         /// <summary>
         /// Center of the sphere
         /// </summary>
+        [Tooltip("Center of the sphere")]
         public Transform Center;
         /// <summary>
         /// Radius of the sphere
         /// </summary>
+        [Tooltip("Radius of the sphere")]
         public float Radius;
         /// <summary>
         /// What to do when the sphere was not hit
         /// </summary>
+        [Tooltip("What to do when the sphere was not hit")]
         public OnMissedPolicy OnMissed = OnMissedPolicy.DoNothing;
 
         /// <inheritdoc/>

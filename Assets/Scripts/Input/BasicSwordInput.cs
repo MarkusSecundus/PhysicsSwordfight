@@ -15,6 +15,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
         /// <summary>
         /// Camera to be used for shooting rays in <see cref="GetInputRay"/>
         /// </summary>
+        [Tooltip("Camera to be used for shooting rays in GetInputRay()")]
         public Camera InputCamera;
         void Start()
         {

@@ -48,9 +48,11 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
         /// <summary>
         /// Event that is fired every time the armor piece is attacked
         /// </summary>
+        [Tooltip("Event that is fired every time the armor piece is attacked")]
         [SerializeField] OnAttackedEvent OnAttacked;
 
         /// <inheritdoc/>
+        [field: Tooltip("Damageable entity this armor piece belongs to")]
         public IDamageable BaseDamageable { get; private set; }
 
         /// <summary>

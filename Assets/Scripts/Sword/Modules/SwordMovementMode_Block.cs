@@ -30,14 +30,17 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
         /// The one child nearest to the control point will be chosed and used as the point to which the sword's blade should point to.
         /// </para>
         /// </summary>
+        [Tooltip("Transform whose children transforms will be used as direction hints for the blocking mode")]
         public Transform SwordDirectionHint;
         /// <summary>
         /// Geometric shape with which <see cref="ISwordInput.GetInputRay"/> gets intersected to obtain control point.
         /// </summary>
+        [Tooltip("Geometric shape with which ISwordInput.GetInputRay() gets intersected to obtain control point")]
         public IRayIntersectable InputIntersector;
         /// <summary>
         /// Value with which to multiply the default force with which the sword is held
         /// </summary>
+        [Tooltip("Value with which to multiply the default force with which the sword is held")]
         public float HoldingForceMultiplier = 20f;
 
 

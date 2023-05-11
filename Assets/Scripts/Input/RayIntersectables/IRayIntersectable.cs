@@ -63,37 +63,45 @@ namespace MarkusSecundus.PhysicsSwordfight.Input.Rays
         /// <summary>
         /// Whether the gizmo vizualization should be drawn. Intended to be used from editor.
         /// </summary>
+        [Tooltip("Whether the gizmo vizualization should be drawn. Intended to be used from editor")]
         public bool ShouldDrawGizmo = false;
         /// <summary>
         /// How detailed the gizmo vizualization should be. Affects performance. Intended to be used from editor.
         /// </summary>
+        [Tooltip("How detailed the gizmo vizualization should be. Affects performance. Intended to be used from editor")]
         public int GizmoSegments = 24;
         /// <summary>
         /// How big is the radius in which the gizmo visualization rays should be thrown compared to the main camera's standard FOV. Intended to be used from editor.
         /// </summary>
+        [Tooltip("How big is the radius in which the gizmo visualization rays should be thrown compared to the main camera's standard FOV. Intended to be used from editor")]
         public float GizmoOvershoot = 1f;
         /// <summary>
-        /// Color to be used when drawing the gizmo
+        /// Color to be used when drawing the gizmo. Intended to be used from editor.
         /// </summary>
+        [Tooltip("Color to be used when drawing the gizmo. Intended to be used from editor")]
         public Color GizmoColor = Color.cyan;
         /// <summary>
-        /// Camera to be used as source of rays for drawing the gizmo.
+        /// Camera to be used as source of rays for drawing the gizmo. Intended to be used from editor.
         /// </summary>
+        [Tooltip("Camera to be used as source of rays for drawing the gizmo. Intended to be used from editor")]
         public Camera GizmoRenderCamera;
 
         /// <summary>
         /// Doesn't affect computation of the intersection. If set, <c>position</c> of this will replace the original <see cref="RayIntersection.InputorCenter"/> in the return value of <see cref="GetIntersection(Ray)"/>.
         /// </summary>
+        [Tooltip("Doesn't affect computation of the intersection. If set, position of this will replace the original RayIntersection.InputorCenter in the return value of GetIntersection(Ray)")]
         public Transform CenterOverride = null;
 
         /// <summary>
         /// Sphere that affects weights of the result intersections.
         /// </summary>
+        [Tooltip("Sphere that affects weights of the result intersections")]
         public RayIntersectableSphere Hole;
 
         /// <summary>
         /// Curve that determines weights of the intersections, depending on <c>(<see cref="RayIntersection.Value"/>.Distance(Hole.Center)/Hole.Radius</c>
         /// </summary>
+        [Tooltip("Curve that determines weights of the intersections, depending on RayIntersection.Value.Distance(Hole.Center)/Hole.Radius")]
         public AnimationCurve HoleWeight = NumericConstants.AnimationCurve01;
 
         /// <summary>

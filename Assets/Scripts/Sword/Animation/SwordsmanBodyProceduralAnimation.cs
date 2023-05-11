@@ -15,26 +15,31 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Animation
         /// <summary>
         /// Sword to hold
         /// </summary>
+        [Tooltip("Sword to hold")]
         public SwordDescriptor Sword;
 
         /// <summary>
         /// Description of the bone rig to be procedurally animated
         /// </summary>
+        [Tooltip("Description of the bone rig to be procedurally animated")]
         [SerializeField] private SwordsmanModelDescriptor Model;
 
         /// <summary>
         /// Description of the bone rig to be procedurally animated
         /// </summary>
+        [Tooltip("Description of the bone rig to be procedurally animated")]
         [System.Serializable]
         public struct SwordsmanModelDescriptor
         {
             /// <summary>
             /// Rig bones for swordsman's right arm
             /// </summary>
+            [Tooltip("Rig bones for swordsman's right arm")]
             public ArmIKDescriptor RightArm;
             /// <summary>
             /// Rig bones for swordsman's left arm
             /// </summary>
+            [Tooltip("Rig bones for swordsman's left arm")]
             public ArmIKDescriptor LeftArm;
 
             [System.Serializable]
@@ -43,22 +48,27 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Animation
                 /// <summary>
                 /// Point defining IK target
                 /// </summary>
+                [Tooltip("Point defining IK target")]
                 public Transform Target;
                 /// <summary>
                 /// Point defining IK hint
                 /// </summary>
+                [Tooltip("Point defining IK hint")]
                 public Transform Hints;
                 /// <summary>
                 /// Point where the hand should be looking at
                 /// </summary>
+                [Tooltip("Point where the hand should be looking at")]
                 public Transform Look;
                 /// <summary>
                 /// Bone chain describing the hand
                 /// </summary>
+                [Tooltip("Bone chain describing the hand")]
                 public Transform[] Bones;
                 /// <summary>
                 /// Leaf hand bone
                 /// </summary>
+                [Tooltip("Leaf hand bone")]
                 public Transform HandTipBone;
             }
 

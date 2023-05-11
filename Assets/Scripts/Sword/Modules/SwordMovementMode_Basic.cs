@@ -22,6 +22,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Modules
         /// <summary>
         /// Geometric shape with which <see cref="ISwordInput.GetInputRay"/> gets intersected to obtain control point.
         /// </summary>
+        [Tooltip("Geometric shape with which ISwordInput.GetInputRay() gets intersected to obtain control point")]
         public IRayIntersectable InputIntersectable;
         /// <summary>
         /// Sets sword rotation according to user input.

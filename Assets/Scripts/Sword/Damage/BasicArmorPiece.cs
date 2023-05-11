@@ -12,10 +12,12 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Damage
         /// <summary>
         /// Minimum damage for an attack to not be ignored
         /// </summary>
+        [Tooltip("Minimum damage for an attack to not be ignored")]
         public float MinDamage = 2f;
         /// <summary>
         /// Value to multiply the original attack damage obtained from the weapon
         /// </summary>
+        [Tooltip("Value to multiply the original attack damage obtained from the weapon")]
         public float DamageMultiplier = 1f;
 
         /// <inheritdoc/>

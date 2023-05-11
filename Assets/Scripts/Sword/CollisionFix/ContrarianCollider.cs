@@ -18,10 +18,12 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
         /// <summary>
         /// Sword where this fixer collider is placed
         /// </summary>
+        [Tooltip("Sword where this fixer collider is placed")]
         public SwordDescriptor Target;
         /// <summary>
         /// The other sword whose tunneling should be prevented
         /// </summary>
+        [Tooltip("The other sword whose tunneling should be prevented")]
         public SwordDescriptor Host;
         /// <inheritdoc/>
         protected override ScaledRay GetTarget() => Target.SwordAsRay();
@@ -56,14 +58,17 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
             /// <summary>
             /// Diameter of the collider.
             /// </summary>
+            [Tooltip("Diameter of the collider")]
             public float ColliderDepth;
             /// <summary>
             /// Max distance of the blades at which tunneling is prevented. 
             /// </summary>
+            [Tooltip("Max distance of the blades at which tunneling is prevented")]
             public float MaxTunnelingDetectionDistance;
             /// <summary>
             /// Added diameter to the collider that is ignored in it's positioning computation. Used for preventing a sword getting stuck between other sword and its collider.
             /// </summary>
+            [Tooltip("Added diameter to the collider that is ignored in it's positioning computation. Used for preventing a sword getting stuck between other sword and its collider")]
             public float Overreach;
 
             /// <summary>
