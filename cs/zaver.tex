@@ -1,4 +1,4 @@
-\chapter{Závěr}
+\chapter{Závěr} \label{endChapter}
 
 Implementaci máme za sebou, prozkoumali jsme málo probádanou oblast akčních her s fyzikálně simulovaným, jemně ovladatelným mečem. V této sekci výsledek naší práce srovnáme s dalšími podobnými hrami, celkově ho zhodnotíme a nastínime možnosti jeho dalšího vývoje. 
 
@@ -91,7 +91,7 @@ Zdrojový kód je doplněn dokumentací ve formátu standardních dokumentační
     \item \textbf{Lepší ovládání pohybu postavy} - jak se zdá, precizní ovládání meče vyžaduje, aby byla myš vyhrazena plně pro něj. Ovládání pohybu postavy tedy musí vystačit s klávesnicí - přímočaré ovladací schéma, jaké naše práce použila, nevede ke zcela optimálnímu hráčskému zážitku. Stejně jako v oblasti ovládání meče je zde třeba dalšího výzkumu.
     \item \textbf{Méně výpočetně náročná korekce kolizí} - metoda (viz \ref{swordCollisionsSection}), kterou jsme použili, abychom zabránili tunelování a celkově nekorektnímu chování mečů při vzájemných kolizích, nese overhead, který roste v nejhorším případě kvadraticky s počtem mečů ve scéně. Pro umožnění hromadných bitev je třeba nalézt preciznější heuristiky, s jejichž pomocí by pomocné collidery byly poolovány a umisťovány pouze tam, kde jsou skutečně třeba.
     \item \textbf{Balancing} - hratelnost byla dosud testována na velmi malém vzorku hráčů. Bylo by velmi vhodné provést rozsáhlejší iterované testování na dobrovolnících a analyzovat, zda jsou některé způsoby hraní nevýhodné či krkolomnější na provedení než by měly být, či naopak natolik výhodné, že uvrhají všechny ostatní do irelevance, a hru dle toho adekvátně vyladit.
-    \item \textbf{Multiplayer} - umožnit vzájemný boj několika hráčů se pro náší hru jeví jako přirozený další krok. 
+    \item \textbf{Multiplayer} - umožnit vzájemný boj několika hráčů se pro náší hru jeví jako přirozený další krok. Schopnost poměřovat takto hráče vzájemně by rovněž učinila mnoho směrů navazujícího výzkumu přímočařejšími.
     \item \textbf{Sofistikovanější nepřátelská AI} - algoritmus, který jsme použili pro ovládání nepřátelských šermířů, je velmi jednoduchý a pro hráče neposkytuje značnou výzvu. Vytvořit umělou inteligenci schopnou využít plně možností, jež jí jemná kontrola nad mečem poskytuje, by mohlo být zajímavým úkolem pro další výzkum - nabízí se např. zapojení evolučních algoritmů.
     \item \textbf{Kombinace s dalšími herními mechanikami} - mnoho her přidává svému bojovému systému dodatečnou hloubku kombinací s dalšími mechanikami jako je systém výdrže, magie či \acs{RPG} progrese.
     \item \textbf{Rozšíření na hru plné velikosti} - jádro, které jsme vytvořili, je třeba doplnit dalšími ortogonálními mechanikami, přidat zajímavé nepřátele, narativ a level design, aby bylo dosaženo hry, která naplní standardy komerčního herního trhu. 
