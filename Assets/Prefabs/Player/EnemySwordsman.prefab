@@ -309,7 +309,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   SwordControl:
-    PlaySpeed: 0.6
+    PlaySpeed: 0.7
     DistanceToIdle: 5
     Records:
       values:
