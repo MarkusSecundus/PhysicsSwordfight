@@ -70,6 +70,7 @@
 
 %\usepackage{listings}
 
+\usepackage{dirtree}
 \usepackage{hyperref}
 \usepackage[none]{hyphenat}
 \iraggedright
@@ -119,13 +120,16 @@ Poděkování.
 
 % Abstrakt (doporučený rozsah cca 80-200 slov; nejedná se o zadání práce)
 \def\Abstrakt{%
-Boj nablízko s chladnou zbraní najdeme v mnoha videohrách, pouze hrstka z nich se však pokouší o realistickou simulaci, jež by hráči dala svobodu jakkoliv se blížící té, již manipulace s chladnou zbraní umožňuje v reálném světě. Velkou výzvou je návrh schématu ovládání pro klasické počítačové periferie. Ještě méně prozkoumanou oblastí je pak zapojení zbraně do fyzikální simulace herního světa.
+Boj nablízko s chladnou zbraní najdeme v mnoha videohrách, zřídka se však pokouší o realistickou simulaci, jež by hráči dala svobodu blížící se té, již manipulace s chladnou zbraní umožňuje v reálném světě. Velkou výzvou je návrh schématu ovládání pro klasické počítačové periferie. Ještě méně prozkoumanou oblastí je pak zapojení zbraně do fyzikální simulace herního světa.
 
 Práce implementuje simulátor šermu s jedenapůlručním mečem v enginu Unity, v němž figuruje meč jako plně fyzikálně simulovaný objekt. Rovněž předkládá schéma ovládání pro klávesnici a myš umožňující hráči jemnou kontrolu nad pohybem zbraně. Pro testování hratelnosti implementuje jednoduchého AI protivníka.
 Implementace je vytvořena s použitím dobrých programátorských praktik a může komukoliv posloužit jako základ pro akční hru s pokročilým bojovým systémem.
 }
 \def\AbstraktEN{%
---PLACEHOLDER--
+Combat with a cold weapon can be seen in many video games, but rarely does it attempt a realistic simulation that gives the player freedom approaching that which cold weapon manipulation allows in the real world. Big challenge is designing a control scheme for classic computer peripherals. An even less explored area is the integration of the weapon into the physics simulation of the game world.
+
+This work implements a longsword fencing simulator in the Unity game engine, featuring the sword as a fully physically simulated object. It also presents a control scheme for keyboard and mouse providing the player with fine control over the movement of the weapon. It also implements a simple AI enemy for testing purposes.
+The implementation is created using good programming practices and can be used as a basis for an action game with an advanced combat system.
 }
 
 % 3 až 5 klíčových slov (doporučeno), každé uzavřeno ve složených závorkách
@@ -173,7 +177,7 @@ Implementace je vytvořena s použitím dobrých programátorských praktik a m�
 
 %%% Tabulky v bakalářské práci (opět nemusí být nutné uvádět)
 %%% U matematických prací může být lepší přemístit seznam tabulek na začátek práce.
-\listoftables
+%\listoftables
 
 %%% Použité zkratky v bakalářské práci (opět nemusí být nutné uvádět)
 %%% U matematických prací může být lepší přemístit seznam zkratek na začátek práce.
@@ -191,9 +195,8 @@ Implementace je vytvořena s použitím dobrých programátorských praktik a m�
 %%% je také do práce vložit na CD/DVD. Povolené formáty souborů specifikuje
 %%% opatření rektora č. 72/2017.
 \appendix
-\chapter{Přílohy}
 
-\section{První příloha}
+\include{prehled-priloh}
 
 \openright
 \end{document}
