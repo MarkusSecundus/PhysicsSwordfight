@@ -67,23 +67,34 @@ Velmi silnou stránkou \acl{KCD} je rovněž \textbf{vizuální prezentace}. Dí
 
 Naše práce ověřila, že za použití moderního fyzikálního systému, jakým je ten vestavěný v enginu Unity, je velmi dobře možné implementovat akční hru s mečem, která hráči poskytne nad zbraní jemnou kontrolu ve všech šesti stupních volnosti. Jádro takové hry jsme implementovali a může posloužit jako základ pro plnohodnotnou komerční hru či jako výchozí bod pro další výzkum v této oblasti.
 
+Standardní fyzikální subsystém enginu Unity se ukázal jako mocný nástroj, který velký kus práce odvedl za nás, rovněž nám však do cesty postavil mnohé nástrahy, jež bylo třeba překonat. Největší výzvou bylo tunelování mečů při vzájemných kolizích - žádná z dostupných variant spojité detekce kolizí zde nepomohla, bylo třeba najít vlastní řešení, kterým bylo na jeden z mečů umístit dodatečný velký collider, natáčející se dle polohy druhého meče a bránící mu v průniku. 
+
+Kromě fyzikálního systému jsme rovněž uplatnili knihovnu \texttt{Animation Rigging} \cite{AnimationRigging}, která nám pomohla vytvořit procedurální animaci, jejímž prostřednictvím šermíř kosmeticky ''drží'' meč.
+
+Velkým tématem, o které jsme zavadili, bylo mapování vstupu z běžných počítačových periferií na pohyb meče (3D objektu se třemi stupni volnosti pro polohu a dalšími třemi pro rotaci). Napodobili jsme schéma, skrze které hra \acl{DbtS} \cite{DieByTheSword} umožnila s mečem sekat, a doplnili jsme ho vlastním modem pro blokování úderů, na který lze přepnout držením klávesy. Oblast vyžaduje mnoho dalšího výzkumu, kladli jsme tedy velký důraz na modularitu, aby další metody ovládání mohly v budoucnu být jednoduše přidány.
 
 
+Naše výsledná hra zahrnuje prostředí fantasy arény, ve které hráčem ovládaný šermíř může zápasit s počítačem ovládanými nepřáteli. Najdeme zde dva jednoduché statické, kteří slouží k procvičování základních technik boje a jako překážky zvyšující členitost bojiště, především však počítačem ovládaný ekvivalent hráčského šermíře, který se pomocí standardního systému \texttt{NavMesh} orientuje v terénu a na hráče útočí přehráváním přednahraných pohybů meče.
+
+\bigbreak
+
+Zdrojový kód je doplněn dokumentací ve formátu standardních dokumentačních komentářů v anglickém jazyce. Celý projekt pro engine Unity, včetně zdrojového kódu a grafických assetů, je volně dostupný pod opensource MIT licencí.
 
 \section{Možnosti rozšíření}
 
 \begin{itemize}
-    \item \textbf{Audio} - v současném stavu hra neobsahuje žádnou zvukovou složku. Je třeba zkomponovat hudební podkres a přidat zvuky vydávané herními entitami. Generování fyzikálně realistických zvuků meče by mohlo být zajímavou oblastí pro další výzkum. 
+    \item \textbf{Audio} - v současném stavu hra neobsahuje žádnou zvukovou složku. Je třeba zkomponovat tématický hudební podkres a přidat zvuky vydávané herními entitami. Generování fyzikálně realistických zvuků meče by mohlo být zajímavou oblastí pro další výzkum. 
     \item \textbf{Grafika} - vizuální stránka hry vyžaduje další práci. Bylo by vhodné pro šermíře vytvořit animace pohybu, pro všechny nepřátele pak dokončit efekt krvavých skvrn reflektujících stav jejich \acs{HP}.
     \item \textbf{Další mody ovládání} - poskytnout výchozí bod pro navazující výzkum v oblasti ovládání meče byl jeden z primárních cílů této práce. Mody, které hra současně podporuje, již nabízejí vcelku flexibilní možnosti ovládání, stále však najdeme očividné směry, které vybízejí k dalšímu rozšiřování - např. bodání s mečem. 
     \item \textbf{Podpora ovladače Wii Remote} - ovladač, který by nám umožnil přímou kontrolu nad pohybem meče ve všech šesti stupních volnosti, by mohl posloužit jako cenný kontrolní bod pro navazující experimenty v oblasti ovládání meče tradičními periferiemi. Ovladač Wii Remote konkrétně je možností spolehlivou, finančně dostupnou a použitelnou v enginu Unity (viz \ref{wiiRemoteSubsection}).
     \item \textbf{Přepracování IRayIntersectable} - v procesu mapování uživatelského vstupu na pohyb meče je nejprve třeba z paprsku vystřeleného z polohy hráčova kurzoru získat kontrolní bod. Toho dosahujeme průnikem paprsku s geometrickým útvarem. Současný systém (viz \ref{rayIntersectablesDefinitionSubsection}) umožňuje definovat tyto útvary vcelku flexibilně, ale nese neduhy v podobě špatných možností vizualizace a značné míry ručního ladění potřebné k dosažení dobrého výsledku. Rovněž chybí editor, s jehož pomocí by tyto útvary mohl editovat hráč uvnitř hry.
-    \item \textbf{Lepší ovládání pohybu postavy} - jak se zdá, precizní ovládání meče vyžaduje, aby byla myš vyhrazena plně pro něj. Ovládání pohybu postavy tedy musí vystačit s klávesnicí - přímočaré ovladací schéma, jaké naše práce použila, nevede ke zcela optimálnímu hráčskému zážitku. Stejně jako v oblasti ovládání meče je zde třeba další výzkum.
+    \item \textbf{Lepší ovládání pohybu postavy} - jak se zdá, precizní ovládání meče vyžaduje, aby byla myš vyhrazena plně pro něj. Ovládání pohybu postavy tedy musí vystačit s klávesnicí - přímočaré ovladací schéma, jaké naše práce použila, nevede ke zcela optimálnímu hráčskému zážitku. Stejně jako v oblasti ovládání meče je zde třeba dalšího výzkumu.
     \item \textbf{Méně výpočetně náročná korekce kolizí} - metoda (viz \ref{swordCollisionsSection}), kterou jsme použili, abychom zabránili tunelování a celkově nekorektnímu chování mečů při vzájemných kolizích, nese overhead, který roste v nejhorším případě kvadraticky s počtem mečů ve scéně. Pro umožnění hromadných bitev je třeba nalézt preciznější heuristiky, s jejichž pomocí by pomocné collidery byly poolovány a umisťovány pouze tam, kde jsou skutečně třeba.
-    \item \textbf{Balancing} - je třeba provést testování na dobrovolnících a podchytit 
-    \item \textbf{Multiplayer} - umožnit vzájemný boj několika hráčů se pro náší hru jeví jako přirozený další krok.  
+    \item \textbf{Balancing} - hratelnost byla dosud testována na velmi malém vzorku hráčů. Bylo by velmi vhodné provést rozsáhlejší iterované testování na dobrovolnících a analyzovat, zda jsou některé způsoby hraní nevýhodné či krkolomnější na provedení než by měly být, či naopak natolik výhodné, že uvrhají všechny ostatní do irelevance, a hru dle toho adekvátně vyladit.
+    \item \textbf{Multiplayer} - umožnit vzájemný boj několika hráčů se pro náší hru jeví jako přirozený další krok. 
     \item \textbf{Sofistikovanější nepřátelská AI} - algoritmus, který jsme použili pro ovládání nepřátelských šermířů, je velmi jednoduchý a pro hráče neposkytuje značnou výzvu. Vytvořit umělou inteligenci schopnou využít plně možností, jež jí jemná kontrola nad mečem poskytuje, by mohlo být zajímavým úkolem pro další výzkum - nabízí se např. zapojení evolučních algoritmů.
-    \item \textbf{Výzkum ohledně interakce s prostředím}
     \item \textbf{Kombinace s dalšími herními mechanikami} - mnoho her přidává svému bojovému systému dodatečnou hloubku kombinací s dalšími mechanikami jako je systém výdrže, magie či \acs{RPG} progrese.
     \item \textbf{Rozšíření na hru plné velikosti} - jádro, které jsme vytvořili, je třeba doplnit dalšími ortogonálními mechanikami, přidat zajímavé nepřátele, narativ a level design, aby bylo dosaženo hry, která naplní standardy komerčního herního trhu. 
 \end{itemize}
+
+\nocite{ThisGithubRepo}
