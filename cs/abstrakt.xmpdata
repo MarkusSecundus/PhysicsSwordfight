@@ -3,3 +3,5 @@
 \Author{Jakub Hroník}
 \Title{3D Simulátor šermu s mečem založený na fyzice}
 \Publisher{Univerzita Karlova}
+\Subject{Boj nablízko s chladnou zbraní najdeme v mnoha videohrách, zřídka se však pokouší o realistickou simulaci, jež by hráči dala svobodu blížící se té, již manipulace s chladnou zbraní umožňuje v reálném světě. Velkou výzvou je návrh schématu ovládání pro klasické počítačové periferie. Ještě méně prozkoumanou oblastí je pak zapojení zbraně do fyzikální simulace herního světa. Práce implementuje simulátor šermu s jedenapůlručním mečem v enginu Unity, v němž figuruje meč jako plně fyzikálně simulovaný objekt. Rovněž předkládá schéma ovládání pro klávesnici a myš umožňující hráči jemnou kontrolu nad pohybem zbraně. Pro testování hratelnosti implementuje jednoduchého AI protivníka. Implementace je vytvořena s použitím dobrých programátorských praktik a může komukoliv posloužit jako základ pro akční hru s pokročilým bojovým systémem.}
+\Keywords{šerm, herní fyzika, počítačová hra, herní engine Unity}
