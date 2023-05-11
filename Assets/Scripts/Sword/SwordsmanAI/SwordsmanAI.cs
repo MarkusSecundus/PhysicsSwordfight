@@ -31,6 +31,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
         /// <summary>
         /// Target to attack
         /// </summary>
+        [Tooltip("Target to attack")]
         public NavMeshObstacle Target;
 
         SwordsmanAssembly SwordsmanAssembly;
@@ -65,25 +66,30 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
         /// <summary>
         /// Config for swordsman's movement through terrain
         /// </summary>
+        [Tooltip("Config for swordsman's movement through terrain")]
         [System.Serializable]
         public struct NavigationConfigurator
         {
             /// <summary>
             /// How fast to rotate sideways
             /// </summary>
+            [Tooltip("How fast to rotate sideways")]
             public float SidewaysRotationMultiplier;
             /// <summary>
             /// Number in interval [0;1] - how much does the <see cref="NavMeshAgent"/> get synced back into current Transform position
             /// </summary>
+            [Tooltip("Number in interval [0;1] - how much does the NavMeshAgent get synced back into current Transform position")]
             [Range(0f,1f)]
             public float AgentSync;
             /// <summary>
             /// How far from the swordsman to start playing attacking sword moves. Ratio relative to the sum of <c>this</c> and <see cref="Target"/>'s radius.
             /// </summary>
+            [Tooltip("How far from the swordsman to start playing attacking sword moves. Ratio relative to the sum of this and Target's radius")]
             public float MelleeReachMultiplier;
             /// <summary>
             /// How accurately swordsman's rotation should face the <see cref="Target"/> depending on his distance. Not totally accurate when distance is big looks better.
             /// </summary>
+            [Tooltip("How accurately swordsman's rotation should face the Target depending on his distance. Not totally accurate when distance is big looks better")]
             public AnimationCurve RotationAccuracyByDistance;
             /// <summary>
             /// Default values for editor
@@ -93,6 +99,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
         /// <summary>
         /// Config for swordsman's movement through terrain
         /// </summary>
+        [Tooltip("Config for swordsman's movement through terrain")]
         public NavigationConfigurator Navigation = NavigationConfigurator.Default;
 
         void SetupNavmeshAgent()
@@ -160,26 +167,31 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.AI
         /// <summary>
         /// Config for swordsman's attacks
         /// </summary>
+        [Tooltip("Config for swordsman's attacks")]
         [System.Serializable]
         public class SwordConfig
         {
             /// <summary>
             /// How fast the sword moves should be replayed
             /// </summary>
+            [Tooltip("How fast the sword moves should be replayed")]
             [SerializeField] public float PlaySpeed = 1f;
             /// <summary>
             /// Distance from <see cref="Target"/> at which swordsman plays Idle moves
             /// </summary>
+            [Tooltip("Distance from Target at which swordsman plays Idle moves")]
             [SerializeField] public float DistanceToIdle = 5f;
             /// <summary>
             /// Records (files containing JSON of <see cref="SwordMovementRecord"/>) to be played for each state.
             /// </summary>
+            [Tooltip("Records (files containing JSON of SwordMovementRecord) to be played for each state")]
             [SerializeField] public SerializableDictionary<SwordRecordUsecase, TextAsset[]> Records;
         }
 
         /// <summary>
         /// Config for swordsman's attacks
         /// </summary>
+        [Tooltip("Config for swordsman's attacks")]
         public SwordConfig SwordControl = new SwordConfig();
 
         static readonly DefaultValDict<TextAsset, SwordMovementRecord> recordCache = new DefaultValDict<TextAsset, SwordMovementRecord>(t => JsonConvert.DeserializeObject<SwordMovementRecord>(t.text));
