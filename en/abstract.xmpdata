@@ -1,5 +1,7 @@
 % Metadata to be stored in PDF, see documentation of the pdfx package for more details.
 
-\Author{Name Surname}
-\Title{Thesis title}
+\Author{Jakub Hroník}
+\Title{3D Physics driven swordfighting simulator}
 \Publisher{Charles University}
+\Subject{Combat with a cold weapon can be seen in many video games, but rarely does it attempt a realistic simulation that would provide the player with freedom nearing what cold weapon manipulation allows in the real world. Big challenge is designing a control scheme for classic computer peripherals. An even less explored area is the integration of the weapon into the physics simulation of the game world. This work implements a longsword fencing simulator in the Unity game engine, featuring the sword as a fully physically simulated object. It also presents a control scheme for keyboard and mouse providing the player with fine control over the movement of the weapon. It also implements a simple AI enemy for testing purposes. The implementation is created using good programming practices and can be used as a basis for an action game with an advanced combat system.}
+\Keywords{swordfighting, game physics, computer game, Unity engine}
