@@ -75,9 +75,15 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
         /// </summary>
         public void DestroyTheSwordsman()
         {
-            if (DeathInstructions.SwordDestroyDelay.IsNormalNumber() && DeathInstructions.SwordDestroyDelay >= -0f) Destroy(Sword.gameObject, DeathInstructions.SwordDestroyDelay);
-            Sword.DropTheSword();
-            Destroy(gameObject);
+            try
+            {
+                if (Sword) Sword.DropTheSword();
+                if (DeathInstructions.SwordDestroyDelay.IsNormalNumber() && DeathInstructions.SwordDestroyDelay >= -0f) Destroy(Sword.gameObject, DeathInstructions.SwordDestroyDelay);
+            }
+            finally
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

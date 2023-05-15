@@ -35,7 +35,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Symbols
         public bool TryGet<TComponent>(SymbolKey key, out TComponent ret) where TComponent : Component
         {
             ret = default;
-            return (Components.Values.TryGetValue(key, out var retComponent) && (ret = retComponent as TComponent) != null);
+            return (Components.Values.TryGetValue(key, out var retComponent) && ((ret = retComponent as TComponent).IsNotNil() || (retComponent.IsNotNil() && (ret = retComponent.GetComponent<TComponent>()).IsNotNil() )));
         }
         /// <summary>
         /// Try to get a number by name

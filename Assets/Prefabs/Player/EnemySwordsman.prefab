@@ -136,6 +136,14 @@ PrefabInstance:
       propertyPath: <MaxHP>k__BackingField
       value: 150
       objectReference: {fileID: 0}
+    - target: {fileID: 4874558437125469206, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: OnPopup.m_PersistentCalls.m_Calls.Array.data[2].m_Target
+      value: 
+      objectReference: {fileID: 2559434292665527268}
+    - target: {fileID: 4874558437125469206, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+      propertyPath: OnPopup.m_PersistentCalls.m_Calls.Array.data[2].m_TargetAssemblyTypeName
+      value: MarkusSecundus.PhysicsSwordfight.Sword.SwordsmanAssembly, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 7253778412543305276, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
       propertyPath: m_RootOrder
       value: -1
@@ -250,6 +258,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4618306852961792970, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
   m_PrefabInstance: {fileID: 6391569670206814588}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2559434292665527268 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8878711620945990296, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
+  m_PrefabInstance: {fileID: 6391569670206814588}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2624544167465646253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5843b20dbff9a642a223053a2c6db5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2624544167465646253 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8997958699356684753, guid: 8da4d63721bd1e34aa99db91669db694, type: 3}
