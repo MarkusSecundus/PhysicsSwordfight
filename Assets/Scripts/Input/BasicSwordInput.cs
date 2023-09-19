@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace MarkusSecundus.PhysicsSwordfight.Input
 {
@@ -22,6 +23,10 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
             InputCamera ??= Camera.main ?? throw new NullReferenceException("No camera found");
         }
 
+        class MyMouse : Mouse
+        {
+             
+        }
 
         /// <inheritdoc/>
         public Ray? GetInputRay()
