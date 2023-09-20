@@ -31,6 +31,7 @@ namespace MarkusSecundus.PhysicsSwordfight.GUI
         public void DoPause()
         {
             if (IsPaused) return;
+            Cursor.lockState = CursorLockMode.Confined; Cursor.visible = true;
             lastTimeScale = Time.timeScale;
             Time.timeScale = 0f;
             Root.SetActive(true);
@@ -42,6 +43,7 @@ namespace MarkusSecundus.PhysicsSwordfight.GUI
         public void DoUnpause()
         {
             if (!IsPaused) return;
+            Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false;
             Time.timeScale = lastTimeScale;
             Root.SetActive(false);
         }

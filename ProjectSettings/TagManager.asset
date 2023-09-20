@@ -44,3 +44,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: CameraUI
+    uniqueID: 2608008265
+    locked: 0
