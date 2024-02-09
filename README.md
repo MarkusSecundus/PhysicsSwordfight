@@ -7,7 +7,7 @@ Everything, including all 2D, 3D and music assets is opensource under MIT licens
 To open, use [Unity 2022.2.13](https://unity.com/releases/editor/archive)  
 
 See [itch.io page](https://markussecundus.itch.io/httpsgithubcommarkussecundusphysicsswordfight)   
-See [dspace.cuni](http://hdl.handle.net/20.500.11956/183091)
+See [the submitted bachelor thesis](http://hdl.handle.net/20.500.11956/183091)
   
 Credits:
  - [Unity3D](https://unity.com/)
