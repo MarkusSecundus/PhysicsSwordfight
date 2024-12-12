@@ -12,11 +12,15 @@ namespace MarkusSecundus.PhysicsSwordfight.Input
     public enum InputAxis
     {
         None = 0,
-        Horizontal = 1,
-        Vertical = 2,
-        HorizontalSecondary = 3,
-        HorizontalQE = 6,
-        MouseX = 4,
-        MouseY = 5
+        Horizontal,
+        Vertical,
+        HorizontalSecondary,
+        HorizontalQE,
+        MouseX,
+        MouseY,
+        RightJoystickX,
+        RightJoystickY,
+        AnalogTriggerLeft,
+        AnalogTriggerRight
     }
 }
