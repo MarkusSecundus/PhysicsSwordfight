@@ -190,7 +190,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword.Collisions
         static ScaledRay AccountForCurrentMotion(ScaledRay position, Rigidbody rb, float delta)
         {
             var toRotate = Quaternion.Euler((rb.angularVelocity + 0f * rb.GetAccumulatedTorque() * delta / rb.mass) * delta);
-            var toMove = (rb.velocity + 0f * rb.GetAccumulatedForce() * delta / rb.mass) * delta;
+            var toMove = (rb.linearVelocity + 0f * rb.GetAccumulatedForce() * delta / rb.mass) * delta;
 
             var (origin, end) = (position.origin, position.end);
 

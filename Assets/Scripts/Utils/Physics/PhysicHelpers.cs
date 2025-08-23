@@ -53,20 +53,20 @@ namespace MarkusSecundus.PhysicsSwordfight.PhysicsUtils
         /// </summary>
         /// <param name="self">Rigidbody to apply force on</param>
         /// <param name="velocity">Target velocity</param>
-        public static void MoveToVelocity(this Rigidbody self, Vector3 velocity)
+        public static void MoveToVelocity(this Rigidbody self, Vector3 velocity, ForceMode mode = ForceMode.VelocityChange)
         {
-            var toApply = velocity - self.velocity;
-            self.AddForce(toApply, ForceMode.VelocityChange);
+            var toApply = velocity - self.linearVelocity;
+            self.AddForce(toApply, mode);
         }
         /// <summary>
         /// Apply torque to a rigidbody exactly enough to set it to desired velocity.
         /// </summary>
         /// <param name="self">Rigidbody to apply torque on</param>
         /// <param name="velocity">Target angular velocity</param>
-        public static void MoveToAngularVelocity(this Rigidbody self, Vector3 velocity)
+        public static void MoveToAngularVelocity(this Rigidbody self, Vector3 velocity, ForceMode mode = ForceMode.VelocityChange)
         {
             var toApply = velocity - self.angularVelocity;
-            self.AddTorque(toApply, ForceMode.VelocityChange);
+            self.AddTorque(toApply, mode);
         }
     }
 

@@ -204,14 +204,21 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
             HandleLookingInputs(delta);
             HandleJumpingInputs(delta);
         }
+
+        [SerializeField] bool ShouldHandleWalking = true;
+        [SerializeField] bool ShouldHandleRotating = true;
+        [SerializeField] bool ShouldHandleJumping = true;
+        [SerializeField] bool ShouldHandleGravity = true;
         void DoFixedMoveStep(float delta)
         {
-            HandleWalking(delta);
-            HandleRotating(delta);
-            HandleJumping(delta);
-            HandleGravity(delta);
+            if (ShouldHandleWalking) HandleWalking(delta);
+            if (ShouldHandleRotating) HandleRotating(delta);
+            if (ShouldHandleJumping) HandleJumping(delta);
+            if (ShouldHandleGravity) HandleGravity(delta);
         }
 
+
+        [SerializeField] ForceMode WalkingMode = ForceMode.Impulse;
         void HandleWalkingInputs(float delta) { }
         void HandleWalking(float delta)
         {
@@ -220,13 +227,12 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
 
             var toMove = (walkForward * MovementDirectionBases.WalkForwardBackwardBase + strafeLeftRight * MovementDirectionBases.StrafeLeftRightBase); //*delta !!velocity should not be multiplied by delta (opposed to applied force)!
 
-            rigidbody.MoveToVelocity(toMove.With(y: toMove.y + rigidbody.velocity.y));
+            rigidbody.MoveToVelocity(toMove.With(y: toMove.y + rigidbody.linearVelocity.y), WalkingMode);
         }
 
 
 
-
-
+        [SerializeField] ForceMode RotationMode = ForceMode.Impulse;
         void HandleRotatingInputs(float delta) { }
         void HandleRotating(float delta)
         {
@@ -235,7 +241,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
             rigidbody.MoveRotation(rigidbody.rotation.WithEuler(x: 0f, z: 0f)); //?! (because the axis locking doesn't actaully work 100%) - for reason see docs ( https://docs.unity3d.com/2022.2/Documentation/ScriptReference/Rigidbody-inertiaTensor.html )
 
             var rotateLeftRight = toRotate * delta * Tweaks.RotateLeftRight * MovementDirectionBases.RotateLeftRightAxis;
-            rigidbody.MoveToAngularVelocity(rotateLeftRight);
+            rigidbody.MoveToAngularVelocity(rotateLeftRight, RotationMode);
         }
 
 
@@ -256,7 +262,7 @@ namespace MarkusSecundus.PhysicsSwordfight.Sword
 
             
             var xRotation = cameraRotation.x - lookUpDown;   //for some reason needs to use substraction to not be inverted
-            var yRotation = cameraRotation.y + lookLeftRight; //no need to clamp this to the reasonable <0;180°> interval - that is taken care of just by forcing the z rotation to 0° (if the player managed to force y outside of this range, that changes z to upside-down a.k.a 180° - reseting that back to 0° by lucky coincidence resets the camera exactly to the reasonable position that one would want in such scenario)
+            var yRotation = cameraRotation.y + lookLeftRight; //no need to clamp this to the reasonable <0;180ï¿½> interval - that is taken care of just by forcing the z rotation to 0ï¿½ (if the player managed to force y outside of this range, that changes z to upside-down a.k.a 180ï¿½ - reseting that back to 0ï¿½ by lucky coincidence resets the camera exactly to the reasonable position that one would want in such scenario)
             cameraRotation = new Vector3(xRotation, yRotation, 0f).ClampEuler(Tweaks.LookConstraints);
             if (CameraToUse != null)
                 CameraToUse.localRotation = Quaternion.Euler(cameraRotation);
